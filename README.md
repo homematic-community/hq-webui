@@ -41,7 +41,9 @@ Todo
 * Räume und Gewerke in Geräteliste!
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?
 * Für Installation auf CCU .img File und Pack-Script erstellen (minifier einsetzen, jQuery evtl von CDN einbinden?)
+* Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Neuer Tab Servicemeldungen
 * Neuer Tab Signalqualität (xmlapi rssilist.cgi)
 * Buttons wegmachen und jqGrid Toolbar nutzen?
 * automatisches Anpassen der Grids an Fenstergröße
+* Auth?
