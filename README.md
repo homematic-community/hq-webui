@@ -4,7 +4,7 @@ Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic C
 
 Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration u.Ä. ist nicht vorgesehen.
 
-Benötigt eine modifizierte Version der XML API (mindestens 1.2-hq4) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
+Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq4) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
 Baut auf jQuery UI auf - d.h. die Optik ist über jQuery UI Themes einfach anpassbar. Hier kann man sich eigene Themes "zusammenklicken": http://jqueryui.com/themeroller/
 
