@@ -1,17 +1,27 @@
+/**
+ *      HQ WebUI
+ *
+ *      Version 1.0
+ *
+ *      11'2012 hobbyquaker hobbyquaker@gmail.com
+ *
+ */
+
 $("document").ready(function () {
 
-    var ccuIP = '172.16.23.3';
+    var ccuUrl = 'http://172.16.23.3';
+    
     var devicesXML;
     var statesXML;
     var variablesXML;
+    var programsXML;
 
     $("#tabs").tabs();
     $("button").button();
 
-/*
- *          Grids
- */
-
+    /*
+     *          Grids
+     */
     $("#gridVariables").jqGrid({
         width: 1080,
         height: 480,
@@ -95,7 +105,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
-        url:            'http://' + ccuIP + '/config/xmlapi/sysvarlist.cgi?text=true',
+        url:            ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
@@ -181,11 +191,16 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
-        url:            'http://' + ccuIP + '/config/xmlapi/programlist.cgi',
+        url:            ccuUrl + '/config/xmlapi/programlist.cgi',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
         data: {
+        },
+        loadComplete: function(data) {
+            if (data.nodeType) {
+                programsXML = data;
+            }
         },
         xmlReader : {
             root: "programList",
@@ -226,11 +241,11 @@ $("document").ready(function () {
                 }
             }
         ],
-        pager: "#gridPagerSystemprotocol",
+        pager: "#gridPagerProtocol",
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
-        url:            'http://' + ccuIP + '/config/xmlapi/protocol.cgi',
+        url:            ccuUrl + '/config/xmlapi/protocol.cgi',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
@@ -287,7 +302,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Status',
-        url:            'http://' + ccuIP + '/config/xmlapi/statelist.cgi',
+        url:            ccuUrl + '/config/xmlapi/statelist.cgi',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -449,7 +464,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Geräte',
-        url:            'http://' + ccuIP + '/config/xmlapi/devicelist.cgi',
+        url:            ccuUrl + '/config/xmlapi/devicelist.cgi',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -539,11 +554,9 @@ $("document").ready(function () {
         }
     });
 
-
     /*
     *      Dialoge
     */
-
     $("#dialogRunProgram").dialog({
         autoOpen: false,
         modal: true,
@@ -622,10 +635,9 @@ $("document").ready(function () {
         }
     });
 
-
-/*
- *      Click Handler
- */
+    /*
+     *      Click Handler
+     */
     $("#buttonRefreshVariables").click(function () {
         refreshVariables();
     });
@@ -645,12 +657,12 @@ $("document").ready(function () {
         $("#dialogClearProtocol").dialog("open");
     });
 
-/*
- *      XML-API Aufrufe
- */
+    /*
+     *      XML-API Aufrufe
+     */
     function xmlapiClearProtocol() {
         $.ajax({
-            url: "http://" + ccuIP + "/config/xmlapi/protocol.cgi",
+            url: ccuUrl + "/config/xmlapi/protocol.cgi",
             type: "GET",
             data: {
                 clear: 1
@@ -661,10 +673,9 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
         });
     }
-
     function xmlapiRunProgram(program_id) {
         $.ajax({
-            url: 'http://' + ccuIP + '/config/xmlapi/runprogram.cgi',
+            url: ccuUrl + '/config/xmlapi/runprogram.cgi',
             type: 'GET',
             data: {
                 program_id: program_id
@@ -675,10 +686,9 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
         });
     }
-
     function xmlapiSetState(ise_id, new_value, successFunction) {
         $.ajax({
-            url: 'http://' + ccuIP + '/config/xmlapi/statechange.cgi',
+            url: ccuUrl + '/config/xmlapi/statechange.cgi',
             type: 'GET',
             data: {
                 ise_id: ise_id,
@@ -688,20 +698,6 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
         });
     }
-
-    function xmlapiSetVariable(ise_id, new_value, successFunction) {
-        $.ajax({
-            url: 'http://' + ccuIP + '/config/xmlapi/statechange.cgi',
-            type: 'GET',
-            data: {
-                ise_id: ise_id,
-                new_value: new_value
-            },
-            success: function (data) { successFunction(data); },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
-        });
-    }
-
     function xmlapiGetState(ise_id) {
         // Naja...
         setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 1000);
@@ -711,10 +707,9 @@ $("document").ready(function () {
         setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 5000);
         setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 30000);
     }
-
     function xmlApiGetStateAjax(ise_id) {
         $.ajax({
-            url: 'http://' + ccuIP + '/config/xmlapi/state.cgi',
+            url: ccuUrl + '/config/xmlapi/state.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -726,10 +721,9 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
         });
     }
-
     function xmlapiGetVariable(ise_id) {
        $.ajax({
-            url: 'http://' + ccuIP + '/config/xmlapi/sysvar.cgi',
+            url: ccuUrl + '/config/xmlapi/sysvar.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -745,10 +739,11 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
         });
     }
-/*
- *  Grids aktualisieren
- */
 
+
+    /*
+     *  Grids aktualisieren
+     */
     function refreshVariables() {
         $("#gridVariables").setGridParam({
             loadonce: false,
@@ -780,10 +775,9 @@ $("document").ready(function () {
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
 
-/*
- *      Misc
- */
-
+    /*
+     *      Misc
+     */
     function selectOptions(value_list) {
         var output = "";
         var values = value_list.split(";");
@@ -792,7 +786,6 @@ $("document").ready(function () {
         }
         return output;
     }
-
     function ajaxerror(xhr, ajaxOptions, thrownError) {
         $("#ajaxOptions").html(ajaxOptions);
         $("#thrownError").html(thrownError);
