@@ -1,5 +1,6 @@
 $("document").ready(function () {
 
+    var ccuIP = '172.16.23.3';
     var devicesXML;
     var variablesXML;
 
@@ -93,7 +94,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
-        url:            'http://172.16.23.3/config/xmlapi/sysvarlist.cgi?text=true',
+        url:            'http://' + ccuIP + '/config/xmlapi/sysvarlist.cgi?text=true',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
@@ -178,7 +179,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
-        url:            'http://172.16.23.3/config/xmlapi/programlist.cgi',
+        url:            'http://' + ccuIP + '/config/xmlapi/programlist.cgi',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
@@ -227,7 +228,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
-        url:            'http://172.16.23.3/config/xmlapi/protocol.cgi',
+        url:            'http://' + ccuIP + '/config/xmlapi/protocol.cgi',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
@@ -288,7 +289,7 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Geräte',
-        url:            'http://172.16.23.3/config/xmlapi/devicelist.cgi',
+        url:            'http://' + ccuIP + '/config/xmlapi/devicelist.cgi',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -475,7 +476,7 @@ $("document").ready(function () {
  */
     function xmlapiClearProtocol() {
         $.ajax({
-            url: "http://172.16.23.3/config/xmlapi/protocol.cgi",
+            url: "http://' + ccuIP + '/config/xmlapi/protocol.cgi",
             type: "GET",
             data: {
                 clear: 1
@@ -489,7 +490,7 @@ $("document").ready(function () {
 
     function xmlapiRunProgram(program_id) {
         $.ajax({
-            url: 'http://172.16.23.3/config/xmlapi/runprogram.cgi',
+            url: 'http://' + ccuIP + '/config/xmlapi/runprogram.cgi',
             type: 'GET',
             data: {
                 program_id: program_id
@@ -503,7 +504,7 @@ $("document").ready(function () {
 
     function xmlapiSetState(ise_id, new_value, successFunction) {
         $.ajax({
-            url: 'http://172.16.23.3/config/xmlapi/statechange.cgi',
+            url: 'http://' + ccuIP + '/config/xmlapi/statechange.cgi',
             type: 'GET',
             data: {
                 ise_id: ise_id,
