@@ -365,7 +365,7 @@ $("document").ready(function () {
                                     return $(obj).attr('timestamp');
                                 },
                                 formatter: function (val) {
-                                    return $.datepicker.parseDate("@", val);
+                                    return val;
                                 }
                             }
                         ],

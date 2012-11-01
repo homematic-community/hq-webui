@@ -39,4 +39,4 @@ Todo
 * Select bei Datenpunkt Edit?
 * Favoriten anzeigen, mit schönen Selektoren und jQuery UI Slider für Float Werte
 * Räume und Gewerke in Geräteliste
-* in Geräteliste auf Unter-Listen verzichten und stattdessen Gerät Kanal als zusätzliche Spalte?
+* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?
