@@ -13,5 +13,5 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 Installation
 ============
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann auf der CCU (z.B. in /www/config/hq-webui/) sein, kann aber auch einfach lokal benutzt werden).
-In js/hq-webui.js die URL der CCU anpassen. Wird das HQ WebUI auf der CCU installiert diese Variable leer lassen (auf "" setzen), anderenfalls auf "http://IP-Adresse-der-CCU" (also z.B. "http://192.168.1.20") setzen. Nun einfach die index.html im Browser aufrufen.
+In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Wird das HQ WebUI auf der CCU installiert diese Variable leer lassen (auf "" setzen), anderenfalls auf "http://IP-Adresse-der-CCU" (also z.B. "http://192.168.1.20") setzen. Nun einfach die index.html im Browser aufrufen.
 
