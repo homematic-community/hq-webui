@@ -17,3 +17,26 @@ Installation
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann auf der CCU (z.B. in /www/config/hq-webui/) sein, kann aber auch einfach lokal benutzt werden).
 In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Wird das HQ WebUI auf der CCU installiert diese Variable leer lassen (auf "" setzen), anderenfalls auf "http://IP-Adresse-der-CCU" (also z.B. "http://192.168.1.20") setzen. Nun einfach die index.html im Browser aufrufen.
 
+
+
+Changelog
+=========
+
+1.1
+---
+* Tab Geräte entfernt, Reiter Status in Geräte umbenannt
+* Beim ersten Laden der Seite werden die einzelnen CGI für die "Erstbefüllung" der Grids eines nach dem anderen geladen.
+* jqGrid Pager und Auswahl wieviele Einträge angezeigt werden hinzugefügt
+* jqGrid Toolbar-Suche / Filter hinzugefügt
+* jqGrid sortable aktiviert - Spalten können jetzt per Drag&Drop umsortiert werden
+
+
+Todo
+====
+* Timestamp formatieren
+* Autorefresh?
+* Mehr Variablentypen?
+* Select bei Datenpunkt Edit?
+* Favoriten anzeigen, mit schönen Selektoren und jQuery UI Slider für Float Werte
+* Räume und Gewerke in Geräteliste
+* in Geräteliste auf Unter-Listen verzichten und stattdessen Gerät Kanal als zusätzliche Spalte?

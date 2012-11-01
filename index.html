@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="UTF-8">
-    <title>HQ WebUI 1.0</title>
+    <title>HQ WebUI 1.1</title>
     <link type="text/css" href="css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
     <link type="text/css" href="css/hq-webui.css" rel="stylesheet" />
@@ -23,8 +23,8 @@
             <ul>
                 <li><a href="#tabVariables">Variablen</a></li>
                 <li><a href="#tabPrograms">Programme</a></li>
-                <li><a href="#tabDevices">Geräte</a></li>
-                <li><a href="#tabStates">Status</a></li>
+                <!--<li><a href="#tabDevices">Geräte</a></li>-->
+                <li><a href="#tabStates">Geräte</a></li>
                 <li><a href="#tabProtocol">Systemprotokoll</a></li>
             </ul>
             <div id="tabVariables">
@@ -45,7 +45,7 @@
                     <div id="gridPagerPrograms"></div>
                 </div>
             </div>
-            <div id="tabDevices">
+     <!--   <div id="tabDevices">
                 <div class="tabToolbar">
                     <button id="buttonRefreshDevices">aktualisieren</button>
                 </div>
@@ -53,10 +53,10 @@
                     <table id="gridDevices"></table>
                     <div id=gridPagerDevices></div>
                 </div>
-            </div>
+            </div>  -->
             <div id="tabStates">
                 <div class="tabToolbar">
-                    <button id="buttonRefreshStatus">aktualisieren</button>
+                    <button id="buttonRefreshStates">aktualisieren</button>
                 </div>
                 <div class="tabContainer">
                     <table id="gridStates"></table>
@@ -70,6 +70,7 @@
                 </div>
                 <div class="tabContainer">
                     <table id="gridProtocol"></table>
+                    <div id="gridPagerProtocol"></div>
                 </div>
             </div>
         </div>

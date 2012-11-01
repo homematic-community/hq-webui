@@ -1,30 +1,18 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.0
+ *      Version 1.1
  *
  *      11'2012 hobbyquaker hobbyquaker@gmail.com
  *
  */
-
-// Todo Pager
-// Todo TabBreite
-// Todo Filter/Suche
-// Todo Anzahl Einträge pro Seite
-// Todo Umsortieren der Spalten, Drag&Drop?
-// Todo Splatenbreiten anpassen
-// Todo Buttons ins Grid integrieren
-// Todo Autorefresh?
-// Todo Mehr Variablentypen?
-// Todo Select bei Datenpunkt Edit?
-// Todo Reiter Geräte überhaupt notwendig??
 
 $("document").ready(function () {
 
 
     var ccuUrl = 'http://172.16.23.3';
     
-    var devicesXML;
+    var protocolXML;
     var statesXML;
     var variablesXML;
     var programsXML;
@@ -35,19 +23,21 @@ $("document").ready(function () {
     /*
      *          Grids
      */
+
+
+
     $("#gridVariables").jqGrid({
-        width: 1080,
-        height: 480,
+        width: 1080, height: 460,
         colNames:[
             'Name',
             'Variable',
             'Wert',
+            'unit',
             'Werteliste',
             'Wert (text)',
             'ise_id',
             'min',
             'max',
-            'unit',
             'type',
             'subtype',
             'timestamp'
@@ -58,14 +48,19 @@ $("document").ready(function () {
                     return $(obj).attr('name');
                 }
             },
-            {name:'variable', index:'variable', width: 40,
+            {name:'variable', index:'variable', width: 40, hidden: true,
                 xmlmap: function (obj) {
                     return $(obj).attr('variable');
                 }
             },
-            {name:'value', index:'value', width: 40,
+            {name:'value', index:'value', width: 100,
                 xmlmap: function (obj) {
                     return $(obj).attr('value');
+                }
+            },
+            {name:'unit', index:'unit', width: 40,
+                xmlmap: function (obj) {
+                    return $(obj).attr('unit');
                 }
             },
             {name:'value_list', index:'value_list', width: 200,
@@ -93,11 +88,6 @@ $("document").ready(function () {
                     return $(obj).attr('max');
                 }
             },
-            {name:'unit', index:'unit', width: 40,
-                xmlmap: function (obj) {
-                    return $(obj).attr('unit');
-                }
-            },
             {name:'type', index:'type', width: 40,
                 xmlmap: function (obj) {
                     return $(obj).attr('type');
@@ -115,15 +105,18 @@ $("document").ready(function () {
             }
         ],
         pager: "#gridPagerVariables",
+        rowList: [20,50,100,500],
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
-        url:            ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
+        url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
         data: {
         },
+        ignoreCase: true,
+        sortable: true,
         xmlReader : {
             root: "systemVariables",
             row: "systemVariable",
@@ -131,6 +124,7 @@ $("document").ready(function () {
             repeatitems: false
         },
         loadComplete: function(data) {
+            refreshPrograms();
             if (data.nodeType) {
                 variablesXML = data;
             }
@@ -162,10 +156,9 @@ $("document").ready(function () {
 
             $("#dialogEditVariable").dialog("open");
         }
-    });
+    }).filterToolbar({defaultSearch: 'cn'});
     $("#gridPrograms").jqGrid({
-        width: 1080,
-        height: 480,
+        width: 1080, height: 460,
         colNames:[
             'id',
             'Aktiv',
@@ -201,20 +194,23 @@ $("document").ready(function () {
             }
         ],
         pager: "#gridPagerPrograms",
+        rowList: [20,50,100,500],
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
-        url:            ccuUrl + '/config/xmlapi/programlist.cgi',
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
         data: {
         },
+        ignoreCase: true,
         loadComplete: function(data) {
+            refreshStates();
             if (data.nodeType) {
                 programsXML = data;
             }
         },
+        sortable: true,
         xmlReader : {
             root: "programList",
             row: "program",
@@ -228,53 +224,9 @@ $("document").ready(function () {
         }
 
 
-    });
-    $("#gridProtocol").jqGrid({
-        width: 1080,
-        height: 480,
-        colNames:[
-            'Datum Uhrzeit',
-            'Sender',
-            'Nachricht'
-        ],
-        colModel :[
-            {name:'datetime', index:'datetime', width: 200,
-                xmlmap: function (obj) {
-                    return $(obj).attr('datetime');
-                }
-            },
-            {name:'sender', index:'sender', width: 300,
-                xmlmap: function (obj) {
-                    return $(obj).attr('names');
-                }
-            },
-            {name:'msg', index:'msg', width: 400,
-                xmlmap: function (obj) {
-                    return $(obj).attr('values');
-                }
-            }
-        ],
-        pager: "#gridPagerProtocol",
-        viewrecords:    true,
-        gridview:       true,
-        caption:        'Systemprotokoll',
-        url:            ccuUrl + '/config/xmlapi/protocol.cgi',
-        datatype:       'xml',
-        mtype:          'GET',
-        loadonce:       true,
-        data: {
-        },
-        xmlReader : {
-            root: "systemProtocol",
-            row: "row",
-            repeatitems: false
-        }
-
-
-    });
+    }).filterToolbar({defaultSearch: 'cn'});
     $("#gridStates").jqGrid({
-        width: 1080,
-        height: 480,
+        width: 1080, height: 460,
         colNames:[
             'Name',
             'ise_id',
@@ -311,26 +263,29 @@ $("document").ready(function () {
             },
             {name:'dummy1', index:'dummy1', width: 80}
         ],
-        pager: "#gridPagerDevices",
+        pager: "#gridPagerStates",
+        rowList: [20,50,100,500],
         viewrecords:    true,
         gridview:       true,
         caption:        'Status',
-        url:            ccuUrl + '/config/xmlapi/statelist.cgi',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
         data: {
         },
+        ignoreCase: true,
         xmlReader : {
             root: "stateList",
             row: "device",
             id: "[ise_id]",
             repeatitems: false
         },
+        sortable: true,
         loadComplete: function(data) {
             if (data.nodeType) {
                 statesXML = data;
             }
+            refreshProtocol();
         },
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
@@ -349,12 +304,12 @@ $("document").ready(function () {
                 datatype:'xmlstring',
                 datastr: statesXML,
                 colModel: [
-                    {name:"name",   index:"name",   width:200,
+                    {name:"name",   index:"name",   width:190,
                         xmlmap: function (obj) {
                             return $(obj).attr('name');
                         }
                     },
-                    {name:"ise_id",   index:"ise_id",   width:80,
+                    {name:"ise_id",   index:"ise_id",   width:86,
                         xmlmap: function (obj) {
                             return $(obj).attr('ise_id');
                         }
@@ -405,9 +360,14 @@ $("document").ready(function () {
                             {name:"valuetype",   index:"valuetype",   width:80, xmlmap: function (obj) {
                                 return $(obj).attr('valuetype');
                             }},
-                            {name:"timestamp",   index:"timestamp",   width:80, xmlmap: function (obj) {
-                                return $(obj).attr('timestamp');
-                            }}
+                            {name:"timestamp",   index:"timestamp",   width:80,
+                                xmlmap: function (obj) {
+                                    return $(obj).attr('timestamp');
+                                },
+                                formatter: function (val) {
+                                    return $.datepicker.parseDate("@", val);
+                                }
+                            }
                         ],
                         xmlReader: {
                             root:"stateList>device>channel[ise_id='" + row_id + "']",
@@ -429,8 +389,56 @@ $("document").ready(function () {
                 }
             });
         }
-    });
-    $("#gridDevices").jqGrid({
+    }).filterToolbar({defaultSearch: 'cn'});
+    $("#gridProtocol").jqGrid({
+        width: 1080,
+        height: 460,
+        colNames:[
+            'Datum Uhrzeit',
+            'Sender',
+            'Nachricht'
+        ],
+        colModel :[
+            {name:'datetime', index:'datetime', width: 200,
+                xmlmap: function (obj) {
+                    return $(obj).attr('datetime');
+                }
+            },
+            {name:'sender', index:'sender', width: 300,
+                xmlmap: function (obj) {
+                    return $(obj).attr('names');
+                }
+            },
+            {name:'msg', index:'msg', width: 400,
+                xmlmap: function (obj) {
+                    return $(obj).attr('values');
+                }
+            }
+        ],
+        pager: "#gridPagerProtocol",
+        rowList: [20,50,100,500],
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Systemprotokoll',
+        datatype:       'xml',
+        mtype:          'GET',
+        loadonce:       true,
+        data: {
+        },
+        sortable: true,
+        ignoreCase: true,
+        xmlReader : {
+            root: "systemProtocol",
+            row: "row",
+            repeatitems: false
+        },
+        loadComplete: function () {
+            firstLoadFinished();
+        }
+
+
+    }).filterToolbar({defaultSearch: 'cn'});
+/*  $("#gridDevices").jqGrid({
         width: 1080,
         height: 480,
         colNames:[
@@ -477,7 +485,6 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Geräte',
-        url:            ccuUrl + '/config/xmlapi/devicelist.cgi',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -566,6 +573,7 @@ $("document").ready(function () {
             });
         }
     });
+    */
 
     /*
     *      Dialoge
@@ -660,8 +668,8 @@ $("document").ready(function () {
     $("#buttonRefreshDevices").click(function () {
         refreshDevices();
     })
-    $("#buttonRefreshStatus").click(function () {
-        refreshStatus();
+    $("#buttonRefreshStates").click(function () {
+        refreshStates();
     })
     $("#buttonRefreshProtocol").click(function () {
         refreshProtocol();
@@ -755,34 +763,67 @@ $("document").ready(function () {
 
 
     /*
-     *  Grids aktualisieren
+     *  Grids laden und aktualisieren
      */
+    function firstLoadFinished() {
+        $("#gridVariables").setGridParam({
+            loadComplete: function (data) {
+                if (data.nodeType) {
+                    variablesXML = data;
+                }
+            }
+        });
+        $("#gridPrograms").setGridParam({
+            loadComplete: function (data) {
+                if (data.nodeType) {
+                    programsXML = data;
+                }
+            }
+        });
+        $("#gridStates").setGridParam({
+            loadComplete: function (data) {
+                if (data.nodeType) {
+                    statesXML = data;
+                }
+            }
+        });
+        $("#gridProtocol").setGridParam({
+            loadComplete: function () {
+                return; // Nothing
+            }
+        });
+    }
     function refreshVariables() {
         $("#gridVariables").setGridParam({
+            url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshPrograms() {
         $("#gridPrograms").setGridParam({
+            url: ccuUrl + '/config/xmlapi/programlist.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshDevices() {
         $("#gridDevices").setGridParam({
+            url:            ccuUrl + '/config/xmlapi/devicelist.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
-    function refreshStatus() {
-        $("#gridStatus").setGridParam({
+    function refreshStates() {
+        $("#gridStates").setGridParam({
+            url: ccuUrl + '/config/xmlapi/statelist.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshProtocol() {
         $("#gridProtocol").setGridParam({
+            url: ccuUrl + '/config/xmlapi/protocol.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});

@@ -11,7 +11,7 @@ div#toolbar {
 }
 
 div#container {
-
+    max-width: 1120px;
 }
 
 div#footer {
