@@ -7,7 +7,20 @@
  *
  */
 
+// Todo Pager
+// Todo TabBreite
+// Todo Filter/Suche
+// Todo Anzahl Einträge pro Seite
+// Todo Umsortieren der Spalten, Drag&Drop?
+// Todo Splatenbreiten anpassen
+// Todo Buttons ins Grid integrieren
+// Todo Autorefresh?
+// Todo Mehr Variablentypen?
+// Todo Select bei Datenpunkt Edit?
+// Todo Reiter Geräte überhaupt notwendig??
+
 $("document").ready(function () {
+
 
     var ccuUrl = 'http://172.16.23.3';
     
