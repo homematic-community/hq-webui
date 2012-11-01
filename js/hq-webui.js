@@ -136,6 +136,7 @@ $("document").ready(function () {
 
             $("#variableName").html($("#gridVariables").getCell(id, "name"));
             $("#variableId").val(id);
+
             $("#dialogEditVariable").dialog("open");
         }
     });
@@ -383,11 +384,19 @@ $("document").ready(function () {
                         xmlReader: {
                             root:"stateList>device>channel[ise_id='" + row_id + "']",
                             row:"datapoint",
+                            id:"[ise_id]",
                             repeatitems: false
                         },
                         gridview:true,
                         height: "100%",
-                        rowNum:1000
+                        rowNum:1000,
+                        ondblClickRow: function (id) {
+                            var value = $("#" + subgrid_table_id).getCell(id, "value");
+                            $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
+                            $("#datapointId").val(id);
+                            $("#datapointInput").html("<input type='text' id='datapointValue' value='" + value + "'>");
+                            $("#dialogEditDatapoint").dialog("open");
+                        }
                     });
                 }
             });
@@ -562,26 +571,40 @@ $("document").ready(function () {
         modal: true,
         buttons: {
             'Ok': function () {
+                var value;
+                if ($("#variableInput").find("select").attr("id")) {
+                    value = $("#variableValue option:selected").val();
+                } else {
+                    value = $("#variableValue").val();
+                }
+                xmlapiSetState($("#variableId").val(), value,
+                    function () {
+                        xmlapiGetVariable($("#variableId").val());
+                    }
+                );
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
                 $(this).dialog('close');
             }
         }
     });
-    $("#dialogEditChannel").dialog({
+    $("#dialogEditDatapoint").dialog({
         autoOpen: false,
         modal: true,
         buttons: {
             'Ok': function () {
+                xmlapiSetState($("#datapointId").val(), $("#datapointInput #datapointValue").val(),
+                    function () {
+                        xmlapiGetState($("#datapointId").val());
+                    }
+                );
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
                 $(this).dialog('close');
             }
-        }
-    });
-    $("#dialogEditStatus").dialog({
-        autoOpen: false,
-        modal: true,
-        buttons: {
-            'Ok': function () {
-                $(this).dialog('close');
-            }
+
         }
     });
     $("#dialogClearProtocol").dialog({
@@ -666,8 +689,62 @@ $("document").ready(function () {
         });
     }
 
+    function xmlapiSetVariable(ise_id, new_value, successFunction) {
+        $.ajax({
+            url: 'http://' + ccuIP + '/config/xmlapi/statechange.cgi',
+            type: 'GET',
+            data: {
+                ise_id: ise_id,
+                new_value: new_value
+            },
+            success: function (data) { successFunction(data); },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+        });
+    }
 
+    function xmlapiGetState(ise_id) {
+        // Naja...
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 1000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 1500);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 2000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 3000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 5000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 30000);
+    }
 
+    function xmlApiGetStateAjax(ise_id) {
+        $.ajax({
+            url: 'http://' + ccuIP + '/config/xmlapi/state.cgi',
+            type: 'GET',
+            async: false,
+            data: {
+                datapoint_id: ise_id,
+            },
+            success: function (data) {
+                $("#gridStates").find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+        });
+    }
+
+    function xmlapiGetVariable(ise_id) {
+       $.ajax({
+            url: 'http://' + ccuIP + '/config/xmlapi/sysvar.cgi',
+            type: 'GET',
+            async: false,
+            data: {
+                ise_id: ise_id
+            },
+            success: function (data) {
+                var variable = $(data).find("systemVariable");
+                $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='value']").html(variable.attr('value'));
+                $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='value_text']").html(variable.attr('value_text'));
+                $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='variable']").html(variable.attr('variable'));
+                $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='timestamp']").html(variable.attr('timestamp'));
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+        });
+    }
 /*
  *  Grids aktualisieren
  */
