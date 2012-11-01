@@ -2,6 +2,7 @@ $("document").ready(function () {
 
     var ccuIP = '172.16.23.3';
     var devicesXML;
+    var statesXML;
     var variablesXML;
 
     $("#tabs").tabs();
@@ -242,6 +243,156 @@ $("document").ready(function () {
 
 
     });
+    $("#gridStates").jqGrid({
+        width: 1080,
+        height: 480,
+        colNames:[
+            'Name',
+            'ise_id',
+            'unreach',
+            'sticky_unreach',
+            'config_pending',
+            ''
+        ],
+        colModel :[
+            {name:'name', index:'name', width: 200,
+                xmlmap: function (obj) {
+                    return $(obj).attr('name');
+                }
+            },
+            {name:'ise_id', index:'ise_id', width: 80,
+                xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                }
+            },
+            {name:'unreach', index:'unreach', width: 80,
+                xmlmap: function (obj) {
+                    return $(obj).attr('unreach');
+                }
+            },
+            {name:'sticky_unreach', index:'sticky_unreach', width: 80,
+                xmlmap: function (obj) {
+                    return $(obj).attr('sticky_unreach');
+                }
+            },
+            {name:'config_pending', index:'config_pending', width: 80,
+                xmlmap: function (obj) {
+                    return $(obj).attr('config_pending');
+                }
+            },
+            {name:'dummy1', index:'dummy1', width: 80}
+        ],
+        pager: "#gridPagerDevices",
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Status',
+        url:            'http://' + ccuIP + '/config/xmlapi/statelist.cgi',
+        loadonce:       true,
+        datatype:       'xml',
+        mtype:          'GET',
+        data: {
+        },
+        xmlReader : {
+            root: "stateList",
+            row: "device",
+            id: "[ise_id]",
+            repeatitems: false
+        },
+        loadComplete: function(data) {
+            if (data.nodeType) {
+                statesXML = data;
+            }
+        },
+        subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            var subgrid_table_id = grid_id + "_t";
+            $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+            $("#" + subgrid_table_id).jqGrid( {
+                width: 1000,
+                colNames: [
+                    'Channel Name',
+                    'ise_id',
+                    '',
+                    '',
+                    '',
+                    ''
+                ],
+                datatype:'xmlstring',
+                datastr: statesXML,
+                colModel: [
+                    {name:"name",   index:"name",   width:200,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('name');
+                        }
+                    },
+                    {name:"ise_id",   index:"ise_id",   width:80,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('ise_id');
+                        }
+                    },
+                    {name:"dummy1", index:"dummy1",   width:80},
+                    {name:"dummy2", index:"dummy2",   width:80},
+                    {name:"dummy3", index:"dummy3",   width:80},
+                    {name:"dummy4", index:"dummy4",   width:80}
+                ],
+                xmlReader: {
+                    root:"stateList>device[ise_id='" + row_id + "']",
+                    row:"channel",
+                    id:"[ise_id]",
+                    repeatitems: false
+                },
+                gridview:true,
+                height: "100%",
+                rowNum:1000,
+                subGrid: true,
+                subGridRowExpanded: function(grid_id, row_id) {
+                    var subgrid_table_id = grid_id + "_t";
+                    $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+                    $("#" + subgrid_table_id).jqGrid( {
+                        width: 920,
+                        colNames: [
+                            'Datapoint Name',
+                            'ise_id',
+                            'Type',
+                            'Value',
+                            'Valuetype',
+                            'Timestamp'
+                        ],
+                        datatype:'xmlstring',
+                        datastr: statesXML,
+                        colModel: [
+                            {name:"name",   index:"name",   width:200, xmlmap: function (obj) {
+                                return $(obj).attr('name');
+                            }},
+                            {name:"ise_id",   index:"ise_id",   width:80, xmlmap: function (obj) {
+                                return $(obj).attr('ise_id');
+                            }},
+                            {name:"type",   index:"type",   width:80, xmlmap: function (obj) {
+                                return $(obj).attr('type');
+                            }},
+                            {name:"value",   index:"value",   width:80, xmlmap: function (obj) {
+                                return $(obj).attr('value');
+                            }},
+                            {name:"valuetype",   index:"valuetype",   width:80, xmlmap: function (obj) {
+                                return $(obj).attr('valuetype');
+                            }},
+                            {name:"timestamp",   index:"timestamp",   width:80, xmlmap: function (obj) {
+                                return $(obj).attr('timestamp');
+                            }}
+                        ],
+                        xmlReader: {
+                            root:"stateList>device>channel[ise_id='" + row_id + "']",
+                            row:"datapoint",
+                            repeatitems: false
+                        },
+                        gridview:true,
+                        height: "100%",
+                        rowNum:1000
+                    });
+                }
+            });
+        }
+    });
     $("#gridDevices").jqGrid({
         width: 1080,
         height: 480,
@@ -312,8 +463,8 @@ $("document").ready(function () {
             $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
             $("#" + subgrid_table_id).jqGrid( {
                 colNames: [
-                    'name',
-                    'type',
+                    'Channel Name',
+                    'ise_id',
                     'address',
                     'ise_id',
                     'direction',
@@ -380,9 +531,9 @@ $("document").ready(function () {
     });
 
 
-/*
- *      Dialoge
- */
+    /*
+    *      Dialoge
+    */
 
     $("#dialogRunProgram").dialog({
         autoOpen: false,
@@ -476,7 +627,7 @@ $("document").ready(function () {
  */
     function xmlapiClearProtocol() {
         $.ajax({
-            url: "http://' + ccuIP + '/config/xmlapi/protocol.cgi",
+            url: "http://" + ccuIP + "/config/xmlapi/protocol.cgi",
             type: "GET",
             data: {
                 clear: 1
