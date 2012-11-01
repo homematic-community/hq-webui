@@ -1,4 +1,4 @@
-HQ WebUI 1.0
+HQ WebUI 1.1
 ============
 Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic CCU.
 
@@ -24,11 +24,11 @@ Changelog
 
 1.1
 ---
-* Tab Geräte entfernt, Reiter Status in Geräte umbenannt
 * Beim ersten Laden der Seite werden die einzelnen CGI für die "Erstbefüllung" der Grids eines nach dem anderen geladen.
 * jqGrid Pager und Auswahl wieviele Einträge angezeigt werden hinzugefügt
 * jqGrid Toolbar-Suche / Filter hinzugefügt
 * jqGrid sortable aktiviert - Spalten können jetzt per Drag&Drop umsortiert werden
+* Tab Geräte entfernt, Tab Status in Geräte umbenannt
 
 
 Todo
