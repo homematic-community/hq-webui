@@ -41,3 +41,4 @@ Todo
 * Räume und Gewerke in Geräteliste
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?
 * Für Installation auf CCU .img File und Pack-Script erstellen (minifier einsetzen, jQuery evtl von CDN einbinden?)
+* Neuer Tab Servicemeldungen?
