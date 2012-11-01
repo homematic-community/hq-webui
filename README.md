@@ -33,12 +33,15 @@ Changelog
 
 Todo
 ====
-* Timestamp formatieren
-* Autorefresh?
-* Mehr Variablentypen?
-* Select bei Datenpunkt Edit?
+* Timestamp formatieren!
+* Autorefresh? xmlapi update.cgi nutzen?
+* Mehr Variablentypen notwendig?
+* Select/Option bei Datenpunkt edit bool/value_list?
 * Favoriten anzeigen, mit schönen Selektoren und jQuery UI Slider für Float Werte
-* Räume und Gewerke in Geräteliste
+* Räume und Gewerke in Geräteliste!
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?
 * Für Installation auf CCU .img File und Pack-Script erstellen (minifier einsetzen, jQuery evtl von CDN einbinden?)
-* Neuer Tab Servicemeldungen?
+* Neuer Tab Servicemeldungen
+* Neuer Tab Signalqualität (xmlapi rssilist.cgi)
+* Buttons wegmachen und jqGrid Toolbar nutzen?
+* automatisches Anpassen der Grids an Fenstergröße
