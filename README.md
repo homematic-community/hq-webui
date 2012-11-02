@@ -32,6 +32,7 @@ Changelog
 =========
 
 1.1.2
+-----
 * Variablentyp wird als Text dargestellt
 * Buttons entfernt und in jqGrid Navbar hinzugefügt
 * Kleinere Aufräumaktionen
