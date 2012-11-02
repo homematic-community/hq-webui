@@ -484,7 +484,7 @@ $("document").ready(function () {
         pager: "#gridPagerDevices",
         viewrecords:    true,
         gridview:       true,
-        caption:        'GerÃ¤te',
+        caption:        'Geräte',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -645,7 +645,7 @@ $("document").ready(function () {
         autoOpen: false,
         modal: true,
         buttons: {
-            'LÃ¶schen': function () {
+            'Löschen': function () {
                 $(this).dialog('close');
                 xmlapiClearProtocol();
 

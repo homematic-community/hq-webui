@@ -2,14 +2,20 @@
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta charset="UTF-8">
+    <meta charset="ISO-8859-1">
     <title>HQ WebUI 1.1</title>
     <link type="text/css" href="css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
     <link type="text/css" href="css/hq-webui.css" rel="stylesheet" />
-    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <!-- <script type="text/javascript" src="plugins/jquery.contextmenu.js"></script> -->
-    <script type="text/javascript" src="js/jquery-ui-1.9.1.custom.js"></script>
+    <!--
+    http://cdn.jsdelivr.net/jqgrid/4.4.1/css/ellipsis-xbl.xml
+http://cdn.jsdelivr.net/jqgrid/4.4.1/css/ui.jqgrid.css
+http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
+
+    -->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
     <!-- <script type="text/javascript" src="js/i18n/jquery.ui.datepicker-de.js"></script> -->
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
@@ -23,8 +29,8 @@
             <ul>
                 <li><a href="#tabVariables">Variablen</a></li>
                 <li><a href="#tabPrograms">Programme</a></li>
-                <!--<li><a href="#tabDevices">GerÃ¤te</a></li>-->
-                <li><a href="#tabStates">GerÃ¤te</a></li>
+                <!--<li><a href="#tabDevices">Geräte</a></li>-->
+                <li><a href="#tabStates">Geräte</a></li>
                 <li><a href="#tabProtocol">Systemprotokoll</a></li>
             </ul>
             <div id="tabVariables">
@@ -66,7 +72,7 @@
             <div id="tabProtocol">
                 <div class="tabToolbar">
                     <button id="buttonRefreshProtocol">aktualisieren</button>
-                    <button id="buttonClearProtocol">lÃ¶schen</button>
+                    <button id="buttonClearProtocol">löschen</button>
                 </div>
                 <div class="tabContainer">
                     <table id="gridProtocol"></table>
@@ -92,7 +98,7 @@
         <span id="datapointName"></span>: <span id="datapointInput"></span> <br>
         <input type="hidden" id="datapointId">
     </div>
-    <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll lÃ¶schen">
-        Wollen Sie das Systemprotokoll wirklich lÃ¶schen?
+    <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
+        Wollen Sie das Systemprotokoll wirklich löschen?
     </div>
 </body>
