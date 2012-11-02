@@ -33,8 +33,9 @@ Changelog
 
 1.1.1
 -----
-* Fixed encoding
-* Added CDN for jQuery and jQuery UI
+* Encoding Fehler behoben
+* CDN für jQuery und jQuery UI
+* .img Datei hinzugefügt für einfach Installation auf der CCU
 
 1.1
 ---
