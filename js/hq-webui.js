@@ -1,7 +1,7 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.1
+ *      Version 1.1.2
  *
  *      11'2012 hobbyquaker hobbyquaker@gmail.com
  *
@@ -9,25 +9,33 @@
 
 $("document").ready(function () {
 
-
+    // Hier die URL der CCU eintragen (z.B.: 'http://192.168.1.20')
     var ccuUrl = '';
-    
-    var protocolXML;
+    // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
+
     var statesXML;
     var variablesXML;
     var programsXML;
+    var rssiXML
+    var functionsXML;
+    var roomsXML;
+
+    //          Flag Daten vollständig geladen
+    var statesReady = false;
+    var variablesReady = false;
+    var programsReady = false;
+    var protocolReady = false;
+    var functionsReady = false;
+    var roomsReady = false;
+    var rssiReady = false;
 
     $("#tabs").tabs();
-    $("button").button();
 
     /*
      *          Grids
      */
-
-
-
     $("#gridVariables").jqGrid({
-        width: 1080, height: 460,
+        width: 1024, height: 490,
         colNames:[
             'Name',
             'Variable',
@@ -39,7 +47,7 @@ $("document").ready(function () {
             'min',
             'max',
             'type',
-            'subtype',
+            'Typ',
             'timestamp'
         ],
         colModel :[
@@ -88,7 +96,7 @@ $("document").ready(function () {
                     return $(obj).attr('max');
                 }
             },
-            {name:'type', index:'type', width: 40,
+            {name:'type', index:'type', width: 40, hidden: true,
                 xmlmap: function (obj) {
                     return $(obj).attr('type');
                 }
@@ -96,6 +104,10 @@ $("document").ready(function () {
             {name:'subtype', index:'subtype', width: 40,
                 xmlmap: function (obj) {
                     return $(obj).attr('subtype');
+                },
+                formatter: function (val) {
+
+                    return formatVarType(val);
                 }
             },
             {name:'timestamp', index:'timestamp', width: 60,
@@ -124,10 +136,12 @@ $("document").ready(function () {
             repeatitems: false
         },
         loadComplete: function(data) {
-            refreshPrograms();
             if (data.nodeType) {
+                variablesReady = true;
                 variablesXML = data;
             }
+            refreshPrograms();
+
         },
         ondblClickRow: function (id) {
             var grid = $("#gridVariables");
@@ -156,9 +170,20 @@ $("document").ready(function () {
 
             $("#dialogEditVariable").dialog("open");
         }
-    }).filterToolbar({defaultSearch: 'cn'});
+    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerVariables", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerVariables", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshVariables(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
     $("#gridPrograms").jqGrid({
-        width: 1080, height: 460,
+        width: 1024, height: 490,
         colNames:[
             'id',
             'Aktiv',
@@ -205,10 +230,12 @@ $("document").ready(function () {
         },
         ignoreCase: true,
         loadComplete: function(data) {
-            refreshStates();
             if (data.nodeType) {
+                programsReady = true;
                 programsXML = data;
             }
+            refreshStates();
+
         },
         sortable: true,
         xmlReader : {
@@ -224,9 +251,20 @@ $("document").ready(function () {
         }
 
 
-    }).filterToolbar({defaultSearch: 'cn'});
+    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerPrograms", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerPrograms", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshPrograms(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
     $("#gridStates").jqGrid({
-        width: 1080, height: 460,
+        width: 1024, height: 490,
         colNames:[
             'Name',
             'ise_id',
@@ -267,7 +305,7 @@ $("document").ready(function () {
         rowList: [20,50,100,500],
         viewrecords:    true,
         gridview:       true,
-        caption:        'Status',
+        caption:        'Geräte',
         loadonce:       true,
         datatype:       'xml',
         mtype:          'GET',
@@ -283,6 +321,7 @@ $("document").ready(function () {
         sortable: true,
         loadComplete: function(data) {
             if (data.nodeType) {
+                statesReady = true;
                 statesXML = data;
             }
             refreshProtocol();
@@ -389,10 +428,21 @@ $("document").ready(function () {
                 }
             });
         }
-    }).filterToolbar({defaultSearch: 'cn'});
+    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerStates", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerStates", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshStates(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
     $("#gridProtocol").jqGrid({
-        width: 1080,
-        height: 460,
+        width: 1024,
+        height: 490,
         colNames:[
             'Datum Uhrzeit',
             'Sender',
@@ -433,13 +483,37 @@ $("document").ready(function () {
             repeatitems: false
         },
         loadComplete: function () {
+            protocolReady = true;
             firstLoadFinished();
         }
 
 
-    }).filterToolbar({defaultSearch: 'cn'});
+    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerProtocol", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerProtocol", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshProtocol(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerProtocol", {
+            caption:"",
+            buttonicon:"ui-icon-trash",
+            onClickButton: function () { $("#dialogClearProtocol").dialog("open"); },
+            position: "last",
+            title:"gesamtes Protokoll löschen",
+            cursor: "pointer"
+        });
+
+
+
 /*  $("#gridDevices").jqGrid({
-        width: 1080,
+        width: 1024,
         height: 480,
         colNames:[
             'Name',
@@ -576,7 +650,7 @@ $("document").ready(function () {
     */
 
     /*
-    *      Dialoge
+    *           Dialoge
     */
     $("#dialogRunProgram").dialog({
         autoOpen: false,
@@ -657,29 +731,7 @@ $("document").ready(function () {
     });
 
     /*
-     *      Click Handler
-     */
-    $("#buttonRefreshVariables").click(function () {
-        refreshVariables();
-    });
-    $("#buttonRefreshPrograms").click(function () {
-        refreshPrograms();
-    })
-    $("#buttonRefreshDevices").click(function () {
-        refreshDevices();
-    })
-    $("#buttonRefreshStates").click(function () {
-        refreshStates();
-    })
-    $("#buttonRefreshProtocol").click(function () {
-        refreshProtocol();
-    });
-    $("#buttonClearProtocol").click(function () {
-        $("#dialogClearProtocol").dialog("open");
-    });
-
-    /*
-     *      XML-API Aufrufe
+     *          XML-API
      */
     function xmlapiClearProtocol() {
         $.ajax({
@@ -691,7 +743,7 @@ $("document").ready(function () {
             success: function () {
                 refreshProtocol();
             },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
     function xmlapiRunProgram(program_id) {
@@ -704,7 +756,7 @@ $("document").ready(function () {
             success: function (data) {
                 refreshPrograms();
             },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
     function xmlapiSetState(ise_id, new_value, successFunction) {
@@ -716,7 +768,7 @@ $("document").ready(function () {
                 new_value: new_value
             },
             success: function (data) { successFunction(data); },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
     function xmlapiGetState(ise_id) {
@@ -739,7 +791,7 @@ $("document").ready(function () {
             success: function (data) {
                 $("#gridStates").find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
             },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
     function xmlapiGetVariable(ise_id) {
@@ -757,18 +809,24 @@ $("document").ready(function () {
                 $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='variable']").html(variable.attr('variable'));
                 $("#gridVariables").find("tr#" + ise_id + " td[aria-describedby$='timestamp']").html(variable.attr('timestamp'));
             },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxerror(xhr, ajaxOptions, thrownError); }
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
+    function xmlapiGetVersion() {
+
+    }
+    function xmlapiGetFunctions() {}
+    function xmlapiGetRooms() {}
 
 
     /*
-     *  Grids laden und aktualisieren
+     *          Grid Data Handling
      */
     function firstLoadFinished() {
         $("#gridVariables").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
+                    variablesReady = true;
                     variablesXML = data;
                 }
             }
@@ -776,6 +834,7 @@ $("document").ready(function () {
         $("#gridPrograms").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
+                    programsReady = true;
                     programsXML = data;
                 }
             }
@@ -783,17 +842,19 @@ $("document").ready(function () {
         $("#gridStates").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
+                    statesReady = true;
                     statesXML = data;
                 }
             }
         });
         $("#gridProtocol").setGridParam({
             loadComplete: function () {
-                return; // Nothing
+                protocolReady = true;
             }
         });
     }
     function refreshVariables() {
+        variablesReady = false;
         $("#gridVariables").setGridParam({
             url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
             loadonce: false,
@@ -801,20 +862,23 @@ $("document").ready(function () {
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshPrograms() {
+        programsReady = false;
         $("#gridPrograms").setGridParam({
             url: ccuUrl + '/config/xmlapi/programlist.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
-    function refreshDevices() {
+  /*  function refreshDevices() {
+
         $("#gridDevices").setGridParam({
             url:            ccuUrl + '/config/xmlapi/devicelist.cgi',
             loadonce: false,
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
-    }
+    } */
     function refreshStates() {
+        statesReady = false;
         $("#gridStates").setGridParam({
             url: ccuUrl + '/config/xmlapi/statelist.cgi',
             loadonce: false,
@@ -822,6 +886,7 @@ $("document").ready(function () {
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshProtocol() {
+        protocolReady = false;
         $("#gridProtocol").setGridParam({
             url: ccuUrl + '/config/xmlapi/protocol.cgi',
             loadonce: false,
@@ -830,7 +895,7 @@ $("document").ready(function () {
     }
 
     /*
-     *      Misc
+     *          Misc Functions
      */
     function selectOptions(value_list) {
         var output = "";
@@ -840,9 +905,34 @@ $("document").ready(function () {
         }
         return output;
     }
-    function ajaxerror(xhr, ajaxOptions, thrownError) {
+    function ajaxError(xhr, ajaxOptions, thrownError) {
         $("#ajaxOptions").html(ajaxOptions);
         $("#thrownError").html(thrownError);
         $("dialogAjaxError").dialog("open");
     };
+    function formatVarType(subtype) {
+        switch (subtype) {
+            case "6":
+                return "Alarm";
+                break;
+            case "29":
+                return "Werteliste";
+                break;
+            case "2":
+                return "Logikwert";
+                break;
+            case "11":
+                return "Zeichenkette";
+                break;
+            case "0":
+                return "Zahl";
+                break;
+            default:
+                return "";
+        }
+    }
+    function formatTimestamp(timestamp) {
+        return "jjjj-mm-tt hh:mm:ss";
+    }
+
 });

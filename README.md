@@ -1,4 +1,4 @@
-HQ WebUI 1.1.1
+HQ WebUI 1.1.2
 ==============
 Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic CCU.
 
@@ -18,7 +18,7 @@ Installation
 Installation auf der CCU
 ------------------------
 
-Die Datei hq-webui-1.1.1.img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
+Die Datei hq-webui-1.1.2.img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
 
 
 Ohne Installation auf der CCU
@@ -30,6 +30,11 @@ In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpas
 
 Changelog
 =========
+
+1.1.2
+* Variablentyp wird als Text dargestellt
+* Buttons entfernt und in jqGrid Navbar hinzugefügt
+* Kleinere Aufräumaktionen
 
 1.1.1
 -----
@@ -51,14 +56,12 @@ Todo
 * Timestamp formatieren!
 * Autorefresh? xmlapi update.cgi nutzen?
 * Mehr Variablentypen notwendig?
-* Select/Option bei Datenpunkt edit bool/value_list?
+* Select/Option bei Datenpunkt edit bool/value_list
 * Favoriten anzeigen, mit schönen Selektoren und jQuery UI Slider für Float Werte
-* Räume und Gewerke in Geräteliste!
-* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?
-* Für Installation auf CCU .img File und Pack-Script erstellen (minifier einsetzen, jQuery evtl von CDN einbinden?)
+* Räume und Gewerke in Geräteliste.
+* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung?
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Neuer Tab Servicemeldungen
 * Neuer Tab Signalqualität (xmlapi rssilist.cgi)
-* Buttons wegmachen und jqGrid Toolbar nutzen?
-* automatisches Anpassen der Grids an FenstergrößŸe
 * Auth?
+* Ajax Fehler in den Grids mit Funktion ajaxError melden
