@@ -29,6 +29,8 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
             <ul>
                 <li><a href="#tabVariables">Variablen</a></li>
                 <li><a href="#tabPrograms">Programme</a></li>
+                <li><a href="#tabRooms">Räume</a></li>
+                <li><a href="#tabFunctions">Gewerke</a></li>
                 <!--<li><a href="#tabDevices">Geräte</a></li>-->
                 <li><a href="#tabStates">Geräte</a></li>
                 <li><a href="#tabProtocol">Systemprotokoll</a></li>
@@ -47,6 +49,22 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
                 <div class="tabContainer">
                     <table id="gridPrograms"></table>
                     <div id="gridPagerPrograms"></div>
+                </div>
+            </div>
+            <div id="tabRooms">
+                <div class="tabToolbar">
+                </div>
+                <div class="tabContainer">
+                    <table id="gridRooms"></table>
+                    <div id="gridPagerRooms"></div>
+                </div>
+            </div>
+            <div id="tabFunctions">
+                <div class="tabToolbar">
+                </div>
+                <div class="tabContainer">
+                    <table id="gridFunctions"></table>
+                    <div id="gridPagerFunctions"></div>
                 </div>
             </div>
      <!--   <div id="tabDevices">
@@ -92,6 +110,7 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
     <div class="dialog" id="dialogEditDatapoint" title="Datenpunkt editieren">
         <span id="datapointName"></span>: <span id="datapointInput"></span> <br>
         <input type="hidden" id="datapointId">
+        <input type="hidden" id="datapointGridId">
     </div>
     <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
         Wollen Sie das Systemprotokoll wirklich löschen?

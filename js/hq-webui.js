@@ -16,7 +16,7 @@ $("document").ready(function () {
     var statesXML;
     var variablesXML;
     var programsXML;
-    var rssiXML
+    var rssiXML;
     var functionsXML;
     var roomsXML;
 
@@ -29,10 +29,7 @@ $("document").ready(function () {
     var roomsReady = false;
     var rssiReady = false;
     var firstLoad = false;
-
-    xmlapiGetFunctions();
-    xmlapiGetRooms();
-
+    var xmlapiVersion;
 
     $("#tabs").tabs();
 
@@ -261,6 +258,212 @@ $("document").ready(function () {
             title:"Neu laden",
             cursor: "pointer"
         });
+
+    $("#gridRooms").jqGrid({
+        width: 1024, height: 490,
+        colNames:[
+            'name',
+            'ise_id'
+        ],
+        colModel :[
+            {name:'name', index:'name', width: 40,
+                xmlmap: function (obj) {
+                    return $(obj).attr('name');
+                }
+            },
+            {name:'ise_id', index:'ise_id', width: 40,
+                xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                }
+            }
+        ],
+        pager: "#gridPagerRooms",
+        rowList: [20,50,100,500],
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Räume',
+        datatype:       'xmlstring',
+        loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
+        data: {
+        },
+        ignoreCase: true,
+        sortable: true,
+        xmlReader : {
+            root: "roomList",
+            row: "room",
+            id: "[ise_id]",
+            repeatitems: false
+        },
+        ondblClickRow: function (id) {
+
+        },
+        subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            var subgrid_table_id = grid_id + "_t";
+            $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+            $("#" + subgrid_table_id).jqGrid( {
+                width: 1000,
+                colNames: [
+                    'Channel Name',
+                    'ise_id',
+                    'address',
+                    '',
+                    '',
+                    ''
+                ],
+                datatype:'xmlstring',
+                datastr: roomsXML,
+                colModel: [
+                    {name:"name",   index:"name",   width:190,
+                        xmlmap: function (obj) {
+                            return $(statesXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").attr('name');
+                        }
+                    },
+                    {name:"ise_id",   index:"ise_id",   width:86,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('ise_id');
+                        }
+                    },
+                    {name:"address",   index:"address",   width:86,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('address');
+                        }
+                    },
+                    {name:"dummy2", index:"dummy2",   width:80},
+                    {name:"dummy3", index:"dummy3",   width:80},
+                    {name:"dummy4", index:"dummy4",   width:80}
+                ],
+                xmlReader: {
+                    root:"roomList>room[ise_id='" + row_id + "']",
+                    row:"channel",
+                    id:"[ise_id]",
+                    repeatitems: false
+                },
+                gridview:true,
+                height: "100%",
+                rowNum:1000,
+                subGrid: true,
+                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); }
+            });
+        }
+    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerRooms", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerRooms", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshRooms(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
+
+    $("#gridFunctions").jqGrid({
+        width: 1024, height: 490,
+        colNames:[
+            'name',
+            'ise_id'
+        ],
+        colModel :[
+            {name:'name', index:'name', width: 40,
+                xmlmap: function (obj) {
+                    return $(obj).attr('name');
+                }
+            },
+            {name:'ise_id', index:'ise_id', width: 40,
+                xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                }
+            }
+        ],
+        pager: "#gridPagerFunctions",
+        rowList: [20,50,100,500],
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Gewerke',
+        datatype:       'xmlstring',
+        loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
+        data: {
+        },
+        ignoreCase: true,
+        sortable: true,
+        xmlReader : {
+            root: "functionList",
+            row: "function",
+            id: "[ise_id]",
+            repeatitems: false
+        },
+        ondblClickRow: function (id) {
+
+        },
+        subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            var subgrid_table_id = grid_id + "_t";
+            $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+            $("#" + subgrid_table_id).jqGrid( {
+                width: 1000,
+                colNames: [
+                    'Channel Name',
+                    'ise_id',
+                    'address',
+                    '',
+                    '',
+                    ''
+                ],
+                datatype:'xmlstring',
+                datastr: functionsXML,
+                colModel: [
+                    {name:"name",   index:"name",   width:190,
+                        xmlmap: function (obj) {
+                            return $(statesXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").attr('name');
+                        }
+                    },
+                    {name:"ise_id",   index:"ise_id",   width:86,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('ise_id');
+                        }
+                    },
+                    {name:"address",   index:"address",   width:86,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('address');
+                        }
+                    },
+                    {name:"dummy2", index:"dummy2",   width:80},
+                    {name:"dummy3", index:"dummy3",   width:80},
+                    {name:"dummy4", index:"dummy4",   width:80}
+                ],
+                xmlReader: {
+                    root:"functionList>function[ise_id='" + row_id + "']",
+                    row:"channel",
+                    id:"[ise_id]",
+                    repeatitems: false
+                },
+                gridview:true,
+                height: "100%",
+                rowNum:1000,
+                subGrid: true,
+                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); }
+            });
+        }
+
+
+            }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+        'navGrid',
+        "#gridPagerFunctions", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerFunctions", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () { refreshFunctions(); },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
+
+
     $("#gridStates").jqGrid({
         width: 1024, height: 490,
         colNames:[
@@ -326,10 +529,8 @@ $("document").ready(function () {
                 colNames: [
                     'Channel Name',
                     'ise_id',
-                    '',
-                    '',
-                    '',
-                    ''
+                    'Räume',
+                    'Gewerke'
                 ],
                 datatype:'xmlstring',
                 datastr: statesXML,
@@ -344,10 +545,25 @@ $("document").ready(function () {
                             return $(obj).attr('ise_id');
                         }
                     },
-                    {name:"dummy1", index:"dummy1",   width:80},
-                    {name:"dummy2", index:"dummy2",   width:80},
-                    {name:"dummy3", index:"dummy3",   width:80},
-                    {name:"dummy4", index:"dummy4",   width:80}
+                    {name:"rooms", index:"rooms",   width:80,
+                        xmlmap: function (obj) {
+                            var output = "";
+                            $(roomsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").each(function () {
+                                if (output == "") {
+                                    output = $(this).parent().attr("name");
+                                } else {
+                                    output += ", " + $(this).parent().attr("name");
+                                }
+                            });
+                            return output;
+
+                        }
+                    },
+                    {name:"functions", index:"functions",   width:80,
+                        xmlmap: function (obj) {
+                            return $(functionsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").parent().attr("name");
+                        }
+                    }
                 ],
                 xmlReader: {
                     root:"stateList>device[ise_id='" + row_id + "']",
@@ -359,64 +575,7 @@ $("document").ready(function () {
                 height: "100%",
                 rowNum:1000,
                 subGrid: true,
-                subGridRowExpanded: function(grid_id, row_id) {
-                    var subgrid_table_id = grid_id + "_t";
-                    $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
-                    $("#" + subgrid_table_id).jqGrid( {
-                        width: 920,
-                        colNames: [
-                            'Datapoint Name',
-                            'ise_id',
-                            'Type',
-                            'Value',
-                            'Valuetype',
-                            'Timestamp'
-                        ],
-                        datatype:'xmlstring',
-                        datastr: statesXML,
-                        colModel: [
-                            {name:"name",   index:"name",   width:200, xmlmap: function (obj) {
-                                return $(obj).attr('name');
-                            }},
-                            {name:"ise_id",   index:"ise_id",   width:80, xmlmap: function (obj) {
-                                return $(obj).attr('ise_id');
-                            }},
-                            {name:"type",   index:"type",   width:80, xmlmap: function (obj) {
-                                return $(obj).attr('type');
-                            }},
-                            {name:"value",   index:"value",   width:80, xmlmap: function (obj) {
-                                return $(obj).attr('value');
-                            }},
-                            {name:"valuetype",   index:"valuetype",   width:80, xmlmap: function (obj) {
-                                return $(obj).attr('valuetype');
-                            }},
-                            {name:"timestamp",   index:"timestamp",   width:80,
-                                xmlmap: function (obj) {
-                                    return $(obj).attr('timestamp');
-                                },
-                                formatter: function (val) {
-                                    return val;
-                                }
-                            }
-                        ],
-                        xmlReader: {
-                            root:"stateList>device>channel[ise_id='" + row_id + "']",
-                            row:"datapoint",
-                            id:"[ise_id]",
-                            repeatitems: false
-                        },
-                        gridview:true,
-                        height: "100%",
-                        rowNum:1000,
-                        ondblClickRow: function (id) {
-                            var value = $("#" + subgrid_table_id).getCell(id, "value");
-                            $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
-                            $("#datapointId").val(id);
-                            $("#datapointInput").html("<input type='text' id='datapointValue' value='" + value + "'>");
-                            $("#dialogEditDatapoint").dialog("open");
-                        }
-                    });
-                }
+                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); }
             });
         }
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
@@ -636,6 +795,67 @@ $("document").ready(function () {
     });
     */
 
+    function subGridDatapoint(grid_id, row_id) {
+        var subgrid_table_id = grid_id + "_t";
+        $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+        $("#" + subgrid_table_id).jqGrid( {
+            width: 920,
+            colNames: [
+                'Datapoint Name',
+                'ise_id',
+                'Type',
+                'Value',
+                'Valuetype',
+                'Timestamp'
+            ],
+            datatype:'xmlstring',
+            datastr: statesXML,
+            colModel: [
+                {name:"name",   index:"name",   width:200, xmlmap: function (obj) {
+                    return $(obj).attr('name');
+                }},
+                {name:"ise_id",   index:"ise_id",   width:80, xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                }},
+                {name:"type",   index:"type",   width:80, xmlmap: function (obj) {
+                    return $(obj).attr('type');
+                }},
+                {name:"value",   index:"value",   width:80, xmlmap: function (obj) {
+                    return $(obj).attr('value');
+                }},
+                {name:"valuetype",   index:"valuetype",   width:80, xmlmap: function (obj) {
+                    return $(obj).attr('valuetype');
+                }},
+                {name:"timestamp",   index:"timestamp",   width:80,
+                    xmlmap: function (obj) {
+                        return $(obj).attr('timestamp');
+                    },
+                    formatter: function (val) {
+                        return val;
+                    }
+                }
+            ],
+            xmlReader: {
+                root:"stateList>device>channel[ise_id='" + row_id + "']",
+                row:"datapoint",
+                id:"[ise_id]",
+                repeatitems: false
+            },
+            gridview:true,
+            height: "100%",
+            rowNum:1000,
+            ondblClickRow: function (id) {
+                var value = $("#" + subgrid_table_id).getCell(id, "value");
+                $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
+                $("#datapointId").val(id);
+                $("#datapointGridId").val(subgrid_table_id);
+                $("#datapointInput").html("<input type='text' id='datapointValue' value='" + value + "'>");
+                $("#dialogEditDatapoint").dialog("open");
+            }
+        });
+    }
+
+
     /*
     *           Dialoge
     */
@@ -691,7 +911,7 @@ $("document").ready(function () {
             'Ok': function () {
                 xmlapiSetState($("#datapointId").val(), $("#datapointInput #datapointValue").val(),
                     function () {
-                        xmlapiGetState($("#datapointId").val());
+                        xmlapiGetState($("#datapointId").val(), $("#datapointGridId").val());
                     }
                 );
                 $(this).dialog('close');
@@ -758,16 +978,16 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
-    function xmlapiGetState(ise_id) {
+    function xmlapiGetState(ise_id, grid_id) {
         // Naja...
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 1000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 1500);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 2000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 3000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 5000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id); }, 30000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 1000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 1500);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 2000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 3000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 5000);
+        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 30000);
     }
-    function xmlApiGetStateAjax(ise_id) {
+    function xmlApiGetStateAjax(ise_id, grid_id) {
         $.ajax({
             url: ccuUrl + '/config/xmlapi/state.cgi',
             type: 'GET',
@@ -776,7 +996,11 @@ $("document").ready(function () {
                 datapoint_id: ise_id,
             },
             success: function (data) {
-                $("#gridStates").find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
+               // $("#" + grid_id).find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
+                $("tr#" + ise_id + " td[aria-describedby$='value']").each(function () {
+                    $(this).html($(data).text());
+                });
+                // Todo - neuen Wert in statesXML schreiben!
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
@@ -800,16 +1024,23 @@ $("document").ready(function () {
         });
     }
     function xmlapiGetVersion() {
-
+        $.ajax({
+            url: ccuUrl + '/config/xmlapi/version.cgi',
+            type: 'GET',
+            dataType: 'xml',
+            success: function (data) {
+                xmlapiVersion = $(data).text();
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+        });
     }
     function xmlapiGetFunctions() {
         $.ajax({
             url: ccuUrl + '/config/xmlapi/functionlist.cgi',
             type: 'GET',
+            dataType: 'xml',
             success: function (data) {
-                //console.log("===functions.cgi");
                 functionsXML = $(data);
-                //console.log(functionsXML);
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
@@ -818,10 +1049,13 @@ $("document").ready(function () {
         $.ajax({
             url: ccuUrl + '/config/xmlapi/roomlist.cgi',
             type: 'GET',
+            dataType: 'xml',
             success: function (data) {
-                //console.log("===roomlist.cgi");
                 roomsXML = $(data);
-                //console.log(roomsXML);
+                roomsXML.find("room").each(function () {
+                    console.log("room " + $(this).attr("name"));
+                });
+
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
@@ -836,24 +1070,36 @@ $("document").ready(function () {
         $("#gridVariables").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
-                    variablesReady = true;
                     variablesXML = data;
+                    variablesReady = true;
                 }
             }
         });
         $("#gridPrograms").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
-                    programsReady = true;
                     programsXML = data;
+                    programsReady = true;
                 }
+            }
+        });
+        $("#gridRooms").setGridParam({
+            loadComplete: function (data) {
+                roomsXML = data;
+                roomsReady = true;
+            }
+        });
+        $("#gridFunctions").setGridParam({
+            loadComplete: function (data) {
+                functionsXML = data;
+                functionsReady = true;
             }
         });
         $("#gridStates").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
-                    statesReady = true;
                     statesXML = data;
+                    statesReady = true;
                 }
             }
         });
@@ -862,6 +1108,7 @@ $("document").ready(function () {
                 protocolReady = true;
             }
         });
+
     }
     function refreshVariables() {
         variablesReady = false;
@@ -884,7 +1131,7 @@ $("document").ready(function () {
                     programsReady = true;
                     programsXML = data;
                 }
-                refreshStates();
+                refreshFunctions();
 
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
@@ -897,6 +1144,40 @@ $("document").ready(function () {
             datatype: 'xml'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     } */
+    function refreshRooms () {
+        roomsReady = false;
+        $("#gridRooms").setGridParam({
+            url: ccuUrl + '/config/xmlapi/roomlist.cgi',
+            loadonce: false,
+            datatype: 'xml',
+            mtype: 'GET',
+            loadComplete: function(data) {
+                if (data.nodeType) {
+                    roomsReady = true;
+                    roomsXML = data;
+                }
+                refreshStates();
+            }
+        }).trigger("reloadGrid").setGridParam({loadonce: true});
+    }
+
+    function refreshFunctions () {
+        roomsReady = false;
+        $("#gridFunctions").setGridParam({
+            url: ccuUrl + '/config/xmlapi/functionlist.cgi',
+            loadonce: false,
+            datatype: 'xml',
+            mtype: 'GET',
+            loadComplete: function(data) {
+                if (data.nodeType) {
+                    functionsReady = true;
+                    functionsXML = data;
+                }
+                refreshRooms();
+            }
+        }).trigger("reloadGrid").setGridParam({loadonce: true});
+    }
+
     function refreshStates() {
         statesReady = false;
         $("#gridStates").setGridParam({

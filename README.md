@@ -18,7 +18,7 @@ Installation
 Installation auf der CCU
 ------------------------
 
-Die Datei hq-webui-1.1.2.img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
+Die Datei hq-webui-1.2.img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
 
 
 Ohne Installation auf der CCU
@@ -27,9 +27,18 @@ Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber au
 In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuIP (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
 
 
+Bedienung
+=========
+Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
+
 
 Changelog
 =========
+
+1.2
+---
+* Neue Tabs Räume und Gewerke
+* Räume und Gewerke werden unter Geräte angezeigt
 
 1.1.3
 -----
@@ -60,12 +69,12 @@ Changelog
 Todo
 ====
 * Timestamp formatieren!
+* Spalten in Subgrids auf eine Linie bringen
 * Autorefresh? xmlapi update.cgi nutzen?
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
 * Select/Option bei Datenpunkt edit bool/value_list
 * Neuer Tab: Favoriten - nicht im Grid sondern großzügiger mit schönen Selektoren und jQuery UI Slider für Float Werte
-* Räume und Gewerke in Geräteliste, Suchfilter mit Selektoren
-* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung?
+* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung? Filter nach Räumen/Gewerken
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Neuer Tab: Servicemeldungen
 * Neuer Tab: Signalqualität (xmlapi rssilist.cgi) - oder besser Signalqualität in Geräteliste als zusätzliche Spalten?
