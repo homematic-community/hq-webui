@@ -1,7 +1,7 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.1.2
+ *      Version 1.1.3
  *
  *      11'2012 hobbyquaker hobbyquaker@gmail.com
  *
@@ -28,6 +28,11 @@ $("document").ready(function () {
     var functionsReady = false;
     var roomsReady = false;
     var rssiReady = false;
+    var firstLoad = false;
+
+    xmlapiGetFunctions();
+    xmlapiGetRooms();
+
 
     $("#tabs").tabs();
 
@@ -125,6 +130,7 @@ $("document").ready(function () {
         datatype:       'xml',
         mtype:          'GET',
         loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
         data: {
         },
         ignoreCase: true,
@@ -223,20 +229,12 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
-        datatype:       'xml',
-        mtype:          'GET',
+        datatype:       'xmlstring',
         loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
         data: {
         },
         ignoreCase: true,
-        loadComplete: function(data) {
-            if (data.nodeType) {
-                programsReady = true;
-                programsXML = data;
-            }
-            refreshStates();
-
-        },
         sortable: true,
         xmlReader : {
             root: "programList",
@@ -307,8 +305,8 @@ $("document").ready(function () {
         gridview:       true,
         caption:        'Geräte',
         loadonce:       true,
-        datatype:       'xml',
-        mtype:          'GET',
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
+        datatype:       'xmlstring',
         data: {
         },
         ignoreCase: true,
@@ -319,13 +317,6 @@ $("document").ready(function () {
             repeatitems: false
         },
         sortable: true,
-        loadComplete: function(data) {
-            if (data.nodeType) {
-                statesReady = true;
-                statesXML = data;
-            }
-            refreshProtocol();
-        },
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
             var subgrid_table_id = grid_id + "_t";
@@ -470,9 +461,9 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
-        datatype:       'xml',
-        mtype:          'GET',
+        datatype:       'xmlstring',
         loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
         data: {
         },
         sortable: true,
@@ -481,10 +472,6 @@ $("document").ready(function () {
             root: "systemProtocol",
             row: "row",
             repeatitems: false
-        },
-        loadComplete: function () {
-            protocolReady = true;
-            firstLoadFinished();
         }
 
 
@@ -815,14 +802,37 @@ $("document").ready(function () {
     function xmlapiGetVersion() {
 
     }
-    function xmlapiGetFunctions() {}
-    function xmlapiGetRooms() {}
+    function xmlapiGetFunctions() {
+        $.ajax({
+            url: ccuUrl + '/config/xmlapi/functionlist.cgi',
+            type: 'GET',
+            success: function (data) {
+                //console.log("===functions.cgi");
+                functionsXML = $(data);
+                //console.log(functionsXML);
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+        });
+    }
+    function xmlapiGetRooms() {
+        $.ajax({
+            url: ccuUrl + '/config/xmlapi/roomlist.cgi',
+            type: 'GET',
+            success: function (data) {
+                //console.log("===roomlist.cgi");
+                roomsXML = $(data);
+                //console.log(roomsXML);
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+        });
+    }
 
 
     /*
      *          Grid Data Handling
      */
     function firstLoadFinished() {
+        firstLoad = true;
         $("#gridVariables").setGridParam({
             loadComplete: function (data) {
                 if (data.nodeType) {
@@ -858,7 +868,8 @@ $("document").ready(function () {
         $("#gridVariables").setGridParam({
             url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
             loadonce: false,
-            datatype: 'xml'
+            datatype: 'xml',
+            mtype: 'GET'
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshPrograms() {
@@ -866,7 +877,16 @@ $("document").ready(function () {
         $("#gridPrograms").setGridParam({
             url: ccuUrl + '/config/xmlapi/programlist.cgi',
             loadonce: false,
-            datatype: 'xml'
+            datatype: 'xml',
+            mtype: 'GET',
+            loadComplete: function(data) {
+                if (data.nodeType) {
+                    programsReady = true;
+                    programsXML = data;
+                }
+                refreshStates();
+
+            }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
   /*  function refreshDevices() {
@@ -882,7 +902,15 @@ $("document").ready(function () {
         $("#gridStates").setGridParam({
             url: ccuUrl + '/config/xmlapi/statelist.cgi',
             loadonce: false,
-            datatype: 'xml'
+            datatype: 'xml',
+            mtype: 'GET',
+            loadComplete: function(data) {
+            if (data.nodeType) {
+                statesReady = true;
+                statesXML = data;
+            }
+            refreshProtocol();
+        }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
     function refreshProtocol() {
@@ -890,7 +918,14 @@ $("document").ready(function () {
         $("#gridProtocol").setGridParam({
             url: ccuUrl + '/config/xmlapi/protocol.cgi',
             loadonce: false,
-            datatype: 'xml'
+            datatype: 'xml',
+            mtype: 'GET',
+            loadComplete: function () {
+                protocolReady = true;
+                if (!firstLoad) {
+                    firstLoadFinished();
+                }
+            }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
 
@@ -934,5 +969,6 @@ $("document").ready(function () {
     function formatTimestamp(timestamp) {
         return "jjjj-mm-tt hh:mm:ss";
     }
+
 
 });

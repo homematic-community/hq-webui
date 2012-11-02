@@ -31,8 +31,8 @@ In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpas
 Changelog
 =========
 
-1.x
----
+1.1.3
+-----
 * Fehler behoben der dazu geführt hat dass hin und wieder leere Grids geladen wurden
 * Eventuelle Ajax Fehler beim Laden der Grids abgefangen
 
