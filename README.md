@@ -31,6 +31,7 @@ Bedienung
 =========
 Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
 Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren, Programme werden auch über Doppelklick auf die Tabellenzeile gestartet.
+In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar. Analog dazu befinden sich auch in der Raum und Gewerkeliste diese Aufklapp-Buttons.
 
 Changelog
 =========
