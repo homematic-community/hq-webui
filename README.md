@@ -31,6 +31,11 @@ In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpas
 Changelog
 =========
 
+1.x
+---
+* Fehler behoben der dazu geführt hat dass hin und wieder leere Grids geladen wurden
+* Eventuelle Ajax Fehler beim Laden der Grids abgefangen
+
 1.1.2
 -----
 * Variablentyp wird als Text dargestellt
@@ -58,11 +63,11 @@ Todo
 * Autorefresh? xmlapi update.cgi nutzen?
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
 * Select/Option bei Datenpunkt edit bool/value_list
-* Favoriten anzeigen, nicht im Grid sondern großzügiger mit schönen Selektoren und jQuery UI Slider für Float Werte
+* Neuer Tab: Favoriten - nicht im Grid sondern großzügiger mit schönen Selektoren und jQuery UI Slider für Float Werte
 * Räume und Gewerke in Geräteliste, Suchfilter mit Selektoren
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung?
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
-* Neuer Tab Servicemeldungen
-* Neuer Tab Signalqualität (xmlapi rssilist.cgi)
+* Neuer Tab: Servicemeldungen
+* Neuer Tab: Signalqualität (xmlapi rssilist.cgi) - oder besser Signalqualität in Geräteliste als zusätzliche Spalten?
+* Neuer Tab: Skriptkonsole
 * Auth?
-* Ajax Fehler in den Grids mit Funktion ajaxError melden
