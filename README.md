@@ -30,7 +30,7 @@ In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpas
 Bedienung
 =========
 Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
-
+Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren.
 
 Changelog
 =========
@@ -73,7 +73,7 @@ Todo
 * Autorefresh? xmlapi update.cgi nutzen?
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
 * Select/Option bei Datenpunkt edit bool/value_list
-* Neuer Tab: Favoriten - nicht im Grid sondern großzügiger mit schönen Selektoren und jQuery UI Slider für Float Werte
+* Neuer Tab: Favoriten
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung? Filter nach Räumen/Gewerken
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Neuer Tab: Servicemeldungen
