@@ -2,7 +2,7 @@ HQ WebUI 1.1.2
 ==============
 Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic CCU.
 
-Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration u.Ã„. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Login erreichbar.
+Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
 Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq4) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
@@ -56,11 +56,11 @@ Todo
 ====
 * Timestamp formatieren!
 * Autorefresh? xmlapi update.cgi nutzen?
-* Mehr Variablentypen notwendig?
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
 * Select/Option bei Datenpunkt edit bool/value_list
-* Favoriten anzeigen, mit schönen Selektoren und jQuery UI Slider für Float Werte
-* Räume und Gewerke in Geräteliste.
-* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung?
+* Favoriten anzeigen, nicht im Grid sondern großzügiger mit schönen Selektoren und jQuery UI Slider für Float Werte
+* Räume und Gewerke in Geräteliste, Suchfilter mit Selektoren
+* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung?
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Neuer Tab Servicemeldungen
 * Neuer Tab Signalqualität (xmlapi rssilist.cgi)
