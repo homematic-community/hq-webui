@@ -17,6 +17,11 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 Installation
 ============
 
+Download
+--------
+https://github.com/hobbyquaker/hq-webui/zipball/master
+Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden können) als auch die .img Datei für die Installation auf der CCU
+
 Installation auf der CCU
 ------------------------
 
@@ -83,3 +88,4 @@ Todo
 * Neuer Tab: Signalqualität (xmlapi rssilist.cgi) - oder besser Signalqualität in Geräteliste als zusätzliche Spalten?
 * Neuer Tab: Skriptkonsole
 * Auth?
+* generate_img.sh Skript erweitern - automatisches minifizieren des .js Dateien, automatisches entfernen der ccuUrl
