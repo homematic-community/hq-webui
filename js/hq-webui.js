@@ -10,7 +10,7 @@
 $("document").ready(function () {
 
 
-    var ccuUrl = 'http://172.16.23.3';
+    var ccuUrl = '';
     
     var protocolXML;
     var statesXML;
