@@ -2,11 +2,11 @@ HQ WebUI
 ========
 Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic CCU.
 
-Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
+Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
-Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen - ebensowenig soll es eine neue Visualisierung für die alltägliche Bedienung sein. Vielmehr ist es als schnelles GUI für den Homematic-"Administrator" gedacht der schnell und komfortabel einen Datenpunkt oder eine Variable editieren möchte.
+Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen - ebensowenig soll es eine neue GUI für die alltägliche Bedienung sein. Vielmehr ist es als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel einen Datenpunkt oder eine Variable editieren möchte, schnell eine ise_id nachschauen muss oder Ähnliches. Der Vorteil des HQ WebUI liegt hierbei in der sehr guten Performance, es lädt quasi "instant" und reagiert ausgesprochen flink.
 
-Benötigt eine modifizierte Version der XML API (mindestens Version 1.3rc1) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
+Benötigt die aktuellste Version der XML API (mindestens Version 1.3rc1) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
 Baut auf jQuery UI auf - d.h. die Optik ist über jQuery UI Themes einfach anpassbar. Hier kann man sich eigene Themes "zusammenklicken": http://jqueryui.com/themeroller/
 
