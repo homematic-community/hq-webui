@@ -30,7 +30,7 @@ In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpas
 Bedienung
 =========
 Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
-Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren.
+Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren, Programme werden auch über Doppelklick auf die Tabellenzeile gestartet.
 
 Changelog
 =========
