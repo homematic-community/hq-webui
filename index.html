@@ -3,35 +3,24 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="ISO-8859-1">
-    <title>HQ WebUI 1.2</title>
+    <title>HQ WebUI 1.2.1</title>
     <link type="text/css" href="css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
-    <link type="text/css" href="css/hq-webui.css" rel="stylesheet" />
+    <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    <!-- <script type="text/javascript" src="plugins/jquery.contextmenu.js"></script> -->
-    <!--
-    http://cdn.jsdelivr.net/jqgrid/4.4.1/css/ellipsis-xbl.xml
-http://cdn.jsdelivr.net/jqgrid/4.4.1/css/ui.jqgrid.css
-http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
-
-    -->
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
-    <!-- <script type="text/javascript" src="js/i18n/jquery.ui.datepicker-de.js"></script> -->
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
 </head>
 <body>
     <div id="container">
-        <div id="header"></div>
-        <div id="toolbar"></div>
         <div id="tabs">
             <ul>
                 <li><a href="#tabVariables">Variablen</a></li>
                 <li><a href="#tabPrograms">Programme</a></li>
                 <li><a href="#tabRooms">Räume</a></li>
                 <li><a href="#tabFunctions">Gewerke</a></li>
-                <!--<li><a href="#tabDevices">Geräte</a></li>-->
                 <li><a href="#tabStates">Geräte</a></li>
                 <li><a href="#tabProtocol">Systemprotokoll</a></li>
             </ul>
@@ -67,15 +56,6 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
                     <div id="gridPagerFunctions"></div>
                 </div>
             </div>
-     <!--   <div id="tabDevices">
-                <div class="tabToolbar">
-                    <button id="buttonRefreshDevices">aktualisieren</button>
-                </div>
-                <div class="tabContainer">
-                    <table id="gridDevices"></table>
-                    <div id=gridPagerDevices></div>
-                </div>
-            </div>  -->
             <div id="tabStates">
                 <div class="tabToolbar">
                 </div>
@@ -93,10 +73,9 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
                 </div>
             </div>
         </div>
-        <div id="footer"></div>
     </div>
     <div class="dialog" id="dialogRunProgram" title="Programm ausführen">
-        Wollen Sie wirklich das Programm "<span id="programName"></span>" ausfÃ¼hren?
+        Wollen Sie wirklich das Programm "<span id="programName"></span>" ausführen?
         <input type="hidden" id="programId">
     </div>
     <div class="dialog" id="dialogAjaxError" title="XML-API Kommunikations-Fehler">
@@ -104,11 +83,11 @@ http://cdn.jsdelivr.net/jqgrid/4.4.1/jquery.jqGrid.js
         <span id="thrownError"></span>
     </div>
     <div class="dialog" id="dialogEditVariable" title="Variable editieren">
-        <span id="variableName"></span>: <span id="variableInput"></span> <br>
+        <span id="variableName"></span>:<br><br><span id="variableInput"></span><span id="variableUnit"></span><br>
         <input type="hidden" id="variableId">
     </div>
     <div class="dialog" id="dialogEditDatapoint" title="Datenpunkt editieren">
-        <span id="datapointName"></span>: <span id="datapointInput"></span> <br>
+        <span id="datapointName"></span>:<br><br><span id="datapointInput"></span> <br>
         <input type="hidden" id="datapointId">
         <input type="hidden" id="datapointGridId">
     </div>

@@ -2,26 +2,10 @@ body {
     font-size: 0.7em;
 }
 
-div#header {
-
-}
-
-div#toolbar {
-
-}
-
 div#container {
     width: 1070px;
 }
 
-div#footer {
-
-}
-
-div.tabContainer {
-
-}
-
-div.tabToolbar {
-
+.ui-jqgrid tr.jqgrow td.ise_id {
+    padding-right: 10px;
 }

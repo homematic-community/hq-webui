@@ -43,6 +43,15 @@ In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein +
 Changelog
 =========
 
+1.2.1
+-----
+* jQuery Selektoren aufgeräumt
+* Fehler behoben der Select/Option bei Wertelisten verhindert hat
+* True/False Select/Option beim editieren von Bool Datenpunkten
+* Float-Werte bei Variablen und Datenpunkten auf 2 Nachkommastellen formartiert
+* Timestamps formatiert
+* Geräteliste neu formatiert
+
 1.2
 ---
 * Neue Tabs Räume und Gewerke
@@ -76,16 +85,16 @@ Changelog
 
 Todo
 ====
-* Timestamp formatieren!
 * Spalten in Subgrids auf eine Linie bringen
 * Autorefresh? xmlapi update.cgi nutzen?
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
-* Select/Option bei Datenpunkt edit bool/value_list
-* Neuer Tab: Favoriten
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung? Filter nach Räumen/Gewerken
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
-* Neuer Tab: Servicemeldungen
-* Neuer Tab: Signalqualität (xmlapi rssilist.cgi) - oder besser Signalqualität in Geräteliste als zusätzliche Spalten?
+* Räume, Gewerke und Servicemeldungen in Geräteübersicht integrieren
+* Neuer Tab: Favoriten
+* Neuer Tab: Funk - Anzeige von Signalqualität und AES Modus (xmlapi rssilist.cgi und devicelist.cgi)
 * Neuer Tab: Skriptkonsole
 * Auth?
 * generate_img.sh Skript erweitern - automatisches minifizieren des .js Dateien, automatisches entfernen der ccuUrl
+* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? (xmlapi?)
+* Icons - Datenpunkttypen, True/False, ...
