@@ -1,7 +1,7 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.2.2
+ *      Version 1.2.3
  *
  *      11'2012 hobbyquaker hobbyquaker@gmail.com
  *
@@ -296,20 +296,22 @@ $("document").ready(function () {
     gridRooms.jqGrid({
         width: gridWidth, height: gridHeight,
         colNames:[
-            'name',
-            'ise_id'
+            'ise_id',
+            'Raum'
         ],
         colModel :[
-            {name:'name', index:'name', width: 40,
+            {name:'ise_id', index:'ise_id', align: 'right', width: 84,
+                xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                },
+                classes: 'ise_id'
+            },
+            {name:'name', index:'name', width: 870,
                 xmlmap: function (obj) {
                     return $(obj).attr('name');
                 }
-            },
-            {name:'ise_id', index:'ise_id', width: 40,
-                xmlmap: function (obj) {
-                    return $(obj).attr('ise_id');
-                }
             }
+
         ],
         pager: "#gridPagerRooms",
         rowList: gridRowList,
@@ -337,36 +339,36 @@ $("document").ready(function () {
             var subgrid_table_id = grid_id + "_t";
             $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
             $("#" + subgrid_table_id).jqGrid( {
-                width: 1000,
                 colNames: [
-                    'Channel Name',
-                    'ise_id',
-                    'address',
                     '',
-                    '',
-                    ''
+                    'Kanal Name',
+                    'Adresse',
+                    'Gewerke'
                 ],
                 datatype:'xmlstring',
                 datastr: roomsXML,
                 colModel: [
-                    {name:"name",   index:"name",   width:190,
+                    {name:"ise_id", index:"ise_id", align: 'right', width:53, fixed: true,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('ise_id');
+                        },
+                        classes: 'ise_id'
+                    },
+                    {name:"name", index:"name", width:240, fixed: true,
                         xmlmap: function (obj) {
                             return $(statesXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").attr('name');
                         }
                     },
-                    {name:"ise_id",   index:"ise_id",   width:86,
-                        xmlmap: function (obj) {
-                            return $(obj).attr('ise_id');
-                        }
-                    },
-                    {name:"address",   index:"address",   width:86,
+                    {name:"address", index:"address", width:157, fixed: true,
                         xmlmap: function (obj) {
                             return $(obj).attr('address');
                         }
                     },
-                    {name:"dummy2", index:"dummy2",   width:80},
-                    {name:"dummy3", index:"dummy3",   width:80},
-                    {name:"dummy4", index:"dummy4",   width:80}
+                    {name:"functions", index:"functions", width:315, fixed: true,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('functions');
+                        }
+                    }
                 ],
                 xmlReader: {
                     root:"roomList>room[ise_id='" + row_id + "']",
@@ -397,20 +399,22 @@ $("document").ready(function () {
     gridFunctions.jqGrid({
         width: gridWidth, height: gridHeight,
         colNames:[
-            'name',
-            'ise_id'
+            'ise_id',
+            'Gewerk'
         ],
         colModel :[
-            {name:'name', index:'name', width: 40,
+            {name:'ise_id', index:'ise_id', align: 'right', width: 85,
+                xmlmap: function (obj) {
+                    return $(obj).attr('ise_id');
+                },
+                classes: 'ise_id'
+            },
+            {name:'name', index:'name', width: 870,
                 xmlmap: function (obj) {
                     return $(obj).attr('name');
                 }
-            },
-            {name:'ise_id', index:'ise_id', width: 40,
-                xmlmap: function (obj) {
-                    return $(obj).attr('ise_id');
-                }
             }
+
         ],
         pager: "#gridPagerFunctions",
         rowList: gridRowList,
@@ -438,36 +442,36 @@ $("document").ready(function () {
             var subgrid_table_id = grid_id + "_t";
             $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
             $("#" + subgrid_table_id).jqGrid( {
-                width: 1000,
                 colNames: [
-                    'Channel Name',
-                    'ise_id',
-                    'address',
                     '',
-                    '',
-                    ''
+                    'Kanal Name Name',
+                    'Adresse',
+                    'Räume'
                 ],
                 datatype:'xmlstring',
                 datastr: functionsXML,
                 colModel: [
-                    {name:"name",   index:"name",   width:190,
+                    {name:"ise_id",   index:"ise_id", width:53, align: 'right',
+                        xmlmap: function (obj) {
+                            return $(obj).attr('ise_id');
+                        },
+                        classes: 'ise_id'
+                    },
+                    {name:"name",   index:"name",   width:240,
                         xmlmap: function (obj) {
                             return $(statesXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").attr('name');
                         }
                     },
-                    {name:"ise_id",   index:"ise_id",   width:86,
-                        xmlmap: function (obj) {
-                            return $(obj).attr('ise_id');
-                        }
-                    },
-                    {name:"address",   index:"address",   width:86,
+                    {name:"address",   index:"address",   width:157,
                         xmlmap: function (obj) {
                             return $(obj).attr('address');
                         }
                     },
-                    {name:"dummy2", index:"dummy2",   width:80},
-                    {name:"dummy3", index:"dummy3",   width:80},
-                    {name:"dummy4", index:"dummy4",   width:80}
+                    {name:"rooms",   index:"rooms",   width:315,
+                        xmlmap: function (obj) {
+                            return $(obj).attr('rooms');
+                        }
+                    }
                 ],
                 xmlReader: {
                     root:"functionList>function[ise_id='" + row_id + "']",
@@ -511,7 +515,7 @@ $("document").ready(function () {
             'Servicemeldungen'
         ],
         colModel :[
-            {name:'ise_id', index:'ise_id', align: 'right', width: 90, fixed: true,
+            {name:'ise_id', index:'ise_id', align: 'right', width: 85, fixed: true,
                 xmlmap: function (obj) {
                     return $(obj).attr('ise_id');
                 },
@@ -591,7 +595,7 @@ $("document").ready(function () {
                 datatype:'xmlstring',
                 datastr: statesXML,
                 colModel: [
-                    {name:"ise_id", align: 'right', index:"ise_id",   width:58, fixed: true,
+                    {name:"ise_id", align: 'right', index:"ise_id",   width:53, fixed: true,
                         xmlmap: function (obj) {
                             return $(obj).attr('ise_id');
                         },
@@ -1096,7 +1100,7 @@ $("document").ready(function () {
             datatype:'xmlstring',
             datastr: statesXML,
             colModel: [
-                {name:"ise_id", index:"ise_id", align: 'right', width:56, fixed: true,
+                {name:"ise_id", index:"ise_id", align: 'right', width:51, fixed: true,
                     xmlmap: function (obj) {
                         return $(obj).attr('ise_id');
                     },
