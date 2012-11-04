@@ -54,6 +54,7 @@ Changelog
 * True/False Select/Option beim editieren von Bool Datenpunkten
 * Float-Werte bei Variablen und Datenpunkten auf 2 Nachkommastellen formatiert
 * Timestamps formatiert
+* Anzeige der Einheit beim Variablen editieren
 * Geräteliste neu formatiert
 
 1.2
@@ -91,7 +92,7 @@ Todo
 ====
 * Spalten in Subgrids auf eine Linie bringen
 * Autorefresh? xmlapi update.cgi nutzen?
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen. Unit im Edit-Dialog anzeigen
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.
 * in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung? Filter nach Räumen/Gewerken
 * Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
 * Räume, Gewerke und Servicemeldungen in Geräteübersicht integrieren
