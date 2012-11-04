@@ -25,7 +25,7 @@ Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden kön
 Installation auf der CCU
 ------------------------
 
-Die Datei hq-webui-<version>.img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
+Die Datei hq-webui-(version).img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://Ip-Adresse-der-CCU/config/hq-webui/ erreichbar.
 
 
 Ohne Installation auf der CCU
