@@ -102,8 +102,7 @@ Todo
 
 Roadmap
 =======
-1.3 - Neuer Tab: Skriptkonsole
-1.4 - Neuer Tab: Funk - Anzeige von Signalqualität und AES Modus (xmlapi rssilist.cgi und devicelist.cgi)
-1.5 - Neuer Tab: Favoriten
-2.0 - Umstieg von XML API auf Remote Script
-    - Authentifizierung?
+* 1.3 - Neuer Tab: Skriptkonsole
+* 1.4 - Neuer Tab: Funk - Anzeige von Signalqualität und AES Modus (xmlapi rssilist.cgi und devicelist.cgi)
+* 1.5 - Neuer Tab: Favoriten
+* 2.0 - Umstieg von XML API auf Remote Script? Authentifizierung?
