@@ -1,7 +1,7 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.2.1
+ *      Version 1.2.2
  *
  *      11'2012 hobbyquaker hobbyquaker@gmail.com
  *
@@ -10,7 +10,7 @@
 $("document").ready(function () {
 
     // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
-    var ccuUrl = '';
+    var ccuUrl = 'http://172.16.23.3';
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
 
     // Hier können verschiedene Optionen für alle Grids vorgegeben werden
@@ -866,7 +866,7 @@ $("document").ready(function () {
         autoOpen: false,
         modal: true,
         buttons: {
-            'AusfÃ¼hren': function () {
+            'Ausführen': function () {
                 $(this).dialog('close');
                 xmlapiRunProgram(programId.val());
             },
