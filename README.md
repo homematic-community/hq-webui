@@ -25,13 +25,13 @@ Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden kön
 Installation auf der CCU
 ------------------------
 
-Die Datei hq-webui-(version).img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://*IP-Adresse-der-CCU*/config/hq-webui/ erreichbar.
+Die Datei hq-webui-(version).img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/config/hq-webui/ erreichbar.
 
 
 Ohne Installation auf der CCU
 -----------------------------
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
-In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://*IP-Adresse-der-CCU*' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
+In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
 
 
 Bedienung
