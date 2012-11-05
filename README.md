@@ -4,7 +4,7 @@ Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic C
 
 Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
-Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen - ebensowenig soll es eine neue GUI für die alltägliche Bedienung sein. Vielmehr ist es als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel einen Datenpunkt oder eine Variable editieren möchte, schnell eine ise_id nachschauen muss oder Ähnliches. Der Vorteil des HQ WebUI liegt hierbei in der sehr guten Performance, es lädt quasi "instant" und reagiert ausgesprochen flink.
+Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen - ebensowenig soll es eine neue GUI für die alltägliche Bedienung sein. Vielmehr ist es als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel einen Datenpunkt oder eine Variable editieren möchte, schnell eine ise_id nachschauen muss oder Ähnliches. Der Vorteil des HQ WebUI liegt hierbei in der sehr guten Performance.
 
 Benötigt die aktuellste Version der XML API (mindestens Version 1.3rc1) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
@@ -43,10 +43,19 @@ In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein +
 Changelog
 =========
 
+1.3.0
+-----
+* Tab Funk (rssilist.cgi) hinzugefügt
+* Tab Script-Konsole hinzugefügt (exec.cgi von http://homematic-forum.de/forum/viewtopic.php?f=31&t=7014 verwendet)
+* Tab Info hinzugefügt
+* Tabs Räume und Gewerke wieder entfernt
+* hq-webui.js aufgeräumt
+* Räume, Gewerke und Servicemeldungen voll in Geräteübersicht integriert
+* Neue Spalten in Geräteliste
+
 1.2.3
 -----
 * Raum- und Gewerkeliste neu formatiert
-
 
 1.2.2
 -----
@@ -95,20 +104,20 @@ Changelog
 
 Todo
 ====
-* Spalten in Subgrids auf eine Linie bringen
+
+* Datenpunkte: jQuery UI Slider und Schönere On/Off Buttons, einblenden je nach Datenpunkttyp
+* Neuer Tab: Favoriten
+* Addon statt Update!
 * Autorefresh? xmlapi update.cgi nutzen?
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.
-* in Geräteliste auf Unter-Listen verzichten - nur Datenpunkte anzeigen - und stattdessen Geräte- und Kanal-Infos als zusätzliche Spalten?? Oder ein Umschalter zwischen hierarchischer und flacher Darstellung? Filter nach Räumen/Gewerken
-* Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing zusammenschreiben
-* Räume, Gewerke und Servicemeldungen in Geräteübersicht integrieren
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+* Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing erstellen?
 * Auth?
 * generate_img.sh Skript erweitern - automatisches minifizieren des .js Dateien, automatisches entfernen der ccuUrl
 * Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? (xmlapi?)
-* Icons - Datenpunkt-Typen, True/False, ...
+* Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
+* Umstieg von XML API auf Remote Script und XML RPC?
 
-Roadmap
-=======
-* 1.3 - Neuer Tab: Skriptkonsole
-* 1.4 - Neuer Tab: Funk - Anzeige von Signalqualität und AES Modus (xmlapi rssilist.cgi und devicelist.cgi)
-* 1.5 - Neuer Tab: Favoriten
-* 2.0 - Umstieg von XML API auf Remote Script? Authentifizierung?
+
+Lizenz
+======
+GNU GPL v3

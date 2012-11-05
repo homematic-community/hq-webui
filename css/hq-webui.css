@@ -9,3 +9,20 @@ div#container {
 .ui-jqgrid tr.jqgrow td.ise_id {
     padding-right: 10px;
 }
+
+#hmScriptTools {
+    vertical-align: bottom;
+}
+ul.tabsPanel li a span {
+    width:21px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+ul.tabsPanel li img {
+    padding-left: 5px;
+
+}
+ul.tabsPanel li a {
+
+}
