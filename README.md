@@ -17,7 +17,7 @@ Installation
 Download
 --------
 https://github.com/hobbyquaker/hq-webui/zipball/master
-Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden können) als auch die .img Datei für die Installation auf der CCU
+Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden können) als auch die .tar.gz Datei für die Installation als Zusatzsoftware auf der CCU
 
 Installation auf der CCU
 ------------------------
