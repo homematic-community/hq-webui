@@ -1126,7 +1126,6 @@ $("document").ready(function () {
                 html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'><div class='favName'>" + channelName + "</div></div>";
                 $("div[id='fav" + fav_id + "']").append(html);
                 html = "";
-                console.log($(this));
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
                         $(this).find("systemVariable").each(function () {
@@ -1181,7 +1180,6 @@ $("document").ready(function () {
                         $("div[id='favItem" + channelId + "']").append(html);
                         break;
                     case 'CHANNEL':
-                        console.log("channel!");
                         var firstDP = true;
                         $(this).find("datapoint").each(function () {
 

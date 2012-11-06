@@ -40,8 +40,6 @@ In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein +
 Changelog
 =========
 
-
-
 1.3.0
 -----
 * Als Erweiterung installierbar (nicht wie zuvor als Update)
@@ -108,6 +106,7 @@ Changelog
 Todo/Ideen
 ==========
 
+* Tab Favoriten: Manueller Refresh
 * Datenpunkte: Slider beim editieren fertigstellen
 * Datenpunkte: angepasste Darstellung je nach Gerätetyp?
 * Favoriten: nicht bedienbare ausgrauen
