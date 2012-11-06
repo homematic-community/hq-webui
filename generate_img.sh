@@ -2,9 +2,11 @@
 rm -r tmp
 mkdir -p tmp/hq-webui/js
 mkdir -p tmp/hq-webui/css
+mkdir -p tmp/hq-webui/img
 
 cp -a js/ tmp/hq-webui/js/
 cp -a css/* tmp/hq-webui/css/
+cp -a img/* tmp/hq-webui/img/
 cp index.html tmp/hq-webui/
 cp update_script tmp/
 cp hobbyquaker-webui tmp/

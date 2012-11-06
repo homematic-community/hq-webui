@@ -621,7 +621,6 @@ $("document").ready(function () {
 
     xmlapiGetVersion();
 
-    $("#loaderVariables").show();
     gridVariables.jqGrid({
         width: gridWidth, height: gridHeight,
         colNames: colNamesVariables,
