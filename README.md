@@ -4,13 +4,10 @@ Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic C
 
 Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
-Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen - ebensowenig soll es eine neue GUI für die alltägliche Bedienung sein. Vielmehr ist es als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel einen Datenpunkt oder eine Variable editieren möchte, schnell eine ise_id nachschauen muss oder Ähnliches. Der Vorteil des HQ WebUI liegt hierbei in der sehr guten Performance.
+Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen, es ist vielmehr als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel und schnell einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen muss oder Ähnliches.
 
-Benötigt die aktuellste Version der XML API (mindestens Version 1.3rc1) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
+Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq6) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
-Baut auf jQuery UI auf - d.h. die Optik ist über jQuery UI Themes einfach anpassbar. Hier kann man sich eigene Themes "zusammenklicken": http://jqueryui.com/themeroller/
-
-Screenshots gibt es hier: https://github.com/hobbyquaker/hq-webui/tree/master/screenshots
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
@@ -25,7 +22,7 @@ Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden kön
 Installation auf der CCU
 ------------------------
 
-Die Datei hq-webui-(version).img kann als Softwareupdate (nicht als Zusatzsoftware!) auf der CCU installiert werden. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/config/hq-webui/ erreichbar.
+Die Datei hq-webui-(version).tar.gz kann als Zusatzsoftware auf der CCU installiert werden. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq-webui/ erreichbar.
 
 
 Ohne Installation auf der CCU
@@ -43,15 +40,21 @@ In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein +
 Changelog
 =========
 
+
+
 1.3.0
 -----
-* Tab Funk (rssilist.cgi) hinzugefügt
-* Tab Script-Konsole hinzugefügt (exec.cgi von http://homematic-forum.de/forum/viewtopic.php?f=31&t=7014 verwendet)
+* Als Erweiterung installierbar (nicht wie zuvor als Update)
+* Tab Favoriten hinzugefügt (favoritelist.cgi) - zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - lässt sich hq-webui.js konfigurieren.
+* jQuery UI Slider bei Datenpunkten (noch nicht ganz fertig)
+* Tab Funk (xmlapi rssilist.cgi) hinzugefügt
+* Tab Script-Konsole hinzugefügt (dafür exec.cgi von http://homematic-forum.de/forum/viewtopic.php?f=31&t=7014 in xmlapi 1.2-hq6 integriert)
 * Tab Info hinzugefügt
 * Tabs Räume und Gewerke wieder entfernt
 * hq-webui.js aufgeräumt
 * Räume, Gewerke und Servicemeldungen voll in Geräteübersicht integriert
 * Neue Spalten in Geräteliste
+* CDN auf googleapis.com umgestellt, jQuery UI css und img werden nun ebenfalls aus dem CDN geladen
 
 1.2.3
 -----
@@ -71,8 +74,8 @@ Changelog
 * Anzeige der Einheit beim Variablen editieren
 * Geräteliste neu formatiert
 
-1.2
----
+1.2.0
+-----
 * Neue Tabs Räume und Gewerke
 * Räume und Gewerke werden unter Geräte angezeigt
 
@@ -102,21 +105,22 @@ Changelog
 * Tab Geräte entfernt, Tab Status in Geräte umbenannt
 
 
-Todo
-====
+Todo/Ideen
+==========
 
-* Datenpunkte: jQuery UI Slider und Schönere On/Off Buttons, einblenden je nach Datenpunkttyp
-* Neuer Tab: Favoriten
+* Datenpunkte: Slider beim editieren fertigstellen
+* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
+* Favoriten: nicht bedienbare ausgrauen
 * Addon statt Update!
-* Autorefresh? xmlapi update.cgi nutzen?
+* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
+* Intelligenter und Ressourcenschonender Update-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Step-by-Step Anleitung zum einbinden anderer Themes und Hinweise zu sonstigen Customizing erstellen?
 * Auth?
 * generate_img.sh Skript erweitern - automatisches minifizieren des .js Dateien, automatisches entfernen der ccuUrl
 * Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? (xmlapi?)
 * Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
-* Umstieg von XML API auf Remote Script und XML RPC?
-
+* Verzicht auf xmlapi? komplett auf Remote Script und XML RPC umsteigen?
+* Clientseitig Daten cachen, Settings speichern, ... (WebSQL?)?
 
 Lizenz
 ======

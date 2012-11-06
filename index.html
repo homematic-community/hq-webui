@@ -4,11 +4,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="ISO-8859-1">
     <title>HQ WebUI 1.3.0</title>
-    <link type="text/css" href="css/ui-lightness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet">
+
+    <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
     <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
@@ -17,14 +18,22 @@
     <div id="container">
         <div id="tabs">
             <ul class="tabsPanel">
-                <li><a href="#tabVariables">Variablen<span class="loader"><img id="loaderVariables" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabStates">Geräte<span class="loader"><img id="loaderStates" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabProtocol">Systemprotokoll<span class="loader"><img id="loaderProtocol" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabScript">Script-Konsole<span class="loader"><img id="loaderScript" src="img/loader.gif"></span></a></li>
-                <li><a href="#tabInfo">Infos<span class="loader"><img id="loaderInfo" src="img/loader.gif"></span></a></li>
+                <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabVariables">Variablen<span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabStates">Geräte<span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabProtocol">Systemprotokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabScript">Script-Konsole<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabInfo">Infos<span class="loader"><img id="loaderInfo" src="img/loader-bright.gif"></span></a></li>
             </ul>
+            <div id="tabFavorites">
+                <div class="tabToolbar">
+                </div>
+                <div id="accordionFavorites">
+
+                </div>
+            </div>
             <div id="tabVariables">
                 <div class="tabToolbar">
                 </div>
@@ -86,11 +95,11 @@
                 </div>
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
-                        <textarea id="hmScript" cols="128" rows="38"></textarea>
+                        <textarea id="hmScript" cols="92" rows="40"></textarea>
                     </td><td id="hmScriptTools">
                         <button id="hmRunScript">Ausführen</button><br><br>
                         <span class="hmScriptToolsHeader">Script-Ausgabe</span><br>
-                        <textarea id="hmScriptStdout" cols="64" rows="15" readonly="readonly"></textarea><br>
+                        <textarea id="hmScriptStdout" cols="46" rows="15" readonly="readonly"></textarea><br>
                         <span class="hmScriptToolsHeader">Variablen</span><br>
                         <table id="gridScriptVariables"></table>
                     </td></tr></table>
@@ -125,5 +134,37 @@
     </div>
     <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
         Wollen Sie das Systemprotokoll wirklich löschen?
+    </div>
+    <div class="dialog" id="dialogSelectTheme" title="jQuery UI Theme wählen">
+        <select id="selectUiTheme">
+            <option value="base">base</option>
+            <option value="black-tie">black-tie</option>
+            <option value="blitzer">blitzer</option>
+            <option value="cupertino">cupertino</option>
+            <option value="dark-hive">dark-hive</option>
+            <option value="dot-luv">dot-luv</option>
+            <option value="eggplant">eggplant</option>
+            <option value="excite-bike">excite-bike</option>
+            <option value="flick">flick</option>
+            <option value="hot-sneaks">hot-sneaks</option>
+            <option value="humanity">humanity</option>
+            <option value="le-frog">le-frog</option>
+            <option value="mint-choc">mint-choc</option>
+            <option value="overcast">overcast</option>
+            <option value="pepper-grinder">pepper-grinder</option>
+            <option value="redmond">redmond</option>
+            <option value="smoothness">smoothness</option>
+            <option value="south-street">south-street</option>
+            <option value="start">start</option>
+            <option value="sunny">sunny</option>
+            <option value="swanky-purse">swanky-purse</option>
+            <option value="trontastic">trontastic</option>
+            <option value="ui-darkness">ui-darkness</option>
+            <option value="ui-lightness">ui-lightness</option>
+            <option value="vader">vader</option>
+            
+            
+            
+        </select>
     </div>
 </body>

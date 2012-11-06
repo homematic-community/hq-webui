@@ -1,17 +1,55 @@
 body {
     font-size: 0.7em;
+    background-color: #555;
 }
 
 div#container {
     width: 1070px;
 }
 
+div#container, div#tabs, div#tabFavorites {
+    min-height: 580px;
+}
+
+div.favItem {
+    padding: 5px;
+    margin: 5px;
+    width: 400px;
+    min-height: 28px;
+}
+
+div.favName {
+    float: left;
+    display: inline;
+    padding-top: 4px;
+    font-size: 1.1em;
+}
+
+div.favInput {
+    float: right;
+    display: inline;
+    min-height: 24px;
+}
+
+div.favInputSlider {
+    min-width: 100px;
+    width: 160px;
+    position: relative;
+    top: 8px;
+    right: 5px;
+
+}
 .ui-jqgrid tr.jqgrow td.ise_id {
     padding-right: 10px;
 }
 
 #hmScriptTools {
     vertical-align: bottom;
+}
+
+#hmScriptStdout, #hmScript {
+    font-family: courier;
+    font-size: 12px;
 }
 ul.tabsPanel li a span {
     width:21px;

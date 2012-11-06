@@ -3,37 +3,43 @@
  *
  *      Version 1.3.0
  *
- *      11'2012 hobbyquaker hobbyquaker@gmail.com
+ *      https://github.com/hobbyquaker/hq-webui/
  *
  */
 
 $("document").ready(function () {
 
     // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
-    var ccuUrl = 'http://172.16.23.3';
+    var ccuUrl = '';
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
+
+    // Der User dessen Favoriten angezeigt werden
+    var favoriteUsername = "_USER1004";
 
     // Hier können verschiedene Optionen für alle Grids vorgegeben werden
     var gridWidth =             1024;
     var gridHeight =            490;
-    var gridRowList =           [20,50,100,500];
-    var gridRowNum =            100;
+    var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Einträge
+    var gridRowNum =            100;                // Standardmäßige Anzahl angezeigter Einträge
 
     var version =               "1.3.0";
-    var statesXML;
-    var variablesXML;
-    var programsXML;
-    var rssiXML;
-    var functionsXML;
-    var roomsXML;
-    var devicesXML;
-    var statesXMLObj;
-    var variablesXMLObj;
-    var programsXMLObj;
-    var rssiXMLObj;
-    var functionsXMLObj;
-    var roomsXMLObj;
-    var devicesXMLObj;
+
+    var statesXML,
+        variablesXML,
+        programsXML,
+        rssiXML,
+        functionsXML,
+        roomsXML,
+        devicesXML,
+        favoritesXML,
+        statesXMLObj,
+        variablesXMLObj,
+        programsXMLObj,
+        rssiXMLObj,
+        functionsXMLObj,
+        roomsXMLObj,
+        devicesXMLObj,
+        favoritesXMLObj;
 
     var statesReady =           false;
     var variablesReady =        false;
@@ -43,6 +49,7 @@ $("document").ready(function () {
     var roomsReady =            false;
     var rssiReady =             false;
     var devicesReady =          false;
+    var favoritesReady =        false;
     var firstLoad =             false;
     var xmlapiVersion;
 
@@ -68,13 +75,19 @@ $("document").ready(function () {
     var dialogAjaxError =       $("#dialogAjaxError");
     var dialogEditVariable =    $("#dialogEditVariable");
     var dialogEditDatapoint =   $("#dialogEditDatapoint");
-
+    var dialogSelectTheme =     $("#dialogSelectTheme");
 
 
 
     $("ul.tabsPanel li a img").hide();
     $("#tabs").tabs();
     $("button").button();
+
+    $("ul.tabsPanel").append("<button style='float:right' id='buttonSelectTheme'>Theme</button> ");
+    $("#buttonSelectTheme").button().click(function () {
+       dialogSelectTheme.dialog("open");
+    });
+    xmlapiGetFavorites();
 
 
     /*
@@ -462,7 +475,7 @@ $("document").ready(function () {
                 return val;
             }
         },
-        {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
+        {name:"valuetype",   index:"valuetype",   width:80,// hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('valuetype');
             }
@@ -618,13 +631,9 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
-        url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
-        datatype:       'xml',
-        mtype:          'GET',
+        datatype:       'xmlstring',
         loadonce:       true,
         loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
-        data: {
-        },
         ignoreCase: true,
         sortable: true,
         xmlReader : {
@@ -632,17 +641,6 @@ $("document").ready(function () {
             row: "systemVariable",
             id: "[ise_id]",
             repeatitems: false
-        },
-        loadComplete: function(data) {
-            if (data.nodeType) {
-                variablesReady = true;
-                variablesXML = data;
-                variablesXMLObj = $(data);
-                $("#loaderVariables").hide();
-                addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
-
-            }
-            refreshPrograms();
         },
         ondblClickRow: function (id) {
             var value       = gridVariables.getCell(id, "value");
@@ -864,7 +862,6 @@ $("document").ready(function () {
 
     });
 
-
     gridScriptVariables.jqGrid({
         width: 343,
         height: 200,
@@ -872,7 +869,6 @@ $("document").ready(function () {
         colModel:[
             {name:'variable', index:'variable', width: 80},
             {name: 'value', index: 'value', width: 200}
-
         ],
         rowNum:         10000,
         viewrecords:    true,
@@ -883,13 +879,8 @@ $("document").ready(function () {
         data: {
         },
         sortable: true,
-        ignoreCase: true,
-
-
-
+        ignoreCase: true
     }).filterToolbar({defaultSearch: 'cn'});
-
-    $("div#gbox_gridScriptVariables div div.ui-jqgrid-titlebar").hide();
 
     function subGridChannel(grid_id, row_id) {
         var subgrid_table_id = grid_id + "_t";
@@ -941,7 +932,27 @@ $("document").ready(function () {
                         datapointInput.html("<select id='datapointValue'><option value='false'>False</option><option value='true'>True</option></select>");
                         $("#datapointValue option[value='" + value + "']").attr("selected", true);
                         break;
+                    case '6':
+                        datapointInput.html("<div id='sliderDatapoint'></div><br>" +
+                            "<div id='radioDatapoint'>" +
+                            "<input type='radio' name='radioDatapoint' id='radioDatapointOff'><label for='radioDatapointOff'>Aus</label>" +
+                            "<input type='radio' name='radioDatapoint' id='radioDatapointOn'><label for='radioDatapointOn'>An</label>" +
+                            "</div><br>" +
+                            "<input type='text' id='datapointValue' value='" + value + "'>");
+                        $("#radioDatapoint").buttonset();
+                        $("#sliderDatapoint").slider({
+                            min: 0.00,
+                            max: 1.00,
+                            step: 0.01,
+                            value: value,
+                            stop: function (e, ui) {
+                                value = ui.value;
+                                $("input#datapointValue").val(ui.value);
+                            }
+                        });
+                        break;
                     default:
+
                         datapointInput.html("<input type='text' id='datapointValue' value='" + value + "'>");
 
                 }
@@ -951,9 +962,7 @@ $("document").ready(function () {
     }
 
 
-    /*
-     *          Grid Data Handling
-     */
+    /* Grid Data Handling */
     function firstLoadFinished() {
         firstLoad = true;
         gridVariables.setGridParam({
@@ -972,20 +981,6 @@ $("document").ready(function () {
                     programsXMLObj = $(data);
                     programsReady = true;
                 }
-            }
-        });
-        gridRooms.setGridParam({
-            loadComplete: function (data) {
-                roomsXML = data;
-                roomsXMLObj = $(data);
-                roomsReady = true;
-            }
-        });
-        gridFunctions.setGridParam({
-            loadComplete: function (data) {
-                functionsXML = data;
-                functionsXMLObj = $(data);
-                functionsReady = true;
             }
         });
         gridStates.setGridParam({
@@ -1007,8 +1002,8 @@ $("document").ready(function () {
                 rssiReady = true;
             }
         });
-
     }
+
 
     function refreshVariables() {
         variablesReady = false;
@@ -1016,7 +1011,20 @@ $("document").ready(function () {
             url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
             loadonce: false,
             datatype: 'xml',
-            mtype: 'GET'
+            mtype: 'GET',
+            loadComplete: function(data) {
+                if (data.nodeType) {
+                    variablesReady = true;
+                    variablesXML = data;
+                    variablesXMLObj = $(data);
+                    $("#loaderVariables").hide();
+                    addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
+
+                }
+                if (!programsReady) {
+                    refreshPrograms();
+                }
+            }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
 
@@ -1035,7 +1043,6 @@ $("document").ready(function () {
                     programsXMLObj = $(data);
                     $("#loaderPrograms").hide();
                     addInfo("Anzahl Programme", programsXMLObj.find("program").length);
-
                 }
                 if (!functionsReady) {
                     xmlapiGetFunctions();
@@ -1043,9 +1050,6 @@ $("document").ready(function () {
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
-
-
-
 
     function refreshStates() {
         $("#loaderStates").show();
@@ -1064,13 +1068,10 @@ $("document").ready(function () {
                     addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
                     addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
                     addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
-
                 }
                 if (!rssiReady) {
                     refreshRssi();
                 }
-
-
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
@@ -1092,6 +1093,7 @@ $("document").ready(function () {
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
+
     function refreshRssi() {
         $("#loaderRssi").show();
         rssiReady = false;
@@ -1110,10 +1112,177 @@ $("document").ready(function () {
         }).trigger("reloadGrid").setGridParam({loadonce: true});
     }
 
+    function buildFavorites() {
+        favoritesXMLObj.find("favorite[name='" + favoriteUsername + "'] channel").each(function () {
+            var htmlContainer = "";
+            var fav_id = $(this).attr("ise_id");
+            var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name")
+            htmlContainer += "<h3>" + name + "</h3><div id='fav" + fav_id + "'></div>";
+            $("div#accordionFavorites").append(htmlContainer);
 
-    /*
-    *           Dialoge
-    */
+            favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
+                var html = "";
+                var channelName = $(this).attr("name");
+                var channelId = $(this).attr("ise_id");
+                html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'><div class='favName'>" + channelName + "</div></div>";
+                $("div[id='fav" + fav_id + "']").append(html);
+                html = "";
+                console.log($(this));
+                switch ($(this).attr("type")) {
+                    case 'SYSVAR':
+                        $(this).find("systemVariable").each(function () {
+                            var value = $(this).attr("value");
+                            var var_id = $(this).attr("ise_id");
+                            html += "<div class='favInput'>";
+
+
+                            switch ($(this).attr("subtype")) {
+                                case '2':
+                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>False</option><option value='true'>True</option></select>";
+                                    html += "</div>";
+
+                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
+                                    $("#favInputSelect" + var_id).change(function () {
+                                        xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
+                                    });
+
+                                    break;
+                                case '29':
+                                    html += "<select id='favInputSelect" + var_id + "'>" + selectOptions($(this).attr("value_list")) + "</select>";
+                                    if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
+                                    html += "</div>";
+                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
+                                    $("#favInputSelect" + var_id).change(function () {
+                                        xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
+                                    });
+                                    break;
+                                default:
+                                    html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    html += "</div>";
+                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("#favInputText" + var_id).eyup(function(e) {
+                                        if(e.keyCode == 13) {
+                                            xmlapiSetState(var_id, $("#favInputText" + var_id).val());
+                                        }
+                                    });
+
+
+                            }
+
+
+                        });
+
+
+
+                        break;
+                    case 'PROGRAM':
+                        html += "<br>" + $(this).attr("ise_id") + "<br>";
+                        $("div[id='favItem" + channelId + "']").append(html);
+                        break;
+                    case 'CHANNEL':
+                        console.log("channel!");
+                        var firstDP = true;
+                        $(this).find("datapoint").each(function () {
+
+                            var name = $(this).attr("name").split(".");
+                            var type = name[2];
+
+
+                            if (!firstDP) {
+                                $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; height: 1px; clear:both; height: 43px;'><br>");
+                            } else {
+                                firstDP = false;
+                            }
+
+                             var id = $(this).attr("ise_id");
+
+                            switch (type) {
+                                case 'STATE':
+                                    var checkedOn = "";
+                                    var checkedOff = "";
+                                    if ($(this).attr("value") == "true") {
+                                        checkedOn = " checked='checked'";
+                                    } else {
+                                        checkedOff = " checked='checked'";
+                                    }
+                                    html += "<div class='favInput'>";
+                                    html +=     "<div class='favInputRadio' id='favRadio" + id + "'>";
+                                    html +=         "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                    html +=         "<label for='favRadioOff" + id + "'>Aus</label>";
+                                    html +=         "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                    html +=         "<label for='favRadioOn" + id + "'>An</label>";
+                                    html +=     "</div>";
+                                    html += "</div>";
+                                    $("div[id='favItem" + channelId + "']").append(html);
+
+                                    $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                        if ($(this).is(":checked")) {
+                                            xmlapiSetState(id, 1);
+                                        }
+                                    });
+                                    $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                        if ($(this).is(":checked")) {
+                                            xmlapiSetState(id, 0);
+                                        }
+                                    });
+                                    break;
+                                case 'LEVEL':
+                                    var value = $(this).attr("value");
+                                    html += "<div class='favInput'>";
+                                    html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
+                                    html +=     "</div>";
+                                    html += "</div>";
+                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("#favSlider" + id).slider({
+                                        min: 0.00,
+                                        max: 1.00,
+                                        step: 0.01,
+                                        value: value,
+                                        stop: function (e, ui) {
+                                            xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                        }
+                                    });
+                                    break;
+                                case 'PRESS_SHORT':
+                                    // TODO
+                                    break;
+                                case 'PRESS_LONG':
+                                    // TODO
+                                    break;
+                                default:
+
+                            }
+
+
+
+
+
+                        });
+
+
+
+                        break;
+                    default:
+
+                }
+
+            });
+
+
+
+        });
+        $(".favInputRadio").buttonset();
+
+        $("div#accordionFavorites").accordion({ heightStyle: "content" });
+
+    }
+
+
+
+
+    /* Buttons, Dialoge */
     dialogRunProgram.dialog({
         autoOpen: false,
         modal: true,
@@ -1195,11 +1364,42 @@ $("document").ready(function () {
             }
         }
     });
+    dialogSelectTheme.dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Ok': function () {
+                $(this).dialog('close');
+                changeTheme($("#selectUiTheme").val());
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
+    $("button#hmRunScript").click(function () {
+        gridScriptVariables.jqGrid('clearGridData');
+        hmRunScript($("textarea#hmScript").val(), function (data) {
+            $.each(data, function(key, value) {
+                switch (key) {
+                    case 'STDOUT':
+                        $("textarea#hmScriptStdout").val(value);
+                        break;
+                    case 'httpUserAgent':
+                    case 'sessionId':
+                        break;
+                    default:
+                        gridScriptVariables.jqGrid('addRowData', key, {'variable': key, 'value': value});
+
+                }
+            });
+            $("#loaderScript").hide();
+        });
+    });
 
 
-    /*
-     *          XML-API
-     */
+    /*   XML-API */
     function xmlapiClearProtocol() {
         $.ajax({
             url: ccuUrl + "/config/xmlapi/protocol.cgi",
@@ -1236,7 +1436,7 @@ $("document").ready(function () {
                 ise_id: ise_id,
                 new_value: new_value
             },
-            success: function (data) { successFunction(data); },
+            success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
@@ -1257,7 +1457,7 @@ $("document").ready(function () {
             type: 'GET',
             async: false,
             data: {
-                datapoint_id: ise_id,
+                datapoint_id: ise_id
             },
             success: function (data) {
                // $("#" + grid_id).find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
@@ -1335,6 +1535,28 @@ $("document").ready(function () {
         });
     }
 
+    function xmlapiGetFavorites() {
+        $("#loaderFavorites").show();
+        $.ajax({
+            url: ccuUrl + '/config/xmlapi/favoritelist.cgi?show_datapoint=1',
+            type: 'GET',
+            dataType: 'xml',
+            success: function (data) {
+                refreshVariables();
+                favoritesReady = true;
+                favoritesXML = data;
+                favoritesXMLObj = $(data);
+                buildFavorites();
+                $("#loaderFavorites").hide();
+                refreshVariables();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#loaderFavorites").hide();
+                ajaxError(xhr, ajaxOptions, thrownError);
+            }
+        });
+    }
+
     function xmlapiGetVersion() {
         $.ajax({
             url: ccuUrl + '/config/xmlapi/version.cgi',
@@ -1348,26 +1570,6 @@ $("document").ready(function () {
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
-
-    $("button#hmRunScript").click(function () {
-        gridScriptVariables.jqGrid('clearGridData');
-        hmRunScript($("textarea#hmScript").val(), function (data) {
-            $.each(data, function(key, value) {
-                switch (key) {
-                    case 'STDOUT':
-                        $("textarea#hmScriptStdout").val(value);
-                        break;
-                    case 'httpUserAgent':
-                    case 'sessionId':
-                        break;
-                    default:
-                        gridScriptVariables.jqGrid('addRowData', key, {'variable': key, 'value': value});
-
-                }
-            });
-            $("#loaderScript").hide();
-        });
-    });
 
     function hmRunScript (script, successFunction) {
         $("#loaderScript").show();
@@ -1387,14 +1589,11 @@ $("document").ready(function () {
         });
     }
 
-
+    /* Misc */
     function addInfo(key, value) {
         gridInfo.jqGrid('addRowData', key, {'key': key, 'value': value});
     }
 
-    /*
-     *          Misc Functions
-     */
     function selectOptions(value_list) {
         var output = "";
         var values = value_list.split(";");
@@ -1446,6 +1645,11 @@ $("document").ready(function () {
         var second = dateObj.getSeconds().toString(10);
         second = (second.length == 1 ? "0" + second : second);
         return dateObj.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+    }
+
+    function changeTheme(theme) {
+        // Prüfen ob Theme in uiThemes enthalten ist!
+        $("#theme").attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/" + theme + "/jquery-ui.css");
     }
 
 });
