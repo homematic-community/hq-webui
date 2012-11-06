@@ -8,6 +8,7 @@ Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen, es
 
 Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq6) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
+Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
@@ -109,14 +110,15 @@ Todo/Ideen
 * Tab Favoriten: Manueller Refresh
 * Datenpunkte: Slider beim editieren fertigstellen
 * Datenpunkte: angepasste Darstellung je nach Gerätetyp?
-* Favoriten: nicht bedienbare ausgrauen
+* Favoriten: nicht bedienbare disablen
+* Anzahl Servicemeldungen irgendwo prominent präsentieren?
 * Addon statt Update!
 * Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Intelligenter und Ressourcenschonender Update-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
 * Auth?
-* generate_img.sh Skript erweitern - automatisches minifizieren des .js Dateien, automatisches entfernen der ccuUrl
-* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? (xmlapi?)
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
+* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlapi erweiterung notwendig?)
 * Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
 * Verzicht auf xmlapi? komplett auf Remote Script und XML RPC umsteigen?
 * Clientseitig Daten cachen, Settings speichern, ... (WebSQL?)?
