@@ -11,9 +11,8 @@ case "$1" in
         echo "Info: <center><br>Aufruf:<br><a href="/addons/hq-webui" target="_blank">http://IP-Adresse-der-CCU/addons/hq-webui</a></center>"
         echo "Info: <center><br>Readme:<br><a href="https://raw.github.com/hobbyquaker/hq-webui/master/README.md" target="_blank">https://raw.github.com/hobbyquaker/hq-webui/master/README.md</a></center>"
         echo "Name: HQ WebUI"
-        echo "Version: 1.3.0"
+        echo "Version: 1.3.1"
         echo "Operations: uninstall"
-        echo "Update: https://raw.github.com/hobbyquaker/hq-webui/master/version"
         ;;
 	uninstall)
 		rm -r /usr/local/etc/config/addons/www/hq-webui

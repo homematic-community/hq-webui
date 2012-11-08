@@ -42,6 +42,11 @@ Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei 
 Changelog
 =========
 
+1.3.1
+-----
+* diverse kleine Fehler behoben
+
+
 1.3.0
 -----
 * Als Erweiterung installierbar (nicht wie zuvor als Update)
@@ -109,6 +114,7 @@ Todo/Ideen
 ==========
 
 * Tab Favoriten: Manueller Refresh
+* Favoriten: Anzeige von mehr Datenpunkttypen
 * Favoriten: Auswahlmöglichkeit für angezeigten User?
 * Datenpunkte: Slider beim editieren fertigstellen
 * Datenpunkte: angepasste Darstellung je nach Gerätetyp?

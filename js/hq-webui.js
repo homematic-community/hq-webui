@@ -22,7 +22,7 @@ $("document").ready(function () {
     var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Eintr‰ge
     var gridRowNum =            100;                // Standardm‰ﬂige Anzahl angezeigter Eintr‰ge
 
-    var version =               "1.3.0";
+    var version =               "1.3.1";
 
     var statesXML,
         variablesXML,
@@ -83,7 +83,7 @@ $("document").ready(function () {
     $("#tabs").tabs();
     $("button").button();
 
-    $("ul.tabsPanel").append("<button style='float:right' id='buttonSelectTheme'>Theme</button> ");
+    $("ul.tabsPanel").append("<button style='font-size: 0.8em; float:right' id='buttonSelectTheme'>Theme</button> ");
     $("#buttonSelectTheme").button().click(function () {
        dialogSelectTheme.dialog("open");
     });
@@ -1005,6 +1005,7 @@ $("document").ready(function () {
 
 
     function refreshVariables() {
+        $("#loaderVariables").show();
         variablesReady = false;
         gridVariables.setGridParam({
             url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
@@ -1187,11 +1188,6 @@ $("document").ready(function () {
                             var type = name[2];
 
 
-                            if (!firstDP) {
-                                $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; height: 1px; clear:both; height: 43px;'><br>");
-                            } else {
-                                firstDP = false;
-                            }
 
                              var id = $(this).attr("ise_id");
 
@@ -1212,6 +1208,9 @@ $("document").ready(function () {
                                     html +=         "<label for='favRadioOn" + id + "'>An</label>";
                                     html +=     "</div>";
                                     html += "</div>";
+                                    if (!firstDP) { $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; clear:both; height: 43px;'><br>"); }
+                                    firstDP = false;
+
                                     $("div[id='favItem" + channelId + "']").append(html);
 
                                     $("input#favRadioOn" + id).change(function (eventdata, handler) {
@@ -1231,6 +1230,9 @@ $("document").ready(function () {
                                     html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
                                     html +=     "</div>";
                                     html += "</div>";
+                                    if (!firstDP) { $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; clear:both; height: 43px;'><br>"); }
+                                    firstDP = false;
+
                                     $("div[id='favItem" + channelId + "']").append(html);
                                     $("#favSlider" + id).slider({
                                         min: 0.00,
