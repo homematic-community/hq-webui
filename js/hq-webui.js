@@ -27,7 +27,7 @@ $("document").ready(function () {
     var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Eintr‰ge
     var gridRowNum =            100;                // Standardm‰ﬂige Anzahl angezeigter Eintr‰ge
 
-    var version =               "1.3.2";
+    var version =               "1.3.3";
 
     var statesXML,
         variablesXML,
