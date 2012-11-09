@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="ISO-8859-1">
-    <title>HQ WebUI 1.3.1</title>
+    <title>HQ WebUI 1.3.2</title>
 
     <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/overcast/jquery-ui.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
@@ -12,7 +12,9 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
+    <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
+
 </head>
 <body>
     <div id="container">
@@ -97,8 +99,9 @@
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
                         <textarea id="hmScript" cols="92" rows="40"></textarea>
-                    </td><td id="hmScriptTools">
-                        <button id="hmRunScript">Ausführen</button><br><br>
+                    </td><td style="padding-left: 20px;" id="hmScriptTools">
+                        <button id="hmRunScript">Ausführen</button>
+                        <button id="hmDebugScript">Debuggen</button><br><br>
                         <span class="hmScriptToolsHeader">Script-Ausgabe</span><br>
                         <textarea id="hmScriptStdout" cols="46" rows="15" readonly="readonly"></textarea><br>
                         <span class="hmScriptToolsHeader">Variablen</span><br>
@@ -167,5 +170,8 @@
             
             
         </select>
+    </div>
+    <div class="dialog" id="dialogDebugScript" title="Skript Fehler">
+        <span id="debugScript"></span>
     </div>
 </body>

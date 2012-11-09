@@ -42,6 +42,11 @@ Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei 
 Changelog
 =========
 
+1.3.2
+-----
+* Neue Scriptkonsole: Editor mit Syntax Highlight und Autocomplete, Debug-Modus mit Ausgabe der Fehlermeldungen aus /var/log/messages (benötigt xmlapi 1.2-hq9)
+* Parameter xmlapiPath hinzugefügt
+
 1.3.1
 -----
 * diverse kleine Fehler behoben

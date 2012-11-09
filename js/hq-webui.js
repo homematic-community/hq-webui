@@ -1,11 +1,13 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.3.0
+ *      Version 1.3.2
  *
  *      https://github.com/hobbyquaker/hq-webui/
  *
  */
+
+
 
 $("document").ready(function () {
 
@@ -16,13 +18,16 @@ $("document").ready(function () {
     // Der User dessen Favoriten angezeigt werden
     var favoriteUsername = "_USER1004";
 
+    // Pfad zur xmlapi
+    var xmlapiPath = "/config/xmlapi";
+
     // Hier können verschiedene Optionen für alle Grids vorgegeben werden
     var gridWidth =             1024;
     var gridHeight =            490;
     var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Einträge
     var gridRowNum =            100;                // Standardmäßige Anzahl angezeigter Einträge
 
-    var version =               "1.3.1";
+    var version =               "1.3.2";
 
     var statesXML,
         variablesXML,
@@ -84,6 +89,9 @@ $("document").ready(function () {
     $("button").button();
 
     $("ul.tabsPanel").append("<button style='font-size: 0.8em; float:right' id='buttonSelectTheme'>Theme</button> ");
+
+
+
     $("#buttonSelectTheme").button().click(function () {
        dialogSelectTheme.dialog("open");
     });
@@ -1377,9 +1385,22 @@ $("document").ready(function () {
         }
     });
 
+    $("#dialogDebugScript").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Schliessen': function () {
+
+                $(this).dialog('close');
+                $("#debugScript").html("");
+
+            }
+        }
+    })
+
     $("button#hmRunScript").click(function () {
         gridScriptVariables.jqGrid('clearGridData');
-        hmRunScript($("textarea#hmScript").val(), function (data) {
+        hmRunScript(editAreaLoader.getValue("hmScript"), function (data) {
             $.each(data, function(key, value) {
                 switch (key) {
                     case 'STDOUT':
@@ -1398,10 +1419,72 @@ $("document").ready(function () {
     });
 
 
+    $("button#hmDebugScript").click(function () {
+        gridScriptVariables.jqGrid('clearGridData');
+        var script = editAreaLoader.getValue("hmScript");
+        var debugScript = script + "\n" + "var hqDebugDummy=1;";
+
+        var debugVar;
+        /*
+         var scriptLine = script.split("\n");
+         for (var i = 1; i <= scriptLine.length; i++) {
+            debugScript += scriptLine[i-1] + "\n";
+            var counter = i.toString(10);
+            for (var j = counter.length; j < 5; j++) {
+                counter = "0" + counter;
+            }
+            debugVar = "hqDebugDummy" + counter;
+            debugScript += "var " + debugVar + " = 1;\n";
+
+        }*/
+        hmRunScript(debugScript, function (data) {
+            var scriptFailed = false;
+            var dummyFound = false;
+            var lineNumber = 0;
+            $.each(data, function(key, value) {
+                switch (key) {
+                    case 'STDOUT':
+                        $("textarea#hmScriptStdout").val(value);
+                        break;
+                    case 'httpUserAgent':
+                    case 'sessionId':
+                        break;
+                    default:
+                        if (!key.match("hqDebugDummy")) {
+                            gridScriptVariables.jqGrid('addRowData', key, {'variable': key, 'value': value});
+                        } else {
+                            dummyFound = true;
+                            if (value == "null") {
+                                scriptFailed = true;
+
+                            }
+                        }
+                }
+            });
+            if (!scriptFailed && dummyFound) {
+                $("#debugScript").html("Scriptausführung erfolgreich.");
+                $("#dialogDebugScript").dialog('open');
+            } else {
+                $.ajax({
+                    url: ccuUrl + xmlapiPath + "/scripterrors.cgi",
+                    type: 'GET',
+                    success: function (data) {
+                        var error = $(data).find("error:last");
+                        $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
+                        $("#dialogDebugScript").dialog('open');
+
+
+                    }
+                })
+
+            }
+            $("#loaderScript").hide();
+        });
+    });
     /*   XML-API */
     function xmlapiClearProtocol() {
         $.ajax({
-            url: ccuUrl + "/config/xmlapi/protocol.cgi",
+            url: ccuUrl + xmlapiPath + "/protocol.cgi",
             type: "GET",
             data: {
                 clear: 1
@@ -1573,7 +1656,7 @@ $("document").ready(function () {
     function hmRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: ccuUrl + "/config/xmlapi/exec.cgi",
+            url: ccuUrl + xmlapiPath + "/exec.cgi",
             type: 'POST',
             data: script,
             dataType: 'json',
@@ -1587,6 +1670,8 @@ $("document").ready(function () {
             }
         });
     }
+
+
 
     /* Misc */
     function addInfo(key, value) {
@@ -1650,5 +1735,25 @@ $("document").ready(function () {
         // Prüfen ob Theme in uiThemes enthalten ist!
         $("#theme").attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/" + theme + "/jquery-ui.css");
     }
+
+});
+
+
+editAreaLoader.init({
+    id: "hmScript",
+    start_highlight: true,
+    word_wrap: true,
+    plugins: 'autocompletion',
+    autocompletion: true,
+    font_size: "10",
+    allow_resize: "no",
+    allow_toggle: false,
+    display: "onload",
+    language: "de",
+    syntax: "hmscript",
+    replace_tab_by_spaces: 4,
+    min_height: 570,
+    min_width: 640,
+    toolbar: "search, fullscreen, |, undo, redo, |, select_font,|, reset_highlight ,|, autocompletion"
 
 });
