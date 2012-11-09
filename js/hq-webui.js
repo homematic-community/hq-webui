@@ -1,7 +1,7 @@
 /**
  *      HQ WebUI
  *
- *      Version 1.3.2
+ *      Version 1.3.3
  *
  *      https://github.com/hobbyquaker/hq-webui/
  *
@@ -1016,7 +1016,7 @@ $("document").ready(function () {
         $("#loaderVariables").show();
         variablesReady = false;
         gridVariables.setGridParam({
-            url: ccuUrl + '/config/xmlapi/sysvarlist.cgi?text=true',
+            url: ccuUrl + xmlapiPath + '/sysvarlist.cgi?text=true',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1040,7 +1040,7 @@ $("document").ready(function () {
         $("#loaderPrograms").show();
         programsReady = false;
         gridPrograms.setGridParam({
-            url: ccuUrl + '/config/xmlapi/programlist.cgi',
+            url: ccuUrl + xmlapiPath + '/programlist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1063,7 +1063,7 @@ $("document").ready(function () {
         $("#loaderStates").show();
         statesReady = false;
         gridStates.setGridParam({
-            url: ccuUrl + '/config/xmlapi/statelist.cgi',
+            url: ccuUrl + xmlapiPath + '/statelist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1088,7 +1088,7 @@ $("document").ready(function () {
         $("#loaderProtocol").show();
         protocolReady = false;
         gridProtocol.setGridParam({
-            url: ccuUrl + '/config/xmlapi/protocol.cgi',
+            url: ccuUrl + xmlapiPath + '/protocol.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1106,7 +1106,7 @@ $("document").ready(function () {
         $("#loaderRssi").show();
         rssiReady = false;
         gridRssi.setGridParam({
-            url: ccuUrl + '/config/xmlapi/rssilist.cgi',
+            url: ccuUrl + xmlapiPath + '/rssilist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1498,7 +1498,7 @@ $("document").ready(function () {
 
     function xmlapiRunProgram(program_id) {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/runprogram.cgi',
+            url: ccuUrl + xmlapiPath + '/runprogram.cgi',
             type: 'GET',
             data: {
                 program_id: program_id
@@ -1512,7 +1512,7 @@ $("document").ready(function () {
 
     function xmlapiSetState(ise_id, new_value, successFunction) {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/statechange.cgi',
+            url: ccuUrl + xmlapiPath + '/statechange.cgi',
             type: 'GET',
             data: {
                 ise_id: ise_id,
@@ -1535,7 +1535,7 @@ $("document").ready(function () {
 
     function xmlApiGetStateAjax(ise_id, grid_id) {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/state.cgi',
+            url: ccuUrl + xmlapiPath + '/state.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -1554,7 +1554,7 @@ $("document").ready(function () {
 
     function xmlapiGetVariable(ise_id) {
        $.ajax({
-            url: ccuUrl + '/config/xmlapi/sysvar.cgi',
+            url: ccuUrl + xmlapiPath + '/sysvar.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -1573,7 +1573,7 @@ $("document").ready(function () {
 
     function xmlapiGetDevices() {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/devicelist.cgi',
+            url: ccuUrl + xmlapiPath + '/devicelist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1589,7 +1589,7 @@ $("document").ready(function () {
     function xmlapiGetFunctions() {
         $("#loaderStates").show();
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/functionlist.cgi',
+            url: ccuUrl + xmlapiPath + '/functionlist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1604,7 +1604,7 @@ $("document").ready(function () {
 
     function xmlapiGetRooms() {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/roomlist.cgi',
+            url: ccuUrl + xmlapiPath + '/roomlist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1620,7 +1620,7 @@ $("document").ready(function () {
     function xmlapiGetFavorites() {
         $("#loaderFavorites").show();
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/favoritelist.cgi?show_datapoint=1',
+            url: ccuUrl + xmlapiPath + '/favoritelist.cgi?show_datapoint=1',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1641,7 +1641,7 @@ $("document").ready(function () {
 
     function xmlapiGetVersion() {
         $.ajax({
-            url: ccuUrl + '/config/xmlapi/version.cgi',
+            url: ccuUrl + xmlapiPath + '/version.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
