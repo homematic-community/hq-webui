@@ -5,12 +5,24 @@
 	<title>EditArea</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-	[__CSSRULES__]
+    <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/overcast/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" href="../css/hq-webui.css" rel="stylesheet">
+
+
+    [__CSSRULES__]
+    <style type=\"text/css\">
+        body.ui-widget-content {
+            border-width: 0px;
+        }
+        #editor {
+            background-color: #fff;
+        }
+    </style>
 	[__JSCODE__]
 </head>
-<body>
-	<div id='editor'>
-		<div class='area_toolbar' id='toolbar_1'>[__TOOLBAR__]</div>
+<body class="ui-widget-content">
+	<div id='editor' class="ui-widget ui-widget-content ui-corner-all ui-clearfix">
+		<div class='area_toolbar ui-widget ui-widget-header ui-corner-top' style='height:29px' id='toolbar_1'>[__TOOLBAR__]</div>
 		<div class='area_toolbar' id='tab_browsing_area'><ul id='tab_browsing_list' class='menu'> <li> </li> </ul></div>
 		<div id='result'>
 			<div id='no_file_selected'></div>

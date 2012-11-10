@@ -6,7 +6,7 @@ Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden,
 
 Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen, es ist vielmehr als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel und schnell einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen muss oder Ähnliches.
 
-Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq6) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
+Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq9) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
@@ -38,9 +38,20 @@ Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Da
 Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren, Programme werden auch über Doppelklick auf die Tabellenzeile gestartet.
 In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar. Analog dazu befinden sich auch in der Raum und Gewerkeliste diese Aufklapp-Buttons.
 Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei hq-webui.js entsprechend angepasst werden.
+Bitte nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art von Cookie im Browser und kann durchaus mal verloren gehen.
 
 Changelog
 =========
+
+
+1.4.0
+-----
+* lostorage.js eingebunden
+* Ausgewähltes Theme wird nun gespeichert
+* Editor erweitert - man kann nun parallel mehrere Scripte bearbeiten
+* Scripteditor speichert die Scripte nun automatisch ab (spätestens wenn ein Script ausgeführt wird).
+* devicelist.cgi, roomlist.cgi und functionlist.cgi werden nun lokal gecached, um den Cache zu leeren gibt es ein neuen Button rechts in der Toolbar
+
 
 1.3.3
 -----
@@ -122,23 +133,40 @@ Changelog
 Todo/Ideen
 ==========
 
-* Tab Favoriten: Manueller Refresh
-* Favoriten: Anzeige von mehr Datenpunkttypen
-* Favoriten: Auswahlmöglichkeit für angezeigten User?
+* Refresh-Button für Räume, Gewerke und Geräte
+* Tastenkürzel für Buttons in Scriptkonsole
+* Header und Footer des areaedit mit jQuery UI Styles und Icons umbauen
+* Sortierung Scriptkonsole-Variablen fixen
+* STDOUT Fenter hübscher machen (gleicher Header und Rahmen wie Variablengrid darunter, auch zum zuklappen)
+* Speichern und Laden von Scripten
 * Datenpunkte: Slider beim editieren fertigstellen
-* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
-* Favoriten: nicht bedienbare disablen
-* Anzahl Servicemeldungen irgendwo prominent präsentieren?
-* Addon statt Update!
-* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
-* Intelligenter und Ressourcenschonender Update-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Auth?
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
-* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlapi erweiterung notwendig?)
+* Warnzeichen im Geräte-Reiter wenn Service-Meldungen vorhanden sind
+* Theme-Button -> Icon statt Text
+* Favoriten: Anzeige von mehr Datenpunkttypen
 * Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
-* Verzicht auf xmlapi? komplett auf Remote Script und XML RPC umsteigen?
-* Clientseitig Daten cachen, Settings speichern, ... (WebSQL?)?
+* Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+* Tab Favoriten: Manueller Refresh
+* Favoriten: Auswahlmöglichkeit für angezeigten User?
+* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
+* Warnzeichen für Alarmmeldungen? Wo unterbringen?
+* Favoriten: nicht bedienbare disablen
+* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
+* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
+* Auth?
+* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
+
+
+Verwendete Software
+===================
+
+* jQuery http://jquery.com/
+* jQuery UI http://jqueryui.com/
+* jqGrid http://www.trirand.com/blog/
+* editarea http://www.cdolivet.com/editarea/
+* lostorage.js https://github.com/js-coder/loStorage.js
+
 
 Lizenz
 ======

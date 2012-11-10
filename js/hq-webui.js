@@ -8,18 +8,17 @@
  */
 
 
-
 $("document").ready(function () {
 
-    // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
+     // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
     var ccuUrl = '';
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
 
-    // Der User dessen Favoriten angezeigt werden
-    var favoriteUsername = "_USER1004";
-
     // Pfad zur xmlapi
     var xmlapiPath = "/config/xmlapi";
+
+    // Der User dessen Favoriten angezeigt werden
+    var favoriteUsername = "_USER1004";
 
     // Hier können verschiedene Optionen für alle Grids vorgegeben werden
     var gridWidth =             1024;
@@ -27,7 +26,13 @@ $("document").ready(function () {
     var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Einträge
     var gridRowNum =            100;                // Standardmäßige Anzahl angezeigter Einträge
 
-    var version =               "1.3.3";
+    // jQuery UI Theme
+    var themeUrl =              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/";
+    var defaultTheme =          "overcast";
+    var themeSuffix =           "/jquery-ui.css";
+
+    // HQ WebUI Version
+    var version =               "1.4.0";
 
     var statesXML,
         variablesXML,
@@ -82,19 +87,37 @@ $("document").ready(function () {
     var dialogEditDatapoint =   $("#dialogEditDatapoint");
     var dialogSelectTheme =     $("#dialogSelectTheme");
 
-
+    getTheme();
 
     $("ul.tabsPanel li a img").hide();
     $("#tabs").tabs();
     $("button").button();
 
-    $("ul.tabsPanel").append("<button style='font-size: 0.8em; float:right' id='buttonSelectTheme'>Theme</button> ");
+    $("ul.tabsPanel").append("<button value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ")
+        .append("<button value='Geräte, Räume und Gewerke aktualisieren' class='smallButton' style='float:right' id='buttonClearCache'></button> ");
 
 
 
-    $("#buttonSelectTheme").button().click(function () {
+    $("#buttonSelectTheme").button({
+        icons: { primary: "ui-icon-gear" },
+        text: false
+    }).click(function () {
        dialogSelectTheme.dialog("open");
     });
+    $("#buttonClearCache").button({
+        icons: { primary: "ui-icon-refresh" },
+        text: false
+    }).click(function () {
+            storage.set("hqWebUiRooms", null);
+            storage.set("hqWebUiFunctions", null);
+            storage.set("hqWebUiDevices", null);
+            roomsReady = false;
+            functionsReady = false;
+            devicesReady = false;
+            xmlapiGetFunctions();
+        });
+    $(".smallButton span.ui-icon").css("margin-left", "-9px").css("margin-top", "-9px");
+
     xmlapiGetFavorites();
 
 
@@ -483,7 +506,7 @@ $("document").ready(function () {
                 return val;
             }
         },
-        {name:"valuetype",   index:"valuetype",   width:80,// hidden: true,
+        {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('valuetype');
             }
@@ -1396,31 +1419,47 @@ $("document").ready(function () {
 
             }
         }
-    })
-
-    $("button#hmRunScript").click(function () {
-        gridScriptVariables.jqGrid('clearGridData');
-        hmRunScript(editAreaLoader.getValue("hmScript"), function (data) {
-            $.each(data, function(key, value) {
-                switch (key) {
-                    case 'STDOUT':
-                        $("textarea#hmScriptStdout").val(value);
-                        break;
-                    case 'httpUserAgent':
-                    case 'sessionId':
-                        break;
-                    default:
-                        gridScriptVariables.jqGrid('addRowData', key, {'variable': key, 'value': value});
-
-                }
-            });
-            $("#loaderScript").hide();
-        });
     });
 
 
-    $("button#hmDebugScript").click(function () {
+    $("#dialogDeleteScript").dialog({
+
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Löschen': function () {
+                alert($("#scriptDeleteReally").html());
+                editAreaLoader.closeFile("hmScript", $("#scriptDeleteReally").html());
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
+    $("button#hmSaveScript").click(function () {
+        var files = editAreaLoader.getAllFiles("hmScript");
+        var store = {};
+        for (var key in files) {
+            var file = files[key];
+            // if (file['edited'] == true) {
+                editAreaLoader.setFileEditedMode("hmScript", key, false);
+                store[key] = file['text'];
+            // }
+        }
+        storage.set("hqWebUiScripts", null);
+        storage.set("hqWebUiScripts", JSON.stringify(store));
+    }).hide();
+
+    $("button#hmNewScript").click(function () {
+         var new_file= {id: formatTimestamp(), text: "", syntax: 'hmscript'};
+         editAreaLoader.openFile('hmScript', new_file);
+    });
+
+    $("button#hmRunScript").click(function () {
         gridScriptVariables.jqGrid('clearGridData');
+        $("div#hmScriptStdout").html("");
         var script = editAreaLoader.getValue("hmScript");
         var debugScript = script + "\n" + "var hqDebugDummy=1;";
 
@@ -1428,15 +1467,15 @@ $("document").ready(function () {
         /*
          var scriptLine = script.split("\n");
          for (var i = 1; i <= scriptLine.length; i++) {
-            debugScript += scriptLine[i-1] + "\n";
-            var counter = i.toString(10);
-            for (var j = counter.length; j < 5; j++) {
-                counter = "0" + counter;
-            }
-            debugVar = "hqDebugDummy" + counter;
-            debugScript += "var " + debugVar + " = 1;\n";
+         debugScript += scriptLine[i-1] + "\n";
+         var counter = i.toString(10);
+         for (var j = counter.length; j < 5; j++) {
+         counter = "0" + counter;
+         }
+         debugVar = "hqDebugDummy" + counter;
+         debugScript += "var " + debugVar + " = 1;\n";
 
-        }*/
+         }*/
         hmRunScript(debugScript, function (data) {
             var scriptFailed = false;
             var dummyFound = false;
@@ -1444,7 +1483,7 @@ $("document").ready(function () {
             $.each(data, function(key, value) {
                 switch (key) {
                     case 'STDOUT':
-                        $("textarea#hmScriptStdout").val(value);
+                        $("div#hmScriptStdout").html(value);
                         break;
                     case 'httpUserAgent':
                     case 'sessionId':
@@ -1465,6 +1504,7 @@ $("document").ready(function () {
                 $("#debugScript").html("Scriptausführung erfolgreich.");
                 $("#dialogDebugScript").dialog('open');
             } else {
+
                 $.ajax({
                     url: ccuUrl + xmlapiPath + "/scripterrors.cgi",
                     type: 'GET',
@@ -1481,6 +1521,7 @@ $("document").ready(function () {
             $("#loaderScript").hide();
         });
     });
+
     /*   XML-API */
     function xmlapiClearProtocol() {
         $.ajax({
@@ -1572,6 +1613,14 @@ $("document").ready(function () {
     }
 
     function xmlapiGetDevices() {
+        var cache = storage.get("hqWebUiDevices");
+        if (cache !== null) {
+            devicesReady = true;
+            devicesXML = $.parseXML(cache);
+            devicesXMLObj = $(devicesXML);
+            refreshStates();
+            return false;
+        }
         $.ajax({
             url: ccuUrl + xmlapiPath + '/devicelist.cgi',
             type: 'GET',
@@ -1580,6 +1629,7 @@ $("document").ready(function () {
                 devicesReady = true;
                 devicesXML = data;
                 devicesXMLObj = $(data);
+                storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(data));
                 refreshStates();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
@@ -1588,6 +1638,14 @@ $("document").ready(function () {
 
     function xmlapiGetFunctions() {
         $("#loaderStates").show();
+        var cache = storage.get("hqWebUiFunctions");
+        if (cache !== null) {
+            functionsReady = true;
+            functionsXML = $.parseXML(cache);
+            functionsXMLObj = $(functionsXML);
+            xmlapiGetRooms();
+            return false;
+        }
         $.ajax({
             url: ccuUrl + xmlapiPath + '/functionlist.cgi',
             type: 'GET',
@@ -1596,6 +1654,7 @@ $("document").ready(function () {
                 functionsReady = true;
                 functionsXML = data;
                 functionsXMLObj = $(data);
+                storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(data));
                 xmlapiGetRooms();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
@@ -1603,6 +1662,14 @@ $("document").ready(function () {
     }
 
     function xmlapiGetRooms() {
+        var cache = storage.get("hqWebUiRooms");
+        if (cache !== null) {
+            roomsReady = true;
+            roomsXML = $.parseXML(cache);
+            roomsXMLObj = $(roomsXML);
+            xmlapiGetDevices();
+            return false;
+        }
         $.ajax({
             url: ccuUrl + xmlapiPath + '/roomlist.cgi',
             type: 'GET',
@@ -1611,6 +1678,7 @@ $("document").ready(function () {
                 roomsReady = true;
                 roomsXML = data;
                 roomsXMLObj = $(data);
+                storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(data));
                 xmlapiGetDevices();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
@@ -1717,7 +1785,9 @@ $("document").ready(function () {
 
     function formatTimestamp(timestamp) {
         var dateObj = new Date();
-        dateObj.setTime(timestamp + "000");
+        if (timestamp != undefined) {
+            dateObj.setTime(timestamp + "000");
+        }
         var month = (dateObj.getMonth() + 1).toString(10);
         month = (month.length == 1 ? "0" + month : month);
         var day = dateObj.getDate().toString(10);
@@ -1728,32 +1798,109 @@ $("document").ready(function () {
         minute = (minute.length == 1 ? "0" + minute : minute);
         var second = dateObj.getSeconds().toString(10);
         second = (second.length == 1 ? "0" + second : second);
-        return dateObj.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        if (timestamp == undefined) {
+            return dateObj.getFullYear() + "-" + month + "-" + day + "_" + hour + "-" + minute + "-" + second;
+        } else {
+            return dateObj.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        }
     }
 
     function changeTheme(theme) {
-        // Prüfen ob Theme in uiThemes enthalten ist!
-        $("#theme").attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/" + theme + "/jquery-ui.css");
+        storage.set('hqWebUiTheme', theme);
+        $("#theme").attr("href", themeUrl + theme + themeSuffix);
     }
 
+    function getTheme() {
+        var theme = storage.get("hqWebUiTheme");
+        if (theme === null) { theme = defaultTheme; }
+         $("#theme").attr("href", themeUrl + theme + themeSuffix);
+    }
+
+    editAreaLoader.init({
+        id: "hmScript",
+        start_highlight: true,
+        is_multi_files: true,
+        word_wrap: true,
+        plugins: 'autocompletion',
+        autocompletion: true,
+        font_size: "10",
+        allow_resize: "no",
+        allow_toggle: false,
+        display: "onload",
+        language: "de",
+        syntax: "hmscript",
+        replace_tab_by_spaces: 4,
+        min_height: 565,
+        min_width: 640,
+        toolbar: "search, go_to_line, fullscreen, |, undo, redo, |, select_font,|, reset_highlight ,|, autocompletion",
+        EA_load_callback: "scriptEditorReady",
+        load_callback: "scriptEditorLoad",
+        save_callback: "scriptEditorSave",
+        new_document_callback: "scriptEditorNew",
+        EA_file_close_callback: "scriptFileClose",
+        change_callback: "scriptChange"
+    });
+
+
+
+
+    $("a.ui-jqgrid-titlebar-close").hide();
+
 });
 
+function scriptFileClose(file) {
+ // Todo - Prüfen warum closeFile() im Dialog dialogDeleteScript nicht funktioniert
+ //   $("#scriptDeleteReally").html(file["id"]);
+ //   $("#dialogDeleteScript").dialog("open");
+ //   return false;
+ // Bis dahin: Workaround via confirm()
+    if (confirm("Wirklich das Script " + file["id"] + " löschen?")) {
+        setTimeout(function () {
+            $("button#hmSaveScript").trigger("click");
+        }, 200);
+        return true;
+    } else {
+        return false;
+    }
+}
 
-editAreaLoader.init({
-    id: "hmScript",
-    start_highlight: true,
-    word_wrap: true,
-    plugins: 'autocompletion',
-    autocompletion: true,
-    font_size: "10",
-    allow_resize: "no",
-    allow_toggle: false,
-    display: "onload",
-    language: "de",
-    syntax: "hmscript",
-    replace_tab_by_spaces: 4,
-    min_height: 570,
-    min_width: 640,
-    toolbar: "search, fullscreen, |, undo, redo, |, select_font,|, reset_highlight ,|, autocompletion"
 
-});
+var scriptSaveTimer;
+function scriptChange() {
+    clearTimeout(scriptSaveTimer);
+    scriptSaveTimer = setTimeout(function () {
+        $("button#hmSaveScript").trigger("click");
+    }, 1000);
+}
+
+function scriptEditorReady() {
+
+    //alert($(".ui-jqgrid-titlebar").css("background-color"));
+    $("#frame_hmScript").contents().find(".area_toolbar").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+    var scripts = JSON.parse(storage.get('hqWebUiScripts'));
+    for (var key in scripts) {
+        var new_file= {id: key, text: scripts[key], syntax: 'hmscript'};
+        editAreaLoader.openFile('hmScript', new_file);
+
+    }
+
+
+
+     //$("#frame_hmScript").contents().find("#toolbar_1").append("<button id='scriptEditorRun' class='smallButton' style='float: right; height: 20px; margin-top:1px;'><span style='position: relative; top:-3px;'>Script ausführen</span></button>");
+    // $("#frame_hmScript").contents().find("#toolbar_1").addClass("ui-widget-header ui-corner-top").css("height", "29px");
+    // $("#frame_hmScript").contents().find("#tab_browsing_area").addClass("ui-widget-header").css("height", "29px");
+    //$("#frame_hmScript").contents().find("#scriptEditorRun").button({
+    //    icons: { primary: "ui-icon-play" }
+    //});
+}
+
+function scriptEditorSave() {
+    alert("save");
+}
+
+function scriptEditorNew() {
+    alert("new");
+}
+function scriptEditorLoad() {
+    alert("load");
+}

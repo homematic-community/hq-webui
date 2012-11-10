@@ -400,8 +400,8 @@
 	};
 	
 	EditArea.prototype.execCommand= function(cmd, param){
-		
-		for(var i in this.plugins){
+
+        for(var i in this.plugins){
 			if(typeof(this.plugins[i].execCommand)=="function"){
 				if(!this.plugins[i].execCommand(cmd, param))
 					return;
@@ -453,12 +453,12 @@
 				break;
 			
 			default:
-				if(typeof(eval("editArea."+cmd))=="function")
+                if(typeof(eval("editArea."+cmd))=="function")
 				{
 					if(this.settings["debug"])
 						eval("editArea."+ cmd +"(param);");
 					else
-						try{eval("editArea."+ cmd +"(param);");}catch(e){};
+                    	try{eval("editArea."+ cmd +"(param);");}catch(e){};
 				}
 		}
 	};

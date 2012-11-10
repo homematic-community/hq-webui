@@ -65,3 +65,11 @@ ul.tabsPanel li a {
 
 }
 
+li a:focus {
+     outline:none;
+}
+
+.smallButton {
+    width: 22px; height: 22px;
+}
+

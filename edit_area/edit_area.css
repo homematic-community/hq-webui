@@ -11,8 +11,9 @@ body, html, table, form, textarea{
 	font: 12px monospace, sans-serif;
 }
 
+
+
 #editor{
-	border: solid #888 1px;
 	overflow: hidden;
 }
 
