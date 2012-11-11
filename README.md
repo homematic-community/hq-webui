@@ -19,10 +19,6 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
 
-* auto-gen TOC:
-{:toc}
-
-
 Installation
 ============
 
