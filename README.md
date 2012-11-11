@@ -69,6 +69,7 @@ Todo/Bekannte Fehler
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 * Variablen vom Typ Zeichenkette lassen sich nicht editieren
+* rssilist Sortierung nach RX/TX fehlerhaft
 
 
 Todo/Ideen
@@ -81,7 +82,6 @@ Todo/Ideen
 * Favoriten: Variablen-Einheiten anzeigen
 * Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Tastenkürzel für Buttons in Scriptkonsole
-* rssilist Sortierung nach RX/TX fehlerhaft
 * rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
 * Mehr Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
 * Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
