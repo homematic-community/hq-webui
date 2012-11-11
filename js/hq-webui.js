@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "1.4.4";
+    var version =               "1.4.5";
 
     var statesXML,
         variablesXML,
@@ -1546,7 +1546,7 @@ $("document").ready(function () {
     }).hide();
 
     $("button#hmNewScript").click(function () {
-         var new_file= {id: formatTimestamp(), text: "", syntax: 'hmscript'};
+         var new_file= {id: formatTimestamp(), text: "\n\n\n\n\n", syntax: 'hmscript'};
          editAreaLoader.openFile('hmScript', new_file);
     });
 

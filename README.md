@@ -76,6 +76,7 @@ Todo/Ideen
 * Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
+* Scriptkonsole: ACE Editor statt area_edit?!
 * Favoriten: Variablen-Einheiten anzeigen
 * Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Tastenkürzel für Buttons in Scriptkonsole
@@ -106,6 +107,10 @@ Todo/Ideen
 
 Changelog
 =========
+
+1.4.5
+-----
+* diverse kleine Fehlerbehebungen im Script-Editor (der leider immer noch an einigen Stellen buggt)
 
 1.4.4
 -----

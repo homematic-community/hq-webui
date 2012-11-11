@@ -43,7 +43,7 @@ editAreaLoader.load_syntax["hmscript"] = {
 	}
 	,'AUTO_COMPLETION' :  {
 		"default": {	// the name of this definition group. It's posisble to have different rules inside the same definition file
-			"REGEXP": { "before_word": "[^a-zA-Z0-9_]|^|;"	// \\s|\\.|
+			"REGEXP": { "before_word": "[^a-zA-Z0-9_]|^|;|\\."	// \\s|\\.|
 						,"possible_words_letters": "[a-zA-Z0-9_]+"
 						,"letter_after_word_must_match": "[^a-zA-Z0-9_]|$"
 						,"prefix_separator": "DummyPrefix" // "\\."
@@ -58,12 +58,12 @@ editAreaLoader.load_syntax["hmscript"] = {
 						 * 		If empty the keyword will be displayed
 						 * 2 : (optionnal) the text that appear in the suggestion box (if empty, the string to insert will be displayed)
 						 */
-                    ['foreach', '§ ({@})', ''],
-                    ['while', '§ ({@})', ''],
-                    ['if', '§ ({@})', ''],
-                    ['else', '§', ''],
-                    ['Write', '§({@})', ''],
-                    ['WriteLine', '§({@})', ''],
+                    ['foreach', 'foreach ({@})', ''],
+                    ['while', 'while ({@})', ''],
+                    ['if', 'if ({@})', ''],
+                    ['else'],
+                    ['Write', 'Write({@})', ''],
+                    ['WriteLine', 'WriteLine({@})', ''],
                     ['system'],
                     ['integer'],
                     ['string'],
@@ -71,10 +71,10 @@ editAreaLoader.load_syntax["hmscript"] = {
                     ['$this$'],
                     ['$src$'],
                     ['VarType()'], ['ToFloat()'], ['ToInteger()'], ['ToString()'], ['ToTime()'], ['Year()'], ['Month()'], ['Day()'], ['Hour()'], ['Minute()'], ['Second()'], ['Week()'], ['Weekday()'],
-                    ['Yesterday()'], ['IsLocaltime()'], ['IsDST()'], ['Format()'], ['Length()'], ['Substr()'], ['Find()'], ['Split()'], ['StrValueByIndex()'], ['ID()'], ['GetObject()'],
+                    ['Yesterday()'], ['IsLocaltime()'], ['IsDST()'], ['Format()'], ['Length()'], ['Substr()'], ['Find()'], ['Split()'], ['StrValueByIndex()'], ['ID()'], ['GetObject', 'GetObject({@})', ''],
                     ['Date()'], ['IsVar()'], ['GetVar()'], ['Name()'], ['Type()'], ['TypeName()'], ['IsTypeOf()'], ['State()'],
                     ['Channels()'], ['Interface()'], ['Address()'], ['HssType()'],
-                    ['Device()'], ['DPs()'], ['Interface()'], ['Address()'], ['ChnGroupPartnerId()'], ['ChnDirection()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnRoom()'], ['ChnFunction()'], ['DPByHssDP()'],
+                    ['Device()'], ['DPs()'], ['Interface()'], ['Address()'], ['ChnGroupPartnerId()'], ['ChnDirection()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnRoom()'], ['ChnFunction()'], ['DPByHssDP'],
                     ['ValueType()'], ['Channel()'], ['Value()'], ['LastValue()'], ['Operations()'], ['Timestamp()'], ['Variable()'],
                     ['Count()'], ['EnumUsedIDs()'], ['EnumUsedNames()'], ['Get()'], ['GetAt()']
                 ],
