@@ -35,7 +35,7 @@ Die Datei hq-webui-(version).tar.gz kann als Zusatzsoftware auf der CCU installi
 Ohne Installation auf der CCU
 -----------------------------
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
-In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
+In der Datei "config.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
 _Achtung Firefox-Benutzer_: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
 
 
@@ -170,7 +170,6 @@ Changelog
 Todo/Bekannte Fehler
 ====================
 * Variablen vom Typ Zeichenkette lassen sich nicht editieren
-* Tastendruck (Datenpunkttypen PRESS_SHORT und PRESS_LONG) lässt sich nicht auslösen
 
 
 Todo/Ideen
