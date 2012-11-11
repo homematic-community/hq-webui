@@ -86,13 +86,18 @@ Todo/Ideen
 * Scripteditor: Links auf die HM-Script Dokumentation, das Forum, hm-inside, ... als 3. Button (zum aufklappen)?
 * Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
+* Programme aktivieren/deaktivieren?
+* Geräte (ent)sperren?
+* Raumthermostat Modus setzen?
+* Servicemeldungen bestätigen? (xmlrpc?)
 * Dienste starten/stoppen (ftpd etc)
 * Shell integrieren? (eigentlich reicht mir ein "normales" telnet ja - also eher nicht)
-* möglichkeit erweiterte erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
+* TCL-Script Editor integrieren? (Zusätzlicher Tab, oder im Script-Editor eine Auswahl ob man HMScript oder TCL erstellen möchte) - Top wäre eine Möglichkeit die Scripte gleich auf der CCU zu speichern...
+* Möglichkeit erweiterte erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
+* CCU-Dateibrowser? (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 * Auth?
-* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
+* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen? -> allow-origin nervt - will das ja via XHR machen, also vermutlich bleibts bei xmlapi.
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 
 
 
