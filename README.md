@@ -9,7 +9,7 @@ Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq9) - zu
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
-Getestet wird das HQ WebUI mit Google Chrome, Firefox und Safari. Opera und dem Internet Explorer wird keine Beachtung geschenkt, vielleicht funktioniert es, wenn nicht - Pech.
+Getestet wird das HQ WebUI primär mit Google Chrome. Firefox und Safari Kompatibilität wird angestrebt. Opera und dem Internet Explorer wird keine Beachtung geschenkt, vielleicht funktioniert es, wenn nicht - Pech.
 
 Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werden, allerdings ohne jegliche Garantien, die Benutzung erfolgt auf eigenes Risiko. Bei einer Weiterverbreitung bitte dieses Readme beibehalten!
 
@@ -170,6 +170,8 @@ Changelog
 Todo/Bekannte Fehler
 ====================
 * Variablen vom Typ Zeichenkette lassen sich nicht editieren
+* Script-Editor buggt im Firefox, macht ihn unbenutzbar. Fehler in edit_area/autocompletion.js
+* Sortierung der Variablen in der Scriptkonsole funktionert nicht
 
 
 Todo/Ideen
@@ -179,7 +181,6 @@ Todo/Ideen
 * Favoriten: Variablen-Einheiten anzeigen
 * Refresh-Button für Räume, Gewerke und Geräte
 * Tastenkürzel für Buttons in Scriptkonsole
-* Sortierung Scriptkonsole-Variablen fixen
 * Datenpunkte: Slider beim editieren fertigstellen
 * Warnzeichen im Geräte-Reiter wenn Service-Meldungen vorhanden sind
 * Favoriten: Anzeige von mehr Datenpunkttypen
