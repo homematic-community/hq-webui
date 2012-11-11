@@ -1,38 +1,23 @@
 /**
- *      HQ WebUI
+ *  HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
+ *  https://github.com/hobbyquaker/hq-webui/
  *
- *      Version 1.3.3
+ *  Copyright (C) 2012 hobbyquaker https://github.com/hobbyquaker
  *
- *      https://github.com/hobbyquaker/hq-webui/
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  Version 3 as published by the Free Software Foundation.
+ *  http://www.gnu.org/licenses/gpl.html
+ *  http://www.gnu.de/documents/gpl.de.html
+ *
+ *  This software comes without any warranty, use it at your own risk
  *
  */
 
-
 $("document").ready(function () {
 
-     // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
-    var ccuUrl = '';
-    // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
-
-    // Pfad zur xmlapi
-    var xmlapiPath = "/config/xmlapi";
-
-    // Der User dessen Favoriten angezeigt werden
-    var favoriteUsername = "_USER1004";
-
-    // Hier können verschiedene Optionen für alle Grids vorgegeben werden
-    var gridWidth =             1024;
-    var gridHeight =            490;
-    var gridRowList =           [20,50,100,500];    // Auswahl Anzahl angezeigter Einträge
-    var gridRowNum =            100;                // Standardmäßige Anzahl angezeigter Einträge
-
-    // jQuery UI Theme
-    var themeUrl =              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/";
-    var defaultTheme =          "overcast";
-    var themeSuffix =           "/jquery-ui.css";
-
     // HQ WebUI Version
-    var version =               "1.4.0";
+    var version =               "1.4.1";
 
     var statesXML,
         variablesXML,
@@ -90,7 +75,42 @@ $("document").ready(function () {
     getTheme();
 
     $("ul.tabsPanel li a img").hide();
-    $("#tabs").tabs();
+
+
+    var tabs = $('#tabs');
+
+    var tab_a_selector = 'ul.ui-tabs-nav a';
+
+    var tabChange = false;
+
+    tabs.tabs({
+        select: function(event, ui) {
+            if (!tabChange) {
+                history.pushState({}, "", $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href"));
+            } else {
+                tabChange = false;
+            }
+
+        }
+    });
+
+
+
+    $(window).bind( 'hashchange', function(e) {
+        console.log("change");
+        tabChange = true;
+        tabs.tabs('select', window.location.hash);
+    });
+
+//    $(window).trigger( 'hashchange' );
+
+
+
+
+
+
+
+
     $("button").button();
 
     $("ul.tabsPanel").append("<button value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ")
@@ -117,7 +137,12 @@ $("document").ready(function () {
             xmlapiGetFunctions();
         });
     $(".smallButton span.ui-icon").css("margin-left", "-9px").css("margin-top", "-9px");
-
+    $("button#hmRunScript").button({
+        icons: { primary: "ui-icon-play" }
+    });
+    $("button#hmNewScript").button({
+        icons: { primary: "ui-icon-document" }
+    });
     xmlapiGetFavorites();
 
 
@@ -139,6 +164,8 @@ $("document").ready(function () {
         'max',
         'type',
         'Typ',
+        'Sichtbar',
+        'Protokolliert',
         'Zeitstempel'
     ];
     var colModelVariables = [
@@ -210,6 +237,18 @@ $("document").ready(function () {
                 return formatVarType(val);
             }
         },
+        {name:'visible', index:'visible', width: 40,
+            xmlmap: function (obj) {
+                return $(obj).attr('visible');
+            },
+            formatter: formatBool
+        },
+        {name:'logged', index:'logged', width: 40,
+            xmlmap: function (obj) {
+                return $(obj).attr('logged');
+            },
+            formatter: formatBool
+        },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
@@ -243,7 +282,8 @@ $("document").ready(function () {
         {name:'active', index:'active', width: 40,
             xmlmap: function (obj) {
                 return $(obj).attr('active');
-            }
+            },
+            formatter: formatBool
         },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
@@ -579,12 +619,14 @@ $("document").ready(function () {
         {name:'RX', index:'RX', width: 60,
             xmlmap: function (obj) {
                 return $(obj).attr('rx');
-            }
+            },
+            formatter: formatRssi
         },
         {name:'TX', index:'TX', width: 60,
             xmlmap: function (obj) {
                 return $(obj).attr('tx');
-            }
+            },
+            formatter: formatRssi
         },
         {name:'aes', index:'aes', width: 60,
             xmlmap: function (obj) {
@@ -592,14 +634,15 @@ $("document").ready(function () {
                 var aes = devicesXMLObj.find("device[address='" + device + "'] channel:first").attr("aes_available");
 
                 return aes;
-            }
+            },
+            formatter: formatBool
         },
         {name:'mode', index:'mode', width: 60,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
                 var mode = devicesXMLObj.find("device[address='" + device + "'] channel:first").attr("transmission_mode");
                 if (mode == "AES") {
-                    mode = '<span style="display:inline-block; align:bottom" class="ui-icon ui-icon-locked"></span> <span style="position:relative; top: -3px;">' + mode + '</span>';
+                    mode = '<span style="display:inline-block; align:bottom" class="ui-icon ui-icon-key"></span> <span style="position:relative; top: -3px;">' + mode + '</span>';
                 }
                 return mode;
             }
@@ -1148,8 +1191,8 @@ $("document").ready(function () {
             var htmlContainer = "";
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name")
-            htmlContainer += "<h3>" + name + "</h3><div id='fav" + fav_id + "'></div>";
-            $("div#accordionFavorites").append(htmlContainer);
+            htmlContainer += "<h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'></div>";
+            $("div#accordionFavorites").prepend(htmlContainer);
 
             favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
                 var html = "";
@@ -1192,7 +1235,7 @@ $("document").ready(function () {
                                     html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
                                     html += "</div>";
                                     $("div[id='favItem" + channelId + "']").append(html);
-                                    $("#favInputText" + var_id).eyup(function(e) {
+                                    $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + var_id).val());
                                         }
@@ -1208,11 +1251,18 @@ $("document").ready(function () {
 
                         break;
                     case 'PROGRAM':
-                        html += "<br>" + $(this).attr("ise_id") + "<br>";
+                        html += "<div class='favStartProgram'><button id='favProgram"+ $(this).attr("ise_id") +"'>Ausführen</button></div>";
                         $("div[id='favItem" + channelId + "']").append(html);
+
+                        $("button[id='favProgram"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
+                            xmlapiRunProgram($(this).attr("ise_id"));
+                        });
                         break;
                     case 'CHANNEL':
                         var firstDP = true;
+
+                        $("div[id='favItem" + channelId + "']").append("<div class='favInput'></div>");
+
                         $(this).find("datapoint").each(function () {
 
                             var name = $(this).attr("name").split(".");
@@ -1231,18 +1281,16 @@ $("document").ready(function () {
                                     } else {
                                         checkedOff = " checked='checked'";
                                     }
-                                    html += "<div class='favInput'>";
-                                    html +=     "<div class='favInputRadio' id='favRadio" + id + "'>";
-                                    html +=         "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                    html +=         "<label for='favRadioOff" + id + "'>Aus</label>";
-                                    html +=         "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                    html +=         "<label for='favRadioOn" + id + "'>An</label>";
-                                    html +=     "</div>";
+                                    html += "<div class='favInputRadio' id='favRadio" + id + "'>";
+                                    html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                    html += "<label for='favRadioOff" + id + "'>Aus</label>";
+                                    html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                    html += "<label for='favRadioOn" + id + "'>An</label>";
                                     html += "</div>";
-                                    if (!firstDP) { $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; clear:both; height: 43px;'><br>"); }
+                                    if (!firstDP) { }
                                     firstDP = false;
 
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
 
                                     $("input#favRadioOn" + id).change(function (eventdata, handler) {
                                         if ($(this).is(":checked")) {
@@ -1257,14 +1305,12 @@ $("document").ready(function () {
                                     break;
                                 case 'LEVEL':
                                     var value = $(this).attr("value");
-                                    html += "<div class='favInput'>";
                                     html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
                                     html +=     "</div>";
-                                    html += "</div>";
                                     if (!firstDP) { $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; clear:both; height: 43px;'><br>"); }
                                     firstDP = false;
 
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
                                     $("#favSlider" + id).slider({
                                         min: 0.00,
                                         max: 1.00,
@@ -1761,6 +1807,22 @@ $("document").ready(function () {
         dialogAjaxError.dialog("open");
     };
 
+    function formatBool(val) {
+        if (val == "true") {
+            return "<span class='ui-icon ui-icon-check'></span>"
+        } else {
+            return "";
+        }
+    }
+
+    function formatRssi(val) {
+        if (val == 65536) {
+            return "";
+        } else {
+            return val;
+        }
+    }
+
     function formatVarType(subtype) {
         switch (subtype) {
             case "6":
@@ -1784,6 +1846,9 @@ $("document").ready(function () {
     }
 
     function formatTimestamp(timestamp) {
+        if (timestamp == 0) {
+            return "";
+        }
         var dateObj = new Date();
         if (timestamp != undefined) {
             dateObj.setTime(timestamp + "000");
@@ -1808,6 +1873,7 @@ $("document").ready(function () {
     function changeTheme(theme) {
         storage.set('hqWebUiTheme', theme);
         $("#theme").attr("href", themeUrl + theme + themeSuffix);
+        setTimeout("scriptEditorStyle",1500);
     }
 
     function getTheme() {
@@ -1874,24 +1940,29 @@ function scriptChange() {
 }
 
 function scriptEditorReady() {
+    scriptEditorStyle();
 
-    //alert($(".ui-jqgrid-titlebar").css("background-color"));
-    $("#frame_hmScript").contents().find(".area_toolbar").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+    // Gespeicherte Scripte laden
     var scripts = JSON.parse(storage.get('hqWebUiScripts'));
     for (var key in scripts) {
         var new_file= {id: key, text: scripts[key], syntax: 'hmscript'};
         editAreaLoader.openFile('hmScript', new_file);
-
     }
 
+}
 
+function scriptEditorStyle() {
+    // Umstylen... Pfusch...
+    $("#frame_hmScript").contents().find("#toolbar_1").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+    $("#frame_hmScript").contents().find("#toolbar_1").css("background", $(".ui-jqgrid-titlebar").css("background"));
+    $("#frame_hmScript").contents().find("#toolbar_1").css("color", $(".ui-jqgrid-titlebar").css("color"));
+    $("#frame_hmScript").contents().find("#toolbar_2").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+    $("#frame_hmScript").contents().find("#toolbar_2").css("background", $(".ui-jqgrid-titlebar").css("background"));
+    $("#frame_hmScript").contents().find("#toolbar_2").css("color", $(".ui-jqgrid-titlebar").css("color"));
+    $("#frame_hmScript").contents().find("#tab_browsing_area").css("background-color", $("#gridScriptVariables_variable").css("background-color"));
+    $("#frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
+    $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
-     //$("#frame_hmScript").contents().find("#toolbar_1").append("<button id='scriptEditorRun' class='smallButton' style='float: right; height: 20px; margin-top:1px;'><span style='position: relative; top:-3px;'>Script ausführen</span></button>");
-    // $("#frame_hmScript").contents().find("#toolbar_1").addClass("ui-widget-header ui-corner-top").css("height", "29px");
-    // $("#frame_hmScript").contents().find("#tab_browsing_area").addClass("ui-widget-header").css("height", "29px");
-    //$("#frame_hmScript").contents().find("#scriptEditorRun").button({
-    //    icons: { primary: "ui-icon-play" }
-    //});
 }
 
 function scriptEditorSave() {

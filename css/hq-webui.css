@@ -2,7 +2,9 @@ body {
     font-size: 0.7em;
     background-color: #555;
 }
+div.favPane {
 
+}
 div#container {
     width: 1070px;
 }
@@ -14,8 +16,9 @@ div#container, div#tabs, div#tabFavorites {
 div.favItem {
     padding: 5px;
     margin: 5px;
-    width: 400px;
+    width: 460px;
     min-height: 28px;
+    float: left;
 }
 
 div.favName {
@@ -25,7 +28,7 @@ div.favName {
     font-size: 1.1em;
 }
 
-div.favInput {
+div.favInput, div.favStartProgram {
     float: right;
     display: inline;
     min-height: 24px;
@@ -38,6 +41,9 @@ div.favInputSlider {
     top: 8px;
     right: 5px;
 
+}
+div.favStartProgram button {
+    height: 28px;
 }
 .ui-jqgrid tr.jqgrow td.ise_id {
     padding-right: 10px;
@@ -70,6 +76,6 @@ li a:focus {
 }
 
 .smallButton {
-    width: 22px; height: 22px;
+    width: 29px; height: 26px;
 }
 

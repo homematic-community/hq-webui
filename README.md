@@ -1,16 +1,22 @@
 HQ WebUI
 ========
-Alternatives leichtgewichtiges und schnelles WebUI zur Bedienung der Homematic CCU.
+Leichtgewichtiges und schnelles Webfrontend zur Bedienung der Homematic CCU.
 
 Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
-Die Idee hinter diesem WebUI ist nicht das originale vollständig zu ersetzen, es ist vielmehr als schnelles ergänzendes GUI für den Homematic-"Administrator" gedacht der komfortabel und schnell einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen muss oder Ähnliches.
-
+Die Idee hinter diesem WebUI ist nicht das originale Homematic WebUI vollständig zu ersetzen, es ist vielmehr als schnelle ergänzende Oberfläche für den Homematic-"Administrator" gedacht der komfortabel und schnell z.B. einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen oder ein Script erstellen will.
 Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq9) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
+Getestet wird das HQ WebUI mit Google Chrome, Firefox und Safari. Opera und dem Internet Explorer wird keine Beachtung geschenkt, vielleicht funktioniert es, wenn nicht - Pech.
+
+Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werden, allerdings ohne jegliche Garantien, die Benutzung erfolgt auf eigenes Risiko. Bei einer Weiterverbreitung bitte dieses Readme beibehalten!
+
+Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind jederzeit willkommen!
+
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
+
 
 Installation
 ============
@@ -30,19 +36,49 @@ Ohne Installation auf der CCU
 -----------------------------
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
 In der Datei "hq-webui.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
+_Achtung Firefox-Benutzer_: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
 
 
 Bedienung
 =========
+Allgemein
+---------
 Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
-Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren, Programme werden auch über Doppelklick auf die Tabellenzeile gestartet.
-In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar. Analog dazu befinden sich auch in der Raum und Gewerkeliste diese Aufklapp-Buttons.
+
+Favoriten
+---------
 Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei hq-webui.js entsprechend angepasst werden.
-Bitte nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art von Cookie im Browser und kann durchaus mal verloren gehen.
+Die Favoritenansicht ist fix zwei-spaltig und zeigt leider keine "Separatoren" an.
+
+Geräte und Variablen
+--------------------
+In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
+Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren.
+
+Programme
+---------
+Programme werden über Doppelklick auf die Tabellenzeile gestartet.
+
+Script-Editor
+-------------
+Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann durchaus mal verloren gehen.
+
+
+
 
 Changelog
 =========
 
+1.4.1
+-----
+* separates Config-File: config.js im Unterordner js
+* diverse Icons
+* neue Spalten Sichtbar und Protokolliert in Variablen-Ansicht
+* div. kleine Änderungen an den Grid-Formattern
+* Favoriten werden jetzt zweispaltig angezeigt
+* Navigation mit vor und zurück Buttons ist jetzt möglich
+* Fehler in hq-webui.js behoben der dazu führte dass die Favoriten in Firefox nicht korrekt dargestellt wurden
+* in der Favoritenansicht können nun Programme gestartet werden
 
 1.4.0
 -----
@@ -130,18 +166,23 @@ Changelog
 * Tab Geräte entfernt, Tab Status in Geräte umbenannt
 
 
+
+Todo/Bekannte Fehler
+====================
+* Variablen vom Typ Zeichenkette lassen sich nicht editieren
+* Tastendruck (Datenpunkttypen PRESS_SHORT und PRESS_LONG) lässt sich nicht auslösen
+
+
 Todo/Ideen
 ==========
 
+* Überflüssige Dateien im Verzeichnis edit_area entfernen
+* Favoriten: Variablen-Einheiten anzeigen
 * Refresh-Button für Räume, Gewerke und Geräte
 * Tastenkürzel für Buttons in Scriptkonsole
-* Header und Footer des areaedit mit jQuery UI Styles und Icons umbauen
 * Sortierung Scriptkonsole-Variablen fixen
-* STDOUT Fenter hübscher machen (gleicher Header und Rahmen wie Variablengrid darunter, auch zum zuklappen)
-* Speichern und Laden von Scripten
 * Datenpunkte: Slider beim editieren fertigstellen
 * Warnzeichen im Geräte-Reiter wenn Service-Meldungen vorhanden sind
-* Theme-Button -> Icon statt Text
 * Favoriten: Anzeige von mehr Datenpunkttypen
 * Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
 * Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
@@ -154,13 +195,15 @@ Todo/Ideen
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
 * Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
+* Dienste starten/stoppen (ftpd etc)
+* Shell integrieren? (eigentlich reicht mir ein telnet-Fenster ja)
+* erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)
 * Auth?
 * Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
 
 
-Verwendete Software
-===================
-
+in HQ WebUI verwendete Software
+===============================
 * jQuery http://jquery.com/
 * jQuery UI http://jqueryui.com/
 * jqGrid http://www.trirand.com/blog/
@@ -168,6 +211,20 @@ Verwendete Software
 * lostorage.js https://github.com/js-coder/loStorage.js
 
 
-Lizenz
-======
-GNU GPL v3
+Copyright, Lizenz, Bedingungen
+==============================
+HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
+
+Copyright (C) 2012 hobbyquaker https://github.com/hobbyquaker
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+Version 3 as published by the Free Software Foundation.
+
+http://www.gnu.org/licenses/gpl.html
+
+_deutsche Übersetzung_: http://www.gnu.de/documents/gpl.de.html
+
+Please keep this Readme File when redistributing this Software!
+
+This software comes without any warranty, use it at your own risk!
