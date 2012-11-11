@@ -36,7 +36,7 @@ Ohne Installation auf der CCU
 -----------------------------
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
 In der Datei "config.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
-*Achtung Firefox-Benutzer*: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
+**Achtung Firefox-Benutzer**: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
 
 
 Bedienung
@@ -222,7 +222,7 @@ Version 3 as published by the Free Software Foundation.
 
 http://www.gnu.org/licenses/gpl.html
 
-_deutsche Übersetzung_: http://www.gnu.de/documents/gpl.de.html
+**deutsche Übersetzung**: http://www.gnu.de/documents/gpl.de.html
 
 Please keep this Readme File when redistributing this Software!
 
