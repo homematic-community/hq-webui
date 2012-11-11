@@ -66,7 +66,7 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 
 Todo/Bekannte Fehler
 ====================
-* Script-Editor buggt im Firefox, macht ihn unbenutzbar. Fehler in edit_area/autocompletion.js
+* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js
 * Variablen vom Typ Zeichenkette lassen sich nicht editieren
 
 
@@ -106,6 +106,11 @@ Todo/Ideen
 
 Changelog
 =========
+
+1.4.4
+-----
+* Fehler behoben der bewirkte dass ein Grid überflüssigerweise erneut die index.html geladen hat
+* Autocompletion im Firefox erstmal deaktiviert - so ist die Scriptkonsole wenigstens benutzbar
 
 1.4.3
 -----

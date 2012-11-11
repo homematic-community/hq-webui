@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "1.4.3";
+    var version =               "1.4.4";
 
     var statesXML,
         variablesXML,
@@ -910,11 +910,12 @@ $("document").ready(function () {
             {name: 'key', index:'key', width:120, sortable: false},
             {name: 'value', index: 'value', width: 600, sortable: false}
         ],
-        rowNum: 10000,
+        rowNum: 9998,
         viewrecords:    true,
         gridview:       true,
         caption:        'Info',
         ignoreCase: true,
+        datatype: 'local'
 
 
     });
@@ -927,7 +928,7 @@ $("document").ready(function () {
             {name:'variable', index:'variable', width: 80},
             {name: 'value', index: 'value', width: 200}
         ],
-        rowNum:         10000,
+        rowNum:         9997,
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
@@ -981,7 +982,7 @@ $("document").ready(function () {
             },
             gridview:true,
             height: "100%",
-            rowNum:10000,
+            rowNum:9999,
             ondblClickRow: function (id) {
                 var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
                 $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
@@ -1927,13 +1928,11 @@ $("document").ready(function () {
          $("#theme").attr("href", hqConf["themeUrl"] + theme + hqConf["themeSuffix"]);
     }
 
-    editAreaLoader.init({
+    var editAreaInit = {
         id: "hmScript",
         start_highlight: true,
         is_multi_files: true,
         word_wrap: true,
-        plugins: 'autocompletion',
-        autocompletion: true,
         font_size: "10",
         allow_resize: "no",
         allow_toggle: false,
@@ -1950,7 +1949,15 @@ $("document").ready(function () {
         new_document_callback: "scriptEditorNew",
         EA_file_close_callback: "scriptFileClose",
         change_callback: "scriptChange"
-    });
+    }
+
+    // Autocompletion im Mozilla erstmal deaktiviert. Fehler in autocompletion.js muss erst behoben werden.
+    if (!$.browser.mozilla) {
+        editAreaInit['plugins'] = 'autocompletion';
+        editAreaInit['autocompletion'] = true;
+    }
+
+    editAreaLoader.init(editAreaInit);
 
 
 
