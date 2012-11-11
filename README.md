@@ -78,6 +78,8 @@ Todo/Ideen
 * Favoriten: Variablen-Einheiten anzeigen
 * Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Tastenkürzel für Buttons in Scriptkonsole
+* rssilist Sortierung nach RX/TX fehlerhaft
+* rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
 * Mehr Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
 * Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * Tab Favoriten: Manueller Refresh
