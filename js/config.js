@@ -6,7 +6,7 @@
 
 // Hier die URL der CCU eintragen (z.B.: 'http://172.16.23.3')
 // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
-var ccuUrl =                'http://172.16.23.3';
+var ccuUrl =                '';
 
 // Pfad zur xmlapi
 var xmlapiPath =            "/config/xmlapi";
