@@ -36,7 +36,7 @@ Ohne Installation auf der CCU
 -----------------------------
 Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
 In der Datei "config.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
-_Achtung Firefox-Benutzer_: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
+*Achtung Firefox-Benutzer*: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
 
 
 Bedienung
@@ -47,7 +47,7 @@ Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Da
 
 Favoriten
 ---------
-Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei hq-webui.js entsprechend angepasst werden.
+Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei config.js entsprechend angepasst werden.
 Die Favoritenansicht ist fix zwei-spaltig und zeigt leider keine "Separatoren" an.
 
 Geräte und Variablen
