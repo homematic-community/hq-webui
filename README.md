@@ -67,6 +67,7 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Todo/Bekannte Fehler
 ====================
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js
+* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 * Variablen vom Typ Zeichenkette lassen sich nicht editieren
 
 
