@@ -69,6 +69,10 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
+1.4.3
+-----
+* Datenpunkt-Edit-Dialog überarbeitet, Slider, Input und Radio verhalten sich nun so wie man es erwartet
+
 1.4.2
 -----
 * Favoriten: langen und kurzen Tastendruck hinzugefügt

@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "1.4.2";
+    var version =               "1.4.3";
 
     var statesXML,
         variablesXML,
@@ -996,6 +996,7 @@ $("document").ready(function () {
                             "<input type='radio' name='radioDatapoint' id='radioDatapointOn'><label for='radioDatapointOn'>An</label>" +
                             "</div><br>" +
                             "<input type='text' id='datapointValue' value='" + value + "'>");
+
                         $("#radioDatapoint").buttonset();
                         $("#sliderDatapoint").slider({
                             min: 0.00,
@@ -1006,6 +1007,16 @@ $("document").ready(function () {
                                 value = ui.value;
                                 $("input#datapointValue").val(ui.value);
                             }
+                        });$("#radioDatapointOff").click(function () {
+                            $("#datapointValue").val("0.00");
+                            $("#sliderDatapoint").slider('value', 0.00);
+                        });
+                        $("#radioDatapointOn").click(function () {
+                            $("#datapointValue").val("1.00");
+                            $("#sliderDatapoint").slider('value', 1.00);
+                        });
+                        $("#datapointValue").change(function () {
+                            $("#sliderDatapoint").slider('value', $("#datapointValue").val());
                         });
                         break;
                     default:
@@ -1658,10 +1669,10 @@ $("document").ready(function () {
                 datapoint_id: ise_id
             },
             success: function (data) {
-               // $("#" + grid_id).find("tr#" + ise_id + " td[aria-describedby$='value']").html($(data).text());
-                $("tr#" + ise_id + " td[aria-describedby$='value']").each(function () {
-                    $(this).html($(data).text());
-                });
+               $("tr#" + ise_id + " td[aria-describedby$='value']").each(function () {
+                    var value = $(data).text()
+                    $(this).html(value);
+               });
                 // Todo - neuen Wert in statesXML schreiben!
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
