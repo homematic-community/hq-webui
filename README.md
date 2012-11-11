@@ -77,25 +77,22 @@ Todo/Ideen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Favoriten: Variablen-Einheiten anzeigen
 * Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
-* Refresh-Button für Räume, Gewerke und Geräte
 * Tastenkürzel für Buttons in Scriptkonsole
 * Datenpunkte: Slider beim editieren fertigstellen
 * Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
-* Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * Tab Favoriten: Manueller Refresh
 * Favoriten: Auswahlmöglichkeit für angezeigten User?
-* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
-* Warnzeichen für Alarmmeldungen? Wo unterbringen?
 * Favoriten: nicht bedienbare disablen
 * Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
 * Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
 * Dienste starten/stoppen (ftpd etc)
-* Shell integrieren? (eigentlich reicht mir ein telnet-Fenster ja)
-* erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)
+* Shell integrieren? (eigentlich reicht mir ein "normales" telnet ja - also eher nicht)
+* möglichkeit erweiterte erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
 * Auth?
 * Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
 
 
 
