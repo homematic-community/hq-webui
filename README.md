@@ -78,12 +78,12 @@ Todo/Ideen
 * Favoriten: Variablen-Einheiten anzeigen
 * Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Tastenkürzel für Buttons in Scriptkonsole
-* Datenpunkte: Slider beim editieren fertigstellen
-* Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
+* Mehr Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
 * Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * Tab Favoriten: Manueller Refresh
 * Favoriten: Auswahlmöglichkeit für angezeigten User?
 * Favoriten: nicht bedienbare disablen
+* Scripteditor: Links auf die HM-Script Dokumentation, das Forum, hm-inside, ... als 3. Button (zum aufklappen)?
 * Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
 * Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
