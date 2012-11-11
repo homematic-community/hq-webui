@@ -73,6 +73,7 @@ Todo/Bekannte Fehler
 Todo/Ideen
 ==========
 
+* Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Favoriten: Variablen-Einheiten anzeigen
