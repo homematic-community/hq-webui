@@ -2,6 +2,7 @@ HQ WebUI
 ========
 Leichtgewichtiges und schnelles Webfrontend zur Bedienung der Homematic CCU.
 
+
 Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
 
 Die Idee hinter diesem WebUI ist nicht das originale Homematic WebUI vollständig zu ersetzen, es ist vielmehr als schnelle ergänzende Oberfläche für den Homematic-"Administrator" gedacht der komfortabel und schnell z.B. einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen oder ein Script erstellen will.
@@ -16,6 +17,10 @@ Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werde
 Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind jederzeit willkommen!
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
+
+
+* auto-gen TOC:
+{:toc}
 
 
 Installation
@@ -63,6 +68,38 @@ Script-Editor
 -------------
 Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann durchaus mal verloren gehen.
 
+Todo/Bekannte Fehler
+====================
+* Script-Editor buggt im Firefox, macht ihn unbenutzbar. Fehler in edit_area/autocompletion.js
+* Variablen vom Typ Zeichenkette lassen sich nicht editieren
+
+
+Todo/Ideen
+==========
+
+* Überflüssige Dateien im Verzeichnis edit_area entfernen
+* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
+* Favoriten: Variablen-Einheiten anzeigen
+* Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
+* Refresh-Button für Räume, Gewerke und Geräte
+* Tastenkürzel für Buttons in Scriptkonsole
+* Datenpunkte: Slider beim editieren fertigstellen
+* Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
+* Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+* Tab Favoriten: Manueller Refresh
+* Favoriten: Auswahlmöglichkeit für angezeigten User?
+* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
+* Warnzeichen für Alarmmeldungen? Wo unterbringen?
+* Favoriten: nicht bedienbare disablen
+* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
+* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
+* Dienste starten/stoppen (ftpd etc)
+* Shell integrieren? (eigentlich reicht mir ein telnet-Fenster ja)
+* erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)
+* Auth?
+* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
 
 
 
@@ -72,6 +109,8 @@ Changelog
 1.4.3
 -----
 * Datenpunkt-Edit-Dialog überarbeitet, Slider, Input und Radio verhalten sich nun so wie man es erwartet
+* Neuer Punkt in der Info-Tabelle: CCU Batteriestatus
+* Sortierung der Variablen in Scriptkonsole gefixt
 
 1.4.2
 -----
@@ -178,39 +217,6 @@ Changelog
 * Tab Geräte entfernt, Tab Status in Geräte umbenannt
 
 
-
-Todo/Bekannte Fehler
-====================
-* Script-Editor buggt im Firefox, macht ihn unbenutzbar. Fehler in edit_area/autocompletion.js
-* Sortierung der Variablen in der Scriptkonsole funktionert nicht
-* Variablen vom Typ Zeichenkette lassen sich nicht editieren
-
-
-Todo/Ideen
-==========
-
-* Überflüssige Dateien im Verzeichnis edit_area entfernen
-* Favoriten: Variablen-Einheiten anzeigen
-* Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
-* Refresh-Button für Räume, Gewerke und Geräte
-* Tastenkürzel für Buttons in Scriptkonsole
-* Datenpunkte: Slider beim editieren fertigstellen
-* Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
-* Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
-* Tab Favoriten: Manueller Refresh
-* Favoriten: Auswahlmöglichkeit für angezeigten User?
-* Datenpunkte: angepasste Darstellung je nach Gerätetyp?
-* Warnzeichen für Alarmmeldungen? Wo unterbringen?
-* Favoriten: nicht bedienbare disablen
-* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches entfernen der ccuUrl
-* Programme aktivieren/deaktivieren? Geräte sperren? Raumthermostat Modus setzen? Servicemeldungen bestätigen? (xmlrpc?)
-* Dienste starten/stoppen (ftpd etc)
-* Shell integrieren? (eigentlich reicht mir ein telnet-Fenster ja)
-* erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)
-* Auth?
-* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen?
 
 
 in HQ WebUI verwendete Software

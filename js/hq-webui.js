@@ -931,7 +931,10 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
-        datatype:       'json',
+        datatype:       'local',
+        loadComplete: function() {
+            gridScriptVariables.trigger("reloadGrid"); // Call to fix client-side sorting
+        },
         loadonce:       true,
         data: {
         },
@@ -1139,9 +1142,12 @@ $("document").ready(function () {
                     statesXML = data;
                     statesXMLObj = $(data);
                     $("#loaderStates").hide();
+                    var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
+                    ccuBat = ccuBat.toFixed(2);
                     addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
                     addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
                     addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
+                    addInfo("CCU Batteriestatus", ccuBat + "%");
                     if (statesXMLObj.find("channel[name$=':0'] datapoint[valuetype='2'][value='true']").length > 0) {
                         $("#service").show();
                     } else {
