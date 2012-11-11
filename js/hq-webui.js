@@ -2,9 +2,9 @@
  *  HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
  *  https://github.com/hobbyquaker/hq-webui/
  *
- *  Copyright (C) 2012 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2012 hobbyquaker https://github.com/hobbyquaker
  *
- *  This program is free software; you can redistribute it and/or
+ *  This Software is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
  *  Version 3 as published by the Free Software Foundation.
  *  http://www.gnu.org/licenses/gpl.html
@@ -17,12 +17,11 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "1.4.1";
+    var version =               "1.4.2";
 
     var statesXML,
         variablesXML,
         programsXML,
-        rssiXML,
         functionsXML,
         roomsXML,
         devicesXML,
@@ -30,7 +29,6 @@ $("document").ready(function () {
         statesXMLObj,
         variablesXMLObj,
         programsXMLObj,
-        rssiXMLObj,
         functionsXMLObj,
         roomsXMLObj,
         devicesXMLObj,
@@ -72,17 +70,15 @@ $("document").ready(function () {
     var dialogEditDatapoint =   $("#dialogEditDatapoint");
     var dialogSelectTheme =     $("#dialogSelectTheme");
 
+    var tabs = $('#tabs');
+
     getTheme();
 
     $("ul.tabsPanel li a img").hide();
-
-
-    var tabs = $('#tabs');
-
-    var tab_a_selector = 'ul.ui-tabs-nav a';
+    $("#service").hide();
+    $("#alarm").hide();
 
     var tabChange = false;
-
     tabs.tabs({
         select: function(event, ui) {
             if (!tabChange) {
@@ -94,29 +90,17 @@ $("document").ready(function () {
         }
     });
 
-
-
     $(window).bind( 'hashchange', function(e) {
         console.log("change");
         tabChange = true;
         tabs.tabs('select', window.location.hash);
     });
 
-//    $(window).trigger( 'hashchange' );
-
-
-
-
-
-
-
 
     $("button").button();
 
     $("ul.tabsPanel").append("<button value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ")
         .append("<button value='Geräte, Räume und Gewerke aktualisieren' class='smallButton' style='float:right' id='buttonClearCache'></button> ");
-
-
 
     $("#buttonSelectTheme").button({
         icons: { primary: "ui-icon-gear" },
@@ -696,11 +680,11 @@ $("document").ready(function () {
     xmlapiGetVersion();
 
     gridVariables.jqGrid({
-        width: gridWidth, height: gridHeight,
+        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesVariables,
         colModel: colModelVariables,
         pager: "#gridPagerVariables",
-        rowList: gridRowList, rowNum: gridRowNum, 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
@@ -756,11 +740,11 @@ $("document").ready(function () {
         });
 
     gridPrograms.jqGrid({
-        width: gridWidth, height: gridHeight,
+        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesPrograms,
         colModel: colModelPrograms,
         pager: "#gridPagerPrograms",
-        rowList: gridRowList, rowNum: gridRowNum, 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
@@ -798,11 +782,11 @@ $("document").ready(function () {
         });
 
     gridStates.jqGrid({
-        width: gridWidth, height: gridHeight,
+        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames:colNamesStates,
         colModel :colModelStates,
         pager: "#gridPagerStates",
-        rowList: gridRowList, rowNum: gridRowNum, 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
         viewrecords:    true,
         gridview:       true,
         caption:        'Geräte',
@@ -837,11 +821,11 @@ $("document").ready(function () {
         });
 
     gridRssi.jqGrid({
-        width: gridWidth, height: gridHeight,
+        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames:colNamesRssi,
         colModel :colModelRssi,
         pager: "#gridPagerRssi",
-        rowList: gridRowList, rowNum: gridRowNum, 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
         viewrecords:    true,
         gridview:       true,
         caption:        'RSSI',
@@ -873,12 +857,12 @@ $("document").ready(function () {
         });
 
     gridProtocol.jqGrid({
-        width: gridWidth,
-        height: gridHeight,
+        width: hqConf["gridWidth"],
+        height: hqConf["gridHeight"],
         colNames:colNamesProtocol,
         colModel :colModelProtocol,
         pager: "#gridPagerProtocol",
-        rowList: gridRowList, rowNum: gridRowNum, 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
@@ -919,8 +903,8 @@ $("document").ready(function () {
         });
 
     gridInfo.jqGrid({
-        width: gridWidth,
-        height: gridHeight,
+        width: hqConf["gridWidth"],
+        height: hqConf["gridHeight"],
         colNames: ['',''],
         colModel: [
             {name: 'key', index:'key', width:120, sortable: false},
@@ -1082,7 +1066,7 @@ $("document").ready(function () {
         $("#loaderVariables").show();
         variablesReady = false;
         gridVariables.setGridParam({
-            url: ccuUrl + xmlapiPath + '/sysvarlist.cgi?text=true',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/sysvarlist.cgi?text=true',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1093,6 +1077,11 @@ $("document").ready(function () {
                     variablesXMLObj = $(data);
                     $("#loaderVariables").hide();
                     addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
+                    if (variablesXMLObj.find("systemVariable[subtype='6'][value='true']").length > 0) {
+                       $("#alarm").show();
+                    } else {
+                        $("#alarm").hide();
+                    }
 
                 }
                 if (!programsReady) {
@@ -1106,7 +1095,7 @@ $("document").ready(function () {
         $("#loaderPrograms").show();
         programsReady = false;
         gridPrograms.setGridParam({
-            url: ccuUrl + xmlapiPath + '/programlist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/programlist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1129,7 +1118,7 @@ $("document").ready(function () {
         $("#loaderStates").show();
         statesReady = false;
         gridStates.setGridParam({
-            url: ccuUrl + xmlapiPath + '/statelist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/statelist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1142,6 +1131,11 @@ $("document").ready(function () {
                     addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
                     addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
                     addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
+                    if (statesXMLObj.find("channel[name$=':0'] datapoint[valuetype='2'][value='true']").length > 0) {
+                        $("#service").show();
+                    } else {
+                        $("#serivce").hide();
+                    }
                 }
                 if (!rssiReady) {
                     refreshRssi();
@@ -1154,7 +1148,7 @@ $("document").ready(function () {
         $("#loaderProtocol").show();
         protocolReady = false;
         gridProtocol.setGridParam({
-            url: ccuUrl + xmlapiPath + '/protocol.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/protocol.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1172,7 +1166,7 @@ $("document").ready(function () {
         $("#loaderRssi").show();
         rssiReady = false;
         gridRssi.setGridParam({
-            url: ccuUrl + xmlapiPath + '/rssilist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/rssilist.cgi',
             loadonce: false,
             datatype: 'xml',
             mtype: 'GET',
@@ -1187,7 +1181,7 @@ $("document").ready(function () {
     }
 
     function buildFavorites() {
-        favoritesXMLObj.find("favorite[name='" + favoriteUsername + "'] channel").each(function () {
+        favoritesXMLObj.find("favorite[name='" + hqConf["favoriteUsername"] + "'] channel").each(function () {
             var htmlContainer = "";
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name")
@@ -1198,6 +1192,7 @@ $("document").ready(function () {
                 var html = "";
                 var channelName = $(this).attr("name");
                 var channelId = $(this).attr("ise_id");
+
                 html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'><div class='favName'>" + channelName + "</div></div>";
                 $("div[id='fav" + fav_id + "']").append(html);
                 html = "";
@@ -1229,6 +1224,18 @@ $("document").ready(function () {
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
                                         xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
+                                    });
+                                    break;
+                                case '0':
+                                    value = parseFloat(value);
+                                    value = value.toFixed(2);
+                                    html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    html += "</div>";
+                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    $("#favInputText" + var_id).keyup(function(e) {
+                                        if(e.keyCode == 13) {
+                                            xmlapiSetState(var_id, $("#favInputText" + var_id).val());
+                                        }
                                     });
                                     break;
                                 default:
@@ -1271,7 +1278,7 @@ $("document").ready(function () {
 
 
                              var id = $(this).attr("ise_id");
-
+                            html = "";
                             switch (type) {
                                 case 'STATE':
                                     var checkedOn = "";
@@ -1307,7 +1314,6 @@ $("document").ready(function () {
                                     var value = $(this).attr("value");
                                     html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
                                     html +=     "</div>";
-                                    if (!firstDP) { $("div[id='favItem" + channelId + "']").append("<div style='width: 100%; clear:both; height: 43px;'><br>"); }
                                     firstDP = false;
 
                                     $("div[id='favItem" + channelId + "'] .favInput").append(html);
@@ -1322,12 +1328,35 @@ $("document").ready(function () {
                                     });
                                     break;
                                 case 'PRESS_SHORT':
-                                    // TODO
-                                    break;
                                 case 'PRESS_LONG':
+                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
+                                        xmlapiSetState($(this).attr("ise_id"), "true");
+                                    });
+
+
+                                    break;
+                                case 'ERROR':
+                                case 'OLD_LEVEL':
+                                case 'RAMP_TIME':
                                     // TODO
                                     break;
+
                                 default:
+                                    var value = $(this).attr("value");
+                                    if (!firstDP) { html += "<br>"; } else { firstDP = false; }
+                                    if (type == "TEMPERATURE") {
+                                        value = parseFloat(value);
+                                        value = value.toFixed(1) + "°C";
+                                    }
+                                    if (type == "HUMIDITY") {
+                                        value = parseFloat(value);
+                                        value = value.toFixed(0) + "%";
+                                    }
+                                    html += "<span class='unknownType'>" + type + ": " + value + "</span>";
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+
 
                             }
 
@@ -1350,7 +1379,7 @@ $("document").ready(function () {
 
         });
         $(".favInputRadio").buttonset();
-
+        $(".favKey").button();
         $("div#accordionFavorites").accordion({ heightStyle: "content" });
 
     }
@@ -1552,7 +1581,7 @@ $("document").ready(function () {
             } else {
 
                 $.ajax({
-                    url: ccuUrl + xmlapiPath + "/scripterrors.cgi",
+                    url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + "/scripterrors.cgi",
                     type: 'GET',
                     success: function (data) {
                         var error = $(data).find("error:last");
@@ -1571,7 +1600,7 @@ $("document").ready(function () {
     /*   XML-API */
     function xmlapiClearProtocol() {
         $.ajax({
-            url: ccuUrl + xmlapiPath + "/protocol.cgi",
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + "/protocol.cgi",
             type: "GET",
             data: {
                 clear: 1
@@ -1585,7 +1614,7 @@ $("document").ready(function () {
 
     function xmlapiRunProgram(program_id) {
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/runprogram.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/runprogram.cgi',
             type: 'GET',
             data: {
                 program_id: program_id
@@ -1599,7 +1628,7 @@ $("document").ready(function () {
 
     function xmlapiSetState(ise_id, new_value, successFunction) {
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/statechange.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/statechange.cgi',
             type: 'GET',
             data: {
                 ise_id: ise_id,
@@ -1622,7 +1651,7 @@ $("document").ready(function () {
 
     function xmlApiGetStateAjax(ise_id, grid_id) {
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/state.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/state.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -1641,7 +1670,7 @@ $("document").ready(function () {
 
     function xmlapiGetVariable(ise_id) {
        $.ajax({
-            url: ccuUrl + xmlapiPath + '/sysvar.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/sysvar.cgi',
             type: 'GET',
             async: false,
             data: {
@@ -1668,7 +1697,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/devicelist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/devicelist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1693,7 +1722,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/functionlist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/functionlist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1717,7 +1746,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/roomlist.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/roomlist.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1734,11 +1763,10 @@ $("document").ready(function () {
     function xmlapiGetFavorites() {
         $("#loaderFavorites").show();
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/favoritelist.cgi?show_datapoint=1',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/favoritelist.cgi?show_datapoint=1',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
-                refreshVariables();
                 favoritesReady = true;
                 favoritesXML = data;
                 favoritesXMLObj = $(data);
@@ -1755,7 +1783,7 @@ $("document").ready(function () {
 
     function xmlapiGetVersion() {
         $.ajax({
-            url: ccuUrl + xmlapiPath + '/version.cgi',
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/version.cgi',
             type: 'GET',
             dataType: 'xml',
             success: function (data) {
@@ -1770,7 +1798,7 @@ $("document").ready(function () {
     function hmRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: ccuUrl + xmlapiPath + "/exec.cgi",
+            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + "/exec.cgi",
             type: 'POST',
             data: script,
             dataType: 'json',
@@ -1872,14 +1900,14 @@ $("document").ready(function () {
 
     function changeTheme(theme) {
         storage.set('hqWebUiTheme', theme);
-        $("#theme").attr("href", themeUrl + theme + themeSuffix);
+        $("#theme").attr("href", hqConf["themeUrl"] + theme + hqConf["themeSuffix"]);
         setTimeout("scriptEditorStyle",1500);
     }
 
     function getTheme() {
         var theme = storage.get("hqWebUiTheme");
-        if (theme === null) { theme = defaultTheme; }
-         $("#theme").attr("href", themeUrl + theme + themeSuffix);
+        if (theme === null) { theme = hqConf["defaultTheme"]; }
+         $("#theme").attr("href", hqConf["themeUrl"] + theme + hqConf["themeSuffix"]);
     }
 
     editAreaLoader.init({

@@ -69,6 +69,14 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
+1.4.2
+-----
+* Favoriten: langen und kurzen Tastendruck hinzugefügt
+* Favoriten: Es werden nun alle Datenpunkte dargestellt
+* config.js überarbeitet - nur noch ein Objekt im globalen Namensraum
+* Servicemeldungen werden als Icon im Geräte-Reiter angezeigt
+* Alarmmeldungen werden als Icon im Variablen-Reiter angezeigt
+
 1.4.1
 -----
 * separates Config-File: config.js im Unterordner js
@@ -169,9 +177,9 @@ Changelog
 
 Todo/Bekannte Fehler
 ====================
-* Variablen vom Typ Zeichenkette lassen sich nicht editieren
 * Script-Editor buggt im Firefox, macht ihn unbenutzbar. Fehler in edit_area/autocompletion.js
 * Sortierung der Variablen in der Scriptkonsole funktionert nicht
+* Variablen vom Typ Zeichenkette lassen sich nicht editieren
 
 
 Todo/Ideen
@@ -179,12 +187,11 @@ Todo/Ideen
 
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * Favoriten: Variablen-Einheiten anzeigen
+* Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Refresh-Button für Räume, Gewerke und Geräte
 * Tastenkürzel für Buttons in Scriptkonsole
 * Datenpunkte: Slider beim editieren fertigstellen
-* Warnzeichen im Geräte-Reiter wenn Service-Meldungen vorhanden sind
-* Favoriten: Anzeige von mehr Datenpunkttypen
-* Icons - Datenpunkt-Typen, True/False, Geräte-Typen, ...
+* Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
 * Intelligenter und Ressourcenschonender Refresh-Mechanismus (-> xmlapi update.cgi brauchbar? state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * Tab Favoriten: Manueller Refresh
 * Favoriten: Auswahlmöglichkeit für angezeigten User?
@@ -215,9 +222,9 @@ Copyright, Lizenz, Bedingungen
 ==============================
 HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
 
-Copyright (C) 2012 hobbyquaker https://github.com/hobbyquaker
+Copyright (c) 2012 hobbyquaker https://github.com/hobbyquaker
 
-This program is free software; you can redistribute it and/or
+This software is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 Version 3 as published by the Free Software Foundation.
 

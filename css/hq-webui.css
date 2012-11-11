@@ -14,10 +14,11 @@ div#container, div#tabs, div#tabFavorites {
 }
 
 div.favItem {
-    padding: 5px;
-    margin: 5px;
-    width: 460px;
-    min-height: 28px;
+    padding: 4px;
+    margin: 4px;
+    width: 466px;
+    height: 28px;
+    overflow: hidden;
     float: left;
 }
 
@@ -28,10 +29,15 @@ div.favName {
     font-size: 1.1em;
 }
 
+.unknownType {
+    font-size: 0.8em;
+    padding-right: 5px;
+}
+
 div.favInput, div.favStartProgram {
     float: right;
     display: inline;
-    min-height: 24px;
+    min-height: 28px;
 }
 
 div.favInputSlider {
@@ -42,8 +48,14 @@ div.favInputSlider {
     right: 5px;
 
 }
-div.favStartProgram button {
+div.favInput {
     height: 28px;
+}
+
+
+
+div.favStartProgram button, div.favInput button {
+   height: 28px;
 }
 .ui-jqgrid tr.jqgrow td.ise_id {
     padding-right: 10px;
@@ -62,6 +74,17 @@ ul.tabsPanel li a span {
     height: 14px;
     display: inline-block;
     vertical-align: text-bottom;
+}
+
+ul.tabsPanel li a span.tabAlert {
+    width: 16px;
+    height:  16px;
+    padding-bottom: -2px;
+    margin-bottom: -2px;
+    position: relative;
+    display: inline-block;
+    top: -1px;
+
 }
 ul.tabsPanel li img {
     padding-left: 5px;
