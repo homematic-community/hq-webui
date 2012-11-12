@@ -604,13 +604,15 @@ $("document").ready(function () {
             xmlmap: function (obj) {
                 return $(obj).attr('rx');
             },
-            formatter: formatRssi
+            formatter: formatRssi,
+            sorttype: 'float'
         },
         {name:'TX', index:'TX', width: 60,
             xmlmap: function (obj) {
                 return $(obj).attr('tx');
             },
-            formatter: formatRssi
+            formatter: formatRssi,
+            sorttype: 'float'
         },
         {name:'aes', index:'aes', width: 60,
             xmlmap: function (obj) {
@@ -714,7 +716,7 @@ $("document").ready(function () {
                 case 'Werteliste':
                     variableInput.html("<select id='variableValue'>" + selectOptions(value_list) + "</select>");
                     if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
-                    $("#variableValue option[value='" + value + "']").attr("selected", true);
+                    $("#variableValue option[text='" + value + "']").attr("selected", true);
                     break;
                 default:
                     variableInput.html("<input type='text' id='variableValue' value='" + value + "'>" + unit);
@@ -1648,6 +1650,8 @@ $("document").ready(function () {
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/statechange.cgi',
             type: 'GET',
+            scriptCharset: "ISO-8859-1",
+            contentType: 'application/x-www-form-urlencoded; charset=ISO-8859-1',
             data: {
                 ise_id: ise_id,
                 new_value: new_value

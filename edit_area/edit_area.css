@@ -12,7 +12,6 @@ body, html, table, form, textarea{
 }
 
 
-
 #editor{
 	overflow: hidden;
 }
@@ -53,6 +52,7 @@ body, html, table, form, textarea{
 	border-width: 0;
 	background-color: transparent;
 	resize: none;
+    color: #fff;
 }
 
 #textarea, #textarea:hover{
@@ -144,8 +144,8 @@ pre{
 }
 
 .hidden{
-	opacity: 0.2; 
-	filter:alpha(opacity=20);
+	opacity: 0.0;
+	filter:alpha(opacity=0);
 }
 
 #result .edit_area_cursor{

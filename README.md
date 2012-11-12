@@ -67,10 +67,8 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Todo/Bekannte Fehler
 ====================
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js
+* Bei der ausführung eines Fehlerhaften Scripts versucht das HQ WebUI die Fehlermeldung in /var/log/messages zu finden. Das funktioniert allerdings nicht wenn man auf einen externen Syslog loggt.
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
-* Variablen vom Typ Zeichenkette lassen sich nicht editieren
-* rssilist Sortierung nach RX/TX fehlerhaft
-
 
 Todo/Ideen
 ==========
@@ -109,9 +107,12 @@ Todo/Ideen
 Changelog
 =========
 
+
+
 1.4.5
 -----
-* diverse kleine Fehlerbehebungen im Script-Editor (der leider immer noch an einigen Stellen buggt)
+* Sortierung der Rssilist nach RX/TX gefixt
+* diverse Fehlerbehebungen im Script-Editor (der leider immer noch an einigen Stellen buggt)
 
 1.4.4
 -----
