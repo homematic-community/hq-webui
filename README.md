@@ -92,11 +92,11 @@ Todo/Ideen
 * Programme aktivieren/deaktivieren?
 * Geräte (ent)sperren?
 * Raumthermostat Modus setzen?
-* Servicemeldungen bestätigen? (xmlrpc?)
+* Servicemeldungen bestätigen?
 * Dienste starten/stoppen (ftpd etc)
 * Shell integrieren? (eigentlich reicht mir ein "normales" telnet ja - also eher nicht)
 * TCL-Script Editor integrieren? (Zusätzlicher Tab, oder im Script-Editor eine Auswahl ob man HMScript oder TCL erstellen möchte) - Top wäre eine Möglichkeit die Scripte gleich auf der CCU zu speichern...
-* Möglichkeit erweiterte erweiterte CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
+* Möglichkeit erweiteterte  CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
 * CCU-Dateibrowser? (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 * Auth?
 * Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen? -> allow-origin nervt - will das ja via XHR machen, also vermutlich bleibts bei xmlapi.
