@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "1.4.5";
+    var version =               "1.4.6";
 
     var statesXML,
         variablesXML,
@@ -1205,7 +1205,7 @@ $("document").ready(function () {
             var htmlContainer = "";
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name")
-            htmlContainer += "<h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'></div>";
+            htmlContainer += "<div id='favContainer" + fav_id + "'><h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'></div></div>";
             $("div#accordionFavorites").prepend(htmlContainer);
 
             favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
@@ -1394,13 +1394,36 @@ $("document").ready(function () {
                 }
 
             });
-
-
-
         });
+        var favSavedOrder = [];
+        favSavedOrder = storage.get("hqWebUiFavOrder").split(",");
+        if (favSavedOrder) {
+            var sortedHtml = "";
+            for (var i in favSavedOrder) {
+                sortedHtml += "<div id='" + favSavedOrder[i] + "'>" + $("#" + favSavedOrder[i]).html() + "</div>";
+            }
+            $("div#accordionFavorites").html(sortedHtml);
+        }
+        $("div#accordionFavorites").accordion({
+            heightStyle: "content",
+            header: "> div > h3"
+        }).sortable({
+                axis: "y",
+                //handle: "h3",
+                stop: function( event, ui ) {
+                    ui.item.children( "h3" ).triggerHandler( "focusout" );
+                },
+                update: function (event, ui) {
+                    var favOrder = [];
+                    var i = 0;
+                    $("div[id^='favContainer']").each(function () {
+                       favOrder[i++] = $(this).attr("id");
+                    });
+                    storage.set("hqWebUiFavOrder", favOrder.join(","));
+                }
+            });
         $(".favInputRadio").buttonset();
         $(".favKey").button();
-        $("div#accordionFavorites").accordion({ heightStyle: "content" });
 
     }
 

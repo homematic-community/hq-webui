@@ -4,7 +4,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="ISO-8859-1">
     <title>HQ WebUI</title>
-
     <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
     <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/overcast/jquery-ui.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
@@ -16,7 +15,6 @@
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
-
 </head>
 <body>
     <div id="container">
@@ -32,99 +30,71 @@
                 <li><a href="#tabInfo">Infos<span class="loader"><img id="loaderInfo" src="img/loader-bright.gif"></span></a></li>
             </ul>
             <div id="tabFavorites">
-
-                <div class="tabToolbar">
-                </div>
-                <div id="accordionFavorites">
-
-                </div>
+                <div id="accordionFavorites"></div>
             </div>
             <div id="tabVariables">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridVariables"></table>
                     <div id="gridPagerVariables"></div>
                 </div>
             </div>
             <div id="tabPrograms">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridPrograms"></table>
                     <div id="gridPagerPrograms"></div>
                 </div>
             </div>
             <div id="tabRooms">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridRooms"></table>
                     <div id="gridPagerRooms"></div>
                 </div>
             </div>
             <div id="tabFunctions">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridFunctions"></table>
                     <div id="gridPagerFunctions"></div>
                 </div>
             </div>
             <div id="tabStates">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridStates"></table>
                     <div id="gridPagerStates"></div>
                 </div>
             </div>
             <div id="tabRssi">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridRssi"></table>
                     <div id="gridPagerRssi"></div>
                 </div>
             </div>
             <div id="tabProtocol">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridProtocol"></table>
                     <div id="gridPagerProtocol"></div>
                 </div>
             </div>
             <div id="tabScript">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
-
                         <textarea id="hmScript" cols="92" rows="40"></textarea>
                     </td><td style="padding-left: 20px;" id="hmScriptTools">
-
                         <button id="hmRunScript">Ausführen</button>
                         <button id="hmNewScript">Neues Skript</button>
                         <button id="hmSaveScript">Sichern</button>
                         <br><br>
-
                         <div class="ui-widget ui-widget-content ui-corner-all" style="background-color: #fff; padding-left: -1px; width: 343px; height: 230px; position: relative">
                             <div class="ui-widget ui-widget-header ui-corner-top" style="width:343px; height: 29px; position:relative; left: -1px; top:-1px;">
                                 <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Script-Ausgabe (STDOUT)</span>
                             </div>
-
                             <div id="hmScriptStdout" style="background-color: #fff; color: #000; height: 199px; overflow: scroll;"></div><br>
                         </div>
                         <br>
-
                         <table id="gridScriptVariables"></table>
                     </td></tr></table>
                </div>
             </div>
             <div id="tabInfo">
-                <div class="tabToolbar">
-                </div>
                 <div class="tabContainer">
                     <table id="gridInfo"></table>
                     <div id="gridPagerInfo"></div>
@@ -180,9 +150,6 @@
             <option value="ui-darkness">ui-darkness</option>
             <option value="ui-lightness">ui-lightness</option>
             <option value="vader">vader</option>
-            
-            
-            
         </select>
     </div>
     <div class="dialog" id="dialogDebugScript" title="Skript Fehler">
@@ -196,5 +163,4 @@
         unwiderruflich.<br><br>
         Sind Sie sich sicher?
     </div>
-
 </body>

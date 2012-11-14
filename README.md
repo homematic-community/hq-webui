@@ -107,7 +107,9 @@ Todo/Ideen
 Changelog
 =========
 
-
+1.4.6
+-----
+* Die einzelnen Favoritenbereiche lassen sich nun via Drag&Drop sortieren
 
 1.4.5
 -----
