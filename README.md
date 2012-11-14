@@ -49,7 +49,7 @@ Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Da
 Favoriten
 ---------
 Der Tab Favoriten zeigt defaultm‰ﬂig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei config.js entsprechend angepasst werden.
-Die Favoritenansicht ist fix zwei-spaltig und zeigt leider keine "Separatoren" an.
+Die Favoritenansicht ist fix zwei-spaltig und zeigt leider keine "Separatoren" an. Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren.
 
 Ger‰te und Variablen
 --------------------
