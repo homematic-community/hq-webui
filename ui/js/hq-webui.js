@@ -1179,7 +1179,7 @@ $("document").ready(function () {
         variablesReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptVariables,
             success: function (data) {
@@ -1239,7 +1239,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             datatype: 'text',
             data: scriptPrograms,
@@ -1289,7 +1289,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             datatype: 'text',
             data: scriptStates,
@@ -1360,7 +1360,7 @@ $("document").ready(function () {
         protocolReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptProtocol,
             success: function (data) {
@@ -1386,7 +1386,7 @@ $("document").ready(function () {
         rssiReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq-webui/tcl/tclscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptRssi,
             success: function (data) {
@@ -1977,7 +1977,7 @@ $("document").ready(function () {
             break;
         case "xml":
             $.ajax({
-               url: "http://172.16.23.3/addons/hq-webui/tcl/xmlrpc.cgi?session=" + jsonSession,
+               url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?session=" + jsonSession,
                type: "POST",
                 dataType: "text",
                 data: fileContent,
@@ -2108,7 +2108,7 @@ $("document").ready(function () {
     function xmlapiRunProgram(program_id) {
         var scriptRunProgram = "object obj = dom.GetObject(" + program_id + "); if (obj) { obj.ProgramExecute(); Write(obj); }";
         $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
             type: 'POST',
             data: scriptRunProgram,
             success: function (data) {
@@ -2121,7 +2121,7 @@ $("document").ready(function () {
     function xmlapiSetState(ise_id, new_value, successFunction) {
         var script = "Write(dom.GetObject(" + ise_id + ").State('" + new_value + "'));";
         $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
             type: "post",
             data: script,
             success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
@@ -2231,7 +2231,7 @@ $("document").ready(function () {
         
         $.ajax({
 
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
             type: "post",
             data: scriptState,
             async: false,
@@ -2273,7 +2273,7 @@ $("document").ready(function () {
 
 
             $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
             type: "post",
             data: scriptSysvar,
             success: function (data) {
@@ -2316,7 +2316,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf["ccuUrl"] + '/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
             type: 'POST',
             data: scriptDevices,
             dataType: 'xml',
@@ -2342,7 +2342,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf["ccuUrl"] + '/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
             type: 'POST',
             data: scriptFunctions,
             dataType: 'xml',
@@ -2367,7 +2367,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf["ccuUrl"] + '/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
             type: 'POST',
             data: scriptRooms,
             success: function (data) {
@@ -2386,7 +2386,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             dataType: 'xml',
             type: 'POST',
             data: scriptFavorites,
@@ -2431,7 +2431,7 @@ $("document").ready(function () {
     function xmlapiGetVersion() {
         gridInfo.jqGrid('addRowData', "HQ WebUI Version", {'key': "HQ WebUI Version", 'value': version});
         $.ajax({
-            url: hqConf.ccuUrl + "/addons/hq/api/version.txt",
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/version.txt",
             type: 'GET',
             dataType: 'text',
             success: function (data) {
@@ -2629,7 +2629,7 @@ $("document").ready(function () {
         $("#loaderScript").show();
         if (hqConf.scriptApi == "xmlapi") {
             $.ajax({
-                url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/hmscript.cgi?session=" + jsonSession + "&debug=true&content=json",
+                url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?session=" + jsonSession + "&debug=true&content=json",
                 type: 'POST',
                 data: script,
                 dataType: 'json',
@@ -2649,7 +2649,7 @@ $("document").ready(function () {
     function tclRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/tclscript.cgi?session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/tclscript.cgi?session=" + jsonSession,
             type: 'POST',
             data: script,
             dataType: 'text',
@@ -2668,7 +2668,7 @@ $("document").ready(function () {
     function shRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf["ccuUrl"] + "/addons/hq-webui/tcl/process.cgi?content=json&debug=true&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + jsonSession,
             type: 'POST',
             data: script,
             dataType: 'json',

@@ -10,7 +10,7 @@ var hqConf = {
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
     // Achtung: nicht das abschlieﬂende Komma vergessen. Die Zeile muss z.B. so aussehen:
     //      ccurl: 'http://172.16.23.3',
-    ccuUrl:                 'http://172.16.23.3',
+    ccuUrl:                 '',
 
     // Pfad zur xmlapi
     xmlapiPath:             "/config/xmlapi",
