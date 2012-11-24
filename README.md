@@ -224,6 +224,7 @@ Todo/Ideen
 ==========
 
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* html/css - eine Menge Kleinigkeiten, automatisches Anpassen an Browser-Breite/Höhe, ...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
 * Anpassen an Fenstergröße! Editor/Ausgabe/Variablen resizeable
