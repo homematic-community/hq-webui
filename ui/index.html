@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="ISO-8859-1">
+    <title>HQ WebUI</title>
+    <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/redmond/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery.jsonview.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
+    <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lostorage.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
+    <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="js/jquery.jsonview.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/hmscripts.js"></script>
+    <script type="text/javascript" src="js/tclscripts.js"></script>
+    <script type="text/javascript" src="js/hq-webui.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="tabs">
+            <ul id="mainNav" class="tabsPanel">
+                <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
+            </ul>
+            <div class="tabs" id="tabFavorites">
+                <div id="accordionFavorites"></div>
+            </div>
+            <div class="tabs" id="tabVariables">
+                <div class="tabContainer">
+                    <table id="gridVariables"></table>
+                    <div id="gridPagerVariables"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabPrograms">
+                <div class="tabContainer">
+                    <table id="gridPrograms"></table>
+                    <div id="gridPagerPrograms"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabRooms">
+                <div class="tabContainer">
+                    <table id="gridRooms"></table>
+                    <div id="gridPagerRooms"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabFunctions">
+                <div class="tabContainer">
+                    <table id="gridFunctions"></table>
+                    <div id="gridPagerFunctions"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabStates">
+                <div class="tabContainer">
+                    <table id="gridStates"></table>
+                    <div id="gridPagerStates"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabRssi">
+                <div class="tabContainer">
+                    <table id="gridRssi"></table>
+                    <div id="gridPagerRssi"></div>
+                </div>
+            </div>
+            <div class="tabs" id="tabDev">
+                <div class="tabContainer">
+                    <table><tr><td id="hmScriptContainer">
+                        <textarea id="hmScript" cols="92" rows="40"></textarea>
+                    </td><td style="vertical-align: top; padding-left: 20px;" id="hmScriptTools">
+                        <div id="editorButtons">
+                            <button style="float:left;" id="hmRunScript">Ausführen</button>
+                            <ul id="hmRunScriptMenu">
+                                <li><a id="editorNewXml0" href="#">BidCos-Wired</a></li>
+                                <li><a id="editorNewXml1" href="#">BidCos-RF</a></li>
+                                <li><a id="editorNewXml2" href="#">intern</a></li>
+                            </ul>
+                            <button style="float:left;" id="editorNewFile">Neue Datei</button>
+                            <ul id="hmNewScriptMenu">
+                                <li><a id="editorNewHmScript" href="#">Homematic Script</a></li>
+                                <li><a id="editorNewTclScript" href="#">TCL Script</a></li>
+                                <li><a id="editorNewShScript" href="#">Shell Script</a></li>
+                                <li><a id="editorNewJson" href="#">JSON RPC</a></li>
+                                <li><a id="editorNewXml" href="#">XML RPC</a>
+
+                                </li>
+
+                            </ul>
+                            <button style="float:left;" id="editorCcu">CCU</button>
+                            <ul id="hmCcuMenu">
+                                <li><a id="editorCcuSave" href="#">auf CCU speichern</a></li>
+                                <li><a id="editorCcuLoad" href="#">von CCU laden</a></li>
+                            </ul>
+                            <button style="float:right" id="editorHelp">Doku</button>
+                            <button id="hmSaveScript"></button>
+                        </div>
+                        <br><br><br>
+                        <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 490px; max-width: 600px; height: 300px; overflow:hidden;">
+                            <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
+                                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
+                            </div>
+                            <div id="hmScriptStdout" class="ui-corner-bottom" style="overflow: scroll; height:271px; width: 100%; background-color: #fff; color: #000; ">
+
+                            </div>
+                        </div>
+                        <br>
+                        <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 490px; height: 300px; overflow:hidden;">
+                            <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
+                                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
+                            </div>
+                            <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:271px; width: 100%; background-color: #fff; color: #000; ">
+
+                            </div>
+                        </div>
+                        <br>
+                        <div id="divScriptVariables">
+                            <table id="gridScriptVariables"></table>
+                        </div>
+                    </td></tr></table>
+               </div>
+            </div>
+
+            <div class="tabs" id="tabCcu">
+                <div id="subTabCcu">
+                    <ul class="tabsPanel">
+                        <li><a href="#tabCcuMain">Allgemein<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
+                    </ul>
+                    <div class="tabs" id="tabCcuMain">Todo</div>
+                    <div class="tabs" id="tabCcuProtocol">
+                        <div class="tabContainer">
+                            <table id="gridProtocol"></table>
+                            <div id="gridPagerProtocol"></div>
+                        </div>
+                    </div>
+                    <div class="tabs" id="tabCcuInfo">
+                        <div class="tabContainer">
+                            <table id="gridInfo"></table>
+                            <div id="gridPagerInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="dialog" id="dialogRunProgram" title="Programm ausführen">
+        Wollen Sie wirklich das Programm "<span id="programName"></span>" ausführen?
+        <input type="hidden" id="programId">
+    </div>
+    <div class="dialog" id="dialogAjaxError" title="XML-API Kommunikations-Fehler">
+        <span id="ajaxOptions"></span><br>
+        <span id="thrownError"></span>
+    </div>
+    <div class="dialog" id="dialogJsonError" title="JSON API Kommunikations-Fehler">
+        <span id="jsonOptions"></span><br>
+        <span id="jsonError"></span>
+    </div>
+    <div class="dialog" id="dialogEditVariable" title="Variable editieren">
+        <span id="variableName"></span>:<br><br><span id="variableInput"></span><span id="variableUnit"></span><br>
+        <input type="hidden" id="variableId">
+    </div>
+    <div class="dialog" id="dialogEditDatapoint" title="Datenpunkt editieren">
+        <span id="datapointName"></span>:<br><br><span id="datapointInput"></span> <br>
+        <input type="hidden" id="datapointId">
+        <input type="hidden" id="datapointGridId">
+    </div>
+    <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
+        Wollen Sie das Systemprotokoll wirklich löschen?
+    </div>
+    <div class="dialog" id="dialogSettings" title="HQ WebUI Einstellungen">
+        <h3>Gespeicherte Anmeldedaten</h3>
+        <button id="buttonDelCred">Löschen</button>
+        <h3>Theme auswählen</h3>
+        <select id="selectUiTheme">
+            <option value="base">base</option>
+            <option value="black-tie">black-tie</option>
+            <option value="blitzer">blitzer</option>
+            <option value="cupertino">cupertino</option>
+            <option value="dark-hive">dark-hive</option>
+            <option value="dot-luv">dot-luv</option>
+            <option value="eggplant">eggplant</option>
+            <option value="excite-bike">excite-bike</option>
+            <option value="flick">flick</option>
+            <option value="hot-sneaks">hot-sneaks</option>
+            <option value="humanity">humanity</option>
+            <option value="le-frog">le-frog</option>
+            <option value="mint-choc">mint-choc</option>
+            <option value="overcast">overcast</option>
+            <option value="pepper-grinder">pepper-grinder</option>
+            <option value="redmond">redmond</option>
+            <option value="smoothness">smoothness</option>
+            <option value="south-street">south-street</option>
+            <option value="start">start</option>
+            <option value="sunny">sunny</option>
+            <option value="swanky-purse">swanky-purse</option>
+            <option value="trontastic">trontastic</option>
+            <option value="ui-darkness">ui-darkness</option>
+            <option value="ui-lightness">ui-lightness</option>
+            <option value="vader">vader</option>
+        </select>
+    </div>
+    <div class="dialog" id="dialogDebugScript" title="Ausführung">
+        <br>
+        <span id="debugScript"></span>
+    </div>
+    <div class="dialog" id="dialogDocu" title="Dokumentation">
+        <h3>eQ3 - HomeMatic Script Dokumentation</h3>
+        <ul>
+            <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_1_Sprachbeschreibung_V1.2.pdf" target="_blank">Teil 1: Sprachbeschreibung</a></li>
+            <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_2_Objektmodell_V1.2.pdf" target="_blank">Teil 2: Objektmodell</a></li>
+            <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_3_Beispiele_V1.1.pdf" target="_blank">Teil 3: Beispiele</a></li>
+            <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_4_Datenpunkte_1_503.pdf" target="_blank">Teil 4: Datenpunkte</a></li>
+            </ul>
+        <h3>eQ3 - HomeMatic RPC</h3>
+        <ul>
+            <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_XmlRpc_V1_502__2_.pdf" target="_blank">HomeMatic XML RPC Schnittstelle</a></li>
+            <li><a href="/api/homematic.cgi" target="_blank">HomeMatic JSON API</a></li>
+         </ul>
+        <h3>Community</h3>
+        <ul>
+            <li><a href="http://www.homematic-forum.de" target="_blank">Homematic Forum</a></li>
+            <li><a href="http://www.homematic-inside.de" target="_blank">Homematic Inside</a></li>
+            <li><a href="http://www.homematic-wiki.info" target="_blank">Homematic Wiki</a></li>
+        </ul>
+        <h3>ELV Journal</h3>
+        <ul>
+            <li><a href="http://www.elv-downloads.de/downloads/Leseproben/Journal/04-2010/xml_rpc_sendemodul.pdf">Via Netzwerk auf HomeMatic zugreifen - XML-RPC-Schnittstelle</a></li>
+        </ul>
+
+    </div>
+    <div class="dialog" id="dialogAbout" title="HQ WebUI">
+        <h3>HQ-WebUI Version <span id="hqWebUiVersion"></span></h3>
+        <p>Die Nutzung dieser Software geschieht auf eigenes Risiko!</p>
+        </p>
+        <ul>
+            <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/README.md" target="_blank">Readme</a></li>
+            <li><a href="http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559" target="_blank">Support</a></li>
+        </ul>
+    </div>
+    <div class="dialog" id="dialogDeleteScript" title="Script löschen">
+        <br>
+        Hiermit löschen Sie das Script<br>
+        <span style="font-weight: bold; padding-left: 20px;" id="scriptDeleteReally"></span><br>
+        unwiderruflich.<br><br>
+        Sind Sie sich sicher?
+    </div>
+    <div class="" id="login">
+        <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
+        <div id="widgetLogin" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+            <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI Anmeldung</span>
+            </div>
+            <div style="padding-left: 45px; padding-top: 10px;">
+                <form id="formLogin" name="login">
+                    <table>
+                        <tr style="font-size: 0.9em;">
+                            <td colspan="2"><span id="loginError" style="color:#f33; font-weight:bold;"></span>&nbsp;</td>
+                        </tr>
+                        <tr style="font-size: 1.3em;">
+                            <td>Benutzername</td><td><input tabindex="1" id="username" value="Admin"></td>
+                        </tr>
+                        <tr style="font-size: 1.3em;">
+                            <td>Passwort</td><td><input tabindex="2" type="password" id="password"> <input tabindex="4" type="submit" style="font-size: 0.73em;" id="buttonLogin" value="Anmelden"/></td>
+                        </tr>
+                    </table><br>
+                    <input tabindex="3" id="keepcred" type="checkbox"> Anmeldedaten speichern und in Zukunft automatisch anmelden
+                </form>
+            </div>
+        </div>
+        </td><td style="width: 50%">
+        </td></tr></table>
+        <div id="xmlDummy0"><form action=""></form></div>
+    </div>
+</body>

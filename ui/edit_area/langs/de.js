@@ -14,7 +14,7 @@ occurrence_replaced: "Die Vorkommen wurden ersetzt.",
 search_field_empty: "Leeres Suchfeld",
 restart_search_at_begin: "Ende des zu durchsuchenden Bereiches erreicht. Es wird die Suche von Anfang an fortgesetzt.", //find a shorter translation
 move_popup: "Suchfenster bewegen",
-font_size: "--Schriftgr&ouml;&szlig;e--",
+font_size: "Gr&ouml;&szlig;e",
 go_to_line: "Gehe zu Zeile",
 go_to_line_prompt: "Gehe zu Zeilennummmer:",
 undo: "R&uuml;ckg&auml;ngig",
@@ -42,7 +42,8 @@ shift: "Shift",
 ctrl: "Ctrl",
 esc: "Esc",
 processing: "In Bearbeitung...",
-fullscreen: "Full-Screen",
+fullscreen: "Vollbildmodus",
 syntax_selection: "--Syntax--",
-close_tab: "Close file"
+close_tab: "Script löschen",
+autocompletion: "Autovervollst&auml;ndigung"
 };

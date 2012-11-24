@@ -1,16 +1,13 @@
-HQ WebUI
-========
+HQ WebUI 2.0
+============
 Leichtgewichtiges und schnelles Webfrontend zur Bedienung der Homematic CCU.
 
-
-Mit diesem WebUI können Variablen und Datenpunkte angezeigt und geändert werden, Programme können gestartet werden und das Systemprotokoll kann angezeigt und gelöscht werden. Geräte-Konfiguration oder das Anlegen von Variablen oder Programmen und Verknüpfungen u.Ä. ist nicht vorgesehen. Achtung: Wie bei XML-API Anwendungen üblich findet keine Authentifizierung statt, das HQ WebUI ist also ohne Passwortschutz erreichbar.
-
-Die Idee hinter diesem WebUI ist nicht das originale Homematic WebUI vollständig zu ersetzen, es ist vielmehr als schnelle ergänzende Oberfläche für den Homematic-"Administrator" gedacht der komfortabel und schnell z.B. einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen oder ein Script erstellen will.
+Die Idee hinter diesem WebUI ist nicht das originale Homematic WebUI vollständig zu ersetzen, es ist vielmehr als schnelle ergänzende Oberfläche für den Homematic-"Administrator" gedacht der komfortabel und schnell z.B. einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen, ein RPC testen oder ein Script erstellen will.
 Benötigt eine modifizierte Version der XML API (mindestens Version 1.2-hq9) - zu finden hier: https://github.com/hobbyquaker/hq-xmlapi
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
-Getestet wird das HQ WebUI primär mit Google Chrome. Firefox und Safari Kompatibilität wird angestrebt. Opera und dem Internet Explorer wird keine Beachtung geschenkt, vielleicht funktioniert es, wenn nicht - Pech.
+Getestet wird das HQ WebUI primär mit Google Chrome. Firefox und Safari Kompatibilität wird angestrebt. Opera und der Internet Explorer werden nicht von mir getestet. Vielleicht funktioniert es, vielleicht aber auch nicht...
 
 Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werden, allerdings ohne jegliche Garantien, die Benutzung erfolgt auf eigenes Risiko. Bei einer Weiterverbreitung bitte dieses Readme beibehalten!
 
@@ -19,32 +16,41 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
 
+Features
+========
+* schnelle Ladezeiten
+* Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen, diversen Informationen und dem Systemprotokoll
+* Schreibender Zugriff auf Datenpunkte
+* Ändern des Wertes eine Variable
+* Starten von Programmen
+* Favoritenansicht
+* Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
+* Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
+* Themes
+* ...geplante Features siehe "Todo"
+
+
 Installation
 ============
 
 Download
 --------
-https://github.com/hobbyquaker/hq-webui/zipball/master
-Diese Zip Datei beinhaltet sowohl die Quellen (die Standalone genutzt werden können) als auch die .tar.gz Datei für die Installation als Zusatzsoftware auf der CCU
-
-Installation auf der CCU
-------------------------
-
-Die Datei hq-webui-(version).tar.gz kann als Zusatzsoftware auf der CCU installiert werden. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq-webui/ erreichbar.
+Die .tar.gz Datei zur Installation auf der CCU kann hier heruntergeladen werden:
 
 
-Ohne Installation auf der CCU
------------------------------
-Dateien irgendwo ablegen (kann auf einem beliebigen Webserver sein, kann aber auch einfach lokal benutzt werden).
-In der Datei "config.js" (zu finden im Unterordner "js") die URL der CCU anpassen. Die Variable ccuUrl (zu finden in den ersten paar Zeilen des Scripts) auf 'http://IP-Adresse-der-CCU' (also z.B. 'http://192.168.1.20') setzen. Nun einfach die index.html im Browser aufrufen.
-**Achtung Firefox-Benutzer**: Das HQ WebUI kann im Firefox nicht lokal über eine file:// URL aufgerufen werden. Es muss ein Webserver verwendet werden oder die Installation auf der CCU muss durchgeführt werden. Mit http:// URLs tritt das Problem nicht auf.
+Installation
+------------
 
+Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ui/ erreichbar.
+
+*Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen*
 
 Bedienung
 =========
 Allgemein
 ---------
-Links unten bei jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
+Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
+Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und lassen sich über den Reload-Button oben rechts aktualisieren. Der Reload-Button unten Links in der Gerätetabelle lädt lediglich die Status der Datenpunkte neu.
 
 Favoriten
 ---------
@@ -62,50 +68,26 @@ Programme werden über Doppelklick auf die Tabellenzeile gestartet.
 
 Script-Editor
 -------------
-Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann durchaus mal verloren gehen.
+Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
-Todo/Bekannte Fehler
-====================
-* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js
-* Bei der ausführung eines Fehlerhaften Scripts versucht das HQ WebUI die Fehlermeldung in /var/log/messages zu finden. Das funktioniert allerdings nicht wenn man auf einen externen Syslog loggt.
-* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
-
-Todo/Ideen
-==========
-
-* Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
-* Überflüssige Dateien im Verzeichnis edit_area entfernen
-* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
-* Scriptkonsole: ACE Editor statt area_edit?!
-* Favoriten: Variablen-Einheiten anzeigen
-* Favoriten: TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
-* Tastenkürzel für Buttons in Scriptkonsole
-* rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
-* Mehr Icons - Datenpunkt-Typen, True/False, Geräte-Typen (auf CCU vorhandene Bilder benutzen?), ...
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
-* Tab Favoriten: Manueller Refresh
-* Favoriten: Auswahlmöglichkeit für angezeigten User?
-* Favoriten: nicht bedienbare disablen
-* Scripteditor: Links auf die HM-Script Dokumentation, das Forum, hm-inside, ... als 3. Button (zum aufklappen)?
-* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Programme aktivieren/deaktivieren?
-* Geräte (ent)sperren?
-* Raumthermostat Modus setzen?
-* Servicemeldungen bestätigen?
-* Dienste starten/stoppen (ftpd etc)
-* Shell integrieren? (eigentlich reicht mir ein "normales" telnet ja - also eher nicht)
-* TCL-Script Editor integrieren? (Zusätzlicher Tab, oder im Script-Editor eine Auswahl ob man HMScript oder TCL erstellen möchte) - Top wäre eine Möglichkeit die Scripte gleich auf der CCU zu speichern...
-* Möglichkeit erweiteterte  CCU Infos abfragen (/proc/loadavg, memfree, df -h, ps ax, ....)?
-* CCU-Dateibrowser? (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
-* Auth?
-* Verzicht auf xmlapi? komplett auf Remote Script und xmlrpc umsteigen? -> allow-origin nervt - will das ja via XHR machen, also vermutlich bleibts bei xmlapi.
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 
 
 
 Changelog
 =========
+
+2.0alpha1
+---------
+* JSON RPC Interface - Login, Session
+* Editor: Ausführung von XML und JSON RPC Abfragen
+* Editor: Ausführung von TCL Scripten
+* Editor: Ausführung von Shell Scripten
+* Neue Verzeichnisstruktur (/www/addons/hq/api und /www/addons/hq/ui)
+* Neuer Tab "Zentrale"
+* Die auf der CCU vorhandenen Geräte-Icons werden nun in der Geräteliste angezeigt. (abschaltbar und um weitere Typen erweiterbar in config.js)
+* kleine Style Korrekturen im Script-Editor
+* Die Anzeige der Zeilennummer in der Fehlermeldung des Script-Editors funktioniert nun auch ohne Zugriff auf /var/log/messages. Konfigurierbar in config.js
+* Hilfe und Doku Buttons hinzugefügt
 
 1.4.6
 -----
@@ -233,14 +215,60 @@ Changelog
 
 
 
+Todo/Bekannte Fehler
+====================
+* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
+* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
+
+Todo/Ideen
+==========
+
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
+* Anpassen an Fenstergröße! Editor/Ausgabe/Variablen resizeable
+* Favoriten des eingeloggten Users anzeigen
+* Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
+* ERROR-Datenpunkte als Servicemeldungen anzeigen
+* Doppelklick auf Gerät oder Kanal -> Subgrid aufklappen (als alternative zum Plus-Icon)
+* Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
+* Überflüssige Dateien im Verzeichnis edit_area entfernen
+* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
+* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
+* Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
+* Favoriten: Variablen-Einheiten anzeigen
+* Favoriten: Darstellung verschiedener Geräte: z.B. TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
+* Tastenkürzel für Buttons in Scriptkonsole
+* rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
+* Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen, Datenpunkt-Typen, True/False,
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server schwer machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+* Favoriten: nicht bedienbare disablen
+* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+* Programme aktivieren/deaktivieren
+* Geräte (ent)sperren
+* Raumthermostat Modus setzen
+* Dienste starten/stoppen (inetd (telnet), ftpd etc)
+* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
+
+
+* Umbenennen von Programmen/Variablen/Geräten/Kanälen
+* ändern von Variablentypen und Wertelisten
+* Programme anzeigen (Programme anlegen/ändern??)
+* Anlernmodus??
+
+
+
 
 in HQ WebUI verwendete Software
 ===============================
 * jQuery http://jquery.com/
 * jQuery UI http://jqueryui.com/
 * jqGrid http://www.trirand.com/blog/
+* jQuery JSON View https://github.com/quickredfox/jquery-jsonview
 * editarea http://www.cdolivet.com/editarea/
 * lostorage.js https://github.com/js-coder/loStorage.js
+
 
 
 Copyright, Lizenz, Bedingungen

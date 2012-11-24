@@ -3,7 +3,7 @@
 mkdir -p /mnt
 mount -t yaffs /dev/mtdblock3 /mnt
 
-cp -R ./hq-webui /mnt/etc/config/addons/www/
+cp -R ./hq /mnt/etc/config/addons/www/
 cp ./hobbyquaker-webui /mnt/etc/config/rc.d
 chmod +x /mnt/etc/config/rc.d/hobbyquaker-webui
 

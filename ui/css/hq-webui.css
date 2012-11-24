@@ -1,3 +1,38 @@
+html, body, div#container, div.tabs {
+    height: 99%;
+    margin:0;
+
+}
+
+img {
+    border: none;
+}
+
+.editAreaButtonOver, .editAreaButtonNormal {
+    border: none;
+}
+#hmNewScriptMenu {
+    position: absolute; width: 150px;
+    z-index: 2000;
+}
+#toolbar_1 a, #toolbar_1 a span, #toolbar_1 a span  {
+    height: 20px; !important
+    margin: 0; !important
+    padding: 0; !important
+}
+
+div#container {
+    height:100%;
+   /* border: 1px dashed yellow;*/
+
+}
+
+div#tabs {
+    margin: 10px;
+   /* border: 1px dashed red;*/
+
+}
+
 body {
     font-size: 0.7em;
     background-color: #555;
@@ -6,11 +41,14 @@ div.favPane {
 
 }
 div#container {
-    width: 1070px;
+    min-width: 1090px;
+    width: 100%;
+
 }
 
 div#container, div#tabs, div#tabFavorites {
     min-height: 580px;
+
 }
 
 div.favItem {
@@ -64,10 +102,13 @@ div.favStartProgram button, div.favInput button {
 #hmScriptTools {
     vertical-align: bottom;
 }
-
+#hmScriptContainer {
+    vertical-align: top;
+}
 #hmScriptStdout, #hmScript {
-    font-family: courier;
+    font-family: monospace;
     font-size: 12px;
+    white-space: pre;
 }
 ul.tabsPanel li a span {
     width:21px;
@@ -107,3 +148,17 @@ li a:focus {
     float: right;
 }
 
+#login {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+
+    background-color: #555;
+
+}
+
+li.array-item.closed-object {
+    height: 15px;
+}
