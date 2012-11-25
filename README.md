@@ -32,10 +32,6 @@ Features
 Installation
 ============
 
-Download
---------
-Die .tar.gz Datei zur Installation auf der CCU kann hier heruntergeladen werden:
-
 
 Installation
 ------------
@@ -77,6 +73,7 @@ Changelog
 =========
 
 2.0-alpha4
+----------
 * Fehler behoben bei der Anzeige des AES Modus im Tab Funk
 * Fehler behoben der zur mehrfachen Anzeige mancher Protokolleinträge geführt hat
 * Fehler beim löschen des Protokolls behoben
