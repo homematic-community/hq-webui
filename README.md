@@ -66,8 +66,9 @@ Programme
 ---------
 Programme werden über Doppelklick auf die Tabellenzeile gestartet.
 
-Script-Editor
--------------
+Entwicklung
+-----------
+Beim Ausführen von JSON RPC muss die Eigenschaft _session_id nicht angebeben werden, sie wird automatisch ergänzt.
 Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
 

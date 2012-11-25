@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "2.0-alpha1";
+    var version =               "2.0-alpha2";
 
     var statesXML,
         rssiXML,
@@ -2461,7 +2461,7 @@ $("document").ready(function () {
    // jsonLogin();
 
     function sessionStart() {
-        console.log("sessionStart()");
+        //console.log("sessionStart()");
         var username = storage.get("hqWebUiUsername");
         var password = storage.get("hqWebUiPassword");
         if (hqConf.sessionPersistent) {
@@ -2491,7 +2491,7 @@ $("document").ready(function () {
     };
 
     function jsonLogin(username, password) {
-        console.log("jsonLogin()");
+        //console.log("jsonLogin()");
 
         jsonPost({
             "method": "Session.login",
@@ -2500,7 +2500,7 @@ $("document").ready(function () {
                 "password" : password
             }
         }, function (data) {
-            console.log("jsonLogin() jsonPost success");
+            //console.log("jsonLogin() jsonPost success");
 
             jsonSession = data.result;
 
@@ -2564,7 +2564,7 @@ $("document").ready(function () {
     }
 
     function jsonSessionRenew(firstLoad) {
-        console.log("jsonSessionRenew()");
+        //console.log("jsonSessionRenew()");
 
         if (jsonSession) {
             jsonPost({
@@ -2573,7 +2573,7 @@ $("document").ready(function () {
                         "_session_id_": jsonSession
                     }
             }, function (data) {
-                console.log("jsonSessionRenew() jsonPost success");
+                //console.log("jsonSessionRenew() jsonPost success");
 
                 if (data.result) {
                     $("#login").hide();
@@ -2585,7 +2585,7 @@ $("document").ready(function () {
                     $("#login").show();
                 }
             }, function (data) {
-                console.log("jsonSessionRenew() jsonPost error");
+                //console.log("jsonSessionRenew() jsonPost error");
 
                 jsonSession = undefined;
                 $("#login").show();
@@ -2612,7 +2612,7 @@ $("document").ready(function () {
                     }
 
                 }
-              //  console.log(data);
+              //  //console.log(data);
 
             },
             error: function () {
@@ -2627,29 +2627,27 @@ $("document").ready(function () {
 
     function hmRunScript (script, successFunction) {
         $("#loaderScript").show();
-        if (hqConf.scriptApi == "xmlapi") {
-            $.ajax({
-                url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?session=" + jsonSession + "&debug=true&content=json",
-                type: 'POST',
-                data: script,
-                dataType: 'json',
-                success: function (data) {
-                    $("#loaderScript").hide();
-                    successFunction(data);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    ajaxError(xhr, ajaxOptions, thrownError);
-
-                }
-            });
-        }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?session=" + jsonSession + "&debug=true&content=json",
+            type: 'POST',
+            data: script,
+            dataType: 'json',
+            success: function (data) {
+                $("#loaderScript").hide();
+                successFunction(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                ajaxError(xhr, ajaxOptions, thrownError);
+        
+            }
+        });
     }
 
 
     function tclRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/tclscript.cgi?session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?session=" + jsonSession,
             type: 'POST',
             data: script,
             dataType: 'text',
@@ -2668,7 +2666,7 @@ $("document").ready(function () {
     function shRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + jsonSession,
             type: 'POST',
             data: script,
             dataType: 'json',
@@ -2685,7 +2683,7 @@ $("document").ready(function () {
     }
     function webuiStart() {
         // Favoritenansicht aufbauen. Das Laden des n‰chsten Tabs wird aus xmlapiGetFavorites heraus angestoﬂen
-        console.log("webuistart");
+        //console.log("webuistart");
         xmlapiGetFavorites();
         xmlapiGetVersion();
     };
