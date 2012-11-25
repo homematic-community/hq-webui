@@ -76,7 +76,11 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
-2.0alpha1
+2.0-alpha2
+----------
+* Fehler behoben der Ausführung von HMScripts verhinderte
+
+2.0-alpha1
 ---------
 * JSON RPC Interface - Login, Session
 * Editor: Ausführung von XML und JSON RPC Abfragen

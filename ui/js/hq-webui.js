@@ -1648,7 +1648,7 @@ $("document").ready(function () {
         function favButtonset() {
             $(".favInputRadio").buttonset();
         }
-        setTimeout(favButtonset(), 1000);
+        setTimeout(favButtonset, 1000);
 
     }
 
@@ -2316,7 +2316,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptDevices,
             dataType: 'xml',
@@ -2342,7 +2342,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptFunctions,
             dataType: 'xml',
@@ -2367,7 +2367,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf["ccuUrl"] + 'hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=' + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
             type: 'POST',
             data: scriptRooms,
             success: function (data) {
@@ -2744,7 +2744,7 @@ $("document").ready(function () {
         storage.set('hqWebUiTheme', theme);
         $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-        setTimeout(scriptEditorStyle,1500);
+        setTimeout(scriptEditorStyle,2000);
     }
 
     function getTheme() {
@@ -2752,7 +2752,7 @@ $("document").ready(function () {
         if (theme === null) { theme = hqConf.themeDefault; }
         $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-        setTimeout(scriptEditorStyle,1500);
+        setTimeout(scriptEditorStyle,2000);
     }
 
 
@@ -2835,6 +2835,8 @@ function scriptEditorStyle() {
     $("#frame_hmScript").contents().find("#toolbar_1").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
     $("#frame_hmScript").contents().find("#toolbar_1").css("background", $(".ui-jqgrid-titlebar").css("background"));
     $("#frame_hmScript").contents().find("#toolbar_1").css("color", $(".ui-jqgrid-titlebar").css("color"));
+
+    // Todo abfangen falls noch keine Buttons initialisiert sind!
     $("#frame_hmScript").contents().find("#toolbar_1 a").button("destroy");
     $("#frame_hmScript").contents().find("#toolbar_1 a").button();
     $("#frame_hmScript").contents().find("#toolbar_1 a span").css({
