@@ -2,7 +2,7 @@ HQ WebUI 2.0
 ============
 Leichtgewichtiges und schnelles Webfrontend zur Bedienung der Homematic CCU.
 
-Die Idee hinter diesem WebUI ist nicht das originale Homematic WebUI vollständig zu ersetzen, es ist vielmehr als schnelle ergänzende Oberfläche für den Homematic-"Administrator" gedacht der komfortabel und schnell z.B. einen Datenpunkt oder eine Variable editieren möchte, eine ise_id nachschauen, ein RPC testen oder ein Script erstellen will.
+Dieses WebUI ist als schnelle ergänzende Oberfläche für den Homematic-"Administrator" oder Entwickler gedacht, es ist _nicht_ das Ziel ein weiteres GUI für die alltägliche Bedienung mit hohem "WAF" anzubieten.
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
@@ -231,17 +231,26 @@ Todo/Bekannte Fehler
 Todo/Ideen
 ==========
 
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* Soriertung nach ise_id fixen
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server schwer machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * html/css - eine Menge Kleinigkeiten, automatisches Anpassen an Browser-Breite/Höhe, ...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
+* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
 * Anpassen an Fenstergröße! Editor/Ausgabe/Variablen resizeable
 * Favoriten des eingeloggten Users anzeigen
+* Umbenennen von Programmen
+* Umbenennen von Variablen/Geräten/Kanälen
+* Programme anzeigen (Programme anlegen/ändern??)
+* ändern von Variablentypen und Wertelisten
+* Anlernmodus??
+* Verknüpfungen anzeigen. Anlegen/Ändern?
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Doppelklick auf Gerät oder Kanal -> Subgrid aufklappen (als alternative zum Plus-Icon)
 * Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
@@ -250,7 +259,6 @@ Todo/Ideen
 * Tastenkürzel für Buttons in Scriptkonsole
 * rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen, Datenpunkt-Typen, True/False,
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server schwer machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * Favoriten: nicht bedienbare disablen
 * Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
@@ -261,10 +269,7 @@ Todo/Ideen
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 
 
-* Umbenennen von Programmen/Variablen/Geräten/Kanälen
-* ändern von Variablentypen und Wertelisten
-* Programme anzeigen (Programme anlegen/ändern??)
-* Anlernmodus??
+
 
 
 
