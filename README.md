@@ -77,6 +77,7 @@ Changelog
 * Fehler behoben bei der Anzeige des AES Modus im Tab Funk
 * Fehler behoben der zur mehrfachen Anzeige mancher Protokolleinträge geführt hat
 * Fehler beim löschen des Protokolls behoben
+* Alle XML-API Aufrufe durch JSON RPC oder Remote TCL Scripts ersetzt, das HQ WebUI kann ab sofort ohne XML-API genutzt werden
 
 2.0-alpha3
 ----------
