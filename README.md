@@ -76,6 +76,11 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
+2.0-alpha4
+* Fehler behoben bei der Anzeige des AES Modus im Tab Funk
+* Fehler behoben der zur mehrfachen Anzeige mancher Protokolleinträge geführt hat
+* Fehler beim löschen des Protokolls behoben
+
 2.0-alpha3
 ----------
 * Diverse kleine Fehler behoben beim Laden der Favoriten und Geräteansicht

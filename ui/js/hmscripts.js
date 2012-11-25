@@ -168,8 +168,8 @@ var scriptProtocol = "Write(\"<systemProtocol>\");\n" +
 "        drop = drop # \"<row datetime=\\\"\" # sCollectedDateTimes # \"\\\" names=\\\"\" # sCollectedNames # \"\\\" values=\\\"\" # sCollectedValues # \"\\\" />\";\n" +
 "    }\n" +
 "    \n" +
-"    Write(drop);\n" +
 "}\n" +
+"    Write(drop);\n" +
 "Write(\"</systemProtocol>\");\n" +
 "\n";
 
@@ -234,8 +234,8 @@ var scriptDevices = "integer DIR_SENDER      = 1;\n" +
 "                !                if (OPERATION_EVENT & iDPOperations) { bChnEventable = true; }\n" +
 "                !              }\n" +
 "            !            }\n" +
-"        !\n" +
-"            Write(\"<channel name='\");WriteXML( oChannel.Name() );Write(\"'\");\n" +
+"        !\n\n" +
+"        Write(\"<channel name='\");WriteXML( oChannel.Name() );Write(\"'\");\n" +
 "        Write(\" type='\");WriteXML( oChannel.ChannelType() );Write(\"'\");\n" +
 "        Write(\" address='\");WriteXML( oChannel.Address() );Write(\"'\");\n" +
 "        Write(\" ise_id='\" # sChnId # \"'\");\n" +

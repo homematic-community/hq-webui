@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "2.0-alpha2";
+    var version =               "2.0-alpha4";
 
     var statesXML,
         rssiXML,
@@ -1909,14 +1909,13 @@ $("document").ready(function () {
                         $("#dialogDebugScript").dialog('open');
                     } else {
                         $.ajax({
-                            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + "/scripterrors.cgi",
-                            type: 'GET',
+                            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + jsonSession,
+                            type: 'POST',
+                            data: scriptErrors,
                             success: function (data) {
                                 var error = $(data).find("error:last");
                                 $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
                                 $("#dialogDebugScript").dialog('open');
-
-
                             }
                         });
                     }
@@ -2093,11 +2092,9 @@ $("document").ready(function () {
     // XML-API Funktionen
     function xmlapiClearProtocol() {
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + "/protocol.cgi",
-            type: "GET",
-            data: {
-                clear: 1
-            },
+            url: hqConf.ccuUrl + hqConf.xmlapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            type: "POST",
+            data: "var clearHistory = dom.ClearHistoryData(); Write(clearHistory);",
             success: function () {
                 refreshProtocol();
             },
@@ -2435,10 +2432,10 @@ $("document").ready(function () {
             type: 'GET',
             dataType: 'text',
             success: function (data) {
-                gridInfo.jqGrid('addRowData', "HQ API Version", {'key': "HQ-API Version", 'value': $(data).text()});
+                gridInfo.jqGrid('addRowData', "HQ API Version", {'key': "HQ API Version", 'value': data});
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                gridInfo.jqGrid('addRowData', "HQ API Version", {'key': "HQ-API Version", 'value': 'not available'});
+                gridInfo.jqGrid('addRowData', "HQ API Version", {'key': "HQ API Version", 'value': 'not available'});
             }
         });
         $.ajax({
