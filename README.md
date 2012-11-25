@@ -76,6 +76,10 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
+2.0-alpha3
+----------
+* Diverse kleine Fehler behoben beim Laden der Favoriten und Geräteansicht
+
 2.0-alpha2
 ----------
 * Fehler behoben der Ausführung von HMScripts verhinderte
