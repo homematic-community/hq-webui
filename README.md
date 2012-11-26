@@ -83,6 +83,7 @@ Changelog
 * Geräte: Falsch beschriftete Reload-Buttons korrigiert
 * Zentrale: Grid-Größe Protokoll und Infos angepasst
 * Favoriten: Icon-Anzeige für Tür-Fenster-Kontakte und Drehgriff
+* Favoriten: Anzeige der Einheit von Systemvariablen
 * Fehler behoben beim Löschen des Systemprotokolls
 
 
@@ -270,7 +271,6 @@ Todo/Ideen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
-* Favoriten: Variablen-Einheiten anzeigen
 * Tastenkürzel für Buttons in Scriptkonsole
 * rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen, Datenpunkt-Typen, True/False,
