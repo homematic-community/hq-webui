@@ -56,6 +56,7 @@ Geräte und Variablen
 --------------------
 In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
 Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren.
+Geräte und Kanäle können über Doppelklick umbenannt werden.
 
 Programme
 ---------
@@ -71,6 +72,17 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 
 Changelog
 =========
+
+2.0-alpha5
+----------
+* Umbennen von Geräten und Kanälen (via Doppelklick)
+* Soriertung nach ise_id gefixt
+* Fehler behoben bei der Anzeige von Wertelisten/Werten
+* Systemprotokoll: Sortierreihenfolge umgedreht, neueste Einträge nun ganz oben
+* Geräte: Falsch beschriftete Reload-Buttons korrigiert
+* Zentrale: Grid-Größe Protokoll und Infos angepasst
+* Favoriten: Icon-Anzeige für Tür-Fenster-Kontakte und Drehgriff
+
 
 2.0-alpha4
 ----------
@@ -234,7 +246,7 @@ Todo/Bekannte Fehler
 Todo/Ideen
 ==========
 
-* Soriertung nach ise_id fixen
+
 * Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server schwer machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
 * html/css - eine Menge Kleinigkeiten, automatisches Anpassen an Browser-Breite/Höhe, ...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
@@ -251,19 +263,16 @@ Todo/Ideen
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Doppelklick auf Gerät oder Kanal -> Subgrid aufklappen (als alternative zum Plus-Icon)
-* Systemprotokoll: Standard-Sortierreihenfolge umkehren, neueste ganz oben
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
 * Favoriten: Variablen-Einheiten anzeigen
-* Favoriten: Darstellung verschiedener Geräte: z.B. TFK Offen/Zu statt Aus/An -> xmlapi favoritelist.cgi erweitern - benötige Gerätetyp
 * Tastenkürzel für Buttons in Scriptkonsole
 * rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen, Datenpunkt-Typen, True/False,
 * Favoriten: nicht bedienbare disablen
-* Refresh Button je Variable und Datenpunkt bzw Favoritenbereich (-> xmlapi state.cgi erweitern um Möglichkeit mehrere ise_id zu übergeben?)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
 * Programme aktivieren/deaktivieren
 * Geräte (ent)sperren

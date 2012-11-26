@@ -79,7 +79,7 @@ var scriptPrograms = "string sProgramId;\n" +
 
 var scriptVariables = "object oSysVar;\n" +
     "string sSysVarId;\n" +
-    "string sShowText=1;\n" +
+    "string sShowText='true';\n" +
     "Write(\"<systemVariables>\");\n" +
     "foreach (sSysVarId, dom.GetObject(ID_SYSTEM_VARIABLES).EnumUsedIDs()) {\n" +
     "    oSysVar     = dom.GetObject(sSysVarId);\n" +
@@ -140,7 +140,7 @@ var scriptProtocol = "Write(\"<systemProtocol>\");\n" +
 "            }\n" +
 "    \n" +
 "            if( iLastGroupIndex != iGroupIndex ) {\n" +
-"                drop = drop # \"<row datetime=\\\"\" # sCollectedDateTimes # \"\\\" names=\\\"\" # sCollectedNames # \"\\\" values=\\\"\" # sCollectedValues # \"\\\" />\n\";\n" +
+"                drop = \"<row datetime=\\\"\" # sCollectedDateTimes # \"\\\" names=\\\"\" # sCollectedNames # \"\\\" values=\\\"\" # sCollectedValues # \"\\\" />\n\" # drop;\n" +
 "                sCollectedNames = \"\";\n" +
 "                sCollectedValues = \"\";\n" +
 "                iLastGroupIndex = iGroupIndex;\n" +
@@ -313,13 +313,14 @@ var scriptFavorites = "var show_datapoint=1;\n" +
 "    foreach(sChannelId, oFavorite.EnumUsedIDs()) {\n" +
 "        object fav = dom.GetObject(sChannelId);\n" +
 "        Write(\"<channel ise_id='\" # sChannelId # \"' name='\"); WriteXML(fav.Name());\n" +
-"        !Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
+"        Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
 "        !Write( \"' column_count='\"); WriteXML(fav.FavControls());\n" +
 "        var favType = \"UNKNOWN\";\n" +
 "        if (fav.IsTypeOf(OT_PROGRAM)) { favType = \"PROGRAM\"; }\n" +
 "        if (fav.IsTypeOf(OT_DP))      { favType = \"SYSVAR\";  }\n" +
 "        if (fav.IsTypeOf(OT_CHANNEL)) { favType = \"CHANNEL\"; }\n" +
 "        Write( \"' type='\" # favType);\n" +
+"        Write( \"' ctype='\" # fav.ChannelType());\n" +
 "        string canUse = \"false\";\n" +
 "        string id;\n" +
 "        foreach (id, oFavorite.FavControlIDs().EnumIDs()) {\n" +

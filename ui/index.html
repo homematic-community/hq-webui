@@ -131,11 +131,11 @@
             <div class="tabs" id="tabCcu">
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
-                        <li><a href="#tabCcuMain">Allgemein<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
                     </ul>
-                    <div class="tabs" id="tabCcuMain">Todo</div>
+                    <div class="tabs" id="tabCcuSystem">Todo</div>
                     <div class="tabs" id="tabCcuProtocol">
                         <div class="tabContainer">
                             <table id="gridProtocol"></table>
@@ -253,6 +253,11 @@
         <span style="font-weight: bold; padding-left: 20px;" id="scriptDeleteReally"></span><br>
         unwiderruflich.<br><br>
         Sind Sie sich sicher?
+    </div>
+    <div class="dialog" id="dialogRename" title="Name ändern">
+        <br>
+        <input id="rename" type="text"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
+        <br>
     </div>
     <div class="" id="login">
         <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>

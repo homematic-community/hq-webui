@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "2.0-alpha4";
+    var version =               "2.0-alpha5";
 
     var statesXML,
         rssiXML,
@@ -160,7 +160,7 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelVariables = [
-        {name:'ise_id', index:'ise_id', width: 60,
+        {name:'ise_id', index:'ise_id', width: 60, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('ise_id');
             }
@@ -205,12 +205,12 @@ $("document").ready(function () {
                 return $(obj).attr('value_text');
             }
         },
-        {name:'min', index:'min', width: 30,
+        {name:'min', index:'min', width: 30, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('min');
             }
         },
-        {name:'max', index:'max', width: 30,
+        {name:'max', index:'max', width: 30, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('max');
             }
@@ -255,7 +255,7 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelPrograms = [
-        {name:'id', index:'id', width: 60,
+        {name:'id', index:'id', width: 60, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('id');
             }
@@ -297,7 +297,7 @@ $("document").ready(function () {
         'Servicemeldungen'
     ];
     var colModelStates = [
-        {name:'ise_id', index:'ise_id', width: 80, fixed: true,
+        {name:'ise_id', index:'ise_id', width: 80, fixed: true, sorttype: 'int',
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
 
@@ -448,7 +448,7 @@ $("document").ready(function () {
         ''
     ];
     var colModelChannel = [
-        {name:"ise_id", align: 'right', index:"ise_id",   width:48, fixed: true,
+        {name:"ise_id", align: 'right', index:"ise_id",   width:48, fixed: true, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('ise_id');
             },
@@ -522,7 +522,7 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelDatapoint = [
-        {name:"ise_id", index:"ise_id", align: 'right', width:46, fixed: true,
+        {name:"ise_id", index:"ise_id", align: 'right', width:46, fixed: true, sorttype: 'int',
             xmlmap: function (obj) {
                 return $(obj).attr('ise_id');
             },
@@ -573,7 +573,7 @@ $("document").ready(function () {
         'Servicemeldungen'
     ];
     var colModelRssi = [
-        {name:'ise_id', index:'ise_id', align: 'right', width: 40,
+        {name:'ise_id', index:'ise_id', align: 'right', width: 40, sorttype: 'int',
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
                 var ise_id = devicesXMLObj.find("device[address='" + device + "']").attr("ise_id");
@@ -821,6 +821,15 @@ $("document").ready(function () {
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
             subGridChannel(grid_id, row_id);
+        },
+        ondblClickRow: function(row_id) {
+            if ($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html() != null) {
+                $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
+                $("#renameId").val(row_id);
+                $("#renameType").val("DEVICE");
+                $("#dialogRename").dialog('open');
+
+            }
         }
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
         'navGrid',
@@ -829,7 +838,15 @@ $("document").ready(function () {
         "#gridPagerStates", {
             caption:"",
             buttonicon:"ui-icon-arrowrefresh-1-s",
-            onClickButton: function () { refreshStates(); },
+            onClickButton: function () {
+                storage.set("hqWebUiRooms", null);
+                storage.set("hqWebUiFunctions", null);
+                storage.set("hqWebUiDevices", null);
+                roomsReady = false;
+                functionsReady = false;
+                devicesReady = false;
+                xmlapiGetFunctions();
+            },
             position: "first",
             title:"Geräte, Gewerke und Räume neu laden",
             cursor: "pointer"
@@ -839,13 +856,7 @@ $("document").ready(function () {
             caption:"",
             buttonicon:"ui-icon-refresh",
             onClickButton: function () {
-                storage.set("hqWebUiRooms", null);
-                storage.set("hqWebUiFunctions", null);
-                storage.set("hqWebUiDevices", null);
-                roomsReady = false;
-                functionsReady = false;
-                devicesReady = false;
-                xmlapiGetFunctions();
+                refreshStates();
             },
             position: "first",
             title:"Datenpunkte neu laden",
@@ -889,8 +900,8 @@ $("document").ready(function () {
         });
 
     gridProtocol.jqGrid({
-        width: hqConf["gridWidth"],
-        height: hqConf["gridHeight"],
+        width: hqConf["gridWidth"] - 40,
+        height: hqConf["gridHeight"] - 56,
         colNames:colNamesProtocol,
         colModel :colModelProtocol,
         pager: "#gridPagerProtocol",
@@ -898,13 +909,15 @@ $("document").ready(function () {
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
-        datatype:       'xmlstring',
+        datatype:       'clientSide',
         loadonce:       true,
         loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
         data: {
         },
         sortable: true,
         ignoreCase: true,
+        sortname: "datetime",
+        sortorder: "desc",
         xmlReader : {
             root: "systemProtocol",
             row: "row",
@@ -935,8 +948,8 @@ $("document").ready(function () {
         });
 
     gridInfo.jqGrid({
-        width: hqConf["gridWidth"],
-        height: hqConf["gridHeight"],
+        width: hqConf["gridWidth"] - 40,
+        height: hqConf["gridHeight"] - 10,
         colNames: ['',''],
         colModel: [
             {name: 'key', index:'key', width:120, sortable: false},
@@ -998,7 +1011,14 @@ $("document").ready(function () {
             height: "100%",
             rowNum:1000,
             subGrid: true,
-            subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); }
+            subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
+            ondblClickRow: function(row_id, iRow, iCol, e) {
+                $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
+                $("#renameId").val(row_id);
+                $("#renameType").val("CHANNEL");
+                $("#dialogRename").dialog('open');
+
+            }
         });
     }
 
@@ -1021,6 +1041,7 @@ $("document").ready(function () {
             height: "100%",
             rowNum:9999,
             ondblClickRow: function (id) {
+
                 var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
                 $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
                 $("#datapointId").val(id);
@@ -1365,9 +1386,11 @@ $("document").ready(function () {
             data: scriptProtocol,
             success: function (data) {
                 gridProtocol.setGridParam({
-                    loadonce: false,
+                     loadonce: false,
                     datatype: "xmlstring",
-                    datastr: data
+                    datastr: data,
+                    sortname: 'datetime',
+                    sortorder: 'desc'
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 $("#loaderProtocol").hide();
             }
@@ -1442,6 +1465,7 @@ $("document").ready(function () {
                     case 'SYSVAR':
                         $(this).find("systemVariable").each(function () {
                             var value = $(this).attr("value");
+                            var var_unit = $(this).attr("unit");
                             var var_id = $(this).attr("ise_id");
                             html += "<div class='favInput'>";
 
@@ -1450,7 +1474,6 @@ $("document").ready(function () {
                                 case '2':
                                     html += "<select id='favInputSelect" + var_id + "'><option value='false'>False</option><option value='true'>True</option></select>";
                                     html += "</div>";
-
                                     $("div[id='favItem" + channelId + "']").append(html);
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
@@ -1472,7 +1495,7 @@ $("document").ready(function () {
                                     value = parseFloat(value);
                                     value = value.toFixed(2);
                                     html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
-                                    html += "</div>";
+                                    html += "<span style='display: inline-block; width:32px;'>" + var_unit + "</span></div>";
                                     $("div[id='favItem" + channelId + "']").append(html);
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
@@ -1509,103 +1532,146 @@ $("document").ready(function () {
                         break;
                     case 'CHANNEL':
                         var firstDP = true;
+                        var slider = false;
+                        var ctype = $(this).attr("ctype");
+
 
                         $("div[id='favItem" + channelId + "']").append("<div class='favInput'></div>");
-
+                        console.log("FAV CHANNEL " + $(this).attr("name"));
+                        console.log("CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
+                            if (!slider) {
+                                var name = $(this).attr("name").split(".");
+                                var type = name[2];
 
-                            var name = $(this).attr("name").split(".");
-                            var type = name[2];
 
 
+                                var id = $(this).attr("ise_id");
+                                html = "";
+                                switch (type) {
+                                    case 'STATE':
+                                        console.log("FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
+                                        var dpValue = $(this).attr("value");
+                                        console.log("FAV DP VALUE " + dpValue);
+                                        switch(ctype) {
+                                            case '37':
+                                                switch (dpValue) {
+                                                    case 'false':
+                                                        html += "<img src='/ise/img/door/closed.png' height='28'/>";
+                                                        break;
+                                                    case 'true':
+                                                        html += "<img src='/ise/img/door/open.png' height='28'/>";
+                                                        break;
+                                                }
+                                                firstDP = false;
 
-                             var id = $(this).attr("ise_id");
-                            html = "";
-                            switch (type) {
-                                case 'STATE':
-                                    var checkedOn = "";
-                                    var checkedOff = "";
-                                    if ($(this).attr("value") == "true") {
-                                        checkedOn = " checked='checked'";
-                                    } else {
-                                        checkedOff = " checked='checked'";
-                                    }
-                                    html += "<div class='favInputRadio' id='favRadio" + id + "'>";
-                                    html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                    html += "<label for='favRadioOff" + id + "'>Aus</label>";
-                                    html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                    html += "<label for='favRadioOn" + id + "'>An</label>";
-                                    html += "</div>";
-                                    if (!firstDP) { }
-                                    firstDP = false;
+                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                                break;
+                                            case '38':
+                                                switch (dpValue) {
+                                                    case '0':
+                                                        html += "<img src='/ise/img/window/closed.png' height='28'/>";
+                                                        break;
+                                                    case '1':
+                                                        html += "<img src='/ise/img/window/open_v.png' height='28'/>";
+                                                        break;
+                                                    case '2':
+                                                        html += "<img src='/ise/img/window/open_h.png' height='28'/>";
+                                                        break;
 
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                                }
+                                                firstDP = false;
 
-                                    $("input#favRadioOn" + id).change(function (eventdata, handler) {
-                                        if ($(this).is(":checked")) {
-                                            xmlapiSetState(id, 1);
+                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                                break;
+                                            default:
+                                                var checkedOn = "";
+                                                var checkedOff = "";
+                                                if ($(this).attr("value") == "true") {
+                                                    checkedOn = " checked='checked'";
+                                                } else {
+                                                    checkedOff = " checked='checked'";
+                                                }
+                                                html += "<div class='favInputRadio' id='favRadio" + id + "'>";
+                                                html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                                html += "<label for='favRadioOff" + id + "'>Aus</label>";
+                                                html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                                html += "<label for='favRadioOn" + id + "'>An</label>";
+                                                html += "</div>";
+                                                if (!firstDP) { }
+                                                firstDP = false;
+
+                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
+
+                                                $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                                    if ($(this).is(":checked")) {
+                                                        xmlapiSetState(id, 1);
+                                                    }
+                                                });
+                                                $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                                    if ($(this).is(":checked")) {
+                                                        xmlapiSetState(id, 0);
+                                                    }
+                                                });
                                         }
-                                    });
-                                    $("input#favRadioOff" + id).change(function (eventdata, handler) {
-                                        if ($(this).is(":checked")) {
-                                            xmlapiSetState(id, 0);
+
+
+                                        break;
+                                    case 'LEVEL':
+                                        var value = $(this).attr("value");
+                                        html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
+                                        html +=     "</div>";
+                                        firstDP = false;
+
+                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                        $("#favSlider" + id).slider({
+                                            min: 0.00,
+                                            max: 1.00,
+                                            step: 0.01,
+                                            value: value,
+                                            stop: function (e, ui) {
+                                                xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                            }
+                                        });
+                                        slider = true;
+                                        break;
+                                    case 'PRESS_SHORT':
+                                    case 'PRESS_LONG':
+                                        html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
+                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                        $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
+                                            xmlapiSetState($(this).attr("ise_id"), "true");
+                                        });
+
+
+                                        break;
+                                    case 'ERROR':
+                                    case 'OLD_LEVEL':
+                                    case 'RAMP_TIME':
+                                        // TODO
+                                        break;
+
+                                    default:
+                                        var value = $(this).attr("value");
+                                        if (!firstDP) { html += "<br>"; } else { firstDP = false; }
+                                        if (type == "TEMPERATURE") {
+                                            value = parseFloat(value);
+                                            value = value.toFixed(1) + "°C";
                                         }
-                                    });
-                                    break;
-                                case 'LEVEL':
-                                    var value = $(this).attr("value");
-                                    html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
-                                    html +=     "</div>";
-                                    firstDP = false;
-
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                    $("#favSlider" + id).slider({
-                                        min: 0.00,
-                                        max: 1.00,
-                                        step: 0.01,
-                                        value: value,
-                                        stop: function (e, ui) {
-                                            xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                        if (type == "HUMIDITY") {
+                                            value = parseFloat(value);
+                                            value = value.toFixed(0) + "%";
                                         }
-                                    });
-                                    break;
-                                case 'PRESS_SHORT':
-                                case 'PRESS_LONG':
-                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
-                                        xmlapiSetState($(this).attr("ise_id"), "true");
-                                    });
+                                        html += "<span class='unknownType'>" + type + ": " + value + "</span>";
+                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
 
 
-                                    break;
-                                case 'ERROR':
-                                case 'OLD_LEVEL':
-                                case 'RAMP_TIME':
-                                    // TODO
-                                    break;
+                                }
 
-                                default:
-                                    var value = $(this).attr("value");
-                                    if (!firstDP) { html += "<br>"; } else { firstDP = false; }
-                                    if (type == "TEMPERATURE") {
-                                        value = parseFloat(value);
-                                        value = value.toFixed(1) + "°C";
-                                    }
-                                    if (type == "HUMIDITY") {
-                                        value = parseFloat(value);
-                                        value = value.toFixed(0) + "%";
-                                    }
-                                    html += "<span class='unknownType'>" + type + ": " + value + "</span>";
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+
 
 
                             }
-
-
-
-
-
                         });
 
 
@@ -1654,6 +1720,58 @@ $("document").ready(function () {
 
 
     /* Buttons, Dialoge */
+    $("#dialogRename").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Ok': function () {
+                $(this).dialog('close');
+                var request = {
+                    "method": '',
+                    "params": {
+                        "id": $("#renameId").val(),
+                        "name": $("#rename").val(),
+                        "_session_id_": jsonSession
+                    }
+                };
+                switch ($("#renameType").val()) {
+                    case "DEVICE":
+                        request.method = "Device.setName";
+                        break;
+                    case "CHANNEL":
+                        request.method = "Channel.setName";
+                        break;
+
+
+                }
+                jsonPost(request, function () {
+                    switch ($("#renameType").val()) {
+                        case "DEVICE":
+                            $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby='gridStates_name']").html($("#rename").val());
+                            devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                            break;
+                        case "CHANNEL":
+                            $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby$='t_name']").html($("#rename").val());
+                            channelXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            break;
+                    }
+
+
+
+                });
+
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+
+    });
+
     dialogRunProgram.dialog({
         autoOpen: false,
         modal: true,
@@ -2092,7 +2210,7 @@ $("document").ready(function () {
     // XML-API Funktionen
     function xmlapiClearProtocol() {
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.xmlapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
             type: "POST",
             data: "var clearHistory = dom.ClearHistoryData(); Write(clearHistory);",
             success: function () {
