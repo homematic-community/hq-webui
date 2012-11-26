@@ -22,6 +22,7 @@ Features
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable
 * Starten von Programmen
+* Umbenennen von Geräten und Kanälen
 * Favoritenansicht
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
@@ -256,7 +257,7 @@ Todo/Ideen
 * Anpassen an Fenstergröße! Editor/Ausgabe/Variablen resizeable
 * Favoriten des eingeloggten Users anzeigen
 * Umbenennen von Programmen
-* Umbenennen von Variablen/Geräten/Kanälen
+* Umbenennen von Variablen
 * Programme anzeigen (Programme anlegen/ändern??)
 * ändern von Variablentypen und Wertelisten
 * Anlernmodus??
