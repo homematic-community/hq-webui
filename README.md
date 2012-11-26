@@ -82,6 +82,7 @@ Changelog
 * Geräte: Falsch beschriftete Reload-Buttons korrigiert
 * Zentrale: Grid-Größe Protokoll und Infos angepasst
 * Favoriten: Icon-Anzeige für Tür-Fenster-Kontakte und Drehgriff
+* Fehler behoben beim Löschen des Systemprotokolls
 
 
 2.0-alpha4
