@@ -1,7 +1,7 @@
 #!/bin/tclsh
 
 #
-#   hmscript.cgi Version 1.01
+#   hmscript.cgi Version 1.1
 #   Ausführen eines Homematic Scripts
 #   11'2012 https://github.com/hobbyquaker
 #
@@ -46,11 +46,11 @@ proc utf8-decode str {
   set utfmap {
    "Ã¤" "ä"
    "Ã¶" "ö"
-   "Ãº" "ü"
-   "Ã?" "Ä"
-   "Ã?" "Ö"
-   "Ã?" "Ü"
-   "Ã?" "ß"
+   "Ã¼" "ü"
+   "Ã„" "Ä"
+   "Ã–" "Ö"
+   "Ãœ" "Ü"
+   "ÃŸ" "ß"
   }
   return "[string map $utfmap $str]"
 }
