@@ -1,7 +1,7 @@
 #!/bin/tclsh
 
 #
-#   hmscript.cgi Version 1.0
+#   hmscript.cgi Version 1.01
 #   Ausführen eines Homematic Scripts
 #   11'2012 https://github.com/hobbyquaker
 #
@@ -28,10 +28,8 @@ load tclrega.so
 set debug "false"
 set content "plain"
 
-
-
 proc escape { str } {
-  set map {
+  set jsonmap {
     "\"" "\\\""
     "\\" "\\\\"
     "\b"  "\\b"
@@ -40,7 +38,41 @@ proc escape { str } {
     "\r"  "\\r"
     "\t"  "\\t"
   }
-  return "[string map $map $str]"
+
+  return "[string map $jsonmap $str]"
+}
+
+proc utf8-decode str {
+  set utfmap {
+   "Ã¤" "ä"
+   "Ã¶" "ö"
+   "Ãº" "ü"
+   "Ã?" "Ä"
+   "Ã?" "Ö"
+   "Ã?" "Ü"
+   "Ã?" "ß"
+  }
+  return "[string map $utfmap $str]"
+}
+
+proc init {} {
+    variable map
+    variable alphanumeric a-zA-Z0-9
+    for {set i 0} {$i <= 256} {incr i} {
+        set c [format %c $i]
+        if {![string match \[$alphanumeric\] $c]} {
+            set map($c) %[format %.2x $i]
+        }
+    }
+    # These are handled specially
+    array set map { " " + \n %0d%0a }
+}
+init
+
+proc url-decode str {
+    set str [string map [list + { } "\\" "\\\\"] $str]
+    regsub -all -- {%([A-Fa-f0-9][A-Fa-f0-9])} $str {\\u00\1} str
+    return [subst -novar -nocommand $str]
 }
 
 catch {
@@ -48,7 +80,7 @@ catch {
   set pairs [split $input &]
   foreach pair $pairs {
     if {0 != [regexp "^(\[^=]*)=(.*)$" $pair dummy varname val]} {
-      set $varname $val
+      set $varname [utf8-decode $val]
     }
   }
 }
@@ -56,12 +88,14 @@ catch {
 puts "Content-Type: text/$content;Charset=ISO-8859-1"
 puts ""
 
+
+
 # Session prüfen
 set res [lindex [rega_script "Write(system.GetSessionVarStr('$session'));"] 1]
 
 if {$res != ""} {
     # gültige Session
-    set postdata [read stdin]
+    set postdata [utf8-decode [read stdin]]
     array set script_result [rega_script $postdata]
 
 
