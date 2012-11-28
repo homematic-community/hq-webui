@@ -267,7 +267,7 @@ asap
 * Größenanpassung Tab Geräte
 * Aufräumen: console.log() entfernen, mehrfache verwendete jQuery-Selectoren, hässliche Bezeichner (Styleguide aufsetzen?)...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
@@ -286,26 +286,24 @@ asap
 2.2
 ---
 * Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
+* Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
-2.3
+
+2.5
 ---
 * Programme anzeigen, anlegen, editieren, löschen. Programme aus dem Scripteditor heraus erzeugen
-
-2.4
----
-* Dienste starten/stoppen (inetd (telnet), ftpd etc)
-* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 
 3.0
 ---
 * Intern komplett vom xml auf json umstellen ("Überbleibsel" xmlapi)
+* Auto-Refresh aller sichtbaren Variablen
 
 irgendwann
 ----------
+* Dienste starten/stoppen (inetd (telnet), ftpd etc)
+* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 * Einspielen von Zusatzsoftware ohne Zwangsreboot! (falls machbar...)
 * Geräte (ent)sperren?
-* Überflüssige Dateien im Verzeichnis edit_area entfernen
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
 * Raumthermostat Modus setzen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
