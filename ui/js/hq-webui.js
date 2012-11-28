@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "2.0-alpha5";
+    var version =               "2.0-alpha6";
 
     var statesXML,
         rssiXML,
@@ -86,11 +86,38 @@ $("document").ready(function () {
     $("ul.tabsPanel li a img").hide();
     $("#service").hide();
     $("#alarm").hide();
-
+    $("#divStderr").hide();
+    $("#divScriptVariables").hide();
 
     // Theme laden
     getTheme();
 
+
+    // Resize
+    $(window).resize(function() {
+        resizeAll();
+    });
+    resizeAll();
+
+    function resizeAll() {
+        var x = $(window).width();
+        var y = $(window).height();
+        console.log("x=" + x + " y=" + y);
+        // $("#subTabCcu").css('height', y - 84);
+        var gridWidth = x - 56;
+        if (gridWidth < hqConf.gridWidth) {
+            gridWidth = hqConf.gridWidth;
+        }
+        var gridHeight = y - 175;
+        /* if (gridHeight < hqConf.gridHeight) {
+         gridHeight = hqConf.gridHeight;
+         } */
+        gridStates.setGridHeight(gridHeight);
+        $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
+        $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
+        $("#divStdout").css('width', x - 775);
+        $("#gridScriptVariables").setGridWidth(x - 775);
+    }
 
     // Tab Navigation
     var tabChange = false;
@@ -102,11 +129,27 @@ $("document").ready(function () {
                 tabChange = false;
             }
 
+            if (ui.index == 0) {
+                setTimeout(resizeFavItems, 1000);
+            }
         }
     });
     $("#subTabCcu").tabs();
 
+    function resizeFavItems() {
+        $(".favInput").each(function () {
+            console.log($(this).parent().attr("id") + " " + $(this).height());
+            var newHeight = $(this).height();
+            if (newHeight < 36) {
+                newHeight = 28;
+            } else {
 
+                newHeight = ((Math.ceil(newHeight / 36)) * 37);
+
+            }
+            $(this).parent().css('height', newHeight);
+        });
+    }
 
     $(window).bind( 'hashchange', function(e) {
         //console.log("change");
@@ -186,6 +229,12 @@ $("document").ready(function () {
                     case '29':
                         val = $(obj).attr('value_text');
                         break;
+                    default:
+                        if (typeof val == "string" && val.match(/<img/)) {
+                            console.log(val + " " + typeof val);
+                            val = $('<div/>').text(val).html();
+                        }
+
                 }
                 return val;
             }
@@ -202,7 +251,9 @@ $("document").ready(function () {
         },
         {name:'value_text', index:'value_text', width: 50, hidden: true,
             xmlmap: function (obj) {
-                return $(obj).attr('value_text');
+                var val = $(obj).attr('value_text');
+
+                return val;
             }
         },
         {name:'min', index:'min', width: 30, sorttype: 'int',
@@ -228,17 +279,17 @@ $("document").ready(function () {
                 return formatVarType(val);
             }
         },
-        {name:'visible', index:'visible', width: 40,
+        {name:'visible', index:'visible', width: 40, edittype: 'checkbox',
             xmlmap: function (obj) {
                 return $(obj).attr('visible');
             },
-            formatter: formatBool
+            formatter: 'checkbox'
         },
-        {name:'logged', index:'logged', width: 40,
+        {name:'logged', index:'logged', width: 40, edittype: 'checkbox',
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
             },
-            formatter: formatBool
+            formatter: 'checkbox'
         },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
@@ -260,21 +311,22 @@ $("document").ready(function () {
                 return $(obj).attr('id');
             }
         },
-        {name:'name', index:'name', width: 200,
+        {name:'name', index:'name', width: 200, editable: true,
             xmlmap: function (obj) {
                 return $(obj).attr('name');
             }
         },
-        {name:'description', index:'description', width: 200,
+        {name:'description', index:'description', width: 200, editable: true,
             xmlmap: function (obj) {
                 return $(obj).attr('description');
             }
         },
-        {name:'active', index:'active', width: 40,
+        {name:'active', index:'active', width: 40, editable: true, edittype: 'checkbox',
+
             xmlmap: function (obj) {
                 return $(obj).attr('active');
             },
-            formatter: formatBool
+            formatter: 'checkbox'
         },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
@@ -776,11 +828,14 @@ $("document").ready(function () {
             id: "[id]",
             repeatitems: false
         },
-        ondblClickRow: function (id) {
+        ondblClickRow: function (rowid) {
+            gridPrograms.editRow(rowid, true, undefined, undefined, 'clientArray', undefined, saveProgram);
+        }
+         /*function (id) {
             programName.html(gridPrograms.getCell(id, "name"));
             programId.val(id);
             dialogRunProgram.dialog("open");
-        }
+        }*/
 
 
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
@@ -797,7 +852,7 @@ $("document").ready(function () {
         });
 
     gridStates.jqGrid({
-        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
+        width: 1224, height: hqConf["gridHeight"],
         colNames:colNamesStates,
         colModel :colModelStates,
         pager: "#gridPagerStates",
@@ -960,14 +1015,16 @@ $("document").ready(function () {
         gridview:       true,
         caption:        'Info',
         ignoreCase: true,
-        datatype: 'local'
+        datatype: 'local',
+        pager: '#gridPagerInfo'
 
 
-    });
+
+    }).filterToolbar({defaultSearch: 'cn'});
 
     gridScriptVariables.jqGrid({
         width: 343,
-        height: 200,
+        height: 130,
         colNames:['Variable', 'Wert'],
         colModel:[
             {name:'variable', index:'variable', width: 80},
@@ -1446,20 +1503,34 @@ $("document").ready(function () {
 
     // Favoritenansicht aufbauen
     function buildFavorites() {
+        console.log(favoritesXML);
         favoritesXMLObj.find("favorite[name='" + hqConf["favoriteUsername"] + "'] channel").each(function () {
-            var htmlContainer = "";
             var fav_id = $(this).attr("ise_id");
-            var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name")
-            htmlContainer += "<div id='favContainer" + fav_id + "'><h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'></div></div>";
-            $("div#accordionFavorites").prepend(htmlContainer);
+            var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name");
 
+            var cols = parseInt($(this).attr("column_count"), 10);
+            if (cols == 0) { cols = 1; }
+            var htmlTable = "<table border='0' width='100%' cellspacing='8' cellpadding='0'><tr id='favGroup"+fav_id+"' style='height:100%'>";
+            var percent = 100 / cols;
+            percent = percent.toString() + "%";
+            for (var i=1; i <= cols; i++) {
+                htmlTable += "<td style='padding-right: 8px; vertical-align: top;' class='favCol"+i+"' width='" + percent + "' height='100%'></td>";
+            }
+            htmlTable += "</tr></table>";
+
+            htmlContainer = "";
+            htmlContainer += "<div id='favContainer" + fav_id + "'><h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'>" + htmlTable + "</div></div>";
+            $("div#accordionFavorites").prepend(htmlContainer);
+            var col = 0;
             favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
+                col += 1;
+                if (col > cols) { col = 1; }
                 var html = "";
                 var channelName = $(this).attr("name");
                 var channelId = $(this).attr("ise_id");
 
                 html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'><div class='favName'>" + channelName + "</div></div>";
-                $("div[id='fav" + fav_id + "']").append(html);
+                $("tr[id='favGroup" + fav_id + "'] td.favCol" + col).append(html);
                 html = "";
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
@@ -1504,7 +1575,11 @@ $("document").ready(function () {
                                     });
                                     break;
                                 default:
-                                    html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    if (value.match(/<img/)) {
+                                        html += value;
+                                    } else {
+                                        html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    }
                                     html += "</div>";
                                     $("div[id='favItem" + channelId + "']").append(html);
                                     $("#favInputText" + var_id).keyup(function(e) {
@@ -1682,6 +1757,20 @@ $("document").ready(function () {
                 }
 
             });
+
+            $(".favInput").each(function () {
+                console.log($(this).parent().attr("id") + " " + $(this).height());
+                var newHeight = $(this).height();
+                if (newHeight < 36) {
+                    newHeight = 28;
+                } else {
+
+                    newHeight = ((Math.ceil(newHeight / 36)) * 37);
+
+                }
+               $(this).parent().css('height', newHeight);
+            });
+
         });
         var favSavedOrder = storage.get("hqWebUiFavOrder");
         if (favSavedOrder) {
@@ -2747,6 +2836,7 @@ $("document").ready(function () {
             type: 'POST',
             data: script,
             dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=ISO-8859-1',
             success: function (data) {
                 $("#loaderScript").hide();
                 successFunction(data);
@@ -2796,6 +2886,26 @@ $("document").ready(function () {
         });
 
     }
+
+    function saveProgram(id) {
+        var name = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_name']").html();
+        var description = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_description']").html();
+        description = (description == "&nbsp;" ? "" : description);
+        var active = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_active'] input").is(":checked");
+        var script = "object o = dom.GetObject(" + id + ");\n" +
+            "o.Name('" + name + "');\n" +
+            "o.PrgInfo('" + description + "');\n" +
+            "o.Active(" + active + ");\n";
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            data: script,
+            type: 'POST',
+            success: function () {
+                console.log("saveProgram(" + id + ")");
+            }
+        });
+    }
+
     function webuiStart() {
         // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus xmlapiGetFavorites heraus angestoßen
         //console.log("webuistart");
@@ -2884,7 +2994,7 @@ $("document").ready(function () {
         language: "de",
         syntax: "hmscript",
         replace_tab_by_spaces: 4,
-        min_height: 565,
+        min_height: 585,
         min_width: 695,
         toolbar: "search, go_to_line, fullscreen, autocompletion, select_font",
         EA_load_callback: "scriptEditorReady",
@@ -2977,5 +3087,7 @@ function scriptEditorStyle() {
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
 }
+
+
 
 

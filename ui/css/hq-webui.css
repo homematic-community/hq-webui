@@ -1,5 +1,4 @@
 html, body, div#container, div.tabs {
-    height: 99%;
     margin:0;
 
 }
@@ -28,7 +27,7 @@ div#container {
 }
 
 div#tabs {
-    margin: 10px;
+    margin: 6px;
    /* border: 1px dashed red;*/
 
 }
@@ -47,17 +46,17 @@ div#container {
 }
 
 div#container, div#tabs, div#tabFavorites {
-    min-height: 580px;
 
 }
 
 div.favItem {
+    min-width: 300px;
+    width: 100%;
+    min-height: 28px;
+    overflow: visible;
+    display:block;
     padding: 4px;
-    margin: 4px;
-    width: 466px;
-    height: 28px;
-    overflow: hidden;
-    float: left;
+    margin-bottom: 8px;
 }
 
 div.favName {
@@ -86,9 +85,7 @@ div.favInputSlider {
     right: 5px;
 
 }
-div.favInput {
-    height: 28px;
-}
+
 
 
 

@@ -74,6 +74,15 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 Changelog
 =========
 
+2.0-alpha6
+----------
+* Umlaut-Workaround in hmscript.cgi eingebaut.
+* Programm-Namen und Beschreibungen sind editierbar, Programme können aktiviert und deaktiviert werden
+* Darstellung passt sich nun an beliebige Fenstergrößen an
+* Favoriten-Gerüst neu aufgebaut mit Tabelle - stellt jetzt die in der CCU konfigurierte Anzahl an Spalten dar
+* HTML <img> Tags in Zeichenketten-Variablen werden nun im Tab Variablen escaped und im Tab Favoriten angezeigt
+
+
 2.0-alpha5
 ----------
 * Umbennen von Geräten und Kanälen (via Doppelklick)
@@ -249,23 +258,22 @@ Todo/Bekannte Fehler
 Todo/Ideen
 ==========
 
-
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server schwer machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
-* html/css - eine Menge Kleinigkeiten, automatisches Anpassen an Browser-Breite/Höhe, ...
+* ExecutionFailed Fehler bei Scriptausführung auswerten
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server nicht machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+* html/css - eine Menge Kleinigkeiten, Größenanpassung Tab Geräte, ...
+* Aufräumen: console.log() entfernen, mehrfache verwendete jQuery-Selectoren, ...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
+* Intern komplett vom xml auf json umstellen (überbleibsel xmlapi)
 * Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
-* Anpassen an Fenstergröße! Editor/Ausgabe/Variablen resizeable
 * Favoriten des eingeloggten Users anzeigen
-* Umbenennen von Programmen
 * Umbenennen von Variablen
-* Programme anzeigen (Programme anlegen/ändern??)
+* Programme anzeigen, anlegen, editieren, löschen. Programme aus dem Scripteditor heraus erzeugen
 * ändern von Variablentypen und Wertelisten
 * Anlernmodus??
 * Verknüpfungen anzeigen. Anlegen/Ändern?
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
-* Doppelklick auf Gerät oder Kanal -> Subgrid aufklappen (als alternative zum Plus-Icon)
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...

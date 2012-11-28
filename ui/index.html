@@ -28,6 +28,7 @@
                 <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
@@ -37,13 +38,13 @@
             </div>
             <div class="tabs" id="tabVariables">
                 <div class="tabContainer">
-                    <table id="gridVariables"></table>
+                    <table class="gridFull" id="gridVariables"></table>
                     <div id="gridPagerVariables"></div>
                 </div>
             </div>
             <div class="tabs" id="tabPrograms">
                 <div class="tabContainer">
-                    <table id="gridPrograms"></table>
+                    <table class="gridFull" id="gridPrograms"></table>
                     <div id="gridPagerPrograms"></div>
                 </div>
             </div>
@@ -65,9 +66,16 @@
                     <div id="gridPagerStates"></div>
                 </div>
             </div>
+            <div class="tabs" id="tabLinks">
+                Todo
+                <div class="tabContainer">
+                    <table id="gridLinks"></table>
+                    <div id="gridPagerLinks"></div>
+                </div>
+            </div>
             <div class="tabs" id="tabRssi">
                 <div class="tabContainer">
-                    <table id="gridRssi"></table>
+                    <table class="gridFull" id="gridRssi"></table>
                     <div id="gridPagerRssi"></div>
                 </div>
             </div>
@@ -103,7 +111,7 @@
                             <button id="hmSaveScript"></button>
                         </div>
                         <br><br><br>
-                        <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 490px; max-width: 600px; height: 300px; overflow:hidden;">
+                        <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; max-width: 600px; height: 300px; overflow:hidden;">
                             <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
                                 <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
                             </div>
@@ -112,11 +120,11 @@
                             </div>
                         </div>
                         <br>
-                        <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 490px; height: 300px; overflow:hidden;">
+                        <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; height: 222px; overflow:hidden;">
                             <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
                                 <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
                             </div>
-                            <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:271px; width: 100%; background-color: #fff; color: #000; ">
+                            <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:192px; width: 100%; background-color: #fff; color: #000; ">
 
                             </div>
                         </div>
@@ -132,21 +140,33 @@
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
                         <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
                     </ul>
                     <div class="tabs" id="tabCcuSystem">Todo</div>
                     <div class="tabs" id="tabCcuProtocol">
                         <div class="tabContainer">
-                            <table id="gridProtocol"></table>
+                            <table class="gridSub" id="gridProtocol"></table>
                             <div id="gridPagerProtocol"></div>
                         </div>
                     </div>
                     <div class="tabs" id="tabCcuInfo">
                         <div class="tabContainer">
-                            <table id="gridInfo"></table>
+                            <table class="gridSub" id="gridInfo"></table>
                             <div id="gridPagerInfo"></div>
                         </div>
+                    </div>
+                    <div class="tabs" id="tabCcuFiles">
+                        Todo
+                    </div>
+                    <div class="tabs" id="tabCcuSoftware">
+                        Todo
+                    </div>
+                    <div class="tabs" id="tabCcuServices">
+                        Todo
                     </div>
                 </div>
             </div>
