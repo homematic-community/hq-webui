@@ -17,7 +17,7 @@
 $("document").ready(function () {
 
     // HQ WebUI Version
-    var version =               "2.0-alpha6";
+    var version =               "2.0-alpha7";
 
     var statesXML,
         rssiXML,
@@ -615,8 +615,8 @@ $("document").ready(function () {
         'Gerätetyp',
         'rssi_device',
         'rssi_peer',
-        'RX',
-        'TX',
+        'RX dBm',
+        'TX dBm',
         'AES Verfügbar',
         'Übertragungsmodus',
         'unreach',

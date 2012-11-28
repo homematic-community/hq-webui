@@ -73,6 +73,9 @@ Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. D
 
 Changelog
 =========
+2.0-alpha7
+----------
+* Funk: Einheit dBm bei RX/TX hinzugefügt
 
 2.0-alpha6
 ----------
@@ -255,42 +258,68 @@ Todo/Bekannte Fehler
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 
-Todo/Ideen
-==========
-
+Todo/Ideen/Roadmap
+==================
+asap
+----
 * ExecutionFailed Fehler bei Scriptausführung auswerten
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server nicht machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
-* html/css - eine Menge Kleinigkeiten, Größenanpassung Tab Geräte, ...
-* Aufräumen: console.log() entfernen, mehrfache verwendete jQuery-Selectoren, ...
+* html/css - eine Menge Kleinigkeiten, styles aus .js und .html entfernen, ...
+* Größenanpassung Tab Geräte
+* Aufräumen: console.log() entfernen, mehrfache verwendete jQuery-Selectoren, hässliche Bezeichner (Styleguide aufsetzen?)...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (jstree?)
-* Intern komplett vom xml auf json umstellen (überbleibsel xmlapi)
-* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
-* Favoriten des eingeloggten Users anzeigen
-* Umbenennen von Variablen
-* Programme anzeigen, anlegen, editieren, löschen. Programme aus dem Scripteditor heraus erzeugen
-* ändern von Variablentypen und Wertelisten
-* Anlernmodus??
-* Verknüpfungen anzeigen. Anlegen/Ändern?
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
+* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Überflüssige Dateien im Verzeichnis edit_area entfernen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
-* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
-* Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
-* Tastenkürzel für Buttons in Scriptkonsole
-* rssilist: Einfärben der RX/TX Werte. Einheit (dBm?) in überschrift hinzufügen
-* Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen, Datenpunkt-Typen, True/False,
-* Favoriten: nicht bedienbare disablen
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Programme aktivieren/deaktivieren
-* Geräte (ent)sperren
-* Raumthermostat Modus setzen
+
+2.0
+---
+* Favoriten des eingeloggten Users anzeigen
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server nicht machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+
+2.1
+---
+* Anlegen, löschen und ändern von Variablen
+
+2.2
+---
+* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
+
+2.3
+---
+* Programme anzeigen, anlegen, editieren, löschen. Programme aus dem Scripteditor heraus erzeugen
+
+2.4
+---
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
 
+3.0
+---
+* Intern komplett vom xml auf json umstellen ("Überbleibsel" xmlapi)
 
+irgendwann
+----------
+* Einspielen von Zusatzsoftware ohne Zwangsreboot! (falls machbar...)
+* Geräte (ent)sperren?
+* Überflüssige Dateien im Verzeichnis edit_area entfernen
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
+* Raumthermostat Modus setzen
+* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
+* Tastenkürzel für Buttons in Scriptkonsole
+* rssilist: Einfärben der RX/TX Werte?
+* Favoriten: nicht bedienbare disablen (fraglich. Systemvariablen lassen sich im originalen UI ja leider nicht als Bedienbarer Favorit konfigurieren)
+* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+
+
+eher nicht
+----------
+* Anlernmodus??
+* Verknüpfungen anzeigen. Anlegen/Ändern?
+* Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
 
 
 
