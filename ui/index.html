@@ -35,6 +35,7 @@
             </ul>
             <div class="tabs" id="tabFavorites">
                 <div id="accordionFavorites"></div>
+                <div id="buttonsFavorites"><button id="buttonRefreshFavs">Neu laden</button></div>
             </div>
             <div class="tabs" id="tabVariables">
                 <div class="tabContainer">
@@ -139,14 +140,14 @@
             <div class="tabs" id="tabCcu">
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
-                        <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
+                        <!--<li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
-                        <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
+                    -->    <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
                     </ul>
-                    <div class="tabs" id="tabCcuSystem">Todo</div>
+                    <!--<div class="tabs" id="tabCcuSystem">Todo</div>-->
                     <div class="tabs" id="tabCcuProtocol">
                         <div class="tabContainer">
                             <table class="gridSub" id="gridProtocol"></table>
@@ -158,7 +159,7 @@
                             <table class="gridSub" id="gridInfo"></table>
                             <div id="gridPagerInfo"></div>
                         </div>
-                    </div>
+                    </div><!--
                     <div class="tabs" id="tabCcuFiles">
                         Todo
                     </div>
@@ -167,7 +168,7 @@
                     </div>
                     <div class="tabs" id="tabCcuServices">
                         Todo
-                    </div>
+                    </div>-->
                 </div>
             </div>
 
@@ -267,11 +268,11 @@
             <li><a href="http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559" target="_blank">Support</a></li>
         </ul>
     </div>
-    <div class="dialog" id="dialogDeleteScript" title="Script löschen">
+    <div class="dialog" id="dialogDelScript" title="Script löschen">
         <br>
         Hiermit löschen Sie das Script<br>
         <span style="font-weight: bold; padding-left: 20px;" id="scriptDeleteReally"></span><br>
-        unwiderruflich.<br><br>
+        unwiederruflich.<br><br>
         Sind Sie sich sicher?
     </div>
     <div class="dialog" id="dialogRename" title="Name ändern">

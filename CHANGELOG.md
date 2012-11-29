@@ -1,8 +1,16 @@
 Changelog
 =========
-2.0-alpha7
+2.0-beta1
 ----------
 * Funk: Einheit dBm bei RX/TX hinzugefügt
+* Zusätzliche Spalte für Buttons bei Programme und Variablen
+* Programme Play-Button hinzugefügt
+* Aufräumaktion (mehrfach verwendete jQuery Selektoren)
+* Fehler behoben beim Laden der Sortierung der Favoriten-Bereiche der dazu geführt hat das die Favoriten nicht mehr bedienbar waren
+* Namensänderung von Kanal 0 unterbunden
+* Button für manuellen Refresh der Favoritenansicht hinzugefügt
+* Überflüssige Dateien im Verzeichnis edit_area entfernt
+
 
 2.0-alpha6
 ----------

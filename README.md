@@ -21,7 +21,7 @@ Features
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen, diversen Informationen und dem Systemprotokoll
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable
-* Starten von Programmen
+* Starten, umbenennen und aktivieren/deaktivieren von Programmen
 * Umbenennen von Geräten und Kanälen
 * Favoritenansicht
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
@@ -46,12 +46,12 @@ Bedienung
 Allgemein
 ---------
 Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
-Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und lassen sich über den Reload-Button oben rechts aktualisieren. Der Reload-Button unten Links in der Gerätetabelle lädt lediglich die Status der Datenpunkte neu.
+Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und lassen sich über den zweiten Reload-Button in der Geräteansicht unten Links aktualisieren, der erste Reload-Button lädt lediglich die Status der Datenpunkte neu.
 
 Favoriten
 ---------
 Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei config.js entsprechend angepasst werden.
-Die Favoritenansicht ist fix zwei-spaltig und zeigt leider keine "Separatoren" an. Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren.
+Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren.
 
 Geräte und Variablen
 --------------------
@@ -61,7 +61,7 @@ Geräte und Kanäle können über Doppelklick umbenannt werden.
 
 Programme
 ---------
-Programme werden über Doppelklick auf die Tabellenzeile gestartet.
+Programme können über einen Doppelklick auf die Tabellenzelle umbenannt und aktiviert/deaktiviert werden.
 
 Entwicklung
 -----------
@@ -81,22 +81,17 @@ Todo/Ideen/Roadmap
 ==================
 asap
 ----
+* Kanäle: Prtokollierung aktivieren/deaktivieren
+* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * ExecutionFailed Fehler bei Scriptausführung auswerten
-* html/css - eine Menge Kleinigkeiten, styles aus .js und .html entfernen, ...
 * Größenanpassung Tab Geräte
-* Aufräumen: console.log() entfernen, mehrfache verwendete jQuery-Selectoren, hässliche Bezeichner (Styleguide aufsetzen?)...
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
-* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
-* Überflüssige Dateien im Verzeichnis edit_area entfernen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-
-2.0
----
 * Favoriten des eingeloggten Users anzeigen
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (erstmal für den Favoriten-Tab) (XML-RPC Event Subscription mangels Javascript XML RPC Server nicht machbar? -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen? Erkennen welche Daten sichtbar sind und nur diese Updaten?)
+
 
 2.1
 ---
@@ -104,24 +99,28 @@ asap
 
 2.2
 ---
-* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (Kontextmenü auf Rechtsklick? Buttons in Tabellenansicht?)
+* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (jqGrid Inline Edit in Geräte-Tab -> http://www.erichynds.com/jquery/jquery-ui-multiselect-widget/)
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
-
-2.5
+2.3
 ---
-* Programme anzeigen, anlegen, editieren, löschen. Programme aus dem Scripteditor heraus erzeugen
+* Programme anzeigen, anlegen, editieren, löschen. Programme direkt aus dem Scripteditor heraus erzeugen
 
 3.0
 ---
-* Intern komplett vom xml auf json umstellen ("Überbleibsel" xmlapi)
-* Auto-Refresh aller sichtbaren Variablen
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (XML-RPC Event Subscription nicht (ohne eine Art Proxy) machbar -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen! Erkennen welche Daten sichtbar sind und nur diese Updaten!)
+* Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
+
 
 irgendwann
 ----------
+* Anzeige von Favoriten-Platzhalter (machbar?)
+* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
-* Einspielen von Zusatzsoftware ohne Zwangsreboot! (falls machbar...)
+* Dateien aus Editor auf CCU Speichern
+* Machbarkeit prüfen: Anlegen von Cronjobs?
+* Einspielen von Zusatzsoftware ohne Zwangsreboot! (machbar?)
 * Geräte (ent)sperren?
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
 * Raumthermostat Modus setzen
@@ -130,14 +129,18 @@ irgendwann
 * rssilist: Einfärben der RX/TX Werte?
 * Favoriten: nicht bedienbare disablen (fraglich. Systemvariablen lassen sich im originalen UI ja leider nicht als Bedienbarer Favorit konfigurieren)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
+* Komfortableres bestätigen von Servicemeldungen (noch eine extra Liste von Service-Meldungen im Zentrale-Tab?)
+* Backup erstellen
+* Reboot und Safe-Mode Reboot
 
 
 eher nicht
 ----------
 * Anlernmodus??
-* Verknüpfungen anzeigen. Anlegen/Ändern?
+* Direkte Verknüpfungen Anzeigen/Anlegen/Ändern/Löschen? (durchaus machbar, aber großer Zeitaufwand)
 * Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
-
+* Firewallkonfiguration
+* Backup einspielen, Firmwareupdate (solche "kritischen" Funktionen machen mir Angst;)
 
 
 

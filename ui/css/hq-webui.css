@@ -73,8 +73,8 @@ div.favName {
 
 div.favInput, div.favStartProgram {
     float: right;
-    display: inline;
-    min-height: 28px;
+     min-height: 28px;
+    z-index: 10000;
 }
 
 div.favInputSlider {
@@ -93,7 +93,13 @@ div.favStartProgram button, div.favInput button {
    height: 28px;
 }
 .ui-jqgrid tr.jqgrow td.ise_id {
-    padding-right: 10px;
+    padding-right: 8px;
+}
+
+#buttonsFavorites {
+ width: 100%;
+    text-align: left;
+
 }
 
 #hmScriptTools {

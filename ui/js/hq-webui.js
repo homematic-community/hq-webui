@@ -16,8 +16,7 @@
 
 $("document").ready(function () {
 
-    // HQ WebUI Version
-    var version =               "2.0-alpha7";
+    var version =               "2.0-beta1";
 
     var statesXML,
         rssiXML,
@@ -74,8 +73,21 @@ $("document").ready(function () {
     var dialogEditVariable =    $("#dialogEditVariable");
     var dialogEditDatapoint =   $("#dialogEditDatapoint");
     var dialogSettings =        $("#dialogSettings");
+    var dialogRename =          $("#dialogRename");
+    var dialogDocu =            $("#dialogDocu");
+    var dialogAbout =           $("#dialogAbout");
+    var dialogDebugScript =     $("#dialogDebugScript");
+    var dialogDelScript =       $("#dialogDelScript");
 
-    var jsonSession;
+    var buttonRefreshFavs =     $("#buttonRefreshFavs");
+    
+    var divStderr =             $("#divStderr");
+    var divStdout =             $("#divStdout");
+    var divScriptVariables =    $("#divScriptVariables");
+
+    var accordionFavorites =    $("div#accordionFavorites");
+
+    var hmSession;
 
 
     // Elemente verstecken
@@ -86,40 +98,15 @@ $("document").ready(function () {
     $("ul.tabsPanel li a img").hide();
     $("#service").hide();
     $("#alarm").hide();
-    $("#divStderr").hide();
-    $("#divScriptVariables").hide();
+    divStderr.hide();
+    divScriptVariables.hide();
 
     // Theme laden
     getTheme();
 
 
-    // Resize
-    $(window).resize(function() {
-        resizeAll();
-    });
-    resizeAll();
 
-    function resizeAll() {
-        var x = $(window).width();
-        var y = $(window).height();
-        console.log("x=" + x + " y=" + y);
-        // $("#subTabCcu").css('height', y - 84);
-        var gridWidth = x - 56;
-        if (gridWidth < hqConf.gridWidth) {
-            gridWidth = hqConf.gridWidth;
-        }
-        var gridHeight = y - 175;
-        /* if (gridHeight < hqConf.gridHeight) {
-         gridHeight = hqConf.gridHeight;
-         } */
-        gridStates.setGridHeight(gridHeight);
-        $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
-        $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
-        $("#divStdout").css('width', x - 775);
-        $("#gridScriptVariables").setGridWidth(x - 775);
-    }
-
-    // Tab Navigation
+    // Tabs Init und Navigation
     var tabChange = false;
     tabs.tabs({
         select: function(event, ui) {
@@ -134,28 +121,54 @@ $("document").ready(function () {
             }
         }
     });
-    $("#subTabCcu").tabs();
-
-    function resizeFavItems() {
-        $(".favInput").each(function () {
-            console.log($(this).parent().attr("id") + " " + $(this).height());
-            var newHeight = $(this).height();
-            if (newHeight < 36) {
-                newHeight = 28;
-            } else {
-
-                newHeight = ((Math.ceil(newHeight / 36)) * 37);
-
-            }
-            $(this).parent().css('height', newHeight);
-        });
-    }
-
     $(window).bind( 'hashchange', function(e) {
         //console.log("change");
         tabChange = true;
         tabs.tabs('select', window.location.hash);
     });
+    $("#subTabCcu").tabs();
+
+    // Resize
+    $(window).resize(function() {
+        resizeAll();
+    });
+    setTimeout(resizeAll, 200);
+    function resizeAll() {
+        var x = $(window).width();
+        var y = $(window).height();
+        //console.log("x=" + x + " y=" + y);
+        // $("#subTabCcu").css('height', y - 84);
+        var gridWidth = x - 56;
+        if (gridWidth < hqConf.gridWidth) {
+            gridWidth = hqConf.gridWidth;
+        }
+        var gridHeight = y - 175;
+        /* if (gridHeight < hqConf.gridHeight) {
+         gridHeight = hqConf.gridHeight;
+         } */
+        gridStates.setGridHeight(gridHeight);
+        $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
+        $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
+        divStdout.css('width', x - 775);
+        gridScriptVariables.setGridWidth(x - 775);
+    }
+
+
+    function resizeFavItems() {
+        // Todo totaler Pfusch, das muss besser gehen!
+        $(".favInput").each(function () {
+            //console.log($(this).parent().attr("id") + " " + $(this).height());
+            var newHeight = $(this).height();
+            if (newHeight < 36) {
+                newHeight = 28;
+            } else {
+                newHeight = ((Math.ceil(newHeight / 36)) * 37);
+            }
+            $(this).parent().css('height', newHeight);
+        });
+    }
+
+
 
     // Buttons ins Tabs-Panel einfügen
     $("#mainNav").
@@ -164,20 +177,16 @@ $("document").ready(function () {
         append("<button title='Hilfe' class='smallButton' style='float:right;' id='buttonAbout'></button>");
 
 
-        $("#divStdout").resizable().on("resize", function(event, ui) {
-        $("#hmScriptStdout").height($("#divStdout").height()-29);
-        $("#divStderr").width($("#divStdout").width());
+        divStdout.resizable().on("resize", function(event, ui) {
+        $("#hmScriptStdout").height(divStdout.height()-29);
+        divStderr.width(divStdout.width());
     });
-    $("#divStderr").resizable().on("resize", function(event, ui) {
-        $("#hmScriptStderr").height($("#divStderr").height()-29);
+    divStderr.resizable().on("resize", function(event, ui) {
+        $("#hmScriptStderr").height(divStderr.height()-29);
     });
 
-
-
+    // Los gehts!
     sessionStart();
-
-
-
 
 
     /*
@@ -187,7 +196,8 @@ $("document").ready(function () {
      *
      */
     var colNamesVariables = [
-        'ise_id',
+        '',
+        'id',
         'Name',
         'Variable',
         'Wert',
@@ -203,10 +213,17 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelVariables = [
-        {name:'ise_id', index:'ise_id', width: 60, sorttype: 'int',
+        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
             xmlmap: function (obj) {
-                return $(obj).attr('ise_id');
+                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
             }
+        },
+        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int',
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('ise_id');
+                return '<span style="float:right">' + ise_id + '</span>';
+            },
+            classes: 'ise_id'
         },
         {name:'name', index:'name', width: 150,
             xmlmap: function (obj) {
@@ -231,7 +248,7 @@ $("document").ready(function () {
                         break;
                     default:
                         if (typeof val == "string" && val.match(/<img/)) {
-                            console.log(val + " " + typeof val);
+                            //console.log(val + " " + typeof val);
                             val = $('<div/>').text(val).html();
                         }
 
@@ -299,6 +316,7 @@ $("document").ready(function () {
     ];
 
     var colNamesPrograms = [
+        '',
         'id',
         'Name',
         'Beschreibung',
@@ -306,10 +324,17 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelPrograms = [
-        {name:'id', index:'id', width: 60, sorttype: 'int',
+        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
             xmlmap: function (obj) {
-                return $(obj).attr('id');
+                return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
             }
+        },
+        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int',
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('id');
+                return '<span style="float:right">' + ise_id + '</span>';
+            },
+            classes: 'ise_id'
         },
         {name:'name', index:'name', width: 200, editable: true,
             xmlmap: function (obj) {
@@ -336,7 +361,7 @@ $("document").ready(function () {
     ];
 
     var colNamesStates = [
-        'ise_id',
+        'id',
         'Name',
         'Adresse',
         'Schnittstelle',
@@ -609,7 +634,7 @@ $("document").ready(function () {
     ];
 
     var colNamesRssi = [
-        'ise_id',
+        'id',
         'Name',
         'Adresse',
         'Gerätetyp',
@@ -625,7 +650,7 @@ $("document").ready(function () {
         'Servicemeldungen'
     ];
     var colModelRssi = [
-        {name:'ise_id', index:'ise_id', align: 'right', width: 40, sorttype: 'int',
+        {name:'ise_id', index:'ise_id',  width: 40, fixed: true, sorttype: 'int',
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
                 var ise_id = devicesXMLObj.find("device[address='" + device + "']").attr("ise_id");
@@ -830,12 +855,21 @@ $("document").ready(function () {
         },
         ondblClickRow: function (rowid) {
             gridPrograms.editRow(rowid, true, undefined, undefined, 'clientArray', undefined, saveProgram);
+        },
+        gridComplete: function () {
+            $(".gridButton.runProgram").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-play" }});
+            $(".gridButton.runProgram").each(function () {
+                var id = $(this).attr("id").slice(10);
+                //console.log(id);
+               $(this).click(function() {
+                   programName.html(gridPrograms.getCell(id, "name"));
+                   programId.val(id);
+                   dialogRunProgram.dialog("open");
+               });
+
+            });
         }
-         /*function (id) {
-            programName.html(gridPrograms.getCell(id, "name"));
-            programId.val(id);
-            dialogRunProgram.dialog("open");
-        }*/
+
 
 
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
@@ -882,7 +916,7 @@ $("document").ready(function () {
                 $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
                 $("#renameId").val(row_id);
                 $("#renameType").val("DEVICE");
-                $("#dialogRename").dialog('open');
+                dialogRename.dialog('open');
 
             }
         }
@@ -1070,11 +1104,15 @@ $("document").ready(function () {
             subGrid: true,
             subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
             ondblClickRow: function(row_id, iRow, iCol, e) {
-                $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
-                $("#renameId").val(row_id);
-                $("#renameType").val("CHANNEL");
-                $("#dialogRename").dialog('open');
-
+                if (!$("tr[id='" + row_id + "'] td:first").attr('aria-describedby').match(/_t_[0-9]+_t_/)) {
+                    var channel = $("tr[id='" + row_id + "'] td[aria-describedby$='t_address']").html().split(":");
+                    if (channel[channel.length - 1] != 0) {
+                        $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
+                        $("#renameId").val(row_id);
+                        $("#renameType").val("CHANNEL");
+                        dialogRename.dialog('open');
+                    }
+                }
             }
         });
     }
@@ -1257,7 +1295,7 @@ $("document").ready(function () {
         variablesReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptVariables,
             success: function (data) {
@@ -1317,7 +1355,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             datatype: 'text',
             data: scriptPrograms,
@@ -1367,7 +1405,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             datatype: 'text',
             data: scriptStates,
@@ -1438,7 +1476,7 @@ $("document").ready(function () {
         protocolReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptProtocol,
             success: function (data) {
@@ -1466,7 +1504,7 @@ $("document").ready(function () {
         rssiReady = false;
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptRssi,
             success: function (data) {
@@ -1503,7 +1541,11 @@ $("document").ready(function () {
 
     // Favoritenansicht aufbauen
     function buildFavorites() {
-        console.log(favoritesXML);
+        if (favoritesReady) {
+            accordionFavorites.accordion("destroy");
+        }
+         accordionFavorites.html("");
+        //console.log(favoritesXML);
         favoritesXMLObj.find("favorite[name='" + hqConf["favoriteUsername"] + "'] channel").each(function () {
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name");
@@ -1520,8 +1562,10 @@ $("document").ready(function () {
 
             htmlContainer = "";
             htmlContainer += "<div id='favContainer" + fav_id + "'><h3>" + name + "</h3><div id='fav" + fav_id + "' class='favPane'>" + htmlTable + "</div></div>";
-            $("div#accordionFavorites").prepend(htmlContainer);
+            accordionFavorites.prepend(htmlContainer);
             var col = 0;
+
+
             favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
                 col += 1;
                 if (col > cols) { col = 1; }
@@ -1607,146 +1651,145 @@ $("document").ready(function () {
                         break;
                     case 'CHANNEL':
                         var firstDP = true;
-                        var slider = false;
                         var ctype = $(this).attr("ctype");
 
 
                         $("div[id='favItem" + channelId + "']").append("<div class='favInput'></div>");
-                        console.log("FAV CHANNEL " + $(this).attr("name"));
-                        console.log("CTYPE " + ctype);
+                        //console.log("FAV CHANNEL " + $(this).attr("name"));
+                        //console.log("CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
-                            if (!slider) {
-                                var name = $(this).attr("name").split(".");
-                                var type = name[2];
+                            var name = $(this).attr("name").split(".");
+                            var type = name[2];
 
 
 
-                                var id = $(this).attr("ise_id");
-                                html = "";
-                                switch (type) {
-                                    case 'STATE':
-                                        console.log("FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
-                                        var dpValue = $(this).attr("value");
-                                        console.log("FAV DP VALUE " + dpValue);
-                                        switch(ctype) {
-                                            case '37':
-                                                switch (dpValue) {
-                                                    case 'false':
-                                                        html += "<img src='/ise/img/door/closed.png' height='28'/>";
-                                                        break;
-                                                    case 'true':
-                                                        html += "<img src='/ise/img/door/open.png' height='28'/>";
-                                                        break;
-                                                }
-                                                firstDP = false;
-
-                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                                break;
-                                            case '38':
-                                                switch (dpValue) {
-                                                    case '0':
-                                                        html += "<img src='/ise/img/window/closed.png' height='28'/>";
-                                                        break;
-                                                    case '1':
-                                                        html += "<img src='/ise/img/window/open_v.png' height='28'/>";
-                                                        break;
-                                                    case '2':
-                                                        html += "<img src='/ise/img/window/open_h.png' height='28'/>";
-                                                        break;
-
-                                                }
-                                                firstDP = false;
-
-                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                                break;
-                                            default:
-                                                var checkedOn = "";
-                                                var checkedOff = "";
-                                                if ($(this).attr("value") == "true") {
-                                                    checkedOn = " checked='checked'";
-                                                } else {
-                                                    checkedOff = " checked='checked'";
-                                                }
-                                                html += "<div class='favInputRadio' id='favRadio" + id + "'>";
-                                                html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                                html += "<label for='favRadioOff" + id + "'>Aus</label>";
-                                                html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                                html += "<label for='favRadioOn" + id + "'>An</label>";
-                                                html += "</div>";
-                                                if (!firstDP) { }
-                                                firstDP = false;
-
-                                                $("div[id='favItem" + channelId + "'] .favInput").append(html);
-
-                                                $("input#favRadioOn" + id).change(function (eventdata, handler) {
-                                                    if ($(this).is(":checked")) {
-                                                        xmlapiSetState(id, 1);
-                                                    }
-                                                });
-                                                $("input#favRadioOff" + id).change(function (eventdata, handler) {
-                                                    if ($(this).is(":checked")) {
-                                                        xmlapiSetState(id, 0);
-                                                    }
-                                                });
-                                        }
-
-
-                                        break;
-                                    case 'LEVEL':
-                                        var value = $(this).attr("value");
-                                        html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
-                                        html +=     "</div>";
-                                        firstDP = false;
-
-                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                        $("#favSlider" + id).slider({
-                                            min: 0.00,
-                                            max: 1.00,
-                                            step: 0.01,
-                                            value: value,
-                                            stop: function (e, ui) {
-                                                xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                            var id = $(this).attr("ise_id");
+                            html = "";
+                            switch (type) {
+                                case 'STATE':
+                                    //console.log("FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
+                                    var dpValue = $(this).attr("value");
+                                    //console.log("FAV DP VALUE " + dpValue);
+                                    switch(ctype) {
+                                        case '37':
+                                            switch (dpValue) {
+                                                case 'false':
+                                                    html += "<img src='/ise/img/door/closed.png' height='28'/>";
+                                                    break;
+                                                case 'true':
+                                                    html += "<img src='/ise/img/door/open.png' height='28'/>";
+                                                    break;
                                             }
-                                        });
-                                        slider = true;
-                                        break;
-                                    case 'PRESS_SHORT':
-                                    case 'PRESS_LONG':
-                                        html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
-                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
-                                        $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
-                                            xmlapiSetState($(this).attr("ise_id"), "true");
-                                        });
+                                            firstDP = false;
+
+                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                            break;
+                                        case '38':
+                                            switch (dpValue) {
+                                                case '0':
+                                                    html += "<img src='/ise/img/window/closed.png' height='28'/>";
+                                                    break;
+                                                case '1':
+                                                    html += "<img src='/ise/img/window/open_v.png' height='28'/>";
+                                                    break;
+                                                case '2':
+                                                    html += "<img src='/ise/img/window/open_h.png' height='28'/>";
+                                                    break;
+
+                                            }
+                                            firstDP = false;
+
+                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                            break;
+                                        default:
+                                            var checkedOn = "";
+                                            var checkedOff = "";
+                                            if ($(this).attr("value") == "true") {
+                                                checkedOn = " checked='checked'";
+                                            } else {
+                                                checkedOff = " checked='checked'";
+                                            }
+                                            html += "<div class='favInputRadio' id='favRadio" + id + "'>";
+                                            html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                            html += "<label for='favRadioOff" + id + "'>Aus</label>";
+                                            html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                            html += "<label for='favRadioOn" + id + "'>An</label>";
+                                            html += "</div>";
+                                            if (!firstDP) { }
+                                            firstDP = false;
+
+                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+
+                                            $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                                if ($(this).is(":checked")) {
+                                                    xmlapiSetState(id, 1);
+                                                }
+                                            });
+                                            $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                                if ($(this).is(":checked")) {
+                                                    xmlapiSetState(id, 0);
+                                                }
+                                            });
+                                    }
 
 
-                                        break;
-                                    case 'ERROR':
-                                    case 'OLD_LEVEL':
-                                    case 'RAMP_TIME':
-                                        // TODO
-                                        break;
+                                    break;
+                                case 'LEVEL':
+                                    var value = $(this).attr("value");
+                                    html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
+                                    html +=     "</div>";
+                                    firstDP = false;
 
-                                    default:
-                                        var value = $(this).attr("value");
-                                        if (!firstDP) { html += "<br>"; } else { firstDP = false; }
-                                        if (type == "TEMPERATURE") {
-                                            value = parseFloat(value);
-                                            value = value.toFixed(1) + "°C";
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    $("#favSlider" + id).slider({
+                                        min: 0.00,
+                                        max: 1.00,
+                                        step: 0.01,
+                                        value: value,
+                                        stop: function (e, ui) {
+                                            xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
                                         }
-                                        if (type == "HUMIDITY") {
-                                            value = parseFloat(value);
-                                            value = value.toFixed(0) + "%";
-                                        }
-                                        html += "<span class='unknownType'>" + type + ": " + value + "</span>";
-                                        $("div[id='favItem" + channelId + "'] .favInput").append(html);
+
+                                    });
+
+                                    break;
+                                case 'PRESS_SHORT':
+                                case 'PRESS_LONG':
+                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
+                                        xmlapiSetState($(this).attr("ise_id"), "true");
+                                    });
 
 
-                                }
+                                    break;
+                                case 'ERROR':
+                                case 'OLD_LEVEL':
+                                case 'RAMP_TIME':
+                                case 'RAMP_STOP':
+                                    // TODO
+                                    break;
 
-
+                                default:
+                                    var value = $(this).attr("value");
+                                    if (!firstDP) { html += "<br>"; } else { firstDP = false; }
+                                    if (type == "TEMPERATURE") {
+                                        value = parseFloat(value);
+                                        value = value.toFixed(1) + "°C";
+                                    }
+                                    if (type == "HUMIDITY") {
+                                        value = parseFloat(value);
+                                        value = value.toFixed(0) + "%";
+                                    }
+                                    html += "<span class='unknownType'>" + type + ": " + value + "</span>";
+                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
 
 
                             }
+
+
+
+
                         });
 
 
@@ -1759,7 +1802,7 @@ $("document").ready(function () {
             });
 
             $(".favInput").each(function () {
-                console.log($(this).parent().attr("id") + " " + $(this).height());
+                //console.log($(this).parent().attr("id") + " " + $(this).height());
                 var newHeight = $(this).height();
                 if (newHeight < 36) {
                     newHeight = 28;
@@ -1772,16 +1815,20 @@ $("document").ready(function () {
             });
 
         });
+
+
         var favSavedOrder = storage.get("hqWebUiFavOrder");
         if (favSavedOrder) {
             favSavedOrder = favSavedOrder.split(",");
-            var sortedHtml = "";
+            //var sortedHtml = "";
             for (var i in favSavedOrder) {
-                sortedHtml += "<div id='" + favSavedOrder[i] + "'>" + $("#" + favSavedOrder[i]).html() + "</div>";
+                //console.log("FAVORDER " + favSavedOrder[i]);
+                $("#" + favSavedOrder[i]).appendTo(accordionFavorites);
+                //sortedHtml += "<div id='" + favSavedOrder[i] + "'>" + $("#" + favSavedOrder[i]).html() + "</div>";
             }
-            $("div#accordionFavorites").html(sortedHtml);
+            //accordionFavorites.html(sortedHtml);
         }
-        $("div#accordionFavorites").accordion({
+        accordionFavorites.accordion({
             heightStyle: "content",
             header: "> div > h3"
         }).sortable({
@@ -1799,6 +1846,7 @@ $("document").ready(function () {
                     storage.set("hqWebUiFavOrder", favOrder.join(","));
                 }
             });
+
         $(".favKey").button();
         function favButtonset() {
             $(".favInputRadio").buttonset();
@@ -1809,7 +1857,19 @@ $("document").ready(function () {
 
 
     /* Buttons, Dialoge */
-    $("#dialogRename").dialog({
+    buttonRefreshFavs.button({
+        text: false,
+        icons: { primary: "ui-icon-refresh" }
+    }).click(function () {
+        xmlapiGetFavorites();
+    });
+
+
+    dialogDelScript.dialog({
+        autoOpen: false
+    });
+
+    dialogRename.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
@@ -1820,7 +1880,7 @@ $("document").ready(function () {
                     "params": {
                         "id": $("#renameId").val(),
                         "name": $("#rename").val(),
-                        "_session_id_": jsonSession
+                        "_session_id_": hmSession
                     }
                 };
                 switch ($("#renameType").val()) {
@@ -1962,7 +2022,7 @@ $("document").ready(function () {
         }
     });
 
-    $("#dialogDocu").dialog({
+   dialogDocu.dialog({
         autoOpen: false,
         width: 400,
         modal: true,
@@ -1972,7 +2032,7 @@ $("document").ready(function () {
             }
         }
     });
-    $("#dialogAbout").dialog({
+    dialogAbout.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
@@ -1993,7 +2053,7 @@ $("document").ready(function () {
         $("#buttonDelCred").attr("disabled", true);
     });
 
-    $("#dialogDebugScript").dialog({
+    dialogDebugScript.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
@@ -2006,7 +2066,7 @@ $("document").ready(function () {
         }
     });
 
-    $("#dialogDeleteScript").dialog({
+    dialogDebugScript.dialog({
 
         autoOpen: false,
         modal: true,
@@ -2037,7 +2097,7 @@ $("document").ready(function () {
     }).hide();
 
     $("#editorHelp").click(function () {
-       $("#dialogDocu").dialog('open');
+      dialogDocu.dialog('open');
     });
 
 
@@ -2083,8 +2143,8 @@ $("document").ready(function () {
                 var lineNumber = 0;
                 var tmp;
                 $.each(data, function(key, value) {
-                    $("#divScriptVariables").show();
-                    $("#divStderr").hide();
+                    divScriptVariables.show();
+                    divStderr.hide();
                     switch (key) {
                         case 'STDOUT':
                             $("div#hmScriptStdout").html($("<div/>").text(value).html());
@@ -2113,26 +2173,26 @@ $("document").ready(function () {
                 if (hqConf.scriptDebugMethod == "log") {
                     if (!scriptFailed && dummyFound) {
                         $("#debugScript").html("Scriptausführung erfolgreich.");
-                        $("#dialogDebugScript").dialog('open');
+                        dialogDebugScript.dialog('open');
                     } else {
                         $.ajax({
-                            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + jsonSession,
+                            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
                             type: 'POST',
                             data: scriptErrors,
                             success: function (data) {
                                 var error = $(data).find("error:last");
                                 $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
-                                $("#dialogDebugScript").dialog('open');
+                                dialogDebugScript.dialog('open');
                             }
                         });
                     }
                 } else if (hqConf.scriptDebugMethod == "dummy") {
                     if (lineNumber != debugLinesTotal) {
                         $("#debugScript").html("Skriptausführung gescheitert in Zeile " + (lineNumber + 1));
-                        $("#dialogDebugScript").dialog('open');
+                        dialogDebugScript.dialog('open');
                     } else {
                         $("#debugScript").html("Scriptausführung erfolgreich.");
-                        $("#dialogDebugScript").dialog('open');
+                        dialogDebugScript.dialog('open');
                     }
                 }
 
@@ -2144,18 +2204,18 @@ $("document").ready(function () {
         case "tcl":
             tclRunScript(fileContent, function (data) {
                 $("#debugScript").html("TCL Script ausgeführt.");
-                $("#dialogDebugScript").dialog('open');
-                $("#divScriptVariables").hide();
-                $("#divStderr").hide();
+                dialogDebugScript.dialog('open');
+                divScriptVariables.hide();
+                divStderr.hide();
                 $("div#hmScriptStdout").html(data);
             });
             break;
         case "sh":
             shRunScript(fileContent, function (data) {
                 $("#debugScript").html("Shell Script ausgeführt.");
-                $("#dialogDebugScript").dialog('open');
-                $("#divScriptVariables").hide();
-                $("#divStderr").show();
+                dialogDebugScript.dialog('open');
+                divScriptVariables.hide();
+                divStderr.show();
 
                 $("div#hmScriptStderr").html(data.STDERR);
                 $("div#hmScriptStdout").html(data.STDOUT);
@@ -2169,27 +2229,27 @@ $("document").ready(function () {
                 jsonError('', {code: err.name, message:err.message});
                 break;
             }
-            script.params['_session_id_'] = jsonSession;
+            script.params['_session_id_'] = hmSession;
             jsonPost(script,
                 function (data) {
                     $("#debugScript").html("JSON RPC erfolgreich.");
-                    $("#divScriptVariables").hide();
-                    $("#divStderr").hide();
+                    divScriptVariables.hide();
+                    divStderr.hide();
 
                     $("div#hmScriptStdout").jsonView(data.result); //.html('<pre>' + JSON.stringify(data.result, null, 2) + '</pre>');
-                    $("#dialogDebugScript").dialog('open');
+                    dialogDebugScript.dialog('open');
                 }
             )
             break;
         case "xml":
             $.ajax({
-               url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?session=" + jsonSession,
+               url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?session=" + hmSession,
                type: "POST",
                 dataType: "text",
                 data: fileContent,
                 success: function (data) {
-                    $("#divScriptVariables").hide();
-                    $("#divStderr").hide();
+                    divScriptVariables.hide();
+                    divStderr.hide();
 
                     $("div#hmScriptStdout").html($("<div/>").text(data).html());
                 },
@@ -2223,7 +2283,7 @@ $("document").ready(function () {
         icons: { primary: "ui-icon-help" },
         text: false
     }).click(function () {
-        $("#dialogAbout").dialog("open");
+        dialogAbout.dialog("open");
     });
 
     $(".smallButton span.ui-icon").css("margin-left", "-9px").css("margin-top", "-9px");
@@ -2299,7 +2359,7 @@ $("document").ready(function () {
     // XML-API Funktionen
     function xmlapiClearProtocol() {
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "POST",
             data: "var clearHistory = dom.ClearHistoryData(); Write(clearHistory);",
             success: function () {
@@ -2312,7 +2372,7 @@ $("document").ready(function () {
     function xmlapiRunProgram(program_id) {
         var scriptRunProgram = "object obj = dom.GetObject(" + program_id + "); if (obj) { obj.ProgramExecute(); Write(obj); }";
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: 'POST',
             data: scriptRunProgram,
             success: function (data) {
@@ -2325,7 +2385,7 @@ $("document").ready(function () {
     function xmlapiSetState(ise_id, new_value, successFunction) {
         var script = "Write(dom.GetObject(" + ise_id + ").State('" + new_value + "'));";
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "post",
             data: script,
             success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
@@ -2435,7 +2495,7 @@ $("document").ready(function () {
         
         $.ajax({
 
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "post",
             data: scriptState,
             async: false,
@@ -2477,7 +2537,7 @@ $("document").ready(function () {
 
 
             $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "post",
             data: scriptSysvar,
             success: function (data) {
@@ -2520,7 +2580,7 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptDevices,
             dataType: 'xml',
@@ -2546,7 +2606,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptFunctions,
             dataType: 'xml',
@@ -2571,7 +2631,7 @@ $("document").ready(function () {
             return false;
         }
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptRooms,
             success: function (data) {
@@ -2590,19 +2650,24 @@ $("document").ready(function () {
 
 
         $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + jsonSession,
+            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             dataType: 'xml',
             type: 'POST',
             data: scriptFavorites,
             contentType: "text/xml;charset=ISO-8859-1",
             success: function (data) {
 
-                favoritesReady = true;
                 favoritesXML = data;
                 favoritesXMLObj = $(data);
                 buildFavorites();
                 $("#loaderFavorites").hide();
-                refreshVariables();
+                favoritesReady = true;
+
+                if (!variablesReady) {
+                    refreshVariables();
+                }
+
+
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 $("#loaderFavorites").hide();
@@ -2674,8 +2739,8 @@ $("document").ready(function () {
                 if (username == null) {
                     $("#buttonDelCred").attr("disabled", true);
                 }
-                jsonSession = tmp;
-                jsonSessionRenew(true);
+                hmSession = tmp;
+                hmSessionRenew(true);
                 return true;
             }
         }
@@ -2706,11 +2771,11 @@ $("document").ready(function () {
         }, function (data) {
             //console.log("jsonLogin() jsonPost success");
 
-            jsonSession = data.result;
+            hmSession = data.result;
 
             webuiStart();
             if (hqConf.sessionPersistent) {
-                storage.set("hqWebUiSession", jsonSession);
+                storage.set("hqWebUiSession", hmSession);
             }
             if ($("#keepcred").is(":checked")) {
                 storage.set("hqWebUiUsername", username);
@@ -2748,15 +2813,15 @@ $("document").ready(function () {
     }
 
     function jsonLogout() {
-        if (jsonSession) {
+        if (hmSession) {
             $("#login").show("fade", hqConf.sessionLogoutFade);
             jsonPost({
                 "method":   "Session.logout",
                 "params":   {
-                    "_session_id_": jsonSession
+                    "_session_id_": hmSession
                 }
             }, function () {
-                    jsonSession = undefined;
+                    hmSession = undefined;
                     storage.set("hqWebUiSession", null);
                     if (hqConf.sessionLogoutWarning) {
                         $(window).unbind("beforeunload");
@@ -2767,17 +2832,17 @@ $("document").ready(function () {
         }
     }
 
-    function jsonSessionRenew(firstLoad) {
-        //console.log("jsonSessionRenew()");
+    function hmSessionRenew(firstLoad) {
+        //console.log("hmSessionRenew()");
 
-        if (jsonSession) {
+        if (hmSession) {
             jsonPost({
                     "method":   "Session.renew",
                     "params":   {
-                        "_session_id_": jsonSession
+                        "_session_id_": hmSession
                     }
             }, function (data) {
-                //console.log("jsonSessionRenew() jsonPost success");
+                //console.log("hmSessionRenew() jsonPost success");
 
                 if (data.result) {
                     $("#login").hide();
@@ -2785,13 +2850,13 @@ $("document").ready(function () {
                         webuiStart();
                     }
                 } else {
-                    jsonSession = undefined;
+                    hmSession = undefined;
                     $("#login").show();
                 }
             }, function (data) {
-                //console.log("jsonSessionRenew() jsonPost error");
+                //console.log("hmSessionRenew() jsonPost error");
 
-                jsonSession = undefined;
+                hmSession = undefined;
                 $("#login").show();
             });
         }
@@ -2832,7 +2897,7 @@ $("document").ready(function () {
     function hmRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?session=" + jsonSession + "&debug=true&content=json",
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?session=" + hmSession + "&debug=true&content=json",
             type: 'POST',
             data: script,
             dataType: 'json',
@@ -2852,7 +2917,7 @@ $("document").ready(function () {
     function tclRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?session=" + hmSession,
             type: 'POST',
             data: script,
             dataType: 'text',
@@ -2871,7 +2936,7 @@ $("document").ready(function () {
     function shRunScript (script, successFunction) {
         $("#loaderScript").show();
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + hmSession,
             type: 'POST',
             data: script,
             dataType: 'json',
@@ -2897,11 +2962,11 @@ $("document").ready(function () {
             "o.PrgInfo('" + description + "');\n" +
             "o.Active(" + active + ");\n";
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + jsonSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             data: script,
             type: 'POST',
             success: function () {
-                console.log("saveProgram(" + id + ")");
+                //console.log("saveProgram(" + id + ")");
             }
         });
     }
@@ -3017,9 +3082,9 @@ $("document").ready(function () {
 
 // Funktionen für den Script-Editor(editArea steckt in iFrame und arbeitet im globalen Namensraum)
 function scriptFileClose(file) {
- // Todo - Prüfen warum closeFile() im Dialog dialogDeleteScript nicht funktioniert
+ // Todo - Prüfen warum closeFile() im Dialog dialogDelScript nicht funktioniert
  //   $("#scriptDeleteReally").html(file["id"]);
- //   $("#dialogDeleteScript").dialog("open");
+ //   dialogDebugScript.dialog("open");
  //   return false;
  // Bis dahin: Workaround via confirm()
     if (confirm("Wirklich das Script " + file["id"] + " löschen?")) {
