@@ -16,7 +16,7 @@
 
 $("document").ready(function () {
 
-    var version =               "2.0-beta1";
+    var version =               "2.0-beta2";
 
     var statesXML,
         rssiXML,
@@ -117,7 +117,7 @@ $("document").ready(function () {
             }
 
             if (ui.index == 0) {
-                setTimeout(resizeFavItems, 1000);
+                //setTimeout(resizeFavItems, 1000);
             }
         }
     });
@@ -151,11 +151,15 @@ $("document").ready(function () {
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         divStdout.css('width', x - 775);
         gridScriptVariables.setGridWidth(x - 775);
+        if (favoritesReady) {
+            $("#accordionFavorites").css("height", y - 111).accordion("refresh");
+        }
     }
 
 
     function resizeFavItems() {
-        // Todo totaler Pfusch, das muss besser gehen!
+
+        /*
         $(".favInput").each(function () {
             //console.log($(this).parent().attr("id") + " " + $(this).height());
             var newHeight = $(this).height();
@@ -165,7 +169,7 @@ $("document").ready(function () {
                 newHeight = ((Math.ceil(newHeight / 36)) * 37);
             }
             $(this).parent().css('height', newHeight);
-        });
+        });*/
     }
 
 
@@ -218,14 +222,14 @@ $("document").ready(function () {
                 //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
             }
         },
-        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int',
+        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                return '<span style="float:right">' + ise_id + '</span>';
+                return ise_id;
             },
             classes: 'ise_id'
         },
-        {name:'name', index:'name', width: 150,
+        {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('name');
             }
@@ -296,7 +300,7 @@ $("document").ready(function () {
                 return formatVarType(val);
             }
         },
-        {name:'visible', index:'visible', width: 40, edittype: 'checkbox',
+        {name:'visible', index:'visible', width: 40, edittype: 'checkbox', hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('visible');
             },
@@ -329,14 +333,14 @@ $("document").ready(function () {
                 return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
             }
         },
-        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int',
+        {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('id');
-                return '<span style="float:right">' + ise_id + '</span>';
+                return ise_id;
             },
             classes: 'ise_id'
         },
-        {name:'name', index:'name', width: 200, editable: true,
+        {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('name');
             }
@@ -368,6 +372,7 @@ $("document").ready(function () {
         'Gerätetyp',
         'Räume',
         'Gewerke',
+        'Protokolliert',
         'unreach',
         'sticky_unreach',
         'config_pending',
@@ -394,7 +399,7 @@ $("document").ready(function () {
                 return $(obj).attr('name');
             }
         },
-        {name:'address', index:'address', width: 79, fixed: true,
+        {name:'address', index:'address', width: 90, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var deviceName = $(obj).attr('name');
@@ -411,7 +416,7 @@ $("document").ready(function () {
 
             }
         },
-        {name:'iface', index:'iface', width: 78, fixed: true,
+        {name:'iface', index:'iface', width: 120, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("interface");
@@ -424,7 +429,7 @@ $("document").ready(function () {
                 }
             }
         },
-        {name:'devicetype', index:'devicetype', width: 110, fixed: true,
+        {name:'devicetype', index:'devicetype', width: 130, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
@@ -465,6 +470,12 @@ $("document").ready(function () {
                 return functions;
             }
         },
+        {name:'logged', index:'logged', width: 40, edittype: 'checkbox', fixed: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('logged');
+            },
+            formatter: 'checkbox'
+        },
         {name:'unreach', index:'unreach', width: 80, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('unreach');
@@ -480,7 +491,7 @@ $("document").ready(function () {
                 return $(obj).attr('config_pending');
             }
         },
-        {name:'service', index:'service', width: 120, fixed: true,
+        {name:'service', index:'service', width: 120,
             xmlmap: function (obj) {
                 var output = "";
                 $(obj).find("channel:first datapoint").each(function () {
@@ -522,6 +533,7 @@ $("document").ready(function () {
         'Richtung',
         '',
         '',
+        '',
         ''
     ];
     var colModelChannel = [
@@ -536,7 +548,7 @@ $("document").ready(function () {
                 return $(obj).attr('name');
             }
         },
-        {name:"address",   index:"address",   width:79, fixed: true,
+        {name:"address",   index:"address",   width:90, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var address = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('address');
@@ -557,7 +569,7 @@ $("document").ready(function () {
                 return address;
             }
         },
-        {name:"direction",   index:"direction",   width:78, fixed: true,
+        {name:"direction",   index:"direction",   width:120, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var direction = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
@@ -568,7 +580,7 @@ $("document").ready(function () {
                 }
             }
         },
-        {name: "dummy1", index: "dummy1", width: 110, fixed:true },
+        {name: "dummy1", index: "dummy1", width: 130, fixed:true },
         {name:"rooms", index:"rooms",   width:120, fixed: true,
             xmlmap: function (obj) {
                 var output = "";
@@ -587,6 +599,12 @@ $("document").ready(function () {
             xmlmap: function (obj) {
                 return $(functionsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").parent().attr("name");
             }
+        },
+        {name:'logged', index:'logged', width: 40, edittype: 'checkbox', fixed: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('logged');
+            },
+            formatter: 'checkbox'
         }
     ];
 
@@ -611,7 +629,7 @@ $("document").ready(function () {
         {name:"type",   index:"type",   width:60, hidden: true, xmlmap: function (obj) {
             return $(obj).attr('type');
         }},
-        {name:"value",   index:"value",   width:162, fixed: true,
+        {name:"value",   index:"value",   width:215, fixed: true,
             xmlmap: function (obj) {
                 var val = $(obj).attr('value');
                 if ($(obj).attr('valuetype') == 6) {
@@ -626,7 +644,7 @@ $("document").ready(function () {
                 return $(obj).attr('valuetype');
             }
         },
-        {name:"timestamp",   index:"timestamp",   width:110, fixed: true,
+        {name:"timestamp",   index:"timestamp",   width:130, fixed: true,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
             }
@@ -634,6 +652,7 @@ $("document").ready(function () {
     ];
 
     var colNamesRssi = [
+        '',
         'id',
         'Name',
         'Adresse',
@@ -650,7 +669,12 @@ $("document").ready(function () {
         'Servicemeldungen'
     ];
     var colModelRssi = [
-        {name:'ise_id', index:'ise_id',  width: 40, fixed: true, sorttype: 'int',
+        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+            xmlmap: function (obj) {
+                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
+            }
+        },
+        {name:'ise_id', index:'ise_id', width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
                 var ise_id = devicesXMLObj.find("device[address='" + device + "']").attr("ise_id");
@@ -658,14 +682,14 @@ $("document").ready(function () {
             },
             classes: 'ise_id'
         },
-        {name:'name', index:'name', width: 200,
+        {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
                 var name = devicesXMLObj.find("device[address='" + device + "']").attr("name");
                 return name;
             }
         },
-        {name:'address', index:'address', width: 80,
+        {name:'address', index:'address',  width: 90, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr("device");
             }
@@ -886,7 +910,7 @@ $("document").ready(function () {
         });
 
     gridStates.jqGrid({
-        width: 1224, height: hqConf["gridHeight"],
+        width: 1050, height: hqConf["gridHeight"],
         colNames:colNamesStates,
         colModel :colModelStates,
         pager: "#gridPagerStates",
@@ -1234,7 +1258,7 @@ $("document").ready(function () {
             dateObj.setTime(timestamp + "000");
         }
         var year = dateObj.getFullYear();
-        year = year.toString(10).substr(2);
+        //year = year.toString(10).substr(2);
         var month = (dateObj.getMonth() + 1).toString(10);
         month = (month.length == 1 ? "0" + month : month);
         var day = dateObj.getDate().toString(10);
@@ -1546,17 +1570,20 @@ $("document").ready(function () {
         }
          accordionFavorites.html("");
         //console.log(favoritesXML);
-        favoritesXMLObj.find("favorite[name='" + hqConf["favoriteUsername"] + "'] channel").each(function () {
+        var favoriteUserid = "_USER" + favoritesXMLObj.find("user").attr("id");
+        //console.log("Favorites: " + favoriteUserid);
+        favoritesXMLObj.find("favorite[name='" + favoriteUserid + "'] channel").each(function () {
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name");
 
             var cols = parseInt($(this).attr("column_count"), 10);
+            var orientation = parseInt($(this).attr("name_position"), 10);
             if (cols == 0) { cols = 1; }
             var htmlTable = "<table border='0' width='100%' cellspacing='8' cellpadding='0'><tr id='favGroup"+fav_id+"' style='height:100%'>";
             var percent = 100 / cols;
             percent = percent.toString() + "%";
             for (var i=1; i <= cols; i++) {
-                htmlTable += "<td style='padding-right: 8px; vertical-align: top;' class='favCol"+i+"' width='" + percent + "' height='100%'></td>";
+                htmlTable += "<td style='padding-right: 8px; vertical-align: top;' class='favCol favCol"+i+"' width='" + percent + "' height='100%'></td>";
             }
             htmlTable += "</tr></table>";
 
@@ -1573,8 +1600,24 @@ $("document").ready(function () {
                 var channelName = $(this).attr("name");
                 var channelId = $(this).attr("ise_id");
 
-                html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'><div class='favName'>" + channelName + "</div></div>";
+                html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'>";
+                html += "<table class='favItemTable'>";
+                if (orientation == 1) {
+                    html += "<tr><td style='width:100%'><div style='border:none;' class='favItemHeader ui-widget-header ui-corner-top favName'>" + channelName + "</div>";
+                } else {
+                    html += "<tr><td style='width:50%'><div class='favName'>" + channelName + "</div>";
+                }
+                html += "</td>";
+                if (orientation == 1) {
+                    html += "</tr><tr>";
+                    html += "<td style='min-height: 32px; width:100%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                } else {
+                    html += "<td style='width:50%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                }
+                html += "</tr></table></div>";
                 $("tr[id='favGroup" + fav_id + "'] td.favCol" + col).append(html);
+                var favInputCell = $("td[id='favInputCell" + channelId + "']");
+                //favInputCell.css("border", "1px dashed red");
                 html = "";
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
@@ -1589,7 +1632,7 @@ $("document").ready(function () {
                                 case '2':
                                     html += "<select id='favInputSelect" + var_id + "'><option value='false'>False</option><option value='true'>True</option></select>";
                                     html += "</div>";
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    favInputCell.append(html);
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
                                         xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
@@ -1600,7 +1643,7 @@ $("document").ready(function () {
                                     html += "<select id='favInputSelect" + var_id + "'>" + selectOptions($(this).attr("value_list")) + "</select>";
                                     if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
                                     html += "</div>";
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    favInputCell.append(html);
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
                                         xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
@@ -1611,7 +1654,7 @@ $("document").ready(function () {
                                     value = value.toFixed(2);
                                     html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
                                     html += "<span style='display: inline-block; width:32px;'>" + var_unit + "</span></div>";
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    favInputCell.append(html);
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + var_id).val());
@@ -1625,7 +1668,7 @@ $("document").ready(function () {
                                         html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
                                     }
                                     html += "</div>";
-                                    $("div[id='favItem" + channelId + "']").append(html);
+                                    favInputCell.append(html);
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + var_id).val());
@@ -1643,7 +1686,7 @@ $("document").ready(function () {
                         break;
                     case 'PROGRAM':
                         html += "<div class='favStartProgram'><button id='favProgram"+ $(this).attr("ise_id") +"'>Ausführen</button></div>";
-                        $("div[id='favItem" + channelId + "']").append(html);
+                        favInputCell.append(html);
 
                         $("button[id='favProgram"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
                             xmlapiRunProgram($(this).attr("ise_id"));
@@ -1654,7 +1697,7 @@ $("document").ready(function () {
                         var ctype = $(this).attr("ctype");
 
 
-                        $("div[id='favItem" + channelId + "']").append("<div class='favInput'></div>");
+                        favInputCell.append("<div class='favInput'></div>");
                         //console.log("FAV CHANNEL " + $(this).attr("name"));
                         //console.log("CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
@@ -1682,7 +1725,7 @@ $("document").ready(function () {
                                             }
                                             firstDP = false;
 
-                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                             break;
                                         case '38':
                                             switch (dpValue) {
@@ -1699,7 +1742,7 @@ $("document").ready(function () {
                                             }
                                             firstDP = false;
 
-                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                             break;
                                         default:
                                             var checkedOn = "";
@@ -1718,7 +1761,7 @@ $("document").ready(function () {
                                             if (!firstDP) { }
                                             firstDP = false;
 
-                                            $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
 
                                             $("input#favRadioOn" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
@@ -1740,7 +1783,7 @@ $("document").ready(function () {
                                     html +=     "</div>";
                                     firstDP = false;
 
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                     $("#favSlider" + id).slider({
                                         min: 0.00,
                                         max: 1.00,
@@ -1756,7 +1799,7 @@ $("document").ready(function () {
                                 case 'PRESS_SHORT':
                                 case 'PRESS_LONG':
                                     html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                     $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
@@ -1781,8 +1824,9 @@ $("document").ready(function () {
                                         value = parseFloat(value);
                                         value = value.toFixed(0) + "%";
                                     }
-                                    html += "<span class='unknownType'>" + type + ": " + value + "</span>";
-                                    $("div[id='favItem" + channelId + "'] .favInput").append(html);
+                                    if (type == undefined) { type = name;}
+                                    html += "<span style='padding-right: 3px;' class='unknownType'>" + type + ": " + value + "</span>";
+                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
 
 
                             }
@@ -1800,19 +1844,19 @@ $("document").ready(function () {
                 }
 
             });
+            /*
+
+            Todo - FavItems Höhe auf eine Linie bringen
 
             $(".favInput").each(function () {
                 //console.log($(this).parent().attr("id") + " " + $(this).height());
                 var newHeight = $(this).height();
-                if (newHeight < 36) {
-                    newHeight = 28;
-                } else {
-
-                    newHeight = ((Math.ceil(newHeight / 36)) * 37);
-
+                if (newHeight > 38) {
+                    newHeight = (Math.ceil((newHeight - 38) / 50) * 50) + 38;
+                    $(this).parent().css('height', newHeight);
                 }
-               $(this).parent().css('height', newHeight);
-            });
+
+            });*/
 
         });
 
@@ -1829,7 +1873,7 @@ $("document").ready(function () {
             //accordionFavorites.html(sortedHtml);
         }
         accordionFavorites.accordion({
-            heightStyle: "content",
+            heightStyle: "fill",
             header: "> div > h3"
         }).sortable({
                 axis: "y",
@@ -2066,7 +2110,7 @@ $("document").ready(function () {
         }
     });
 
-    dialogDebugScript.dialog({
+    dialogDelScript.dialog({
 
         autoOpen: false,
         modal: true,
@@ -2675,26 +2719,6 @@ $("document").ready(function () {
             }
         });
 
-
-/*
-        $.ajax({
-            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/favoritelist.cgi?show_datapoint=1',
-            type: 'GET',
-            dataType: 'xml',
-            success: function (data) {
-                favoritesReady = true;
-                favoritesXML = data;
-                favoritesXMLObj = $(data);
-                buildFavorites();
-                $("#loaderFavorites").hide();
-                refreshVariables();
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                $("#loaderFavorites").hide();
-                ajaxError(xhr, ajaxOptions, thrownError);
-            }
-        });
-        */
     }
 
     function xmlapiGetVersion() {

@@ -95,7 +95,10 @@ set res [lindex [rega_script "Write(system.GetSessionVarStr('$session'));"] 1]
 
 if {$res != ""} {
     # gültige Session
-    set postdata [utf8-decode [read stdin]]
+    set res [lindex [split $res ";"] 0]
+    set postdata "var USER_ID=$res;\n"
+    append postdata [utf8-decode [read stdin]]
+
     array set script_result [rega_script $postdata]
 
 

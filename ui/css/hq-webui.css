@@ -2,7 +2,9 @@ html, body, div#container, div.tabs {
     margin:0;
 
 }
-
+div#accordionFavorites div div {
+    padding: 0px;
+}
 img {
     border: none;
 }
@@ -52,17 +54,15 @@ div#container, div#tabs, div#tabFavorites {
 div.favItem {
     min-width: 300px;
     width: 100%;
-    min-height: 28px;
-    overflow: visible;
+    min-height: 40px;
+    overflow: auto;
     display:block;
-    padding: 4px;
+    padding: 0px;
     margin-bottom: 8px;
 }
 
 div.favName {
-    float: left;
-    display: inline;
-    padding-top: 4px;
+    padding: 2px !important;
     font-size: 1.1em;
 }
 
@@ -72,9 +72,11 @@ div.favName {
 }
 
 div.favInput, div.favStartProgram {
-    float: right;
-     min-height: 28px;
-    z-index: 10000;
+min-height: 32px;
+    padding: 2px !important;
+    padding-top: 4px !important;
+    margin-top:2px !important;
+
 }
 
 div.favInputSlider {
@@ -86,6 +88,9 @@ div.favInputSlider {
 
 }
 
+.favItemHeader {
+    text-align: center;
+}
 
 
 
@@ -99,6 +104,7 @@ div.favStartProgram button, div.favInput button {
 #buttonsFavorites {
  width: 100%;
     text-align: left;
+    padding-top:1px;
 
 }
 
@@ -151,6 +157,9 @@ li a:focus {
     float: right;
 }
 
+.favCol {
+
+}
 #login {
     position: fixed;
     top: 0px;
@@ -165,3 +174,27 @@ li a:focus {
 li.array-item.closed-object {
     height: 15px;
 }
+
+
+
+div.favInput label {
+    padding-top: 2px;
+
+}
+
+.favItemTable, .favItemTable tr {
+    width: 100%;
+}
+.favItemTable, .favItemTable tr, .favItemTable tr td {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    border-collapse: collapse;
+
+}
+
+.favInputCell {
+    text-align: right;
+    width: 66%
+}
+

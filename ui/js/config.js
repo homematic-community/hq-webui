@@ -18,9 +18,6 @@ var hqConf = {
     // Pfad zur HQ API
     hqapiPath:              "/addons/hq/api",
 
-    // Der User dessen Favoriten angezeigt werden
-    // http://ccu/config/xmlapi/favoritelist.cgi aufrufen um nachzusehen welche User verfügbar sind
-    favoriteUsername:       "_USER1004",
 
     sessionPersistent:      true,
     sessionLogoutWarning:   false,
@@ -41,7 +38,7 @@ var hqConf = {
     cacheDeviceEnable:      true,
 
     // Hier können Optionen für alle Grids vorgegeben werden
-    gridWidth:              1024,
+    gridWidth:              1050,
     gridHeight:             490,
     gridRowList:            [20,50,100,500],    // Auswahl Anzahl angezeigter Einträge
     gridRowNum:             100,                // Standardmäßige Anzahl angezeigter Einträge

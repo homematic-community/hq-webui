@@ -1,5 +1,19 @@
 Changelog
 =========
+
+2.0-beta2
+---------
+* Fehler behoben Ausrichtung der id nach inline-Edit
+* Performance-Optimierung beim Laden der Geräteliste
+* verschiedene Änderungen an Tabellen- und Spaltenbreiten
+* Favoriten passen sich nun auch in der Höhe dem Browserfenster an
+* Favoriten "Separatoren" werden angezeigt
+* Favoriten des eingeloggten Users werden nun angezeigt (hqConf.favoriteUsername entfällt damit)
+* Favoriten Fehler behoben bei Anzeige des Namens von verknüpften Variablen
+* Favoriten Einstellung Namens-Position links/oben wird ausgewertet
+
+
+
 2.0-beta1
 ----------
 * Funk: Einheit dBm bei RX/TX hinzugefügt

@@ -81,16 +81,14 @@ Todo/Ideen/Roadmap
 ==================
 asap
 ----
-* Kanäle: Prtokollierung aktivieren/deaktivieren
+* Kanäle: Protokollierung aktivieren/deaktivieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * ExecutionFailed Fehler bei Scriptausführung auswerten
-* Größenanpassung Tab Geräte
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Favoriten des eingeloggten Users anzeigen
 
 
 2.1

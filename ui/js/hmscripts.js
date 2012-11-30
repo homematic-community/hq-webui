@@ -1,7 +1,7 @@
 var scriptStates = "string sDevId;\n" +
     "string sChnId;\n" +
     "string sDPId;\n" +
-    "var show_internal = 1;\n" +
+    "var show_internal = 0;\n" +
     "Write(\"<stateList>\");\n" +
     "foreach (sDevId, root.Devices().EnumUsedIDs()) {\n" +
     "    object oDevice   = dom.GetObject(sDevId);\n" +
@@ -10,14 +10,6 @@ var scriptStates = "string sDevId;\n" +
     "        Write(\"<device\");\n" +
     "        Write(\" name='\" # oDevice.Name() # \"'\");\n" +
     "        Write(\" ise_id='\" # sDevId # \"'\");\n" +
-        "        string interfaceid = oDevice.Interface();\n" +
-    "        string servicechan = \"\" # dom.GetObject(interfaceid).Name() #\".\"#oDevice.Address()#\":0\";\n" +
-    "        object schan = dom.GetObject(servicechan#\".UNREACH\");\n" +
-    "        if(schan) { Write(\" unreach='\" # schan.Value() #\"'\"); }\n" +
-    "        object schan = dom.GetObject(servicechan#\".STICKY_UNREACH\");\n" +
-    "        if(schan) { Write(\" sticky_unreach='\" # schan.Value() #\"'\"); }\n" +
-    "        object schan = dom.GetObject(servicechan#\".CONFIG_PENDING\");\n" +
-    "        if(schan) { Write(\" config_pending='\" # schan.Value() #\"'\"); }\n" +
         "        Write(\" >\");  ! device tag schliessen\n" +
         "        foreach(sChnId, oDevice.Channels())\n" +
     "        {\n" +
@@ -26,6 +18,7 @@ var scriptStates = "string sDevId;\n" +
     "            {\n" +
         "                Write(\"<channel name='\");\n" +
     "                WriteXML( oChannel.Name() );\n" +
+    "                Write(\"' logged='\" # oChannel.ChnArchive() );\n" +
     "                Write(\"' ise_id='\" # sChnId # \"'>\");\n" +
         "                foreach(sDPId, oChannel.DPs().EnumUsedIDs())\n" +
     "                {\n" +
@@ -299,6 +292,7 @@ var scriptFunctions = "object oFunction;\n" +
 "}\n" +
 "Write(\"</functionList>\");\n";
 
+
 var scriptFavorites = "var show_datapoint=1;\n" +
 "var show_internal=0;\n" +
 "object oFavorite;\n" +
@@ -310,69 +304,78 @@ var scriptFavorites = "var show_datapoint=1;\n" +
 "    oFavorite     = dom.GetObject(sFavoriteId);\n" +
 "    Write(\"<favorite name='\"); WriteXML( oFavorite.Name() );\n" +
 "    Write(\"' ise_id='\" # sFavoriteId # \"'>\");\n" +
-"    foreach(sChannelId, oFavorite.EnumUsedIDs()) {\n" +
+"    foreach(sChannelId, oFavorite.EnumIDs()) {\n" +
 "        object fav = dom.GetObject(sChannelId);\n" +
-"        Write(\"<channel ise_id='\" # sChannelId # \"' name='\"); WriteXML(fav.Name());\n" +
-"        Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
-"        !Write( \"' column_count='\"); WriteXML(fav.FavControls());\n" +
-"        var favType = \"UNKNOWN\";\n" +
-"        if (fav.IsTypeOf(OT_PROGRAM)) { favType = \"PROGRAM\"; }\n" +
-"        if (fav.IsTypeOf(OT_DP))      { favType = \"SYSVAR\";  }\n" +
-"        if (fav.IsTypeOf(OT_CHANNEL)) { favType = \"CHANNEL\"; }\n" +
-"        Write( \"' type='\" # favType);\n" +
-"        Write( \"' ctype='\" # fav.ChannelType());\n" +
-"        string canUse = \"false\";\n" +
-"        string id;\n" +
-"        foreach (id, oFavorite.FavControlIDs().EnumIDs()) {\n" +
-"            if (id == sChannelId) { canUse = \"true\"; }\n" +
-"        }\n" +
-"        Write( \"' not_can_use='\" # canUse);\n" +
-"        if (show_datapoint == 1) {\n" +
-"            Write (\"'>\");\n" +
-"            if (favType == \"CHANNEL\") {\n" +
-"                string sDPId;\n" +
-"                foreach (sDPId, fav.DPs().EnumUsedIDs()) {\n" +
-"                    object oDP = dom.GetObject(sDPId);\n" +
-"                    if (oDP) {\n" +
-"                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
-"                        if ((dp != \"ON_TIME\") && (dp != \"INHIBIT\")) {\n" +
-"                            Write(\"<datapoint\");\n" +
-"                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
-"                            Write(\"' ise_id='\" # sDPId );\n" +
-"                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
-"                            if (show_internal == 1) {\n" +
-"                                Write(\"' state='\"); WriteXML(oDP.State());\n" +
-"                            }\n" +
-"                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
-"                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
-"                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
-"                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
-"                            Write(\"' />\");\n" +
-"                        }\n" +
-"                    }\n" +
-"                }\n" +
-"            }\n" +
-"            if (favType == \"SYSVAR\") {\n" +
-"                Write(\"<systemVariable\");\n" +
-"                Write(\" name='\"); WriteXML( fav.Name() );\n" +
-"                Write(\"' variable='\"); WriteXML( fav.Variable());\n" +
-"                Write(\"' value='\"); WriteXML( fav.Value());\n" +
-"                Write(\"' value_list='\"); WriteXML( fav.ValueList());\n" +
-"                Write(\"' value_text='\"); WriteXML( fav.ValueList().StrValueByIndex(';', fav.Value()));\n" +
-"                Write(\"' ise_id='\" # fav.ID() );\n" +
-"                Write(\"' min='\"); WriteXML( fav.ValueMin());\n" +
-"                Write(\"' max='\"); WriteXML( fav.ValueMax());\n" +
-"                Write(\"' unit='\"); WriteXML( fav.ValueUnit());\n" +
-"                Write(\"' type='\" # fav.ValueType() # \"' subtype='\" # fav.ValueSubType());\n" +
-"                Write(\"' timestamp='\" # fav.Timestamp().ToInteger());\n" +
-"                Write(\"'/>\");\n" +
-"            }\n" +
+    "        if (fav) { \n" +
+
+    "        Write(\"<channel ise_id='\" # sChannelId # \"' name='\");  \n" +
+    "        var favType = \"UNKNOWN\";\n" +
+    "        if (fav.IsTypeOf(OT_PROGRAM)) { favType = \"PROGRAM\"; }\n" +
+    "        if (fav.IsTypeOf(OT_DP))      { favType = \"SYSVAR\";  }\n" +
+    "        if (fav.IsTypeOf(OT_CHANNEL)) { favType = \"CHANNEL\"; }\n" +
+    "        if (fav.IsTypeOf(OT_ALARMDP)) { favType = \"SYSVAR\"; }\n" +
+    "        if (fav.IsTypeOf(OT_FAVORITE)) { favType = \"FAVORITE\"; }\n" +
+    "        if (favType != \"UNKNOWN\" ) { \n" +
+    "        WriteXML(fav.Name()); Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
+    "        Write( \"' name_position='\"); WriteXML(fav.FavNamePosition());\n" +
+    "        Write( \"' type='\" # favType);\n" +
+    "        Write( \"' ctype='\" # fav.ChannelType());\n" +
+    "        string canUse = \"false\";\n" +
+    "        string id;\n" +
+    "        foreach (id, oFavorite.FavControlIDs().EnumIDs()) {\n" +
+    "            if (id == sChannelId) { canUse = \"true\"; }\n" +
+    "        }\n" +
+    "        Write( \"' not_can_use='\" # canUse);\n" +
+    "        if (show_datapoint == 1) {\n" +
+    "            Write (\"'>\");\n" +
+    "            if (favType == \"CHANNEL\") {\n" +
+    "                string sDPId;\n" +
+    "                foreach (sDPId, fav.DPs().EnumUsedIDs()) {\n" +
+    "                    object oDP = dom.GetObject(sDPId);\n" +
+    "                    if (oDP) {\n" +
+    "                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
+    "                        if ((dp != \"ON_TIME\") && (dp != \"INHIBIT\")) {\n" +
+    "                            Write(\"<datapoint\");\n" +
+    "                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
+    "                            Write(\"' ise_id='\" # sDPId );\n" +
+    "                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
+    "                            if (show_internal == 1) {\n" +
+    "                                Write(\"' state='\"); WriteXML(oDP.State());\n" +
+    "                            }\n" +
+    "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
+    "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
+    "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
+    "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
+    "                            Write(\"' />\");\n" +
+    "                        }\n" +
+    "                    }\n" +
+    "                }\n" +
+    "            }\n" +
+    "            if (favType == \"SYSVAR\") {\n" +
+    "                Write(\"<systemVariable\");\n" +
+    "                Write(\" name='\"); WriteXML( fav.Name() );\n" +
+    "                Write(\"' variable='\"); WriteXML( fav.Variable());\n" +
+    "                Write(\"' value='\"); WriteXML( fav.Value());\n" +
+    "                Write(\"' value_list='\"); WriteXML( fav.ValueList());\n" +
+    "                Write(\"' value_text='\"); WriteXML( fav.ValueList().StrValueByIndex(';', fav.Value()));\n" +
+    "                Write(\"' ise_id='\" # fav.ID() );\n" +
+    "                Write(\"' min='\"); WriteXML( fav.ValueMin());\n" +
+    "                Write(\"' max='\"); WriteXML( fav.ValueMax());\n" +
+    "                Write(\"' unit='\"); WriteXML( fav.ValueUnit());\n" +
+    "                Write(\"' type='\" # fav.ValueType() # \"' subtype='\" # fav.ValueSubType());\n" +
+    "                Write(\"' timestamp='\" # fav.Timestamp().ToInteger());\n" +
+    "                Write(\"'/>\");\n" +
+    "            }\n" +
+
 "            Write(\"</channel>\");\n" +
 "        } else {\n" +
 "            Write (\"'/>\");\n" +
 "        }\n" +
+    "            } else { Write( \"' />\"); }\n" +
+    "            } else { Write( \"' />\"); }\n" +
 "    }\n" +
 "    Write(\"</favorite>\");\n" +
+"   Write(\"<user id='\" # USER_ID # \"'/>\");\n" +
 "}\n" +
 "Write(\"</favoriteList>\");";
 
