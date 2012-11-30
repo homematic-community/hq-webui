@@ -42,7 +42,7 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen*
 
-_Achtung bei Updates:_ vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
+**Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
 Bedienung
 =========
