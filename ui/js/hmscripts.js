@@ -345,6 +345,9 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
     "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
+    "                Write(\"' unit='\"); WriteXML( oDP.ValueUnit());\n" +
+    "                if (oDP.ValueType() == 16) { Write(\"' value_text='\"); WriteXML( oDP.ValueList().StrValueByIndex(';', oDP.Value())); }\n" +
+    "                Write(\"' type='\" # fav.ValueType() # \"' subtype='\" # fav.ValueSubType());\n" +
     "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
     "                            Write(\"' />\");\n" +
     "                        }\n" +

@@ -63,16 +63,18 @@ div.favItem {
 
 div.favName {
     padding: 2px !important;
+    padding-left: 4px !important;
     font-size: 1.1em;
 }
 
 .unknownType {
-    font-size: 0.8em;
+    font-size: 0.9em;
     padding-right: 5px;
 }
 
 div.favInput, div.favStartProgram {
 min-height: 32px;
+    padding-right: 0px !important;
     padding: 2px !important;
     padding-top: 4px !important;
     margin-top:2px !important;
@@ -195,6 +197,36 @@ div.favInput label {
 
 .favInputCell {
     text-align: right;
-    width: 66%
+    width: 66%;
+    padding-right: 3px !important;
 }
 
+img.favIcon {
+    text-align: left;
+    vertical-align: middle;
+    padding-left: 4px;
+}
+
+.unknownType {
+    padding-right: 3px;
+}
+.favInputUnit {
+    padding-left: 2px;
+    min-width: 30px;
+}
+.favDpTable {
+    width: 100%;
+    padding: 4px;
+    padding-left: 8px;
+}
+.favDpLeft {
+    overflow: hidden;
+    white-space: nowrap;
+    padding-right: 4px;
+    text-align: left;
+}
+
+.favDpRight {
+    padding-left: 6px;
+    padding-right: 4px;
+}

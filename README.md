@@ -85,7 +85,6 @@ Todo/Ideen/Roadmap
 2.0
 ---
 * Favoriten: Auto-Spaltenanzahl
-* Kanäle: Protokollierung aktivieren/deaktivieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Auswahl Port bei Ausführung von XML RPC
 * ExecutionFailed Fehler bei Scriptausführung auswerten
@@ -93,34 +92,32 @@ Todo/Ideen/Roadmap
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-
+* Logout umgestalten
 
 2.1
 ---
+* Kanäle: Protokollierung aktivieren/deaktivieren
+* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen
 * Anlegen, löschen und ändern von Variablen
-
-2.2
----
-* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen (jqGrid Inline Edit in Geräte-Tab -> http://www.erichynds.com/jquery/jquery-ui-multiselect-widget/)
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
-2.3
+2.2
 ---
 * Programme anzeigen, anlegen, editieren, löschen.
 * Programme direkt aus dem Scripteditor heraus erzeugen
 * Dateien aus Editor auf CCU Speichern
 
-2.4
+2.3
 ---
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
 
-2.5
+2.4
 ---
 * Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (XML-RPC Event Subscription nicht (ohne eine Art Proxy) machbar -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen! Erkennen welche Daten sichtbar sind und nur diese Updaten!)
 
-2.6
+2.5
 ---
 * Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
 
@@ -166,6 +163,7 @@ in HQ WebUI verwendete Software
 * jQuery JSON View https://github.com/quickredfox/jquery-jsonview
 * editarea http://www.cdolivet.com/editarea/
 * lostorage.js https://github.com/js-coder/loStorage.js
+* jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
 
 
 

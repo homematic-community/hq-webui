@@ -72,5 +72,21 @@ var hqConf = {
         'HMW-IO-12-Sw7-DR':     '30_hmw-io-12-sw7-dr_thumb.png',
         'HM-LC-Sw1-FM':         '4_hm-lc-sw1-fm_thumb.png',
         'HM-WDS40-TH-I':        '13_hm-ws550sth-i_thumb.png'
+    },
+
+    // Zuordnung Datenpunkte -> Bezeichnung, Einheit, Anzahl Dezimalstellen
+    dpDetails: {
+        'TEMPERATURE':          { unit: '°C', desc: 'Temperatur', decimals: 1 },
+        'HUMIDITY':             { unit: '%', desc: 'Luftfeuchte', decimals: 0 },
+        'MOTION':               { unit: '', desc: 'Bewegung', decimals: -1 },
+        'BRIGHTNESS':           { unit: '', desc: 'Helligkeit', decimals: -1 },
+        'RAINING':              { unit: '', desc: 'Regen aktuell', decimals: 2 },
+        'RAIN_COUNTER':         { unit: 'mm', desc: 'Regen heute', decimals: 2 },
+        'WIND_SPEED':           { unit: 'km/h', desc: 'Windgeschwindigkeit', decimals: -1 },
+        'WIND_DIRECTION':       { unit: '°', desc: 'Windrichtung', decimals: -1 },
+        'WIND_WIND_DIRECTION':  { unit: '°', desc: 'Windr. Schwankungsbr.', decimals: 0 },
+        'SUNSHINEDURATION':     { unit: '', desc: 'Sonnenscheindauer', decimals: -1 }
+
     }
+
 };

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0-beta3
+---------
+* Favoriten weitere Detailverbesserungen HTML/CSS,
+* jQuery UI select und input, Plugin Multiselect hinzugefügt
+
+
 2.0-beta2
 ---------
 * Fehler behoben Ausrichtung der id nach inline-Edit
@@ -11,6 +17,7 @@ Changelog
 * Favoriten des eingeloggten Users werden nun angezeigt (hqConf.favoriteUsername entfällt damit)
 * Favoriten Fehler behoben bei Anzeige des Namens von verknüpften Variablen
 * Favoriten Einstellung Namens-Position links/oben wird ausgewertet
+
 
 
 

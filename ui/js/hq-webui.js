@@ -151,8 +151,15 @@ $("document").ready(function () {
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         divStdout.css('width', x - 775);
         gridScriptVariables.setGridWidth(x - 775);
+        resizeFavHeight()
+    }
+
+    function resizeFavHeight() {
         if (favoritesReady) {
+            var y = $(window).height();
             $("#accordionFavorites").css("height", y - 111).accordion("refresh");
+        } else {
+            setTimeout(resizeFavHeight, 250);
         }
     }
 
@@ -833,7 +840,7 @@ $("document").ready(function () {
                     $("#variableValue option[text='" + value + "']").attr("selected", true);
                     break;
                 default:
-                    variableInput.html("<input type='text' id='variableValue' value='" + value + "'>" + unit);
+                    variableInput.html("<input size='' name='' type='text' id='variableValue' value='" + value + "'>" + unit);
 
             }
 
@@ -1652,8 +1659,8 @@ $("document").ready(function () {
                                 case '0':
                                     value = parseFloat(value);
                                     value = value.toFixed(2);
-                                    html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
-                                    html += "<span style='display: inline-block; width:32px;'>" + var_unit + "</span></div>";
+                                    html += "<input style='text-align:right;' type='text' size='8' name='favInputText" + var_id + "' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    html += "<span class='favInputUnit'>" + var_unit + "</span></div>";
                                     favInputCell.append(html);
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
@@ -1665,7 +1672,7 @@ $("document").ready(function () {
                                     if (value.match(/<img/)) {
                                         html += value;
                                     } else {
-                                        html += "<input type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                        html += "<input size='20' type='text' id='favInputText" + var_id + "' value='" + value + "'>";
                                     }
                                     html += "</div>";
                                     favInputCell.append(html);
@@ -1694,6 +1701,7 @@ $("document").ready(function () {
                         break;
                     case 'CHANNEL':
                         var firstDP = true;
+                        var firstUnknown = true;
                         var ctype = $(this).attr("ctype");
 
 
@@ -1717,10 +1725,10 @@ $("document").ready(function () {
                                         case '37':
                                             switch (dpValue) {
                                                 case 'false':
-                                                    html += "<img src='/ise/img/door/closed.png' height='28'/>";
+                                                    html += "Geschlossen<img class='favIcon' src='/ise/img/door/closed.png' height='28'/>";
                                                     break;
                                                 case 'true':
-                                                    html += "<img src='/ise/img/door/open.png' height='28'/>";
+                                                    html += "Offen<img class='favIcon' src='/ise/img/door/open.png' height='28'/>";
                                                     break;
                                             }
                                             firstDP = false;
@@ -1730,13 +1738,13 @@ $("document").ready(function () {
                                         case '38':
                                             switch (dpValue) {
                                                 case '0':
-                                                    html += "<img src='/ise/img/window/closed.png' height='28'/>";
+                                                    html += "Verriegelt<img class='favIcon' src='/ise/img/window/closed.png' height='28'/>";
                                                     break;
                                                 case '1':
-                                                    html += "<img src='/ise/img/window/open_v.png' height='28'/>";
+                                                    html += "Kippstellung<img class='favIcon' src='/ise/img/window/open_v.png' height='28'/>";
                                                     break;
                                                 case '2':
-                                                    html += "<img src='/ise/img/window/open_h.png' height='28'/>";
+                                                    html += "Verschlossen<img class='favIcon' src='/ise/img/window/open_h.png' height='28'/>";
                                                     break;
 
                                             }
@@ -1798,7 +1806,7 @@ $("document").ready(function () {
                                     break;
                                 case 'PRESS_SHORT':
                                 case 'PRESS_LONG':
-                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Taste " + (type == "PRESS_SHORT" ? "kurz": "lang") + "</span></button>";
+                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>" + (type == "PRESS_SHORT" ? "Kurz": "Lang") + "</span></button>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                     $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
@@ -1815,18 +1823,45 @@ $("document").ready(function () {
 
                                 default:
                                     var value = $(this).attr("value");
-                                    if (!firstDP) { html += "<br>"; } else { firstDP = false; }
-                                    if (type == "TEMPERATURE") {
-                                        value = parseFloat(value);
-                                        value = value.toFixed(1) + "°C";
+                                    var value_text = $(this).attr("value_text");
+                                    var value_type = $(this).attr("valuetype");
+
+                                    var unit = $(this).attr("unit");
+                                    if (unit == undefined) { unit = ""; }
+
+                                    if (firstUnknown) {
+                                        firstUnknown = false;
+                                        $("td[id='favInputCell" + channelId + "'] .favInput").append("<table class='favDpTable'><tbody></tbody></table>");
                                     }
-                                    if (type == "HUMIDITY") {
-                                        value = parseFloat(value);
-                                        value = value.toFixed(0) + "%";
+                                    if (!firstDP) {
+                                        html += "<br>";
+                                    } else {
+                                        firstDP = false;
                                     }
-                                    if (type == undefined) { type = name;}
-                                    html += "<span style='padding-right: 3px;' class='unknownType'>" + type + ": " + value + "</span>";
-                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    var dpDesc = "";
+                                    if (type) {
+                                         if (hqConf.dpDetails[type]) {
+                                            if (hqConf.dpDetails[type].decimals != -1) {
+                                                value = parseFloat(value);
+                                                value = value.toFixed(hqConf.dpDetails[type].decimals);
+                                            }
+                                            unit = hqConf.dpDetails[type].unit;
+                                            dpDesc = hqConf.dpDetails[type].desc;
+
+                                        } else {
+
+                                             dpDesc = type;
+                                        }
+                                    } else {
+                                        if (value_type == 4) {
+                                            value = parseFloat(value);
+                                            value = value.toFixed(2);
+                                        }
+                                        dpDesc = name;
+                                    }
+                                    if (value_text) { value = value_text; }
+                                    html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
+                                    $("td[id='favInputCell" + channelId + "'] .favInput table tbody").append(html);
 
 
                             }
@@ -1892,9 +1927,28 @@ $("document").ready(function () {
             });
 
         $(".favKey").button();
+
         function favButtonset() {
             $(".favInputRadio").buttonset();
+            $('input:text, input:password')
+                .button()
+                .css({
+                    'font' : 'inherit',
+                    'color' : 'inherit',
+                    'outline' : 'none',
+                    'cursor' : 'text'
+                });
+            $("select").multiselect({
+                multiple: false,
+                header: false,
+                'minWidth': 76,
+                height: '100%',
+                //header: "Select an option",
+                //noneSelectedText: "Select an Option",
+                selectedList: 1
+            }).css("padding-right", "1px");
         }
+        favButtonset();
         setTimeout(favButtonset, 1000);
 
     }
