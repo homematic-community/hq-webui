@@ -17,7 +17,8 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 
 Features
 ========
-* schnelle Ladezeiten, nach dem ersten Laden quasi keine Wartezeiten mehr
+* schnelle Ladezeit
+* geringere Belastung der CCU
 * Übersichtliche Favoritenansicht
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
