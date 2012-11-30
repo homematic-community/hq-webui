@@ -42,6 +42,8 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen*
 
+_Achtung bei Updates:_ vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
+
 Bedienung
 =========
 Allgemein
@@ -81,7 +83,8 @@ Todo/Bekannte Fehler
 Todo/Ideen/Roadmap
 ==================
 2.0
-----
+---
+* Favoriten: Auto-Spaltenanzahl
 * Kanäle: Protokollierung aktivieren/deaktivieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Auswahl Port bei Ausführung von XML RPC
@@ -124,6 +127,7 @@ Todo/Ideen/Roadmap
 
 3.0
 ---
+* Styleguide und Nomenklatur entwerfen, komplettes Refactoring
 * Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
 
 
