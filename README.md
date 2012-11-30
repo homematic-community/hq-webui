@@ -80,12 +80,12 @@ Todo/Bekannte Fehler
 
 Todo/Ideen/Roadmap
 ==================
-asap
+2.0
 ----
 * Kanäle: Protokollierung aktivieren/deaktivieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
+* Auswahl Port bei Ausführung von XML RPC
 * ExecutionFailed Fehler bei Scriptausführung auswerten
-* Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
@@ -103,42 +103,53 @@ asap
 
 2.3
 ---
-* Programme anzeigen, anlegen, editieren, löschen. Programme direkt aus dem Scripteditor heraus erzeugen
+* Programme anzeigen, anlegen, editieren, löschen.
+* Programme direkt aus dem Scripteditor heraus erzeugen
+* Dateien aus Editor auf CCU Speichern
+
+2.4
+---
+* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
+* Dienste starten/stoppen (inetd (telnet), ftpd etc)
+* Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
+
+2.5
+---
+* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (XML-RPC Event Subscription nicht (ohne eine Art Proxy) machbar -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen! Erkennen welche Daten sichtbar sind und nur diese Updaten!)
+
+2.6
+---
+* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
+
 
 3.0
 ---
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (XML-RPC Event Subscription nicht (ohne eine Art Proxy) machbar -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen! Erkennen welche Daten sichtbar sind und nur diese Updaten!)
 * Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
 
 
 irgendwann
 ----------
-* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
-* Dienste starten/stoppen (inetd (telnet), ftpd etc)
-* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
-* Dateien aus Editor auf CCU Speichern
+* Raumthermostat Modus setzen
+* Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Machbarkeit prüfen: Anlegen von Cronjobs?
-* Einspielen von Zusatzsoftware ohne Zwangsreboot! (machbar?)
 * Geräte (ent)sperren?
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
-* Raumthermostat Modus setzen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Tastenkürzel für Buttons in Scriptkonsole
 * rssilist: Einfärben der RX/TX Werte?
-* Favoriten: nicht bedienbare disablen (fraglich. Systemvariablen lassen sich im originalen UI ja leider nicht als Bedienbarer Favorit konfigurieren)
 * Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
 * Komfortableres bestätigen von Servicemeldungen (noch eine extra Liste von Service-Meldungen im Zentrale-Tab?)
 * Backup erstellen
 * Reboot und Safe-Mode Reboot
-
-
-eher nicht
-----------
-* Anlernmodus??
-* Direkte Verknüpfungen Anzeigen/Anlegen/Ändern/Löschen? (durchaus machbar, aber großer Zeitaufwand)
-* Scriptkonsole: ACE Editor statt area_edit?! Warum noch mal hatte ich mich gegen ACE entschieden?
 * Firewallkonfiguration
-* Backup einspielen, Firmwareupdate (solche "kritischen" Funktionen machen mir Angst;)
+
+tendenziell nein
+----------------
+* Anlernmodus
+* Direkte Verknüpfungen Anzeigen/Anlegen/Ändern/Löschen? (machbar, aber zu großer Zeitaufwand)
+* Scriptkonsole: ACE Editor statt area_edit?
+* Backup zurückspielen
+* Firmwareupdate
 
 
 
