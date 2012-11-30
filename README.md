@@ -53,8 +53,7 @@ Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und 
 
 Favoriten
 ---------
-Der Tab Favoriten zeigt defaultmäßig nur die Favoriten des Users _USER1004 (bei mir der Admin) an - sollen hier die Favoriten eines anderen Users angezeigt werden muss die Variable favoriteUser in der Datei config.js entsprechend angepasst werden.
-Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren.
+Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir automatisch im LocalStorage gespeichert. Unten Links befindet sich ein Refresh-Button. Die Einstellungen Anzahl Spalten und Position Name (im originalen WebUI vorzunehmen) werden ausgewertet.
 
 Geräte und Variablen
 --------------------
@@ -64,19 +63,19 @@ Geräte und Kanäle können über Doppelklick umbenannt werden.
 
 Programme
 ---------
-Programme können über einen Doppelklick auf die Tabellenzelle umbenannt und aktiviert/deaktiviert werden.
+Programme können über einen Doppelklick auf die Tabellenzelle umbenannt und aktiviert/deaktiviert werden. Links in jeder Zeile befindet sich ein "Play-Button", hiermit können Programme gestartet werden.
 
 Entwicklung
 -----------
-Beim Ausführen von JSON RPC muss die Eigenschaft _session_id nicht angebeben werden, sie wird automatisch ergänzt.
+Beim Ausführen von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergänzt.
 Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
 Changelog
 =========
 Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
-Todo/Bekannte Fehler
-====================
+Bekannte Fehler
+===============
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 
