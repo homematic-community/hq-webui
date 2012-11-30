@@ -17,13 +17,14 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 
 Features
 ========
-* schnelle Ladezeiten
-* Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen, diversen Informationen und dem Systemprotokoll
+* schnelle Ladezeiten, nach dem ersten Laden quasi keine Wartezeiten mehr
+* Übersichtliche Favoritenansicht
+* Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
+* Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
 * Umbenennen von Geräten und Kanälen
-* Favoritenansicht
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
 * Themes
