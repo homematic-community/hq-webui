@@ -112,7 +112,6 @@ asap
 
 irgendwann
 ----------
-* Anzeige von Favoriten-Platzhalter (machbar?)
 * Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden)
