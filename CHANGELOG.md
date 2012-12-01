@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.0-beta5
+---------
+* Favoriten/Variablen Wertebezichner für Logikwerte werden nun angezeigt
+* Variablen Beschreibung wird angezeigt
+* Favoriten weitere kleine Verbesserungen und Fehlerbehebungen
+* Alarmicon bei Servicemeldungen durch Sprechblasen-Icon ersetzen
+* neues kleines Icon oben rechts. Wird immer eingeblendet wenn CCU Kommunikation stattfindet
+* Fehler beim Editieren von Alarmvariablen behoben
+* Logout umgestaltet
+
+
 2.0-beta4
 ---------
 * Favoriten diverse Detailverbesserungen HTML/CSS

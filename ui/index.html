@@ -29,7 +29,7 @@
                 <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
-                <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-alert"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
                 <!--<li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>-->
                 <li><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
@@ -284,29 +284,42 @@
     </div>
     <div class="" id="login">
         <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
-        <div id="widgetLogin" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
-            <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
-                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI Anmeldung</span>
+            <div id="widgetLogin" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+                <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                    <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI Anmeldung</span>
+                </div>
+                <div style="padding-left: 45px; padding-top: 10px;">
+                    <form id="formLogin" name="login">
+                        <table>
+                            <tr style="font-size: 0.9em;">
+                                <td colspan="2"><span id="loginError" style="color:#f33; font-weight:bold;"></span>&nbsp;</td>
+                            </tr>
+                            <tr style="font-size: 1.3em;">
+                                <td>Benutzername</td><td><input tabindex="1" id="username" value="Admin"></td>
+                            </tr>
+                            <tr style="font-size: 1.3em;">
+                                <td>Passwort</td><td><input tabindex="2" type="password" id="password"> <input tabindex="4" type="submit" style="font-size: 0.73em;" id="buttonLogin" value="Anmelden"/></td>
+                            </tr>
+                        </table><br>
+                        <input tabindex="3" id="keepcred" type="checkbox"> Anmeldedaten speichern und in Zukunft automatisch anmelden
+                    </form>
+                </div>
             </div>
-            <div style="padding-left: 45px; padding-top: 10px;">
-                <form id="formLogin" name="login">
-                    <table>
-                        <tr style="font-size: 0.9em;">
-                            <td colspan="2"><span id="loginError" style="color:#f33; font-weight:bold;"></span>&nbsp;</td>
-                        </tr>
-                        <tr style="font-size: 1.3em;">
-                            <td>Benutzername</td><td><input tabindex="1" id="username" value="Admin"></td>
-                        </tr>
-                        <tr style="font-size: 1.3em;">
-                            <td>Passwort</td><td><input tabindex="2" type="password" id="password"> <input tabindex="4" type="submit" style="font-size: 0.73em;" id="buttonLogin" value="Anmelden"/></td>
-                        </tr>
-                    </table><br>
-                    <input tabindex="3" id="keepcred" type="checkbox"> Anmeldedaten speichern und in Zukunft automatisch anmelden
-                </form>
-            </div>
-        </div>
         </td><td style="width: 50%">
         </td></tr></table>
         <div id="xmlDummy0"><form action=""></form></div>
+    </div>
+    <div class="" id="logout">
+        <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
+            <div id="widgetLogout" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+                <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                    <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI</span>
+                </div>
+                <div style="padding-left: 45px; padding-top: 10px;">
+                    <h3 style="padding-top:20px;">Bitte die Seite schließen oder neu laden.</h3>
+                </div>
+            </div>
+        </td><td style="width: 50%">
+        </td></tr></table>
     </div>
 </body>

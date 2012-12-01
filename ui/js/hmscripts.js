@@ -76,10 +76,15 @@ var scriptVariables = "object oSysVar;\n" +
     "Write(\"<systemVariables>\");\n" +
     "foreach (sSysVarId, dom.GetObject(ID_SYSTEM_VARIABLES).EnumUsedIDs()) {\n" +
     "    oSysVar     = dom.GetObject(sSysVarId);\n" +
-    "    Write(\"<systemVariable\");\n" +
+    "    Write(\"\\n <systemVariable\");\n" +
     "    Write(\" name='\"); WriteXML( oSysVar.Name() );\n" +
+    "    Write(\"' desc='\"); WriteXML( oSysVar.DPInfo() );\n" +
     "    Write(\"' variable='\"); WriteXML( oSysVar.Variable());\n" +
     "    Write(\"' value='\"); WriteXML( oSysVar.Value());\n" +
+    "    if (oSysVar.ValueType() == 2) {\n" +
+    "     Write(\"' text_false='\"); WriteXML( oSysVar.ValueName0());\n" +
+    "     Write(\"' text_true='\"); WriteXML( oSysVar.ValueName1());\n" +
+    "    }\n" +
     "    Write(\"' value_list='\"); WriteXML( oSysVar.ValueList());\n" +
     "    Write(\"' ise_id='\" # oSysVar.ID() );\n" +
     "    if (sShowText == \"true\") {\n" +
@@ -302,13 +307,13 @@ var scriptFavorites = "var show_datapoint=1;\n" +
 "Write(\"<favoriteList>\");\n" +
 "foreach (sFavoriteId, dom.GetObject(ID_FAVORITES).EnumUsedIDs()) {\n" +
 "    oFavorite     = dom.GetObject(sFavoriteId);\n" +
-"    Write(\"<favorite name='\"); WriteXML( oFavorite.Name() );\n" +
+"    Write(\"\\n<favorite name='\"); WriteXML( oFavorite.Name() );\n" +
 "    Write(\"' ise_id='\" # sFavoriteId # \"'>\");\n" +
 "    foreach(sChannelId, oFavorite.EnumIDs()) {\n" +
 "        object fav = dom.GetObject(sChannelId);\n" +
     "        if (fav) { \n" +
 
-    "        Write(\"<channel ise_id='\" # sChannelId # \"' name='\");  \n" +
+    "        Write(\"\\n <channel ise_id='\" # sChannelId # \"' name='\");  \n" +
     "        var favType = \"UNKNOWN\";\n" +
     "        if (fav.IsTypeOf(OT_PROGRAM)) { favType = \"PROGRAM\"; }\n" +
     "        if (fav.IsTypeOf(OT_DP))      { favType = \"SYSVAR\";  }\n" +
@@ -336,7 +341,7 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "                    if (oDP) {\n" +
     "                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
     "                        if ((dp != \"ON_TIME\") && (dp != \"INHIBIT\")) {\n" +
-    "                            Write(\"<datapoint\");\n" +
+    "                            Write(\"\\n  <datapoint\");\n" +
     "                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
     "                            Write(\"' ise_id='\" # sDPId );\n" +
     "                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
@@ -346,6 +351,10 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
     "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
+    "    if (oDP.ValueType() == 2) {\n" +
+    "     Write(\"' text_false='\"); WriteXML( oDP.ValueName0());\n" +
+    "     Write(\"' text_true='\"); WriteXML( oDP.ValueName1());\n" +
+    "    }\n" +
     "                Write(\"' unit='\"); WriteXML( oDP.ValueUnit());\n" +
     "                if (oDP.ValueType() == 16) { Write(\"' value_text='\"); WriteXML( oDP.ValueList().StrValueByIndex(';', oDP.Value())); }\n" +
     "                Write(\"' type='\" # fav.ValueType() # \"' subtype='\" # fav.ValueSubType());\n" +
@@ -356,12 +365,16 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "                }\n" +
     "            }\n" +
     "            if (favType == \"SYSVAR\") {\n" +
-    "                Write(\"<systemVariable\");\n" +
+    "                Write(\"\\n <systemVariable\");\n" +
     "                Write(\" name='\"); WriteXML( fav.Name() );\n" +
     "                Write(\"' variable='\"); WriteXML( fav.Variable());\n" +
     "                Write(\"' value='\"); WriteXML( fav.Value());\n" +
     "                Write(\"' value_list='\"); WriteXML( fav.ValueList());\n" +
     "                Write(\"' value_text='\"); WriteXML( fav.ValueList().StrValueByIndex(';', fav.Value()));\n" +
+    "    if (fav.ValueType() == 2) {\n" +
+    "     Write(\"' text_false='\"); WriteXML( fav.ValueName0());\n" +
+    "     Write(\"' text_true='\"); WriteXML( fav.ValueName1());\n" +
+    "    }\n" +
     "                Write(\"' ise_id='\" # fav.ID() );\n" +
     "                Write(\"' min='\"); WriteXML( fav.ValueMin());\n" +
     "                Write(\"' max='\"); WriteXML( fav.ValueMax());\n" +
@@ -371,17 +384,17 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "                Write(\"'/>\");\n" +
     "            }\n" +
 
-"            Write(\"</channel>\");\n" +
+"            Write(\"\\n </channel>\");\n" +
 "        } else {\n" +
 "            Write (\"'/>\");\n" +
 "        }\n" +
     "            } else { Write( \"' />\"); }\n" +
     "            } else { Write( \"' />\"); }\n" +
 "    }\n" +
-"    Write(\"</favorite>\");\n" +
-"   Write(\"<user id='\" # USER_ID # \"'/>\");\n" +
+"    Write(\"\\n</favorite>\");\n" +
+"   Write(\"\\n<user id='\" # USER_ID # \"'/>\");\n" +
 "}\n" +
-"Write(\"</favoriteList>\");";
+"Write(\"\\n</favoriteList>\");";
 
 
 

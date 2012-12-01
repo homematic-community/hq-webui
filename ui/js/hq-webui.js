@@ -14,9 +14,14 @@
  *
  */
 
+jQuery.extend(
+    jQuery.expr[ ":" ],
+    { reallyvisible : function (a) { return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length); }}
+);
+
 $("document").ready(function () {
 
-    var version =               "2.0-beta4";
+    var version =               "2.0-beta5";
 
     var statesXML,
         rssiXML,
@@ -86,20 +91,28 @@ $("document").ready(function () {
     var divScriptVariables =    $("#divScriptVariables");
 
     var accordionFavorites =    $("div#accordionFavorites");
+    var serviceIndicator =      $("#service");
+    var alarmIndicator =        $("#alarm");
+    var ajaxIndicator;
+
+    var timerRefresh;
+    var timerSession;
 
     var hmSession;
 
 
     // Elemente verstecken
     $("#login").hide();
+    $("#logout").hide();
     $("#hmNewScriptMenu").menu().hide();
     $("#hmRunScriptMenu").menu().hide();
     $("#hmCcuMenu").menu().hide();
     $("ul.tabsPanel li a img").hide();
-    $("#service").hide();
-    $("#alarm").hide();
+    serviceIndicator.hide();
+    alarmIndicator.hide();
     divStderr.hide();
     divScriptVariables.hide();
+
 
     // Theme laden
     getTheme();
@@ -185,13 +198,20 @@ $("document").ready(function () {
     $("#mainNav").
         append("<button title='Abmelden' class='smallButton' style='float:right;' id='buttonLogout'></button>").
         append("<button title='Theme wählen' value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ").
-        append("<button title='Hilfe' class='smallButton' style='float:right;' id='buttonAbout'></button>");
+        append("<button title='Hilfe' class='smallButton' style='float:right;' id='buttonAbout'></button>").
+        append("<span style='width:15px; height:15px; padding-top:5px; margin-right:10px; float:right;'><span title='CCU Kommunikation' id='ajaxIndicator' style='width:15px; height: 15px;' class='ui-icon ui-icon-transfer-e-w'></span></span>");
+
+    ajaxIndicator = $("#ajaxIndicator");
+    ajaxIndicator.hide().ajaxStart(function () { $(this).show(); }).ajaxStop(function () { $(this).hide(); });
 
 
         divStdout.resizable().on("resize", function(event, ui) {
         $("#hmScriptStdout").height(divStdout.height()-29);
         divStderr.width(divStdout.width());
     });
+
+
+
     divStderr.resizable().on("resize", function(event, ui) {
         $("#hmScriptStderr").height(divStderr.height()-29);
     });
@@ -210,11 +230,14 @@ $("document").ready(function () {
         '',
         'id',
         'Name',
+        'Beschreibung',
         'Variable',
         'Wert',
         'Einheit',
         'Werteliste',
         'Wert (text)',
+        'true (text)',
+        'false (text)',
         'min',
         'max',
         'type',
@@ -241,7 +264,12 @@ $("document").ready(function () {
                 return $(obj).attr('name');
             }
         },
-        {name:'variable', index:'variable', width: 40,
+        {name:'desc', index:'desc', width: 150,
+            xmlmap: function (obj) {
+                return $(obj).attr('desc');
+            }
+        },
+        {name:'variable', index:'variable', width: 40, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('variable');
             }
@@ -254,6 +282,15 @@ $("document").ready(function () {
                         val = parseFloat(val);
                         val = val.toFixed(2);
                         break;
+                    case '2':
+                    case '6':
+                        //console.log("debug " +val);
+                        if (val == "true") {
+                            val = $(obj).attr('text_true');
+                        } else {
+                            val = $(obj).attr('text_false');
+                        }
+                        break;
                     case '29':
                         val = $(obj).attr('value_text');
                         break;
@@ -265,7 +302,9 @@ $("document").ready(function () {
 
                 }
                 return val;
-            }
+            },
+            classes:'update uVAR'
+
         },
         {name:'unit', index:'unit', width: 30,
             xmlmap: function (obj) {
@@ -274,13 +313,29 @@ $("document").ready(function () {
         },
         {name:'value_list', index:'value_list', width: 120,
             xmlmap: function (obj) {
-                return $(obj).attr('value_list');
+                if ($(obj).attr('subtype') == 2 || $(obj).attr('subtype') == 6) {
+                    return $(obj).attr('text_false') + ";" + $(obj).attr('text_true');
+                } else {
+                    return $(obj).attr('value_list');
+                }
+
             }
         },
-        {name:'value_text', index:'value_text', width: 50,
+        {name:'value_text', index:'value_text', width: 50, hidden: true,
             xmlmap: function (obj) {
                 var val = $(obj).attr('value_text');
-
+                return val;
+            }
+        },
+        {name:'text_false', index:'value_text', width: 50, hidden: true,
+            xmlmap: function (obj) {
+                var val = $(obj).attr('text_true');
+                return val;
+            }
+        },
+        {name:'text_true', index:'value_text', width: 50, hidden: true,
+            xmlmap: function (obj) {
+                var val = $(obj).attr('text_false');
                 return val;
             }
         },
@@ -322,7 +377,8 @@ $("document").ready(function () {
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
-            }
+            },
+            classes:'update uVAR'
         }
     ];
 
@@ -345,7 +401,7 @@ $("document").ready(function () {
                 var ise_id = $(obj).attr('id');
                 return ise_id;
             },
-            classes: 'ise_id'
+            classes: 'ise_id update uPRG'
         },
         {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
@@ -367,7 +423,8 @@ $("document").ready(function () {
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
-            }
+            },
+            classes:'update uPRG'
         }
     ];
 
@@ -628,7 +685,7 @@ $("document").ready(function () {
             xmlmap: function (obj) {
                 return $(obj).attr('ise_id');
             },
-            classes: 'ise_id'
+            classes: 'ise_id update uDP'
         },
         {name:"name",   index:"name",   width:240, fixed: true, xmlmap: function (obj) {
             return $(obj).attr('name');
@@ -644,7 +701,8 @@ $("document").ready(function () {
                     val = val.toFixed(2);
                 }
                 return val;
-            }
+            },
+            classes:'update uDP'
         },
         {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
             xmlmap: function (obj) {
@@ -654,7 +712,8 @@ $("document").ready(function () {
         {name:"timestamp",   index:"timestamp",   width:130, fixed: true,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
-            }
+            },
+            classes:'update uDP'
         }
     ];
 
@@ -825,19 +884,22 @@ $("document").ready(function () {
         ondblClickRow: function (id) {
             var value       = gridVariables.getCell(id, "value");
             var value_text  = gridVariables.getCell(id, "value_text");
+            var text_false  = gridVariables.getCell(id, "text_false");
+            var text_true   = gridVariables.getCell(id, "text_true");
             var value_list  = gridVariables.getCell(id, "value_list");
             var unit        = gridVariables.getCell(id, "unit");
             var type        = gridVariables.getCell(id, "type");
             var subtype     = gridVariables.getCell(id, "subtype");
             switch (subtype) {
                 case 'Logikwert':
-                    variableInput.html("<select id='variableValue'><option value='false'>False</option><option value='true'>True</option></select>");
-                    $("#variableValue option[value='" + value + "']").attr("selected", true);
+                case 'Alarm':
+                    variableInput.html("<select id='variableValue'><option value='false'>"+text_true+"</option><option value='true'>"+text_false+"</option></select>");
+                    $("#variableValue option:contains('"+value+"')").attr("selected", true);
                     break;
                 case 'Werteliste':
                     variableInput.html("<select id='variableValue'>" + selectOptions(value_list) + "</select>");
                     if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
-                    $("#variableValue option[text='" + value + "']").attr("selected", true);
+                    $("#variableValue option[value='" + value + "']").attr("selected", true);
                     break;
                 default:
                     variableInput.html("<input size='' name='' type='text' id='variableValue' value='" + value + "'>" + unit);
@@ -1341,9 +1403,9 @@ $("document").ready(function () {
                     }).trigger("reloadGrid").setGridParam({loadonce:true});
                     addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
                     if (variablesXMLObj.find("systemVariable[subtype='6'][value='true']").length > 0) {
-                        $("#alarm").show();
+                        alarmIndicator.show();
                     } else {
-                        $("#alarm").hide();
+                        alarmIndicator.hide();
                     }
 
                  if (!programsReady) {
@@ -1365,9 +1427,9 @@ $("document").ready(function () {
                     $("#loaderVariables").hide();
                     addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
                     if (variablesXMLObj.find("systemVariable[subtype='6'][value='true']").length > 0) {
-                       $("#alarm").show();
+                       alarmIndicator.show();
                     } else {
-                        $("#alarm").hide();
+                        alarmIndicator.hide();
                     }
 
                 }
@@ -1457,7 +1519,7 @@ $("document").ready(function () {
                 addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
                 addInfo("CCU Batteriestatus", ccuBat + "%");
                 if (statesXMLObj.find("channel[name$=':0'] datapoint[valuetype='2'][value='true']").length > 0) {
-                    $("#service").show();
+                    serviceIndicator.show();
                 } else {
                     $("#serivce").hide();
                 }
@@ -1490,7 +1552,7 @@ $("document").ready(function () {
                     addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
                     addInfo("CCU Batteriestatus", ccuBat + "%");
                     if (statesXMLObj.find("channel[name$=':0'] datapoint[valuetype='2'][value='true']").length > 0) {
-                        $("#service").show();
+                        serviceIndicator.show();
                     } else {
                         $("#serivce").hide();
                     }
@@ -1654,7 +1716,8 @@ $("document").ready(function () {
 
                             switch ($(this).attr("subtype")) {
                                 case '2':
-                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>Falsch</option><option value='true'>Wahr</option></select>";
+
+                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>"+$(this).attr("text_false")+"</option><option value='true'>"+$(this).attr("text_true")+"</option></select>";
                                     html += "</div>";
                                     favInputCell.append(html);
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
@@ -1858,9 +1921,9 @@ $("document").ready(function () {
                                     break;
 
                                 default:
-                                    var value = $(this).attr("value");
-                                    var value_text = $(this).attr("value_text");
-                                    var value_type = $(this).attr("valuetype");
+                                    var value =         $(this).attr("value");
+                                    var value_text =    $(this).attr("value_text");
+                                    var value_type =    $(this).attr("valuetype");
 
                                     var unit = $(this).attr("unit");
                                     if (unit == undefined) { unit = ""; }
@@ -1895,6 +1958,13 @@ $("document").ready(function () {
                                         if (value_type == 4) {
                                             value = parseFloat(value);
                                             value = value.toFixed(2);
+
+                                        } else if (value_type == 2) {
+                                            if (value == 'false') {
+                                                value = $(this).attr("text_false");
+                                            } else {
+                                                value = $(this).attr("text_true");
+                                            }
                                         }
                                         dpDesc = name;
                                     }
@@ -1972,7 +2042,7 @@ $("document").ready(function () {
 
         function favButtonset() {
             $(".favInputRadio").buttonset();
-            $('input:text, input:password')
+            $("#tabFavorites").find('input:text, input:password')
                 .button()
                 .css({
                     'font' : 'inherit',
@@ -1981,7 +2051,7 @@ $("document").ready(function () {
                     'cursor' : 'text',
                     'padding' : '.4em .2em .4em .4em'
                 });
-            $("select").multiselect({
+            $("#tabFavorites").find("select").multiselect({
                 multiple: false,
                 header: false,
                 minWidth: '100px',
@@ -2934,8 +3004,10 @@ $("document").ready(function () {
     }
 
     function jsonLogout() {
+        clearTimeout(timerRefresh);
+        clearTimeout(timerSession);
         if (hmSession) {
-            $("#login").show("fade", hqConf.sessionLogoutFade);
+            $("#logout").show("fade", hqConf.sessionLogoutFade);
             jsonPost({
                 "method":   "Session.logout",
                 "params":   {
@@ -2947,6 +3019,7 @@ $("document").ready(function () {
                     if (hqConf.sessionLogoutWarning) {
                         $(window).unbind("beforeunload");
                     }
+
 
                 }
             );
@@ -3101,11 +3174,52 @@ $("document").ready(function () {
 
     // Refresh Funktionen
 
-    var updateQueue = [];
-
+    var updateFirst = true;
     // Diese Funktion wird alle x Sekunden aufgerufen
     function update() {
+        clearTimeout(timerRefresh);
+        if (ajaxIndicator.is(":visible")) {
+            timerRefresh = setTimeout(update, 500);
+            return false;
+        }
+        console.log("Refresh");
+        updateFirst = true;
+        updateScript = "";
+        $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
+            if ($(this).css("display") != "none") {
+                var id = $(this).attr("title");
+                id = parseInt(id, 10);
+                if (!updateFirst) {
+                    updateScript += 'Write(",");\n';
+                } else {
+                    updateFirst = false;
+                }
+                updateScript += 'o = dom.GetObject('+id+');\n';
+                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",");\n';
+                updateScript += 'Write("\\"state\\":\\"" # o.State() # "\\",");\n';
+                updateScript += 'Write("\\"time\\":\\"" # o.Timestamp() # "\\"}");\n';
+            }
 
+        });
+        $("div[id^='favItem']:reallyvisible").each(function() {
+            if ($(this).css("display") != "none") {
+                var id = $(this).attr("id");
+                //id = parseInt(id, 10);
+                //updateQueue.push(id);
+            }
+
+        });
+        if (updateScript != "") {
+            updateScript = 'object o;\nWrite("{");\n' + updateScript + 'Write("}");';
+            //console.log(updateScript);
+            timerRefresh = setTimeout(update, hqConf.refreshPause);
+        } else {
+            timerRefresh = setTimeout(update, hqConf.refreshPause);
+        }
+
+    }
+    if (1) {
+        update();
     }
 
     function updateState() {

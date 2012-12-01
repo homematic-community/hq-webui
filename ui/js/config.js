@@ -91,8 +91,8 @@ var hqConf = {
     },
 
     dpValueMap: {
-        'false':    'Falsch',
-        'true':     'Wahr'
+        'false':    'ist falsch',
+        'true':     'ist wahr'
     },
 
     // Todo Formatierung des STATE Datenpunkts in Abhängigkeit vom
@@ -118,10 +118,10 @@ var hqConf = {
             formatter: function (val) {
                 switch (val) {
                 case 'true':
-                    return "Wahr";
+                    return "ist wahr";
                     break;
                 case 'false':
-                    return "Falsch";
+                    return "is falsch";
                     break;
                 default:
                     return val;

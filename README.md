@@ -84,38 +84,37 @@ Todo/Ideen/Roadmap
 ==================
 2.0
 ---
-* Automatisches Refreshen aller sichtbaren Favoriten in einstellbaren Intervallen
+* Automatischer Refresh
+* Bug fixen: Systemprotokoll wird nicht geladen
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Auswahl Port bei Ausführung von XML RPC
-* Variablen-Beschreibung anzeigen und editierbar machen
-* ExecutionFailed Fehler bei Scriptausführung auswerten
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
-* Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
-* ERROR-Datenpunkte als Servicemeldungen anzeigen
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Logout umgestalten
 * Session Timeout behandeln. Session Fehler abfangen
+* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
 
 2.1
 ---
-* Programme anzeigen, anlegen, editieren, löschen.
-* Programme direkt aus dem Scripteditor heraus erzeugen
-* Dateien aus Editor auf CCU Speichern
+* Kanäle: Protokollierung aktivieren/deaktivieren
+* Anlegen, löschen und ändern von Variablen
 
 2.2
 ---
-* Kanäle: Protokollierung aktivieren/deaktivieren
 * Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen
-* Anlegen, löschen und ändern von Variablen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
 2.3
 ---
-* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
-* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
+* Programme anzeigen, anlegen, editieren, löschen.
+* Programme direkt aus dem Scripteditor heraus erzeugen
 
 2.4
 ---
+* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
+* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
+
+2.5
+---
+* TCL und Shellscripte aus Editor auf CCU Speichern
+* Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
@@ -129,9 +128,16 @@ Todo/Ideen/Roadmap
 
 irgendwann
 ----------
+* Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* Variablen-Beschreibung anzeigen und editierbar machen
+* Fehler beheben Protokoll läd beim 1. laden nicht korrekt
+* ExecutionFailed Fehler bei Scriptausführung auswerten
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
+* Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
+* ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Raumthermostat Modus setzen
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
-* Machbarkeit prüfen: Anlegen von Cronjobs?
 * Geräte (ent)sperren?
 * Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
