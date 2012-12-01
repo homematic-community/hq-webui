@@ -5,7 +5,7 @@ Leichtgewichtiges ergänzendes Webfrontend zur Bedienung der Homematic CCU.
 Features
 ========
 * schnelle Ladezeit
-* geringere Belastung der CCU (Die CCU liefert führt nur sehr überschaubare Scripte aus und liefert ausschließlich kompakte json und xml Daten. Das Generieren des HTML-Outputs findet (im Gegensatz zum originalen WebUI) komplett lokal im Browser statt)
+* geringere Belastung der CCU
 * Übersichtliche Favoritenansicht
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
