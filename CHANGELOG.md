@@ -3,7 +3,7 @@ Changelog
 2.0.1
 -----
 * Zuordnung Geräte -> Icons vervollständigt (Danke DrTob!)
-* Fehlermeldung wenn Scriptfehler nicht in /var/log/messages gefunden wurde angepasst (Danke DrTob)
+* Fehlermeldung wenn Scriptfehler nicht in /var/log/messages gefunden wurde angepasst
 * ExecutionFailed Fehler bei Scriptausführung wird ausgewertet
 * Button zum editieren eines Variablen-Wertes (zusätzlich zum Doppelklick)
 
