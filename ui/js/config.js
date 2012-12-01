@@ -8,8 +8,6 @@ var hqConf = {
 
     // Hier die URL der CCU eintragen
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
-    // Achtung: nicht das abschließende Komma vergessen. Die Zeile muss z.B. so aussehen:
-    //      ccurl: 'http://172.16.23.3',
     ccuUrl:                 '',
 
     // Pfad zur xmlapi
@@ -76,17 +74,60 @@ var hqConf = {
 
     // Zuordnung Datenpunkte -> Bezeichnung, Einheit, Anzahl Dezimalstellen
     dpDetails: {
-        'TEMPERATURE':          { unit: '°C', desc: 'Temperatur', decimals: 1 },
-        'HUMIDITY':             { unit: '%', desc: 'Luftfeuchte', decimals: 0 },
-        'MOTION':               { unit: '', desc: 'Bewegung', decimals: -1 },
-        'BRIGHTNESS':           { unit: '', desc: 'Helligkeit', decimals: -1 },
-        'RAINING':              { unit: '', desc: 'Regen aktuell', decimals: 2 },
-        'RAIN_COUNTER':         { unit: 'mm', desc: 'Regen heute', decimals: 2 },
-        'WIND_SPEED':           { unit: 'km/h', desc: 'Windgeschwindigkeit', decimals: -1 },
-        'WIND_DIRECTION':       { unit: '°', desc: 'Windrichtung', decimals: -1 },
-        'WIND_WIND_DIRECTION':  { unit: '°', desc: 'Windr. Schwankungsbr.', decimals: 0 },
-        'SUNSHINEDURATION':     { unit: '', desc: 'Sonnenscheindauer', decimals: -1 }
+        'BAT_LEVEL':            { unit: '%',        desc: 'Batteriekapazität',      decimals: 1,    factor: 100 },
+        'U_USBD_OK':            { unit: '',         desc: 'USB',                    decimals: -1 },
+        'U_SOURCE_FAIL':        { unit: '',         desc: 'Netzausfall',            decimals: -1 },
+        'LOWBAT':               { unit: '',         desc: 'Batterie erschöpft',     decimals: -1 },
+        'TEMPERATURE':          { unit: '°C',       desc: 'Temperatur',             decimals: 1 },
+        'HUMIDITY':             { unit: '%',        desc: 'Luftfeuchte',            decimals: 0 },
+        'MOTION':               { unit: '',         desc: 'Bewegung',               decimals: -1 },
+        'BRIGHTNESS':           { unit: '',         desc: 'Helligkeit',             decimals: -1 },
+        'RAINING':              { unit: '',         desc: 'Regen aktuell',          decimals: -1 },
+        'RAIN_COUNTER':         { unit: 'mm',       desc: 'Regen heute',            decimals: 0 },
+        'WIND_SPEED':           { unit: 'km/h',     desc: 'Windgeschwindigkeit',    decimals: -1 },
+        'WIND_DIRECTION':       { unit: '°',        desc: 'Windrichtung',           decimals: -1 },
+        'WIND_WIND_DIRECTION':  { unit: '°',        desc: 'Windr. Schwankungsbr.',  decimals: -1 },
+        'SUNSHINEDURATION':     { unit: '',         desc: 'Sonnenscheindauer',      decimals: -1 }
+    },
 
+    dpValueMap: {
+        'false':    'Falsch',
+        'true':     'Wahr'
+    },
+
+    // Todo Formatierung des STATE Datenpunkts in Abhängigkeit vom
+    dpDetailsState: {
+        'T37':               {
+            formatter: function (val) {
+
+            },
+            icon: function (val) {
+
+            }
+
+        },
+        'T38':               {
+            formatter: function (val) {
+
+            },
+            icon: function (val) {
+
+            }
+        },
+        'DEFAULT':              {
+            formatter: function (val) {
+                switch (val) {
+                case 'true':
+                    return "Wahr";
+                    break;
+                case 'false':
+                    return "Falsch";
+                    break;
+                default:
+                    return val;
+                }
+            }
+        }
     }
 
 };

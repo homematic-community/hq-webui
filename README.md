@@ -84,7 +84,6 @@ Todo/Ideen/Roadmap
 ==================
 2.0
 ---
-* Favoriten: Auto-Spaltenanzahl
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Auswahl Port bei Ausführung von XML RPC
 * ExecutionFailed Fehler bei Scriptausführung auswerten
@@ -93,33 +92,34 @@ Todo/Ideen/Roadmap
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Logout umgestalten
+* Session Timeout behandeln. Session Fehler abfangen
 
 2.1
+---
+* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
+* Automatisches Refreshen aller sichtbaren Favoriten in einstellbaren Intervallen
+* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
+
+2.2
 ---
 * Kanäle: Protokollierung aktivieren/deaktivieren
 * Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen
 * Anlegen, löschen und ändern von Variablen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
-2.2
+2.3
 ---
 * Programme anzeigen, anlegen, editieren, löschen.
 * Programme direkt aus dem Scripteditor heraus erzeugen
 * Dateien aus Editor auf CCU Speichern
 
-2.3
+2.4
 ---
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
 
-2.4
----
-* Intelligenter und Ressourcenschonender automatischer Refresh-Mechanismus (XML-RPC Event Subscription nicht (ohne eine Art Proxy) machbar -> Polling via xmlrpc oder rega?, Nutzeraktivität erkennen! Erkennen welche Daten sichtbar sind und nur diese Updaten!)
 
-2.5
----
-* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
 
 
 3.0

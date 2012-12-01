@@ -318,6 +318,7 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "        if (favType != \"UNKNOWN\" ) { \n" +
     "        WriteXML(fav.Name()); Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
     "        Write( \"' name_position='\"); WriteXML(fav.FavNamePosition());\n" +
+    "        Write( \"' col_align='\"); WriteXML(fav.FavColumnAlign());\n" +
     "        Write( \"' type='\" # favType);\n" +
     "        Write( \"' ctype='\" # fav.ChannelType());\n" +
     "        string canUse = \"false\";\n" +

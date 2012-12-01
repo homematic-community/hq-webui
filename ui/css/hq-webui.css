@@ -58,13 +58,15 @@ div.favItem {
     overflow: auto;
     display:block;
     padding: 0px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 div.favName {
     padding: 2px !important;
     padding-left: 4px !important;
     font-size: 1.1em;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .unknownType {
@@ -78,15 +80,14 @@ min-height: 32px;
     padding: 2px !important;
     padding-top: 4px !important;
     margin-top:2px !important;
+    white-space: nowrap;
+
 
 }
 
 div.favInputSlider {
     min-width: 100px;
     width: 160px;
-    position: relative;
-    top: 8px;
-    right: 5px;
 
 }
 
@@ -191,7 +192,7 @@ div.favInput label {
     padding: 0px;
     margin: 0px;
     border: none;
-    border-collapse: collapse;
+    border-collapse: separate;
 
 }
 
@@ -211,13 +212,19 @@ img.favIcon {
     padding-right: 3px;
 }
 .favInputUnit {
-    padding-left: 2px;
-    min-width: 30px;
+    min-width: 26px !important;
+    padding-right: 3px !important;
+    text-align: left;
+    display: inline-block;
 }
 .favDpTable {
     width: 100%;
     padding: 4px;
     padding-left: 8px;
+    border-collapse: collapse;
+}
+.favDpTable tr td{
+    padding-bottom: 1px;
 }
 .favDpLeft {
     overflow: hidden;
@@ -229,4 +236,24 @@ img.favIcon {
 .favDpRight {
     padding-left: 6px;
     padding-right: 4px;
+    text-align: right;
+}
+
+button.ui-multiselect {
+    min-width: 76px;
+    width:auto;
+
+    padding-left: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
+    white-space: nowrap;
+}
+
+.favSliderContainer {
+    display: inline-block;
+    padding-top: 9px !important;
+    padding-right: 6px !important;
+}
+.favIconText {
+    font-size: 1.08em;
 }

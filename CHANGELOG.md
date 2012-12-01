@@ -1,11 +1,18 @@
 Changelog
 =========
 
+2.0-beta4
+---------
+* Favoriten diverse Detailverbesserungen HTML/CSS
+* jQuery UI select und input, Plugin Multiselect hinzugefügt
+* Favoriten Spaltenanzahl "automatisch" wird nun sinnvoll dargestellt
+* Favoriten Ausrichtung links/zentriert wird nun sinnvoll dargestellt
+* Favoriten Datenpunktformatierung und Formatierung für Datenpunkt State in Abhängigkeit vom Gerät hinzugefügt. Konfigurierbar in config.js
+
 2.0-beta3
 ---------
-* Favoriten weitere Detailverbesserungen HTML/CSS,
-* jQuery UI select und input, Plugin Multiselect hinzugefügt
-
+* Favoriten diverse Detailverbesserungen HTML/CSS
+* Favoriten geänderter HTML Aufbau
 
 2.0-beta2
 ---------
@@ -19,10 +26,8 @@ Changelog
 * Favoriten Einstellung Namens-Position links/oben wird ausgewertet
 
 
-
-
 2.0-beta1
-----------
+---------
 * Funk: Einheit dBm bei RX/TX hinzugefügt
 * Zusätzliche Spalte für Buttons bei Programme und Variablen
 * Programme Play-Button hinzugefügt

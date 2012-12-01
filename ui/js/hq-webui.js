@@ -241,7 +241,7 @@ $("document").ready(function () {
                 return $(obj).attr('name');
             }
         },
-        {name:'variable', index:'variable', width: 40, hidden: true,
+        {name:'variable', index:'variable', width: 40,
             xmlmap: function (obj) {
                 return $(obj).attr('variable');
             }
@@ -272,12 +272,12 @@ $("document").ready(function () {
                 return $(obj).attr('unit');
             }
         },
-        {name:'value_list', index:'value_list', width: 120, hidden: true,
+        {name:'value_list', index:'value_list', width: 120,
             xmlmap: function (obj) {
                 return $(obj).attr('value_list');
             }
         },
-        {name:'value_text', index:'value_text', width: 50, hidden: true,
+        {name:'value_text', index:'value_text', width: 50,
             xmlmap: function (obj) {
                 var val = $(obj).attr('value_text');
 
@@ -1575,7 +1575,7 @@ $("document").ready(function () {
         if (favoritesReady) {
             accordionFavorites.accordion("destroy");
         }
-         accordionFavorites.html("");
+        accordionFavorites.html("");
         //console.log(favoritesXML);
         var favoriteUserid = "_USER" + favoritesXMLObj.find("user").attr("id");
         //console.log("Favorites: " + favoriteUserid);
@@ -1585,12 +1585,29 @@ $("document").ready(function () {
 
             var cols = parseInt($(this).attr("column_count"), 10);
             var orientation = parseInt($(this).attr("name_position"), 10);
+            var align = parseInt($(this).attr("col_align"), 10);
+
+            // Spaltenanzahl automatisch
+            if (cols < 1 || cols > 4) { cols = Math.floor($(window).width() / 460); }
             if (cols == 0) { cols = 1; }
-            var htmlTable = "<table border='0' width='100%' cellspacing='8' cellpadding='0'><tr id='favGroup"+fav_id+"' style='height:100%'>";
+            if (cols > 4) { cols = 4; }
+
+
+            if (orientation == 0) {
+                align = "right";
+            } else {
+                if (align == 1) {
+                    align = "center";
+                } else {
+                    align = "left";
+                }
+            }
+
+            var htmlTable = "<table border='0' width='99.9%' cellspacing='6' cellpadding='0'><tr id='favGroup"+fav_id+"' style='height:100%'>";
             var percent = 100 / cols;
             percent = percent.toString() + "%";
             for (var i=1; i <= cols; i++) {
-                htmlTable += "<td style='padding-right: 8px; vertical-align: top;' class='favCol favCol"+i+"' width='" + percent + "' height='100%'></td>";
+                htmlTable += "<td style='vertical-align: top;' class='favCol favCol"+i+"' width='" + percent + "' height='100%'></td>";
             }
             htmlTable += "</tr></table>";
 
@@ -1608,18 +1625,18 @@ $("document").ready(function () {
                 var channelId = $(this).attr("ise_id");
 
                 html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'>";
-                html += "<table class='favItemTable'>";
+                html += "<table style='width:100%; border-spacing:0px;' class='favItemTable'>";
                 if (orientation == 1) {
                     html += "<tr><td style='width:100%'><div style='border:none;' class='favItemHeader ui-widget-header ui-corner-top favName'>" + channelName + "</div>";
                 } else {
                     html += "<tr><td style='width:50%'><div class='favName'>" + channelName + "</div>";
                 }
                 html += "</td>";
+
                 if (orientation == 1) {
-                    html += "</tr><tr>";
-                    html += "<td style='min-height: 32px; width:100%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                    html += "</tr><tr><td style='text-align: "+align+"; min-height: 32px; width:100%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
                 } else {
-                    html += "<td style='width:50%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                    html += "<td style='text-align: "+align+"; width:50%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
                 }
                 html += "</tr></table></div>";
                 $("tr[id='favGroup" + fav_id + "'] td.favCol" + col).append(html);
@@ -1637,7 +1654,7 @@ $("document").ready(function () {
 
                             switch ($(this).attr("subtype")) {
                                 case '2':
-                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>False</option><option value='true'>True</option></select>";
+                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>Falsch</option><option value='true'>Wahr</option></select>";
                                     html += "</div>";
                                     favInputCell.append(html);
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
@@ -1672,7 +1689,7 @@ $("document").ready(function () {
                                     if (value.match(/<img/)) {
                                         html += value;
                                     } else {
-                                        html += "<input size='20' type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                        html += "<input style='text-align: "+(align=="right"?"left":align)+";' size='20' type='text' id='favInputText" + var_id + "' value='" + value + "'>";
                                     }
                                     html += "</div>";
                                     favInputCell.append(html);
@@ -1723,12 +1740,13 @@ $("document").ready(function () {
                                     //console.log("FAV DP VALUE " + dpValue);
                                     switch(ctype) {
                                         case '37':
+                                            html += "<span class='favIconText'>";
                                             switch (dpValue) {
                                                 case 'false':
-                                                    html += "Geschlossen<img class='favIcon' src='/ise/img/door/closed.png' height='28'/>";
+                                                    html += "Geschlossen</span><img class='favIcon' src='/ise/img/door/closed.png' height='28'/>";
                                                     break;
                                                 case 'true':
-                                                    html += "Offen<img class='favIcon' src='/ise/img/door/open.png' height='28'/>";
+                                                    html += "Offen</span><img class='favIcon' src='/ise/img/door/open.png' height='28'/>";
                                                     break;
                                             }
                                             firstDP = false;
@@ -1736,15 +1754,16 @@ $("document").ready(function () {
                                             $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
                                             break;
                                         case '38':
+                                            html += "<span class='favIconText'>";
                                             switch (dpValue) {
                                                 case '0':
-                                                    html += "Verriegelt<img class='favIcon' src='/ise/img/window/closed.png' height='28'/>";
+                                                    html += "Verriegelt</span><img class='favIcon' src='/ise/img/window/closed.png' height='28'/>";
                                                     break;
                                                 case '1':
-                                                    html += "Kippstellung<img class='favIcon' src='/ise/img/window/open_v.png' height='28'/>";
+                                                    html += "Kippstellung</span><img class='favIcon' src='/ise/img/window/open_v.png' height='28'/>";
                                                     break;
                                                 case '2':
-                                                    html += "Verschlossen<img class='favIcon' src='/ise/img/window/open_h.png' height='28'/>";
+                                                    html += "Verschlossen</span><img class='favIcon' src='/ise/img/window/open_h.png' height='28'/>";
                                                     break;
 
                                             }
@@ -1787,8 +1806,7 @@ $("document").ready(function () {
                                     break;
                                 case 'LEVEL':
                                     var value = $(this).attr("value");
-                                    html +=     "<div class='favInputSlider' id='favSlider" + id + "'>";
-                                    html +=     "</div>";
+                                    html +=     "<div class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
                                     firstDP = false;
 
                                     $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
@@ -1804,6 +1822,21 @@ $("document").ready(function () {
                                     });
 
                                     break;
+                                case 'SETPOINT':
+                                    var value = $(this).attr("value");
+                                    value = parseFloat(value);
+                                    value = value.toFixed(1);
+
+                                    html += "<input style='text-align: right;' size='8' type='text' id='favInputText" + id + "' value='" + value + "'><span class='favInputUnit'>°C</span>";
+
+
+                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    $("#favInputText" + id).keyup(function(e) {
+                                        if(e.keyCode == 13) {
+                                            xmlapiSetState(var_id, $("#favInputText" + id).val());
+                                        }
+                                    });
+                                    break;
                                 case 'PRESS_SHORT':
                                 case 'PRESS_LONG':
                                     html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>" + (type == "PRESS_SHORT" ? "Kurz": "Lang") + "</span></button>";
@@ -1818,6 +1851,9 @@ $("document").ready(function () {
                                 case 'OLD_LEVEL':
                                 case 'RAMP_TIME':
                                 case 'RAMP_STOP':
+                                case 'STOP':
+                                case 'ADJUSTING_COMMAND':
+                                case 'ADJUSTING_DATA':
                                     // TODO
                                     break;
 
@@ -1842,6 +1878,9 @@ $("document").ready(function () {
                                     if (type) {
                                          if (hqConf.dpDetails[type]) {
                                             if (hqConf.dpDetails[type].decimals != -1) {
+                                                if (hqConf.dpDetails[type].factor) {
+                                                    value = value * hqConf.dpDetails[type].factor;
+                                                }
                                                 value = parseFloat(value);
                                                 value = value.toFixed(hqConf.dpDetails[type].decimals);
                                             }
@@ -1860,6 +1899,9 @@ $("document").ready(function () {
                                         dpDesc = name;
                                     }
                                     if (value_text) { value = value_text; }
+                                    if (hqConf.dpValueMap[value]) {
+                                        value = hqConf.dpValueMap[value];
+                                    }
                                     html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput table tbody").append(html);
 
@@ -1936,17 +1978,18 @@ $("document").ready(function () {
                     'font' : 'inherit',
                     'color' : 'inherit',
                     'outline' : 'none',
-                    'cursor' : 'text'
+                    'cursor' : 'text',
+                    'padding' : '.4em .2em .4em .4em'
                 });
             $("select").multiselect({
                 multiple: false,
                 header: false,
-                'minWidth': 76,
+                minWidth: '100px',
                 height: '100%',
                 //header: "Select an option",
                 //noneSelectedText: "Select an Option",
                 selectedList: 1
-            }).css("padding-right", "1px");
+            });
         }
         favButtonset();
         setTimeout(favButtonset, 1000);
