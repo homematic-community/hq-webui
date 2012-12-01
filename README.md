@@ -120,11 +120,9 @@ Todo/Ideen/Roadmap
 * Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
 
 
-
-
 3.0
 ---
-* Styleguide und Nomenklatur entwerfen, komplettes Refactoring
+* Style, Nomenklatur, komplettes Refactoring
 * Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
 
 
