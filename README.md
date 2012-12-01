@@ -1,11 +1,11 @@
 HQ WebUI 2.0
 ============
-Leichtgewichtiges und schnelles Webfrontend zur Bedienung der Homematic CCU.
+Leichtgewichtiges ergänzendes Webfrontend zur Bedienung der Homematic CCU.
 
 Features
 ========
 * schnelle Ladezeit
-* geringere Belastung der CCU
+* geringere Belastung der CCU (Die CCU liefert führt nur sehr überschaubare Scripte aus und liefert ausschließlich kompakte json und xml Daten. Das Generieren des HTML-Outputs findet (im Gegensatz zum originalen WebUI) komplett lokal im Browser statt)
 * Übersichtliche Favoritenansicht
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
@@ -15,7 +15,7 @@ Features
 * Umbenennen von Geräten und Kanälen
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
-* Themes
+* Themes, jQuery UI basiert.
 * ...geplante Features siehe "Todo"
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
@@ -49,10 +49,12 @@ Allgemein
 ---------
 Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
 Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und lassen sich über den zweiten Reload-Button in der Geräteansicht unten Links aktualisieren, der erste Reload-Button lädt lediglich die Status der Datenpunkte neu.
+Rechts oben befindet sich der Logout-Button, der Einstellungen-Button (in den Einstellungen kann das Theme gewählt werden und gespeicherte Login-Daten können gelöscht werden), sowie ein Hilfe-Button.
+Eigene Themes können quasi ohne HTML/CSS hier "zusammengecklickt" werden: http://jqueryui.com/themeroller/
 
 Favoriten
 ---------
-Die einzelnen Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir automatisch im LocalStorage gespeichert. Unten Links befindet sich ein Refresh-Button. Die Einstellungen Anzahl Spalten und Position Name (im originalen WebUI vorzunehmen) werden ausgewertet.
+Die Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir automatisch im LocalStorage gespeichert. Unten Links befindet sich ein Refresh-Button.
 
 Geräte und Variablen
 --------------------
@@ -82,8 +84,10 @@ Todo/Ideen/Roadmap
 ==================
 2.0
 ---
+* Automatisches Refreshen aller sichtbaren Favoriten in einstellbaren Intervallen
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Auswahl Port bei Ausführung von XML RPC
+* Variablen-Beschreibung anzeigen und editierbar machen
 * ExecutionFailed Fehler bei Scriptausführung auswerten
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
@@ -94,9 +98,9 @@ Todo/Ideen/Roadmap
 
 2.1
 ---
-* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
-* Automatisches Refreshen aller sichtbaren Favoriten in einstellbaren Intervallen
-* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
+* Programme anzeigen, anlegen, editieren, löschen.
+* Programme direkt aus dem Scripteditor heraus erzeugen
+* Dateien aus Editor auf CCU Speichern
 
 2.2
 ---
@@ -107,9 +111,8 @@ Todo/Ideen/Roadmap
 
 2.3
 ---
-* Programme anzeigen, anlegen, editieren, löschen.
-* Programme direkt aus dem Scripteditor heraus erzeugen
-* Dateien aus Editor auf CCU Speichern
+* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
+* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
 
 2.4
 ---
