@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.0.0
+-----
+* Fehler behoben bei Werte-Bezeichner Drehgriff-Kontakt
+* Favoriten, Fehler behoben beim ändern der Browsergröße und beim ersten Laden
+* Entwicklung XML RPC bei Ausführung erscheint nun Menü für den Zielport
+* Session Refresh alle 4 Minuten
+
 2.0-beta5
 ---------
 * Favoriten/Variablen Wertebezichner für Logikwerte werden nun angezeigt

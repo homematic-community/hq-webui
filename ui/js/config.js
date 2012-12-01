@@ -89,7 +89,7 @@ var hqConf = {
         'WIND_WIND_DIRECTION':  { unit: '°',        desc: 'Windr. Schwankungsbr.',  decimals: -1 },
         'SUNSHINEDURATION':     { unit: '',         desc: 'Sonnenscheindauer',      decimals: -1 }
     },
-
+    // Fliegt raus, dank ValueName0() und ValueName1() nicht mehr notwendig:
     dpValueMap: {
         'false':    'ist falsch',
         'true':     'ist wahr'

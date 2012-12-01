@@ -33,10 +33,6 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 Installation
 ============
 
-
-Installation
-------------
-
 Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ui/ erreichbar.
 
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
@@ -45,6 +41,7 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 Bedienung
 =========
+
 Allgemein
 ---------
 Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
@@ -75,31 +72,29 @@ Changelog
 =========
 Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
-Bekannte Fehler
-===============
-* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
-* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 
-Todo/Ideen/Roadmap
+Roadmap/Todo/Ideen
 ==================
-2.0
----
-* Automatischer Refresh
-* Bug fixen: Systemprotokoll wird nicht geladen
-* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
-* Auswahl Port bei Ausführung von XML RPC
-* Session Timeout behandeln. Session Fehler abfangen
-* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+Asap
+----
+* Session Fehler abfangen
+* Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 
 2.1
 ---
+* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+* Ressourcebschonender Automatischer Refresh aller sichtbaren Datenpunkte, Variablen und Timestamps
+* Automatische drosselung des Auto-Refresh-Intervall wenn User Idle oder Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
 * Kanäle: Protokollierung aktivieren/deaktivieren
 * Anlegen, löschen und ändern von Variablen
 
+
 2.2
 ---
-* Hinzufügen/Entfernen von Kanälen zu Gewerken und Räumen
+* Hinzufügen/Entfernen von Kanälen zu Favoriten, Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
+* Hinzufügen/Entfernen von Variablen und Programmen zu Favoriten
+* Favoriten per Drag & Drop sortieren
 
 2.3
 ---
@@ -107,11 +102,6 @@ Todo/Ideen/Roadmap
 * Programme direkt aus dem Scripteditor heraus erzeugen
 
 2.4
----
-* Neue Favoritengruppen anlegen, löschen, Favoriten hinzufügen, Favoriten per Drag&Drop sortieren
-* Automatisches deaktivieren des Auto-Refreshs wenn Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
-
-2.5
 ---
 * TCL und Shellscripte aus Editor auf CCU Speichern
 * Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
@@ -128,9 +118,11 @@ Todo/Ideen/Roadmap
 
 irgendwann
 ----------
+* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
+* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
+* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Variablen-Beschreibung anzeigen und editierbar machen
 * Fehler beheben Protokoll läd beim 1. laden nicht korrekt
 * ExecutionFailed Fehler bei Scriptausführung auswerten
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)

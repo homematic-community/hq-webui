@@ -21,7 +21,7 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0-beta5";
+    var version =               "2.0.0";
 
     var statesXML,
         rssiXML,
@@ -96,9 +96,11 @@ $("document").ready(function () {
     var ajaxIndicator;
 
     var timerRefresh;
-    var timerSession;
+    var timerSession =          setTimeout(hmSessionRenew, 240000);
 
     var hmSession;
+
+    var xmlmenu;
 
 
     // Elemente verstecken
@@ -106,7 +108,9 @@ $("document").ready(function () {
     $("#logout").hide();
     $("#hmNewScriptMenu").menu().hide();
     $("#hmRunScriptMenu").menu().hide();
-    $("#hmCcuMenu").menu().hide();
+    //$("#hmCcuMenu").menu().hide();
+    $("#hmCcuMenu").hide();
+    $("#buttonsFavorites").hide();
     $("ul.tabsPanel li a img").hide();
     serviceIndicator.hide();
     alarmIndicator.hide();
@@ -130,7 +134,7 @@ $("document").ready(function () {
             }
 
             if (ui.index == 0) {
-                //setTimeout(resizeFavItems, 1000);
+                setTimeout(resizeFavHeight, 40);
             }
         }
     });
@@ -164,15 +168,15 @@ $("document").ready(function () {
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         divStdout.css('width', x - 775);
         gridScriptVariables.setGridWidth(x - 775);
-        resizeFavHeight()
+        $("#tabFavorites").css("height", $("#tabVariables").height());
+        //$("#tabDev").css("height", $("#tabVariables").height());
+        resizeFavHeight();
     }
 
     function resizeFavHeight() {
         if (favoritesReady) {
-            var y = $(window).height();
-            $("#accordionFavorites").css("height", y - 111).accordion("refresh");
-        } else {
-            setTimeout(resizeFavHeight, 250);
+            $("#buttonsFavorites").show();
+            $("#accordionFavorites").css("height", $(window).height() - 111).accordion("refresh");
         }
     }
 
@@ -1581,7 +1585,8 @@ $("document").ready(function () {
                     sortorder: 'desc'
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 $("#loaderProtocol").hide();
-            }
+            },
+            error: ajaxError
         });
 
 
@@ -1826,7 +1831,7 @@ $("document").ready(function () {
                                                     html += "Kippstellung</span><img class='favIcon' src='/ise/img/window/open_v.png' height='28'/>";
                                                     break;
                                                 case '2':
-                                                    html += "Verschlossen</span><img class='favIcon' src='/ise/img/window/open_h.png' height='28'/>";
+                                                    html += "Offen</span><img class='favIcon' src='/ise/img/window/open_h.png' height='28'/>";
                                                     break;
 
                                             }
@@ -2019,6 +2024,8 @@ $("document").ready(function () {
             }
             //accordionFavorites.html(sortedHtml);
         }
+        $("#buttonsFavorites").show();
+
         accordionFavorites.accordion({
             heightStyle: "fill",
             header: "> div > h3"
@@ -2037,6 +2044,8 @@ $("document").ready(function () {
                     storage.set("hqWebUiFavOrder", favOrder.join(","));
                 }
             });
+
+        resizeFavHeight();
 
         $(".favKey").button();
 
@@ -2313,6 +2322,8 @@ $("document").ready(function () {
 
 
     $("button#hmRunScript").click(function () {
+
+
         var fileName = editAreaLoader.getCurrentFile("hmScript").title;
         var fileNameSplit = fileName.split(".");
         var fileType = fileNameSplit[fileNameSplit.length-1];
@@ -2453,21 +2464,18 @@ $("document").ready(function () {
             )
             break;
         case "xml":
-            $.ajax({
-               url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?session=" + hmSession,
-               type: "POST",
-                dataType: "text",
-                data: fileContent,
-                success: function (data) {
-                    divScriptVariables.hide();
-                    divStderr.hide();
-
-                    $("div#hmScriptStdout").html($("<div/>").text(data).html());
-                },
-                error: function () {
-                    alert("xmlrpc ajax error");
-                }
+            console.log("xmlrpc");
+            xmlmenu = $("#hmRunScriptMenu").show().position({
+                my: "left top",
+                at: "left bottom",
+                of: "#hmRunScript"
             });
+            $( document ).one( "click", function() {
+                xmlmenu.hide();
+            });
+            return false;
+
+
             break;
 
         default:
@@ -2503,7 +2511,7 @@ $("document").ready(function () {
     });
     $("button#editorCcu").button({
         icons: { primary: "ui-icon-folder-collapsed" }
-    });
+    }).hide();
     $("button#editorHelp").button({
         icons: { primary: "ui-icon-help" }
     });
@@ -2557,6 +2565,24 @@ $("document").ready(function () {
         editAreaLoader.openFile('hmScript', new_file);
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
+        return false;
+    });
+    $("#editorRunXml0").click(function (e) {
+        xmlRunScript(2000);
+        e.preventDefault();
+        $("#hmRunScriptMenu").hide();
+        return false;
+    });
+    $("#editorRunXml1").click(function (e) {
+        xmlRunScript(2001);
+        e.preventDefault();
+        $("#hmRunScriptMenu").hide();
+        return false;
+    });
+    $("#editorRunXml2").click(function (e) {
+        xmlRunScript(2002);
+        e.preventDefault();
+        $("#hmRunScriptMenu").hide();
         return false;
     });
     $("#buttonLogin").button({
@@ -3028,7 +3054,7 @@ $("document").ready(function () {
 
     function hmSessionRenew(firstLoad) {
         //console.log("hmSessionRenew()");
-
+        clearTimeout(timerSession);
         if (hmSession) {
             jsonPost({
                     "method":   "Session.renew",
@@ -3042,6 +3068,7 @@ $("document").ready(function () {
                     $("#login").hide();
                     if (firstLoad) {
                         webuiStart();
+                        timerSession =          setTimeout(hmSessionRenew, 240000);
                     }
                 } else {
                     hmSession = undefined;
@@ -3146,6 +3173,28 @@ $("document").ready(function () {
 
     }
 
+
+    function xmlRunScript(port) {
+        var fileContent = editAreaLoader.getValue("hmScript");
+
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?port=" + port + "&session=" + hmSession,
+            type: "POST",
+            dataType: "text",
+            data: fileContent,
+            success: function (data) {
+                divScriptVariables.hide();
+                divStderr.hide();
+
+                $("div#hmScriptStdout").html($("<div/>").text(data).html());
+            },
+            error: function () {
+                alert("xmlrpc ajax error");
+            }
+        });
+    }
+
+
     function saveProgram(id) {
         var name = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_name']").html();
         var description = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_description']").html();
@@ -3218,7 +3267,7 @@ $("document").ready(function () {
         }
 
     }
-    if (1) {
+    if (hqConf.refreshEnable) {
         update();
     }
 

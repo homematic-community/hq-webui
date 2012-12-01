@@ -16,6 +16,10 @@ img {
     position: absolute; width: 150px;
     z-index: 2000;
 }
+#hmRunScriptMenu {
+     position: absolute; width: 150px;
+     z-index: 2000;
+ }
 #toolbar_1 a, #toolbar_1 a span, #toolbar_1 a span  {
     height: 20px; !important
     margin: 0; !important
