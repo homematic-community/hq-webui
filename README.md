@@ -80,6 +80,7 @@ Asap
 * Session Fehler abfangen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+* Anzeige Protokolliert-Checkbox bei Geräten
 
 2.1
 ---
