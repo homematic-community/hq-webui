@@ -79,10 +79,11 @@ Asap
 ----
 * Session Fehler abfangen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
+* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+* Button für Wertänderung einer Variable
 
 2.1
 ---
-* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
 * Ressourcebschonender Automatischer Refresh aller sichtbaren Datenpunkte, Variablen und Timestamps
 * Automatische drosselung des Auto-Refresh-Intervall wenn User Idle oder Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
 * Kanäle: Protokollierung aktivieren/deaktivieren
