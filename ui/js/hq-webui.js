@@ -16,7 +16,7 @@
 
 $("document").ready(function () {
 
-    var version =               "2.0-beta2";
+    var version =               "2.0-beta4";
 
     var statesXML,
         rssiXML,
