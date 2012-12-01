@@ -21,7 +21,7 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0.0";
+    var version =               "2.0.1";
 
     var statesXML,
         rssiXML,
@@ -253,7 +253,7 @@ $("document").ready(function () {
     var colModelVariables = [
         {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
             xmlmap: function (obj) {
-                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
+                return "<button class='gridButton editVariable' id='editVariable"+$(obj).attr('ise_id')+"'></button>";
             }
         },
         {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int', align: 'right',
@@ -885,35 +885,17 @@ $("document").ready(function () {
             id: "[ise_id]",
             repeatitems: false
         },
-        ondblClickRow: function (id) {
-            var value       = gridVariables.getCell(id, "value");
-            var value_text  = gridVariables.getCell(id, "value_text");
-            var text_false  = gridVariables.getCell(id, "text_false");
-            var text_true   = gridVariables.getCell(id, "text_true");
-            var value_list  = gridVariables.getCell(id, "value_list");
-            var unit        = gridVariables.getCell(id, "unit");
-            var type        = gridVariables.getCell(id, "type");
-            var subtype     = gridVariables.getCell(id, "subtype");
-            switch (subtype) {
-                case 'Logikwert':
-                case 'Alarm':
-                    variableInput.html("<select id='variableValue'><option value='false'>"+text_true+"</option><option value='true'>"+text_false+"</option></select>");
-                    $("#variableValue option:contains('"+value+"')").attr("selected", true);
-                    break;
-                case 'Werteliste':
-                    variableInput.html("<select id='variableValue'>" + selectOptions(value_list) + "</select>");
-                    if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
-                    $("#variableValue option[value='" + value + "']").attr("selected", true);
-                    break;
-                default:
-                    variableInput.html("<input size='' name='' type='text' id='variableValue' value='" + value + "'>" + unit);
+        ondblClickRow: editVariableValue,
+        gridComplete: function () {
+            $(".gridButton.editVariable").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-pencil" }});
+            $(".gridButton.editVariable").each(function () {
+                var id = $(this).attr("id").slice(12);
+                //console.log(id);
+                $(this).click(function() {
+                    editVariableValue(id);
+                });
 
-            }
-
-            variableName.html(gridVariables.getCell(id, "name"));
-            variableId.val(id);
-
-            dialogEditVariable.dialog("open");
+            });
         }
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
         'navGrid',
@@ -927,7 +909,36 @@ $("document").ready(function () {
             title:"Neu laden",
             cursor: "pointer"
         });
+    function editVariableValue(id) {
+        var value       = gridVariables.getCell(id, "value");
+        var value_text  = gridVariables.getCell(id, "value_text");
+        var text_false  = gridVariables.getCell(id, "text_false");
+        var text_true   = gridVariables.getCell(id, "text_true");
+        var value_list  = gridVariables.getCell(id, "value_list");
+        var unit        = gridVariables.getCell(id, "unit");
+        var type        = gridVariables.getCell(id, "type");
+        var subtype     = gridVariables.getCell(id, "subtype");
+        switch (subtype) {
+            case 'Logikwert':
+            case 'Alarm':
+                variableInput.html("<select id='variableValue'><option value='false'>"+text_true+"</option><option value='true'>"+text_false+"</option></select>");
+                $("#variableValue option:contains('"+value+"')").attr("selected", true);
+                break;
+            case 'Werteliste':
+                variableInput.html("<select id='variableValue'>" + selectOptions(value_list) + "</select>");
+                if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
+                $("#variableValue option[value='" + value + "']").attr("selected", true);
+                break;
+            default:
+                variableInput.html("<input size='' name='' type='text' id='variableValue' value='" + value + "'>" + unit);
 
+        }
+
+        variableName.html(gridVariables.getCell(id, "name"));
+        variableId.val(id);
+
+        dialogEditVariable.dialog("open");
+    }
     gridPrograms.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesPrograms,
@@ -2403,7 +2414,15 @@ $("document").ready(function () {
                             data: scriptErrors,
                             success: function (data) {
                                 var error = $(data).find("error:last");
-                                $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
+                                if (error.attr("msg")) {
+                                    if (error.attr('row') != "") {
+                                        $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
+                                    } else {
+                                        $("#debugScript").html("ExecError: Execution failed");
+                                    }
+                                } else {
+                                    $("#debugScript").html("Scriptausführung gescheitert.<br>Keine Fehlermeldung in /var/log/messages gefunden.");
+                                }
                                 dialogDebugScript.dialog('open');
                             }
                         });

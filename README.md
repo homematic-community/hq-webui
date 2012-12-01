@@ -80,7 +80,6 @@ Asap
 * Session Fehler abfangen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
-* Button für Wertänderung einer Variable
 
 2.1
 ---
@@ -125,14 +124,12 @@ irgendwann
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Fehler beheben Protokoll läd beim 1. laden nicht korrekt
-* ExecutionFailed Fehler bei Scriptausführung auswerten
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Raumthermostat Modus setzen
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Geräte (ent)sperren?
-* Icons - Zurodnung HM-Geräte->Bilddateien vervollständigen (im Forum Benutzer bitten zu helfen), Datenpunkt-Typen, True/False,
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Tastenkürzel für Buttons in Scriptkonsole
 * rssilist: Einfärben der RX/TX Werte?

@@ -26,17 +26,26 @@ var scriptRssi = "puts -nonewline {<rssiList>}\n" +
 
 var scriptErrors = "puts -nonewline {<scriptErrors>}\n" +
 "load tclrega.so\n" +
-"set Datei [open \"|/usr/bin/tail -n 10 /var/log/messages\" r]\n" +
+"set Datei [open \"|/usr/bin/tail -n 2 /var/log/messages\" r]\n" +
 "while {[gets $Datei Zeile] >= 0} {\n" +
 "    if [regexp Error.*near $Zeile] {\n" +
-"    regexp {([a-zA-Z]+ [0-9\\: ]+) \\(none\\) local0.err ReGaHss: Error: IseESP\\:\\:([a-zA-Z]+)\= Error ([0-9]+) at row ([0-9]+) col ([0-9]+)} $Zeile line time msg code row col\n" +
-"puts -nonewline \"<error \"\n" +
-"    puts -nonewline \"timestamp='$time' \"\n" +
-"    puts -nonewline \"row='$row' \"\n" +
-"    puts -nonewline \"col='$col' \"\n" +
-"    puts -nonewline \"code='$code' \"\n" +
-"    puts -nonewline \"msg='$msg' \"\n" +
-"    puts \"/>\"\n" +
-"}\n" +
-"}\n" +
+    "    regexp {([a-zA-Z]+ [0-9\\: ]+) \\(none\\) local0.err ReGaHss: Error: IseESP\\:\\:([a-zA-Z]+)\= Error ([0-9]+) at row ([0-9]+) col ([0-9]+)} $Zeile line time msg code row col\n" +
+    "puts -nonewline \"<error \"\n" +
+    "    puts -nonewline \"timestamp='$time' \"\n" +
+    "    puts -nonewline \"row='$row' \"\n" +
+    "    puts -nonewline \"col='$col' \"\n" +
+    "    puts -nonewline \"code='$code' \"\n" +
+    "    puts -nonewline \"msg='$msg' \"\n" +
+    "    puts \"/>\"\n" +
+    "}\n" +
+"    if [regexp ExecError.*failed $Zeile] {\n" +
+    "puts -nonewline \"<error \"\n" +
+    "    puts -nonewline \"timestamp='' \"\n" +
+    "    puts -nonewline \"row='' \"\n" +
+    "    puts -nonewline \"col='' \"\n" +
+    "    puts -nonewline \"code='' \"\n" +
+    "    puts -nonewline \"msg='ExecError= Execution Failed' \"\n" +
+    "    puts \"/>\"\n" +
+    "}\n" +
+    "}\n" +
 "puts {</scriptErrors>}";
