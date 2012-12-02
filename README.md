@@ -147,6 +147,7 @@ irgendwann
 * Reboot und Safe-Mode Reboot
 * Firewallkonfiguration
 * HMCompanion Integration mit komfortabler Auswahl von Graphen für Favoriten-Ansicht
+* Ausbau des Tabs Funk
 
 tendenziell nein
 ----------------
