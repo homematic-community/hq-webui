@@ -80,7 +80,11 @@ Asap
 * Session Fehler abfangen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+* Favoriten - KeyMatic Anpassungen
 * Anzeige Protokolliert-Checkbox bei Geräten
+* Zugeordnete Systemvariablen in Datenpunkt-Liste (Unter Geräte/Kanäle) erkenntlich machen. Editieren mit Dialog von Variablen-Tab
+* Bug fixen: Nach Login bleiben die Knöpfe der Slider sichtbar (z-index?)
+* Bug fixen: seltsame Darstellung von Taste lang/kurz Button und Slider (anli)
 
 2.1
 ---
@@ -88,6 +92,7 @@ Asap
 * Automatische drosselung des Auto-Refresh-Intervall wenn User Idle oder Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
 * Kanäle: Protokollierung aktivieren/deaktivieren
 * Anlegen, löschen und ändern von Variablen
+* Zuordnung von Variablen zu Kanälen setzen, löschen
 
 
 2.2
@@ -119,6 +124,7 @@ Asap
 
 irgendwann
 ----------
+
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
@@ -139,6 +145,7 @@ irgendwann
 * Backup erstellen
 * Reboot und Safe-Mode Reboot
 * Firewallkonfiguration
+* HMCompanion Integration mit komfortabler Auswahl von Graphen für Favoriten-Ansicht
 
 tendenziell nein
 ----------------

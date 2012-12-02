@@ -102,6 +102,7 @@ $("document").ready(function () {
 
     var xmlmenu;
 
+    var lang = {};
 
     // Elemente verstecken
     $("#login").hide();
@@ -220,9 +221,10 @@ $("document").ready(function () {
         $("#hmScriptStderr").height(divStderr.height()-29);
     });
 
+
+
     // Los gehts!
     sessionStart();
-
 
     /*
      *          jqGrid colNames and colModels
@@ -599,7 +601,7 @@ $("document").ready(function () {
         'Kanal Name',
         '',
         'Richtung',
-        '',
+        'Kanaltyp',
         '',
         '',
         ''
@@ -648,7 +650,17 @@ $("document").ready(function () {
                 }
             }
         },
-        {name: "dummy1", index: "dummy1", width: 130, fixed:true },
+        {name:"hsstype",   index:"hsstype",   width:130, fixed: true,
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('ise_id');
+                var hsstype = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
+                if (hsstype != undefined) {
+                    return hsstype;
+                } else {
+                    return "";
+                }
+            }
+        },
         {name:"rooms", index:"rooms",   width:120, fixed: true,
             xmlmap: function (obj) {
                 var output = "";
@@ -2946,6 +2958,7 @@ $("document").ready(function () {
                 gridInfo.jqGrid('addRowData', "HQ API Version", {'key': "HQ API Version", 'value': 'not available'});
             }
         });
+       /*
         $.ajax({
             url: hqConf.ccuUrl + hqConf.xmlapiPath + '/version.cgi',
             type: 'GET',
@@ -2958,7 +2971,7 @@ $("document").ready(function () {
                 gridInfo.jqGrid('addRowData', "XML-API Version", {'key': "XML-API Version", 'value': 'not available'});
             }
         });
-
+       */
     }
 
 
@@ -3010,6 +3023,7 @@ $("document").ready(function () {
             hmSession = data.result;
 
             webuiStart();
+
             if (hqConf.sessionPersistent) {
                 storage.set("hqWebUiSession", hmSession);
             }
@@ -3236,6 +3250,48 @@ $("document").ready(function () {
     function webuiStart() {
         // Favoritenansicht aufbauen. Das Laden des n‰chsten Tabs wird aus xmlapiGetFavorites heraus angestoﬂen
         //console.log("webuistart");
+
+        // Sprach-Datei laden und in Objekt "verpacken"
+        $.ajax({
+            url: hqConf.ccuUrl + "/config/stringtable_de.txt",
+            type: "GET",
+            dataType: "text",
+            success: function (data) {
+                lang = {};
+                var dataArr = data.split("\n");
+                for (var i = 0; i < dataArr.length; i++) {
+                    var line = dataArr[i];
+                    if (line && line != "") {
+                        var resultArr = line.match(/^([A-Z0-9_-]+)\|?([A-Z0-9_-]+)?=?([A-Z0-9_-]+)?[ \t]+(.+)$/);
+                        if (resultArr) {
+                            if (!lang[resultArr[1]]) {
+                                lang[resultArr[1]] = {};
+                            }
+                            if (resultArr[3]) {
+                                if (!lang[resultArr[1]][resultArr[2]]) {
+                                    lang[resultArr[1]][resultArr[2]] = {};
+                                }
+                                if (!lang[resultArr[1]][resultArr[2]][resultArr[3]]) {
+                                    lang[resultArr[1]][resultArr[2]][resultArr[3]] = {};
+                                }
+                                lang[resultArr[1]][resultArr[2]][resultArr[3]].text = resultArr[4];
+                            } else if (resultArr[2]) {
+                                if (!lang[resultArr[1]][resultArr[2]]) {
+                                    lang[resultArr[1]][resultArr[2]] = {};
+                                }
+                                lang[resultArr[1]][resultArr[2]].text = resultArr[4];
+                            } else {
+                                lang[resultArr[1]].text = resultArr[4];
+                            }
+                        }
+
+                    }
+                }
+                console.log(lang);
+            },
+            error: ajaxError
+        });
+
         xmlapiGetFavorites();
         xmlapiGetVersion();
     };

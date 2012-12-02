@@ -243,7 +243,8 @@ var scriptDevices = "integer DIR_SENDER      = 1;\n" +
 "        Write(\" group_partner='\" # sChnPartnerId # \"'\");\n" +
 "        Write(\" aes_available='\" # bChnAESAvailable # \"'\");\n" +
 "        Write(\" transmission_mode='\" # sChnMode # \"'\");\n" +
-"        !            Write(\" archive='\" # oChannel.ChnArchive() # \"'\");\n" +
+    "        Write(\" hss_type='\" # oChannel.HssType() # \"'\");\n" +
+    "        !            Write(\" archive='\" # oChannel.ChnArchive() # \"'\");\n" +
 "        Write(\" visible='\" # oChannel.Visible() # \"'\");\n" +
 "        Write(\" ready_config='\" # oChannel.ReadyConfig() # \"'\");\n" +
 "        !            Write(\" link_count='\" # iChnLinkCount # \"'\");\n" +

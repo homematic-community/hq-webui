@@ -1,5 +1,12 @@
 Changelog
 =========
+
+2.0.2
+-----
+* Anzeige des HssType von Kanälen
+* Laden der config/stringtable_de.txt
+* xmlapi Versionsabfrage entfernt
+
 2.0.1
 -----
 * Zuordnung Geräte -> Icons vervollständigt (Danke DrTob!)
