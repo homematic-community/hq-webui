@@ -83,8 +83,6 @@ Asap
 * Favoriten - KeyMatic Anpassungen
 * Anzeige Protokolliert-Checkbox bei Geräten
 * Zugeordnete Systemvariablen in Datenpunkt-Liste (Unter Geräte/Kanäle) erkenntlich machen. Editieren mit Dialog von Variablen-Tab
-* Bug fixen: Nach Logout bleiben die Knöpfe der Slider sichtbar (z-index?)
-* Bug fixen: seltsame Darstellung von Taste lang/kurz Button und Slider (anli)
 * Nicht quadratische Geräte-Icons
 
 2.1

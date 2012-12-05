@@ -1811,16 +1811,21 @@ $("document").ready(function () {
                         var firstDP = true;
                         var firstUnknown = true;
                         var ctype = $(this).attr("ctype");
-
-
+                        var label = $(this).attr("chnlabel");
+                        var devname;
                         favInputCell.append("<div class='favInput'></div>");
                         //console.log("FAV CHANNEL " + $(this).attr("name"));
                         //console.log("CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
                             var name = $(this).attr("name").split(".");
                             var type = name[2];
-
-
+                            if (name[1]) {
+                                devname = name[1].split(":");
+                                devname = devname[0];
+                            } else {
+                                devname = "";
+                            }
+console.log("type="+type+" devname="+devname);
 
                             var id = $(this).attr("ise_id");
                             html = "";
@@ -1896,22 +1901,23 @@ $("document").ready(function () {
 
                                     break;
                                 case 'LEVEL':
-                                    var value = $(this).attr("value");
-                                    html +=     "<div class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
-                                    firstDP = false;
+                                    if (devname != "BidCoS-RF") {
+                                        var value = $(this).attr("value");
+                                        html +=     "<div class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
+                                        firstDP = false;
 
-                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
-                                    $("#favSlider" + id).slider({
-                                        min: 0.00,
-                                        max: 1.00,
-                                        step: 0.01,
-                                        value: value,
-                                        stop: function (e, ui) {
-                                            xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
-                                        }
+                                        $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                        $("#favSlider" + id).slider({
+                                            min: 0.00,
+                                            max: 1.00,
+                                            step: 0.01,
+                                            value: value,
+                                            stop: function (e, ui) {
+                                                xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                            }
 
-                                    });
-
+                                        });
+                                    }
                                     break;
                                 case 'SETPOINT':
                                     var value = $(this).attr("value");
@@ -1945,13 +1951,18 @@ $("document").ready(function () {
                                 case 'STOP':
                                 case 'ADJUSTING_COMMAND':
                                 case 'ADJUSTING_DATA':
+                                case 'ERROR_OVERHEAT':
+                                case 'ERROR_OVERLOAD':
+                                case 'ERROR_REDUCED':
                                     // TODO
                                     break;
 
                                 default:
+
                                     var value =         $(this).attr("value");
                                     var value_text =    $(this).attr("value_text");
                                     var value_type =    $(this).attr("valuetype");
+
 
                                     var unit = $(this).attr("unit");
                                     if (unit == undefined) { unit = ""; }
@@ -1975,14 +1986,29 @@ $("document").ready(function () {
                                                 value = parseFloat(value);
                                                 value = value.toFixed(hqConf.dpDetails[type].decimals);
                                             }
-                                            unit = hqConf.dpDetails[type].unit;
-                                            dpDesc = hqConf.dpDetails[type].desc;
+                                            //console.log("label="+label+" name[2]="+name[2]+" value="+value)
+                                             if (value == "false" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["FALSE"]) {
+                                                 value = lang[label][name[2]]["FALSE"].text;
+                                             }
+                                             if (value == "true" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["TRUE"]) {
+                                                 value = lang[label][name[2]]["TRUE"].text;
+                                             }
+                                             unit = hqConf.dpDetails[type].unit;
+                                           // dpDesc = hqConf.dpDetails[type].desc;
 
-                                        } else {
-
-                                             dpDesc = type;
                                         }
+
+                                        dpDesc = type;
+
+                                        if (lang[label] && lang[label][dpDesc] && lang[label][dpDesc].text) {
+                                            dpDesc = lang[label][dpDesc].text;
+                                        } else {
+                                            dpDesc = "";
+                                        }
+
+
                                     } else {
+                                        dpDesc = name;
                                         if (value_type == 4) {
                                             value = parseFloat(value);
                                             value = value.toFixed(2);
@@ -1994,12 +2020,12 @@ $("document").ready(function () {
                                                 value = $(this).attr("text_true");
                                             }
                                         }
-                                        dpDesc = name;
+
                                     }
-                                    if (value_text) { value = value_text; }
-                                    if (hqConf.dpValueMap[value]) {
-                                        value = hqConf.dpValueMap[value];
-                                    }
+                                    //if (value_text) { value = value_text; }
+                                    //if (hqConf.dpValueMap[value]) {
+                                    //    value = hqConf.dpValueMap[value];
+                                    //}
                                     html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput table tbody").append(html);
 
@@ -2495,7 +2521,7 @@ $("document").ready(function () {
             )
             break;
         case "xml":
-            console.log("xmlrpc");
+          //  console.log("xmlrpc");
             xmlmenu = $("#hmRunScriptMenu").show().position({
                 my: "left top",
                 at: "left bottom",
@@ -2651,14 +2677,46 @@ $("document").ready(function () {
     }
 
     function xmlapiSetState(ise_id, new_value, successFunction) {
-        var script = "Write(dom.GetObject(" + ise_id + ").State('" + new_value + "'));";
-        $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
-            type: "post",
-            data: script,
-            success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });
+        var name = $(statesXMLObj).find("datapoint[ise_id='"+ise_id+"']").attr("name")
+       // console.log("setState id=" + ise_id + " name=" + name);
+        if (name) {
+            name = name.split(".");
+            var interface = name[0];
+            var port;
+            switch (interface) {
+                case "BidCos-RF":
+                    port = 2001;
+                    break;
+                case "BidCos-Wired":
+                    port = 2000;
+                    break;
+
+            }
+            var valuetype = name[2];
+            name = name[1];
+            //console.log("name=" + name + " valuetype=" + valuetype);
+            var xmlrpc = "<?xml version=\"1.0\"?><methodCall><methodName>setValue</methodName><params><param><value><string>" + name + "</string></value></param><param><value><string>" + valuetype + "</string></value></param><param><value><string>" + new_value + "</string></value></param></params></methodCall>";
+            $.ajax({
+                url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?port=" + port + "&session=" + hmSession,
+                type: "POST",
+                dataType: "text",
+                data: xmlrpc,
+                error: function () {
+                    alert("xmlrpc ajax error");
+                }
+            });
+
+        } else {
+            var script = "Write(dom.GetObject(" + ise_id + ").State('" + new_value + "'));";
+            $.ajax({
+                url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+                type: "post",
+                data: script,
+                success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
+                error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+            });
+
+        }
 
 
 
@@ -3211,7 +3269,7 @@ $("document").ready(function () {
         var fileContent = editAreaLoader.getValue("hmScript");
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?port=" + port + "&session=" + hmSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/?port=" + port + "&session=" + hmSession,
             type: "POST",
             dataType: "text",
             data: fileContent,
@@ -3287,7 +3345,7 @@ $("document").ready(function () {
 
                     }
                 }
-                console.log(lang);
+                //console.log(lang);
             },
             error: ajaxError
         });
@@ -3306,7 +3364,7 @@ $("document").ready(function () {
             timerRefresh = setTimeout(update, 500);
             return false;
         }
-        console.log("Refresh");
+     //   console.log("Refresh");
         updateFirst = true;
         updateScript = "";
         $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {

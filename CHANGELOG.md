@@ -3,9 +3,12 @@ Changelog
 
 2.0.2
 -----
-* Anzeige des HssType von Kanälen
-* Laden der config/stringtable_de.txt
+* Geräte Anzeige des HssType von Kanälen
+* Favoriten Datenpunkt Namen und Werte werden nun aus config/stringtable_de.txt gelesen
 * xmlapi Versionsabfrage entfernt
+* setState nun via XML RPC statt über ReGa. Bringt ein paar Millisekunden Perfomancevorteil, insbesondere wenn die ReGa anderweitig beschäftigt ist.
+* Fehler behoben Darstellung von überflüssigem Slider bei virtuellen RF Tasten
+* Fehler behoben nach Logout blieben unter Umständen Slider-Knöpfe sichtbar
 
 2.0.1
 -----

@@ -163,20 +163,20 @@ var hqConf = {
 
     // Zuordnung Datenpunkte -> Bezeichnung, Einheit, Anzahl Dezimalstellen
     dpDetails: {
-        'BAT_LEVEL':            { unit: '%',        desc: 'Batteriekapazität',      decimals: 1,    factor: 100 },
-        'U_USBD_OK':            { unit: '',         desc: 'USB',                    decimals: -1 },
-        'U_SOURCE_FAIL':        { unit: '',         desc: 'Netzausfall',            decimals: -1 },
-        'LOWBAT':               { unit: '',         desc: 'Batterie erschöpft',     decimals: -1 },
-        'TEMPERATURE':          { unit: '°C',       desc: 'Temperatur',             decimals: 1 },
-        'HUMIDITY':             { unit: '%',        desc: 'Luftfeuchte',            decimals: 0 },
-        'MOTION':               { unit: '',         desc: 'Bewegung',               decimals: -1 },
-        'BRIGHTNESS':           { unit: '',         desc: 'Helligkeit',             decimals: -1 },
-        'RAINING':              { unit: '',         desc: 'Regen aktuell',          decimals: -1 },
-        'RAIN_COUNTER':         { unit: 'mm',       desc: 'Regen heute',            decimals: 0 },
-        'WIND_SPEED':           { unit: 'km/h',     desc: 'Windgeschwindigkeit',    decimals: -1 },
-        'WIND_DIRECTION':       { unit: '°',        desc: 'Windrichtung',           decimals: -1 },
-        'WIND_WIND_DIRECTION':  { unit: '°',        desc: 'Windr. Schwankungsbr.',  decimals: -1 },
-        'SUNSHINEDURATION':     { unit: '',         desc: 'Sonnenscheindauer',      decimals: -1 }
+        'BAT_LEVEL':            { unit: '%',        decimals: 1,    factor: 100 },
+        'U_USBD_OK':            { unit: '',         decimals: -1 },
+        'U_SOURCE_FAIL':        { unit: '',         decimals: -1 },
+        'LOWBAT':               { unit: '',         decimals: -1 },
+        'TEMPERATURE':          { unit: '°C',       decimals: 1 },
+        'HUMIDITY':             { unit: '%',        decimals: 0 },
+        'MOTION':               { unit: '',         decimals: -1 },
+        'BRIGHTNESS':           { unit: '',         decimals: -1 },
+        'RAINING':              { unit: '',         decimals: -1 },
+        'RAIN_COUNTER':         { unit: 'mm',       decimals: 0 },
+        'WIND_SPEED':           { unit: 'km/h',     decimals: -1 },
+        'WIND_DIRECTION':       { unit: '°',        decimals: -1 },
+        'WIND_WIND_DIRECTION':  { unit: '°',        decimals: -1 },
+        'SUNSHINEDURATION':     { unit: '',         decimals: -1 }
     },
     // Fliegt raus, dank ValueName0() und ValueName1() nicht mehr notwendig:
     dpValueMap: {

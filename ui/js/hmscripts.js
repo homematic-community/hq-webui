@@ -238,6 +238,7 @@ var scriptDevices = "integer DIR_SENDER      = 1;\n" +
 "        Write(\" address='\");WriteXML( oChannel.Address() );Write(\"'\");\n" +
 "        Write(\" ise_id='\" # sChnId # \"'\");\n" +
 "        Write(\" direction='\" # sChnDir # \"'\");\n" +
+"        Write(\" label='\" # oChannel.ChnLabel() # \"'\");\n" +
 "        Write(\" parent_device='\" # oChannel.Device() # \"'\");\n" +
 "        Write(\" index='\" # oChannel.ChnNumber() # \"'\");\n" +
 "        Write(\" group_partner='\" # sChnPartnerId # \"'\");\n" +
@@ -326,6 +327,7 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "        Write( \"' name_position='\"); WriteXML(fav.FavNamePosition());\n" +
     "        Write( \"' col_align='\"); WriteXML(fav.FavColumnAlign());\n" +
     "        Write( \"' type='\" # favType);\n" +
+    "        if (favType == \"CHANNEL\") { Write( \"' chnlabel='\" # fav.ChnLabel()); }\n" +
     "        Write( \"' ctype='\" # fav.ChannelType());\n" +
     "        string canUse = \"false\";\n" +
     "        string id;\n" +
