@@ -1,20 +1,23 @@
 HQ WebUI 2.0
 ============
-Leichtgewichtiges ergänzendes Webfrontend zur Bedienung der Homematic CCU.
+Leichtgewichtiges ergänzendes Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Scripten.
+
+
 
 Features
 ========
 * schnelle Ladezeit
 * geringere Belastung der CCU
-* Übersichtliche Favoritenansicht
+* Durch Login geschützt, sowohl im Frontend als auch im Backend (Die .cgi Dateien im API Verzeichnis sind im Gegensatz zur "xmlapi" z.B. ebenfalls durch Username und Passwort geschützt)
+* Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
+* Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
 * Umbenennen von Geräten und Kanälen
-* Editor mit Syntax-Highlighting und Auto-Vervollständigung für Homematic Scripte, TCL Scripte, Bash Scripte, XML RPC, JSON RPC
-* Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
+* Übersichtliche Favoritenansicht
 * Themes, jQuery UI basiert.
 * ...geplante Features siehe "Todo"
 
