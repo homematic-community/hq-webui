@@ -1829,7 +1829,7 @@ $("document").ready(function () {
                             } else {
                                 devname = "";
                             }
-console.log("label=" + label + " type="+type+" devname="+devname);
+//console.log("label=" + label + " type="+type+" devname="+devname);
 
                             var id = $(this).attr("ise_id");
                             html = "";
