@@ -35,7 +35,7 @@ editAreaLoader.load_syntax["hmscript"] = {
                 ]
                 ,'STYLES' : {
                     'COMMENTS': 'color: #AAAAAA;'
-                    ,'QUOTESMARKS': 'color: #6381F8;'
+                    ,'QUOTESMARKS': 'color: #000000;'
                     ,'KEYWORDS' : {
                         'statements' : 'color: #60CA00;'
                         ,'keywords' : 'color: #48BDDF;'

@@ -6,7 +6,7 @@ editAreaLoader.load_syntax["hmscript"] = {
 	,'KEYWORD_CASE_SENSITIVE' : true
 	,'KEYWORDS' : {
 		'statements' : [
-            'foreach', 'else', 'if', 'while', 'Write', 'WriteLine', 'system'
+            'foreach', 'else', 'if', 'while', 'dom', 'system'
 		]
  		,'keywords' : [
             'object', 'var', 'integer', 'string', 'boolean', 'time', 'real', '$this$', '$src$'
@@ -35,7 +35,7 @@ editAreaLoader.load_syntax["hmscript"] = {
 	]
 	,'STYLES' : {
 		'COMMENTS': 'color: #AAAAAA;'
-		,'QUOTESMARKS': 'color: #6381F8;'
+		,'QUOTESMARKS': 'color: #000000;'
 		,'KEYWORDS' : {
 			'statements' : 'color: #60CA00;'
 			,'keywords' : 'color: #48BDDF;'
