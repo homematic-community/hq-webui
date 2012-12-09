@@ -1734,9 +1734,9 @@ $("document").ready(function () {
                 }
                 html += "</tr></table></div>";
                 $("tr[id='favGroup" + fav_id + "'] td.favCol" + col).append(html);
+                html = "";
                 var favInputCell = $("td[id='favInputCell" + channelId + "']");
                 //favInputCell.css("border", "1px dashed red");
-                html = "";
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
                         $(this).find("systemVariable").each(function () {
@@ -1752,6 +1752,7 @@ $("document").ready(function () {
                                     html += "<select id='favInputSelect" + var_id + "'><option value='false'>"+$(this).attr("text_false")+"</option><option value='true'>"+$(this).attr("text_true")+"</option></select>";
                                     html += "</div>";
                                     favInputCell.append(html);
+                                    html = "";
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
                                         xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
@@ -1763,6 +1764,7 @@ $("document").ready(function () {
                                     if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
                                     html += "</div>";
                                     favInputCell.append(html);
+                                    html = "";
                                     $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + var_id).change(function () {
                                         xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
@@ -1774,6 +1776,7 @@ $("document").ready(function () {
                                     html += "<input style='text-align:right;' type='text' size='8' name='favInputText" + var_id + "' id='favInputText" + var_id + "' value='" + value + "'>";
                                     html += "<span class='favInputUnit'>" + var_unit + "</span></div>";
                                     favInputCell.append(html);
+                                    html = "";
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + var_id).val());
@@ -1788,6 +1791,7 @@ $("document").ready(function () {
                                     }
                                     html += "</div>";
                                     favInputCell.append(html);
+                                    html = "";
                                     $("#favInputText" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + var_id).val());
@@ -1806,7 +1810,7 @@ $("document").ready(function () {
                     case 'PROGRAM':
                         html += "<div class='favStartProgram'><button id='favProgram"+ $(this).attr("ise_id") +"'>Ausführen</button></div>";
                         favInputCell.append(html);
-
+                        html = "";
                         $("button[id='favProgram"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
                             xmlapiRunProgram($(this).attr("ise_id"));
                         });
@@ -1818,6 +1822,7 @@ $("document").ready(function () {
                         var label = $(this).attr("chnlabel");
                         var devname;
                         favInputCell.append("<div class='favInput'></div>");
+
                         //console.log("FAV CHANNEL " + $(this).attr("name"));
                         //console.log("CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
@@ -1852,6 +1857,7 @@ $("document").ready(function () {
                                             firstDP = false;
 
                                             $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            html = "";
                                             break;
                                         case '38':
                                             html += "<span class='favIconText'>";
@@ -1870,6 +1876,7 @@ $("document").ready(function () {
                                             firstDP = false;
 
                                             $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            html = "";
                                             break;
                                         default:
                                             var checkedOn = "";
@@ -1889,6 +1896,7 @@ $("document").ready(function () {
                                             firstDP = false;
 
                                             $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            html = "";
                                             $('#favRadio' + id).buttonset();
 
                                             $("input#favRadioOn" + id).change(function (eventdata, handler) {
@@ -1906,6 +1914,7 @@ $("document").ready(function () {
 
                                     break;
                                 case 'LEVEL':
+                                    console.log("lvl devname=" + devname + " type=" + type + "label=" + label);
                                     if (devname != "BidCoS-RF") {
                                         var value = $(this).attr("value");
                                         var checkedOn = "";
@@ -1925,6 +1934,7 @@ $("document").ready(function () {
                                         firstDP = false;
 
                                         $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                        html = "";
                                         $("#favSlider" + id).slider({
                                             min: 0.00,
                                             max: 1.00,
@@ -1971,6 +1981,7 @@ $("document").ready(function () {
 
 
                                     $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    html = "";
                                     $("#favInputText" + id).keyup(function(e) {
                                         if(e.keyCode == 13) {
                                             xmlapiSetState(var_id, $("#favInputText" + id).val());
@@ -1981,6 +1992,7 @@ $("document").ready(function () {
                                 case 'PRESS_LONG':
                                     html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>" + (type == "PRESS_SHORT" ? "Kurz": "Lang") + "</span></button>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    html = "";
                                     $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
@@ -1988,6 +2000,7 @@ $("document").ready(function () {
                                 case 'OPEN':
                                     html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Tür öffnen</span></button>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    html = "";
                                     $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
@@ -2082,6 +2095,7 @@ $("document").ready(function () {
                                     //}
                                     html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
                                     $("td[id='favInputCell" + channelId + "'] .favInput table tbody").append(html);
+                                    html = "";
 
 
                             }

@@ -82,6 +82,7 @@ Roadmap/Todo/Ideen
 ==================
 Asap
 ----
+* Verbuggte Favoritendarstellung wenn ein Favorite in mehreren Bereichen vorkommt.
 * Session Fehler abfangen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Anzeige Protokolliert-Checkbox bei Geräten
