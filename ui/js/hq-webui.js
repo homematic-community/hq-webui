@@ -21,7 +21,8 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0.2";
+    var version =               "2.0.3";
+
 
     var statesXML,
         rssiXML,
@@ -138,6 +139,9 @@ $("document").ready(function () {
                 setTimeout(resizeFavHeight, 40);
             }
         }
+    });
+    $("a[href='#tabDashboard']").css("border","1px solid red").unbind("click").click(function () {
+        this.href="dashboard.html";
     });
     $(window).bind( 'hashchange', function(e) {
         //console.log("change");
@@ -1825,7 +1829,7 @@ $("document").ready(function () {
                             } else {
                                 devname = "";
                             }
-console.log("type="+type+" devname="+devname);
+console.log("label=" + label + " type="+type+" devname="+devname);
 
                             var id = $(this).attr("ise_id");
                             html = "";
@@ -1875,16 +1879,17 @@ console.log("type="+type+" devname="+devname);
                                             } else {
                                                 checkedOff = " checked='checked'";
                                             }
-                                            html += "<div class='favInputRadio' id='favRadio" + id + "'>";
+                                            html += "<div style='display:inline-block' class='favInputRadio' id='favRadio" + id + "'>";
                                             html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                            html += "<label for='favRadioOff" + id + "'>Aus</label>";
+                                            html += "<label for='favRadioOff" + id + "'>" + (label == "KEYMATIC" ? "Zu" : "Aus") + "</label>";
                                             html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                            html += "<label for='favRadioOn" + id + "'>An</label>";
+                                            html += "<label for='favRadioOn" + id + "'>" + (label == "KEYMATIC" ? "Auf" : "An") + "</label>";
                                             html += "</div>";
                                             if (!firstDP) { }
                                             firstDP = false;
 
                                             $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            $('#favRadio' + id).buttonset();
 
                                             $("input#favRadioOn" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
@@ -1903,7 +1908,20 @@ console.log("type="+type+" devname="+devname);
                                 case 'LEVEL':
                                     if (devname != "BidCoS-RF") {
                                         var value = $(this).attr("value");
-                                        html +=     "<div class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
+                                        var checkedOn = "";
+                                        var checkedOff = "";
+                                        if (parseFloat($(this).attr("value")) === 1.0) {
+                                            checkedOn = " checked='checked'";
+                                        } else if ($(this).attr("value") == 0) {
+                                            checkedOff = " checked='checked'";
+                                        }
+                                         html +=     "<div style='display:inline-block' class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
+                                        html += "<div style='' class='favInputRadio' id='favRadio" + id + "'>";
+                                        html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                        html += "<label for='favRadioOff" + id + "'>" + (label == "BLIND" ? "Zu" : "Aus") + "</label>";
+                                        html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                        html += "<label for='favRadioOn" + id + "'>" + (label == "BLIND" ? "Auf" : "An") + "</label>";
+                                        html += "</div>";
                                         firstDP = false;
 
                                         $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
@@ -1913,9 +1931,34 @@ console.log("type="+type+" devname="+devname);
                                             step: 0.01,
                                             value: value,
                                             stop: function (e, ui) {
+                                                $("label[for='favRadioOn" + id + "']").removeClass("ui-state-active");
+                                                $("label[for='favRadioOff" + id + "']").removeClass("ui-state-active");
+                                                $("input#favRadioOn" + id).removeAttr("checked");
+                                                $("input#favRadioOff" + id).removeAttr("checked");
+                                                if (ui.value == 0.00) {
+                                                    $("label[for='favRadioOff" + id + "']").addClass("ui-state-active");
+                                                    $("input#favRadioOff" + id).attr("checked", true);
+                                                } else if (ui.value == 1.00) {
+                                                    $("label[for='favRadioOn" + id + "']").addClass("ui-state-active");
+                                                    $("input#favRadioOn" + id).attr("checked", true);
+                                                }
                                                 xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
                                             }
 
+                                        });
+                                        $('#favRadio' + id).buttonset();
+
+                                        $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                            if ($(this).is(":checked")) {
+                                                xmlapiSetState(id, 1);
+                                                $("#favSlider" + id).slider({ value: 1.00 });
+                                            }
+                                        });
+                                        $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                            if ($(this).is(":checked")) {
+                                                xmlapiSetState(id, 0);
+                                                $("#favSlider" + id).slider({ value: 0.00 });
+                                            }
                                         });
                                     }
                                     break;
@@ -1941,20 +1984,26 @@ console.log("type="+type+" devname="+devname);
                                     $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
-
-
+                                    break;
+                                case 'OPEN':
+                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Tür öffnen</span></button>";
+                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
+                                        xmlapiSetState($(this).attr("ise_id"), "true");
+                                    });
+                                    break;
                                     break;
                                 case 'ERROR':
                                 case 'OLD_LEVEL':
                                 case 'RAMP_TIME':
                                 case 'RAMP_STOP':
+                                case 'RELOCK_DELAY':
                                 case 'STOP':
                                 case 'ADJUSTING_COMMAND':
                                 case 'ADJUSTING_DATA':
                                 case 'ERROR_OVERHEAT':
                                 case 'ERROR_OVERLOAD':
                                 case 'ERROR_REDUCED':
-                                    // TODO
                                     break;
 
                                 default:
@@ -1978,15 +2027,15 @@ console.log("type="+type+" devname="+devname);
                                     }
                                     var dpDesc = "";
                                     if (type) {
-                                         if (hqConf.dpDetails[type]) {
-                                            if (hqConf.dpDetails[type].decimals != -1) {
-                                                if (hqConf.dpDetails[type].factor) {
-                                                    value = value * hqConf.dpDetails[type].factor;
-                                                }
+                                        if (hqConf.dpDetails[type]) {
+                                             if (hqConf.dpDetails[type].formatfunction) {
+                                                  value =  hqConf.dpDetails[type].formatfunction(value);
+                                             }
+                                             if (hqConf.dpDetails[type].decimals) {
                                                 value = parseFloat(value);
                                                 value = value.toFixed(hqConf.dpDetails[type].decimals);
-                                            }
-                                            //console.log("label="+label+" name[2]="+name[2]+" value="+value)
+                                             }
+                                             //console.log("label="+label+" name[2]="+name[2]+" value="+value)
                                              if (value == "false" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["FALSE"]) {
                                                  value = lang[label][name[2]]["FALSE"].text;
                                              }
@@ -2019,7 +2068,12 @@ console.log("type="+type+" devname="+devname);
                                             } else {
                                                 value = $(this).attr("text_true");
                                             }
+                                        } else if (value_type == 16) {
+                                            if (value_text != "") {
+                                                value = value_text;
+                                            }
                                         }
+
 
                                     }
                                     //if (value_text) { value = value_text; }
@@ -2096,10 +2150,9 @@ console.log("type="+type+" devname="+devname);
 
         resizeFavHeight();
 
-        $(".favKey").button();
 
         function favButtonset() {
-            $(".favInputRadio").buttonset();
+            //$(".favInputRadio").buttonset();
             $("#tabFavorites").find('input:text, input:password')
                 .button()
                 .css({
@@ -2120,7 +2173,6 @@ console.log("type="+type+" devname="+devname);
             });
         }
         favButtonset();
-        setTimeout(favButtonset, 1000);
 
     }
 

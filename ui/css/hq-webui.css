@@ -82,7 +82,7 @@ div.favInput, div.favStartProgram {
 min-height: 32px;
     padding-right: 0px !important;
     padding: 2px !important;
-    padding-top: 4px !important;
+    padding-top: 2px !important;
     margin-top:2px !important;
     white-space: nowrap;
 
@@ -92,7 +92,14 @@ min-height: 32px;
 div.favInputSlider {
     min-width: 100px;
     width: 160px;
+    display: inline-block !important;
 
+
+}
+
+div.favInputRadio {
+    display: inline-block;
+    min-width: 90px;
 }
 
 .favItemHeader {
@@ -202,7 +209,6 @@ div.favInput label {
     width: 100%;
 }
 .favItemTable, .favItemTable tr, .favItemTable tr td {
-    padding: 0px;
     margin: 0px;
     border: none;
     border-collapse: separate;
@@ -263,10 +269,15 @@ button.ui-multiselect {
 }
 
 .favSliderContainer {
-    display: inline-block;
-    padding-top: 9px !important;
-    padding-right: 6px !important;
+    padding-top: 0px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+    padding-bottom: 9px !important;
 }
 .favIconText {
     font-size: 1.08em;
+}
+
+.ui-slider-handle {
+ user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select:none;
 }

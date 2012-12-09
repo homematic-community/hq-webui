@@ -10,12 +10,8 @@ var hqConf = {
     // Wird das HQ WebUI auf der CCU installiert kann diese Variable leer bleiben ('')
     ccuUrl:                 '',
 
-    // Pfad zur xmlapi
-    xmlapiPath:             "/config/xmlapi",
-
     // Pfad zur HQ API
     hqapiPath:              "/addons/hq/api",
-
 
     sessionPersistent:      true,
     sessionLogoutWarning:   false,
@@ -50,7 +46,6 @@ var hqConf = {
     deviceImgEnable:        true,
     deviceImgPath:          '/config/img/devices/50/',
 
-    // Zuordnung Geräte -> Bilder
     // Zuordnung Geräte -> Bilder
     deviceImg:              {
         'HM-LC-Dim1TPBU-FM': 'PushButton-2ch-wm_thumb.png',
@@ -161,62 +156,49 @@ var hqConf = {
         'HM-WS550STH-O':     'TH_CS_thumb.png'
     },
 
-    // Zuordnung Datenpunkte -> Bezeichnung, Einheit, Anzahl Dezimalstellen
+    // Zuordnung Datenpunkte -> Einheit, Anzahl Dezimalstellen, Faktor
     dpDetails: {
-        'BAT_LEVEL':            { unit: '%',        decimals: 1,    factor: 100 },
-        'U_USBD_OK':            { unit: '',         decimals: -1 },
-        'U_SOURCE_FAIL':        { unit: '',         decimals: -1 },
-        'LOWBAT':               { unit: '',         decimals: -1 },
-        'TEMPERATURE':          { unit: '°C',       decimals: 1 },
+        'BAT_LEVEL':            {
+            unit: '%',
+            decimals: 1,
+            formatfunction: function(val) { return val * 100; }
+        },
+        'U_USBD_OK':            { unit: '' },
+        'U_SOURCE_FAIL':        { unit: '' },
+        'LOWBAT':               { unit: '' },
+        'TEMPERATURE':          { unit: '°C',       decimals: 2 },
         'HUMIDITY':             { unit: '%',        decimals: 0 },
-        'MOTION':               { unit: '',         decimals: -1 },
-        'BRIGHTNESS':           { unit: '',         decimals: -1 },
-        'RAINING':              { unit: '',         decimals: -1 },
-        'RAIN_COUNTER':         { unit: 'mm',       decimals: 0 },
-        'WIND_SPEED':           { unit: 'km/h',     decimals: -1 },
-        'WIND_DIRECTION':       { unit: '°',        decimals: -1 },
-        'WIND_WIND_DIRECTION':  { unit: '°',        decimals: -1 },
-        'SUNSHINEDURATION':     { unit: '',         decimals: -1 }
-    },
-    // Fliegt raus, dank ValueName0() und ValueName1() nicht mehr notwendig:
-    dpValueMap: {
-        'false':    'ist falsch',
-        'true':     'ist wahr'
-    },
-
-    // Todo Formatierung des STATE Datenpunkts in Abhängigkeit vom
-    dpDetailsState: {
-        'T37':               {
-            formatter: function (val) {
-
-            },
-            icon: function (val) {
-
-            }
-
-        },
-        'T38':               {
-            formatter: function (val) {
-
-            },
-            icon: function (val) {
-
-            }
-        },
-        'DEFAULT':              {
-            formatter: function (val) {
-                switch (val) {
-                case 'true':
-                    return "ist wahr";
-                    break;
-                case 'false':
-                    return "is falsch";
-                    break;
-                default:
-                    return val;
+        'MOTION':               { unit: '' },
+        'BRIGHTNESS':           { unit: '' },
+        'RAINING':              { unit: '' },
+        'RAIN_COUNTER':         { unit: 'mm',       decimals: 2 },
+        'WIND_SPEED':           { unit: 'km/h',     decimals: 2 },
+        'WIND_DIRECTION':       {
+            unit: '°',
+            decimals: -1,
+            formatfunction: function(val) {
+                if ( (val >= 346) || (val <= 15) ) {
+                    val = "N " + val;
+                } else if  ( (val >= 16) && (val <= 75) ) {
+                    val = "NO " + val;
+                } else if  ( (val >= 76) && (val <= 105) ) {
+                    val = "O " + val;
+                } else if ( (val >= 106) && (val <= 165) ) {
+                    val = "SO " + val;
+                } else if ( (val >= 166) && (val <= 195) ) {
+                    val = "S " + val;
+                } else if ( (val >= 196) && (val <= 255) ) {
+                    val = "SW " + val;
+                } else if ( (val >= 256) && (val <= 285) ) {
+                    val = "W " + val;
+                } else if ( (val >= 286) && (val <= 345) ) {
+                    val = "NW " + val;
                 }
+                return val;
             }
-        }
+        },
+        'WIND_WIND_DIRECTION':  { unit: '°',        decimals: -1 },
+        'WIND_DIRECTION_RANGE': { unit: '°',        decimals: -1 },
+        'SUNSHINEDURATION':     { unit: 'min',      decimals: -1 }
     }
-
 };

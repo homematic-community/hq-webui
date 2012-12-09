@@ -17,9 +17,12 @@ editAreaLoader.load_syntax["hmscript"] = {
             'Yesterday', 'IsLocaltime', 'IsDST', 'Format', 'Length', 'Substr', 'Find', 'Split', 'StrValueByIndex', 'ID', 'GetObject',
             'Date', 'IsVar', 'GetVar', 'Name', 'Type', 'TypeName', 'IsTypeOf', 'State',
             'Channels', 'Interface', 'Address', 'HssType',
-            'Device', 'DPs', 'Interface', 'Address', 'ChnGroupPartnerId', 'ChnDirection', 'ChnAESActive', 'ChnArchive', 'ChnRoom', 'ChnFunction', 'DPByHssDP',
+            'Device', 'DPs', 'Interface', 'Address', 'ChnGroupPartnerId', 'ChnLabel', 'ChnDirection', 'ChnAESActive', 'ChnArchive', 
+            'ChnRoom', 'ChnFunction', 'DPByHssDP',
             'ValueType', 'Channel', 'Value', 'LastValue', 'Operations', 'Timestamp', 'Variable',
             'Count', 'EnumUsedIDs', 'EnumUsedNames', 'Get', 'GetAt'
+
+'Active', 'Add', 'ChnArchive', 'ChnLabel', 'DestSingleCount', 'DestSingleDestination', 'DestinationDP', 'DestinationChannel', 'DestinationParam', 'DestinationValue', 'DestinationValueType', 'DestinationValueParam', 'DestinationValueParamType', 'DPArchive', 'DPInfo', 'PrgInfo', 'Rule', 'RuleDestination', RuleConditions
 
 		]
 	}
@@ -71,10 +74,10 @@ editAreaLoader.load_syntax["hmscript"] = {
                     ['$this$'],
                     ['$src$'],
                     ['VarType()'], ['ToFloat()'], ['ToInteger()'], ['ToString()'], ['ToTime()'], ['Year()'], ['Month()'], ['Day()'], ['Hour()'], ['Minute()'], ['Second()'], ['Week()'], ['Weekday()'],
-                    ['Yesterday()'], ['IsLocaltime()'], ['IsDST()'], ['Format()'], ['Length()'], ['Substr()'], ['Find()'], ['Split()'], ['StrValueByIndex()'], ['ID()'], ['GetObject', 'GetObject({@})', ''],
+                    ['Yesterday()'], ['IsLocaltime()'], ['IsDST()'], ['Format()'], ['Length()'], ['Substr()'], ['Find()'], ['Split()'], ['StrValueByIndex()'], ['ID()'], ['GetObject', 'GetObject({@})', ''], ['AddObject', 'AddObject({@})', ''], ['CreateObject', 'CreateObject({@})', ''],
                     ['Date()'], ['IsVar()'], ['GetVar()'], ['Name()'], ['Type()'], ['TypeName()'], ['IsTypeOf()'], ['State()'],
                     ['Channels()'], ['Interface()'], ['Address()'], ['HssType()'],
-                    ['Device()'], ['DPs()'], ['Interface()'], ['Address()'], ['ChnGroupPartnerId()'], ['ChnDirection()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnRoom()'], ['ChnFunction()'], ['DPByHssDP'],
+                    ['Device()'], ['DPs()'], ['Interface()'], ['Address()'], ['ChnGroupPartnerId()'], ['ChnDirection()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnRoom()'], ['ChnFunction()'], ['ChnLabel()'], ['DPByHssDP'],
                     ['ValueType()'], ['Channel()'], ['Value()'], ['LastValue()'], ['Operations()'], ['Timestamp()'], ['Variable()'],
                     ['Count()'], ['EnumUsedIDs()'], ['EnumUsedNames()'], ['Get()'], ['GetAt()']
                 ],
@@ -82,7 +85,11 @@ editAreaLoader.load_syntax["hmscript"] = {
 			    		 ['Date()', 'Date(string format)']
 			    		,['GetVar()', 'GetVar(string name)']
 			    		,['IsVar()', 'IsVar(string name)']
-					]
+					],
+                'dom' : [
+                    ['GetObject()', 'CreateObject()']
+
+                ]
 			}
 		}
 	}

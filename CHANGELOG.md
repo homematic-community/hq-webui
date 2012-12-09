@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.0.3
+-----
+* Editor Autovervollständigung/Syntax-Highlight - Homematic-Script um einige Schlüsselwörter erweitert
+* config.js aufgeräumt und hqConf.dpDetails[type].formatfunction hinzugefügt - hierüber können Datenpunkt-Werte beliebig für die Favoritenanischt formatiert werden
+* formatfunction für Windrichtung hinzugefügt, weitere kleine Korrekturen für die Wetterstation
+* Favoriten An/Aus bzw Auf/Zu Button neben Slidern bei Datenpunkttyp LEVEL
+* Favoriten - KeyMatic Anpassungen
+
+
 2.0.2
 -----
 * Geräte Anzeige des HssType von Kanälen
