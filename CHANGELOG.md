@@ -1,5 +1,16 @@
 Changelog
 =========
+2.0.4
+-----
+* Fehler beim neu-einloggen mit gespeicherten User/Passwort behoben
+* Anzeige "Bitte warten" hinzugefügt während Session erneuert wird (kriegt man eigentlich nur kurz zu Gesicht wenn die CCU unter hoher Last steht)
+* Favoriten: Darstellungsfehler behoben wenn ein Favorit in mehreren Bereichen vorkommt (3-fache Anzeige von Buttons und Icons)
+* Favoriten: Anzeige des Datenpunkt-Namens erfolgt nun analog zum originalen WebUI
+* Favoriten: Anpassung für CUxD Gerät EM1000 (Anzahl Dezimalstellen über config.js konfigurierbar)
+* Favoriten: Fehler behoben bei Darstellung Wetterstation (fehlerhafte formatfunction für Windrichtungen in config.js vorerst auskommentiert)
+* Geräte: Typ und mögliche Operationen (lesen=r,schreiben=w,event=e) auf Datenpunkten werden angezeigt
+* Fehler beim abfragen von Servicemeldungen behoben
+* Geräte: nur noch schreibbare Datenpunkte öffnen auf Doppelklick ein editier-Dialog
 
 2.0.3
 -----

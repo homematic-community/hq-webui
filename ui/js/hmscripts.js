@@ -26,22 +26,24 @@ var scriptStates = "string sDevId;\n" +
     "                    if(oDP)\n" +
     "                    {\n" +
     "                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
-        "                        if( (dp != \"ON_TIME\") && (dp != \"INHIBIT\") )\n" +
-    "                        {\n" +
+        "                       ! if( (dp != \"ON_TIME\") && (dp != \"INHIBIT\") )\n" +
+    "                        !{\n" +
     "                            Write(\"<datapoint\");\n" +
     "                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
-    "                            Write(\"' type='\"); WriteXML(oDP.Name().StrValueByIndex(\".\", 2))\n" +
+    "                            Write(\"' type='\"); WriteXML(oDP.Name().StrValueByIndex(\".\", 2));\n" +
+    "                            Write(\"' dptype='\"); WriteXML(oDP.TypeName());\n" +
+    "                            Write(\"' oper='\"); WriteXML(oDP.Operations());\n" +
     "                            Write(\"' ise_id='\" # sDPId );\n" +
     "                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
     "                            if (show_internal == 1) {\n" +
     "                                Write(\"' state='\"); WriteXML(oDP.State());\n" +
     "                            }\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
-    "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
+    "                            Write(\"' value='\"); WriteXML(oDP.State());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
     "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
     "                            Write(\"' />\");\n" +
-    "                        }\n" +
+    "                        !}\n" +
     "                    }\n" +
     "                }\n" +
     "                Write(\"</channel>\");\n" +

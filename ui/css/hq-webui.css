@@ -194,6 +194,16 @@ li a:focus {
     background-color: #555;
 
 }
+#session {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    z-index: 1000;
+    background-color: #555;
+
+}
 li.array-item.closed-object {
     height: 15px;
 }
@@ -241,6 +251,7 @@ img.favIcon {
     padding: 4px;
     padding-left: 8px;
     border-collapse: collapse;
+    margin-top: -3px !important;
 }
 .favDpTable tr td{
     padding-bottom: 1px;

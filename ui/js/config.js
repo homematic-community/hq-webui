@@ -175,8 +175,9 @@ var hqConf = {
         'WIND_SPEED':           { unit: 'km/h',     decimals: 2 },
         'WIND_DIRECTION':       {
             unit: '°',
-            decimals: -1,
-            formatfunction: function(val) {
+            decimals: -1 /*,
+             // TODO Windrichtung fixen
+             formatfunction: function(val) {
                 if ( (val >= 346) || (val <= 15) ) {
                     val = "N " + val;
                 } else if  ( (val >= 16) && (val <= 75) ) {
@@ -195,10 +196,22 @@ var hqConf = {
                     val = "NW " + val;
                 }
                 return val;
-            }
+            } */
+
         },
         'WIND_WIND_DIRECTION':  { unit: '°',        decimals: -1 },
         'WIND_DIRECTION_RANGE': { unit: '°',        decimals: -1 },
-        'SUNSHINEDURATION':     { unit: 'min',      decimals: -1 }
+        'SUNSHINEDURATION':     { unit: 'min',      decimals: -1 },
+
+        // CUxD EM 1000
+        'MAX_24H':              { decimals: 3 },
+        'MAX_1H':               { decimals: 3 },
+        'MAX5MINUTES':          { decimals: 3 },
+        'MEAN5MINUTES':         { decimals: 3 },
+        'SUM_24H':              { decimals: 3 },
+        'SUM_1H':               { decimals: 3 },
+        'SUM':                  { decimals: 3 },
+        'METER':                { decimals: 3 }
+
     }
 };

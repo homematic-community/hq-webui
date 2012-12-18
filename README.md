@@ -82,17 +82,17 @@ Roadmap/Todo/Ideen
 ==================
 Asap
 ----
-* Verbuggte Favoritendarstellung wenn ein Favorite in mehreren Bereichen vorkommt.
+* Anzeige Anzahl Servicemeldungen/Alarme (bei 2 oder mehr Meldungen)
+* ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Session Fehler abfangen
+* Zeitpunkt letzter aktualisierung anzeigen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
-* Anzeige Protokolliert-Checkbox bei Geräten
-* Zugeordnete Systemvariablen in Datenpunkt-Liste (Unter Geräte/Kanäle) als Systemvariable erkenntlich machen.
+* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * Tab Favoriten: stringtable_de.txt konsequent überall verwenden, Möglichkeit schaffen via config.js einzelne Werte zu überschreiben
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* ERROR-Datenpunkte als Servicemeldungen anzeigen
 
 
 2.1
@@ -102,36 +102,24 @@ Asap
 * Zuordnung von Variablen zu Kanälen setzen, löschen
 * Hinzufügen/Entfernen von Kanälen  Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
-* Ressourcebschonender Automatischer Refresh aller sichtbaren Datenpunkte, Variablen und Timestamps
-* Automatische drosselung des Auto-Refresh-Intervall wenn User Idle oder Browser nicht sichtbar (http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active)
-
-
-2.2
----
-* Programme anzeigen, anlegen, editieren, löschen.
 * Programme direkt aus dem Scripteditor heraus erzeugen
+* Programme anzeigen, anlegen, editieren, löschen.
 * TCL und Shellscripte aus Editor auf CCU Speichern
-* Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
-* Dienste starten/stoppen (inetd (telnet), ftpd etc)
-* Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
-
-2.3
----
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
-* Favoriten per Drag & Drop sortieren, Favoriten konfigurieren (Ausrichtung, Titel
 
-
-3.0
----
-* Style, Nomenklatur, komplettes Refactoring
-* Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
 
 
 irgendwann
 ----------
-
+* Selbst-Update / Auto-Update des HQ WebUI
+* Anlegen/Bearbeiten/Löschen von Direktverknüpfungen (?)
+* Style, Nomenklatur, komplettes Refactoring
+* Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
+* Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
+* Dienste starten/stoppen (inetd (telnet), ftpd etc)
+* Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
 * Nicht quadratische Geräte-Icons
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)

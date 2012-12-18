@@ -21,7 +21,7 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0.3";
+    var version =               "2.0.4";
 
 
     var statesXML,
@@ -97,7 +97,7 @@ $("document").ready(function () {
     var ajaxIndicator;
 
     var timerRefresh;
-    var timerSession =          setTimeout(hmSessionRenew, 240000);
+    var timerSession =          setTimeout(hmSessionRenew, 150000);
 
     var hmSession;
 
@@ -108,6 +108,7 @@ $("document").ready(function () {
     // Elemente verstecken
     $("#login").hide();
     $("#logout").hide();
+    $("#session").show();
     $("#hmNewScriptMenu").menu().hide();
     $("#hmRunScriptMenu").menu().hide();
     //$("#hmCcuMenu").menu().hide();
@@ -696,8 +697,10 @@ $("document").ready(function () {
         '',
         'Datenpunkt Name',
         'Typ',
+        'Typ',
         'Wert',
         'Wertetyp',
+        'Operationen',
         'Zeitstempel'
     ];
     var colModelDatapoint = [
@@ -713,7 +716,24 @@ $("document").ready(function () {
         {name:"type",   index:"type",   width:60, hidden: true, xmlmap: function (obj) {
             return $(obj).attr('type');
         }},
-        {name:"value",   index:"value",   width:215, fixed: true,
+        {name:"dptype",   index:"dptype",   width:90, hidden: false,
+            xmlmap: function (obj) {
+                var val;
+                val = $(obj).attr('dptype') + " (";
+                var oper = $(obj).attr('oper');
+                if (oper & 1) {
+                    val += "r";
+                }
+                if (oper & 2) {
+                    val += "w";
+                }
+                if (oper & 4) {
+                    val += "e";
+                }
+                return val + ")";
+            }
+        },
+        {name:"value",   index:"value",   width:120, fixed: true,
             xmlmap: function (obj) {
                 var val = $(obj).attr('value');
                 if ($(obj).attr('valuetype') == 6) {
@@ -727,6 +747,11 @@ $("document").ready(function () {
         {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('valuetype');
+            }
+        },
+        {name:"oper",   index:"oper",   width:80, hidden: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('oper');
             }
         },
         {name:"timestamp",   index:"timestamp",   width:130, fixed: true,
@@ -1261,11 +1286,21 @@ $("document").ready(function () {
             rowNum:9999,
             ondblClickRow: function (id) {
 
+
+
                 var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
+                var valuetype = $("#" + subgrid_table_id).getCell(id, "valuetype");
+                var oper = $("#" + subgrid_table_id).getCell(id, "oper");
+console.log("oper=" + oper);
+                if (!(oper & 2)) {
+                    return false;
+                }
+
                 $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
                 $("#datapointId").val(id);
                 $("#datapointGridId").val(subgrid_table_id);
-                switch ($("#" + subgrid_table_id).getCell(id, "valuetype")) {
+
+                switch (valuetype) {
                     case '2':
                         datapointInput.html("<select id='datapointValue'><option value='false'>False</option><option value='true'>True</option></select>");
                         $("#datapointValue option[value='" + value + "']").attr("selected", true);
@@ -1718,7 +1753,7 @@ $("document").ready(function () {
                 var channelName = $(this).attr("name");
                 var channelId = $(this).attr("ise_id");
 
-                html += "<div id='favItem" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'>";
+                html += "<div id='favItem" + fav_id + "_" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'>";
                 html += "<table style='width:100%; border-spacing:0px;' class='favItemTable'>";
                 if (orientation == 1) {
                     html += "<tr><td style='width:100%'><div style='border:none;' class='favItemHeader ui-widget-header ui-corner-top favName'>" + channelName + "</div>";
@@ -1728,14 +1763,14 @@ $("document").ready(function () {
                 html += "</td>";
 
                 if (orientation == 1) {
-                    html += "</tr><tr><td style='text-align: "+align+"; min-height: 32px; width:100%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                    html += "</tr><tr><td style='text-align: "+align+"; min-height: 32px; width:100%' id='favInputCell" + fav_id + "_" + channelId + "' class='favInputCell'></td>";
                 } else {
-                    html += "<td style='text-align: "+align+"; width:50%' id='favInputCell" + channelId + "' class='favInputCell'></td>";
+                    html += "<td style='text-align: "+align+"; width:50%' id='favInputCell" + fav_id + "_" + channelId + "' class='favInputCell'></td>";
                 }
                 html += "</tr></table></div>";
                 $("tr[id='favGroup" + fav_id + "'] td.favCol" + col).append(html);
                 html = "";
-                var favInputCell = $("td[id='favInputCell" + channelId + "']");
+                var favInputCell = $("div[id='favContainer" + fav_id + "']").find("td[id='favInputCell" + fav_id + "_" + channelId + "']");
                 //favInputCell.css("border", "1px dashed red");
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
@@ -1749,37 +1784,56 @@ $("document").ready(function () {
                             switch ($(this).attr("subtype")) {
                                 case '2':
 
-                                    html += "<select id='favInputSelect" + var_id + "'><option value='false'>"+$(this).attr("text_false")+"</option><option value='true'>"+$(this).attr("text_true")+"</option></select>";
+                                    html += "<select id='favInputSelect" + fav_id + "_" + var_id + "'><option value='false'>"+$(this).attr("text_false")+"</option><option value='true'>"+$(this).attr("text_true")+"</option></select>";
                                     html += "</div>";
                                     favInputCell.append(html);
                                     html = "";
-                                    $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
-                                    $("#favInputSelect" + var_id).change(function () {
-                                        xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
-                                    });
+                                    $("#favInputSelect" + fav_id + "_" + var_id + " option[value='" + value + "']").attr("selected", true);
+                                    $("#favInputSelect" + fav_id + "_" + var_id).change(function () {
+                                        xmlapiSetState(var_id, $("#favInputSelect" + fav_id + "_" + var_id + " option:selected").val());
+                                    }).multiselect({
+                                            multiple: false,
+                                            header: false,
+                                            height: '100%',
+                                            minWidth: 128,
+                                            //header: "Select an option",
+                                            //noneSelectedText: "Select an Option",
+                                            selectedList: 1
+                                        });
 
                                     break;
                                 case '29':
-                                    html += "<select id='favInputSelect" + var_id + "'>" + selectOptions($(this).attr("value_list")) + "</select>";
+                                    html += "<select id='favInputSelect" + fav_id + "_" + var_id + "'>" + selectOptions($(this).attr("value_list")) + "</select>";
                                     if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
                                     html += "</div>";
                                     favInputCell.append(html);
                                     html = "";
-                                    $("#favInputSelect" + var_id + " option[value='" + value + "']").attr("selected", true);
-                                    $("#favInputSelect" + var_id).change(function () {
-                                        xmlapiSetState(var_id, $("#favInputSelect" + var_id + " option:selected").val());
-                                    });
+                                    $("#favInputSelect" + fav_id + "_" + var_id + " option[value='" + value + "']").attr("selected", true);
+                                    $("#favInputSelect" + fav_id + "_" + var_id).change(function () {
+                                        //console.log($("#favInputSelect" + fav_id + " " + var_id).html());
+                                        var select_val = $("#favInputSelect" + fav_id + " " + var_id + " option:selected").val();
+                                        //console.log("fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
+                                        xmlapiSetState(var_id, select_val);
+                                    }).multiselect({
+                                            multiple: false,
+                                            header: false,
+                                            height: '100%',
+                                            minWidth: 128,
+                                            //header: "Select an option",
+                                            //noneSelectedText: "Select an Option",
+                                            selectedList: 1
+                                        });
                                     break;
                                 case '0':
                                     value = parseFloat(value);
                                     value = value.toFixed(2);
-                                    html += "<input style='text-align:right;' type='text' size='8' name='favInputText" + var_id + "' id='favInputText" + var_id + "' value='" + value + "'>";
+                                    html += "<input style='text-align:right;' type='text' size='8' name='favInputText" + fav_id + "_" + var_id + "' id='favInputText" + fav_id + "_" + var_id + "' value='" + value + "'>";
                                     html += "<span class='favInputUnit'>" + var_unit + "</span></div>";
                                     favInputCell.append(html);
                                     html = "";
-                                    $("#favInputText" + var_id).keyup(function(e) {
+                                    $("#favInputText" + fav_id + "_" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + var_id).val());
+                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
                                         }
                                     });
                                     break;
@@ -1787,14 +1841,14 @@ $("document").ready(function () {
                                     if (value.match(/<img/)) {
                                         html += value;
                                     } else {
-                                        html += "<input style='text-align: "+(align=="right"?"left":align)+";' size='20' type='text' id='favInputText" + var_id + "' value='" + value + "'>";
+                                        html += "<input style='text-align: "+(align=="right"?"left":align)+";' size='20' type='text' id='favInputText" + fav_id + "_" + var_id + "' value='" + value + "'>";
                                     }
                                     html += "</div>";
                                     favInputCell.append(html);
                                     html = "";
-                                    $("#favInputText" + var_id).keyup(function(e) {
+                                    $("#favInputText" + fav_id + "_" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + var_id).val());
+                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
                                         }
                                     });
 
@@ -1808,11 +1862,12 @@ $("document").ready(function () {
 
                         break;
                     case 'PROGRAM':
-                        html += "<div class='favStartProgram'><button id='favProgram"+ $(this).attr("ise_id") +"'>Ausführen</button></div>";
+                        var program_id = $(this).attr("ise_id");
+                        html += "<div class='favStartProgram'><button id='favProgram" + fav_id + "_" + program_id +"'>Ausführen</button></div>";
                         favInputCell.append(html);
                         html = "";
-                        $("button[id='favProgram"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
-                            xmlapiRunProgram($(this).attr("ise_id"));
+                        $("button[id='favProgram" + fav_id + "_" + program_id +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
+                            xmlapiRunProgram(program_id);
                         });
                         break;
                     case 'CHANNEL':
@@ -1856,7 +1911,7 @@ $("document").ready(function () {
                                             }
                                             firstDP = false;
 
-                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            favInputCell.find(" .favInput").append(html);
                                             html = "";
                                             break;
                                         case '38':
@@ -1875,7 +1930,7 @@ $("document").ready(function () {
                                             }
                                             firstDP = false;
 
-                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            favInputCell.find(" .favInput").append(html);
                                             html = "";
                                             break;
                                         default:
@@ -1886,25 +1941,25 @@ $("document").ready(function () {
                                             } else {
                                                 checkedOff = " checked='checked'";
                                             }
-                                            html += "<div style='display:inline-block' class='favInputRadio' id='favRadio" + id + "'>";
-                                            html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                            html += "<label for='favRadioOff" + id + "'>" + (label == "KEYMATIC" ? "Zu" : "Aus") + "</label>";
-                                            html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                            html += "<label for='favRadioOn" + id + "'>" + (label == "KEYMATIC" ? "Auf" : "An") + "</label>";
+                                            html += "<div style='display:inline-block' class='favInputRadio' id='favRadio" + fav_id + "_" + id + "'>";
+                                            html += "<input id='favRadioOff" + fav_id + "_" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                            html += "<label for='favRadioOff" + fav_id + "_" + id + "'>" + (label == "KEYMATIC" ? "Zu" : "Aus") + "</label>";
+                                            html += "<input id='favRadioOn" + fav_id + "_" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                            html += "<label for='favRadioOn" + fav_id + "_" + id + "'>" + (label == "KEYMATIC" ? "Auf" : "An") + "</label>";
                                             html += "</div>";
                                             if (!firstDP) { }
                                             firstDP = false;
 
-                                            $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                            favInputCell.find(".favInput").append(html);
                                             html = "";
-                                            $('#favRadio' + id).buttonset();
+                                            favInputCell.find("#favRadio" + fav_id + "_" + id).buttonset();
 
-                                            $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                            favInputCell.find("input#favRadioOn" + fav_id + "_" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
                                                     xmlapiSetState(id, 1);
                                                 }
                                             });
-                                            $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                            favInputCell.find("input#favRadioOff" + fav_id + "_" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
                                                     xmlapiSetState(id, 0);
                                                 }
@@ -1914,7 +1969,7 @@ $("document").ready(function () {
 
                                     break;
                                 case 'LEVEL':
-                                    console.log("lvl devname=" + devname + " type=" + type + "label=" + label);
+                                    //console.log("lvl devname=" + devname + " type=" + type + "label=" + label);
                                     if (devname != "BidCoS-RF") {
                                         var value = $(this).attr("value");
                                         var checkedOn = "";
@@ -1924,50 +1979,52 @@ $("document").ready(function () {
                                         } else if ($(this).attr("value") == 0) {
                                             checkedOff = " checked='checked'";
                                         }
-                                         html +=     "<div style='display:inline-block' class='favSliderContainer'><div class='favInputSlider' id='favSlider" + id + "'></div></div>";
-                                        html += "<div style='' class='favInputRadio' id='favRadio" + id + "'>";
-                                        html += "<input id='favRadioOff" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
-                                        html += "<label for='favRadioOff" + id + "'>" + (label == "BLIND" ? "Zu" : "Aus") + "</label>";
-                                        html += "<input id='favRadioOn" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
-                                        html += "<label for='favRadioOn" + id + "'>" + (label == "BLIND" ? "Auf" : "An") + "</label>";
+                                         html +=     "<div style='display:inline-block' class='favSliderContainer'><div class='favInputSlider' id='favSlider" + fav_id + "_" + id + "'></div></div>";
+                                        html += "<div style='' class='favInputRadio' id='favRadio" + fav_id + "_" + id + "'>";
+                                        html += "<input id='favRadioOff" + fav_id + "_" + id + "' type='radio' name='favRadio" + id + "'" + checkedOff + ">";
+                                        html += "<label for='favRadioOff" + fav_id + "_" + id + "'>" + (label == "BLIND" ? "Zu" : "Aus") + "</label>";
+                                        html += "<input id='favRadioOn" + fav_id + "_" + id + "' type='radio' name='favRadio" + id + "'" + checkedOn + ">";
+                                        html += "<label for='favRadioOn" + fav_id + "_" + id + "'>" + (label == "BLIND" ? "Auf" : "An") + "</label>";
                                         html += "</div>";
                                         firstDP = false;
 
-                                        $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                        favInputCell.find(" .favInput").append(html);
                                         html = "";
-                                        $("#favSlider" + id).slider({
+                                        favInputCell.find("#favSlider" + fav_id + "_" + id).slider({
                                             min: 0.00,
                                             max: 1.00,
                                             step: 0.01,
                                             value: value,
                                             stop: function (e, ui) {
-                                                $("label[for='favRadioOn" + id + "']").removeClass("ui-state-active");
-                                                $("label[for='favRadioOff" + id + "']").removeClass("ui-state-active");
-                                                $("input#favRadioOn" + id).removeAttr("checked");
-                                                $("input#favRadioOff" + id).removeAttr("checked");
+                                                $("label[for='favRadioOn" + fav_id + "_" + id + "']").removeClass("ui-state-active");
+                                                $("label[for='favRadioOff" + fav_id + "_" + id + "']").removeClass("ui-state-active");
+                                                $("input#favRadioOn" + fav_id + "_" + id).removeAttr("checked");
+                                                $("input#favRadioOff" + fav_id + "_" + id).removeAttr("checked");
                                                 if (ui.value == 0.00) {
-                                                    $("label[for='favRadioOff" + id + "']").addClass("ui-state-active");
-                                                    $("input#favRadioOff" + id).attr("checked", true);
+                                                    $("label[for='favRadioOff" + fav_id + "_" + id + "']").addClass("ui-state-active");
+                                                    $("input#favRadioOff" + fav_id + "_" + id).attr("checked", true);
                                                 } else if (ui.value == 1.00) {
-                                                    $("label[for='favRadioOn" + id + "']").addClass("ui-state-active");
-                                                    $("input#favRadioOn" + id).attr("checked", true);
+                                                    $("label[for='favRadioOn" + fav_id + "_" + id + "']").addClass("ui-state-active");
+                                                    $("input#favRadioOn" + fav_id + "_" + id).attr("checked", true);
                                                 }
-                                                xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                               // xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                                xmlapiSetState(id, ui.value);
+
                                             }
 
                                         });
-                                        $('#favRadio' + id).buttonset();
+                                        favInputCell.find('#favRadio' + fav_id + "_" + id).buttonset();
 
-                                        $("input#favRadioOn" + id).change(function (eventdata, handler) {
+                                        favInputCell.find("input#favRadioOn" + fav_id + "_" + id).change(function (eventdata, handler) {
                                             if ($(this).is(":checked")) {
                                                 xmlapiSetState(id, 1);
-                                                $("#favSlider" + id).slider({ value: 1.00 });
+                                                $("#favSlider" + fav_id + "_" + id).slider({ value: 1.00 });
                                             }
                                         });
-                                        $("input#favRadioOff" + id).change(function (eventdata, handler) {
+                                        favInputCell.find("input#favRadioOff" + fav_id + "_" + id).change(function (eventdata, handler) {
                                             if ($(this).is(":checked")) {
                                                 xmlapiSetState(id, 0);
-                                                $("#favSlider" + id).slider({ value: 0.00 });
+                                                $("#favSlider" + fav_id + "_" + id).slider({ value: 0.00 });
                                             }
                                         });
                                     }
@@ -1977,31 +2034,31 @@ $("document").ready(function () {
                                     value = parseFloat(value);
                                     value = value.toFixed(1);
 
-                                    html += "<input style='text-align: right;' size='8' type='text' id='favInputText" + id + "' value='" + value + "'><span class='favInputUnit'>°C</span>";
+                                    html += "<input style='text-align: right;' size='8' type='text' id='favInputText" + fav_id + "_" + id + "' value='" + value + "'><span class='favInputUnit'>°C</span>";
 
 
-                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    favInputCell.find(" .favInput").append(html);
                                     html = "";
-                                    $("#favInputText" + id).keyup(function(e) {
+                                    $("#favInputText" + fav_id + "_" + id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + id).val());
+                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + id).val());
                                         }
                                     });
                                     break;
                                 case 'PRESS_SHORT':
                                 case 'PRESS_LONG':
-                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>" + (type == "PRESS_SHORT" ? "Kurz": "Lang") + "</span></button>";
-                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    html += "<button class='favKey' id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>" + (type == "PRESS_SHORT" ? "Kurz": "Lang") + "</span></button>";
+                                    favInputCell.find(" .favInput").append(html);
                                     html = "";
-                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
+                                    $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
                                     break;
                                 case 'OPEN':
-                                    html += "<button class='favKey' id='favPressKey"+ $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Tür öffnen</span></button>";
-                                    $("td[id='favInputCell" + channelId + "'] .favInput").append(html);
+                                    html += "<button class='favKey' id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"'><span style='font-size:0.7em;'>Tür öffnen</span></button>";
+                                    favInputCell.find(" .favInput").append(html);
                                     html = "";
-                                    $("button[id='favPressKey"+ $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
+                                    $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
                                         xmlapiSetState($(this).attr("ise_id"), "true");
                                     });
                                     break;
@@ -2031,7 +2088,7 @@ $("document").ready(function () {
 
                                     if (firstUnknown) {
                                         firstUnknown = false;
-                                        $("td[id='favInputCell" + channelId + "'] .favInput").append("<table class='favDpTable'><tbody></tbody></table>");
+                                        favInputCell.find(" .favInput").append("<table class='favDpTable'><tbody></tbody></table>");
                                     }
                                     if (!firstDP) {
                                         html += "<br>";
@@ -2055,7 +2112,9 @@ $("document").ready(function () {
                                              if (value == "true" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["TRUE"]) {
                                                  value = lang[label][name[2]]["TRUE"].text;
                                              }
-                                             unit = hqConf.dpDetails[type].unit;
+                                             if (hqConf.dpDetails[type].unit) {
+                                                 unit = hqConf.dpDetails[type].unit;
+                                             }
                                            // dpDesc = hqConf.dpDetails[type].desc;
 
                                         }
@@ -2065,7 +2124,9 @@ $("document").ready(function () {
                                         if (lang[label] && lang[label][dpDesc] && lang[label][dpDesc].text) {
                                             dpDesc = lang[label][dpDesc].text;
                                         } else {
-                                            dpDesc = "";
+                                            if (lang[label] && lang[label][dpDesc]) {
+                                                dpDesc = "";
+                                            }
                                         }
 
 
@@ -2094,7 +2155,7 @@ $("document").ready(function () {
                                     //    value = hqConf.dpValueMap[value];
                                     //}
                                     html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
-                                    $("td[id='favInputCell" + channelId + "'] .favInput table tbody").append(html);
+                                    $("div[id='favContainer" + fav_id + "']").find("td[id='favInputCell" + fav_id + "_" + channelId + "'] .favInput table tbody").append(html);
                                     html = "";
 
 
@@ -2167,7 +2228,7 @@ $("document").ready(function () {
 
         function favButtonset() {
             //$(".favInputRadio").buttonset();
-            $("#tabFavorites").find('input:text, input:password')
+            $("#tabFavorites").find('input:text')
                 .button()
                 .css({
                     'font' : 'inherit',
@@ -2176,7 +2237,7 @@ $("document").ready(function () {
                     'cursor' : 'text',
                     'padding' : '.4em .2em .4em .4em'
                 });
-            $("#tabFavorites").find("select").multiselect({
+           /*  $("#tabFavorites").find("select").multiselect({
                 multiple: false,
                 header: false,
                 minWidth: '100px',
@@ -2184,7 +2245,7 @@ $("document").ready(function () {
                 //header: "Select an option",
                 //noneSelectedText: "Select an Option",
                 selectedList: 1
-            });
+            });*/
         }
         favButtonset();
 
@@ -2756,12 +2817,21 @@ $("document").ready(function () {
                 case "BidCos-Wired":
                     port = 2000;
                     break;
+                // Todo CUxD. Internal (2002) notwendig?
 
             }
             var valuetype = name[2];
             name = name[1];
-            //console.log("name=" + name + " valuetype=" + valuetype);
-            var xmlrpc = "<?xml version=\"1.0\"?><methodCall><methodName>setValue</methodName><params><param><value><string>" + name + "</string></value></param><param><value><string>" + valuetype + "</string></value></param><param><value><string>" + new_value + "</string></value></param></params></methodCall>";
+            var paramtype;
+            switch (valuetype) {
+                case "STATE":
+                    //paramtype = "bool";
+                    //break;
+                default:
+                    paramtype = "string";
+            }
+            //console.log("name=" + name + " valuetype=" + valuetype + " value=" + new_value + " paramtype=" + paramtype);
+            var xmlrpc = "<?xml version=\"1.0\"?><methodCall><methodName>setValue</methodName><params><param><value><string>" + name + "</string></value></param><param><value><string>" + valuetype + "</string></value></param><param><value><" + paramtype + ">" + new_value + "</" + paramtype + "></value></param></params></methodCall>";
             $.ajax({
                 url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?port=" + port + "&session=" + hmSession,
                 type: "POST",
@@ -3106,13 +3176,17 @@ $("document").ready(function () {
         //console.log("sessionStart()");
         var username = storage.get("hqWebUiUsername");
         var password = storage.get("hqWebUiPassword");
+        //console.log("user=" + username + " pass=" + password);
         if (hqConf.sessionPersistent) {
+            //console.log("sessionPersitant==true");
             var tmp = storage.get("hqWebUiSession");
             if (tmp != null) {
+
                 if (username == null) {
                     $("#buttonDelCred").attr("disabled", true);
                 }
                 hmSession = tmp;
+                //console.log("Trying to renew Session " + hmSession);
                 hmSessionRenew(true);
                 return true;
             }
@@ -3121,6 +3195,7 @@ $("document").ready(function () {
             jsonLogin(username, password);
         } else {
             $("#buttonDelCred").attr("disabled", true);
+            $("#session").hide();
             $("#login").show();
             $("#password").focus();
         }
@@ -3145,7 +3220,7 @@ $("document").ready(function () {
             //console.log("jsonLogin() jsonPost success");
 
             hmSession = data.result;
-
+            $("#session").hide();
             webuiStart();
 
             if (hqConf.sessionPersistent) {
@@ -3164,6 +3239,7 @@ $("document").ready(function () {
                 });
             }
         }, function (data) {
+            //console.log("jsonLogin failed");
             var msg;
             switch(data.error.code) {
             case 501:
@@ -3175,6 +3251,7 @@ $("document").ready(function () {
             default:
                 msg = data.error.message;
             }
+            $("#session").hide();
             $("#loginError").show().html(msg);
             setTimeout(function () {
                 $("#loginError").hide();
@@ -3213,6 +3290,7 @@ $("document").ready(function () {
         //console.log("hmSessionRenew()");
         clearTimeout(timerSession);
         if (hmSession) {
+            //console.log("hmSession=" + hmSession);
             jsonPost({
                     "method":   "Session.renew",
                     "params":   {
@@ -3223,19 +3301,44 @@ $("document").ready(function () {
 
                 if (data.result) {
                     $("#login").hide();
+                    $("#session").hide();
                     if (firstLoad) {
+                        //console.log("sessionRenew success");
+
                         webuiStart();
                         timerSession =          setTimeout(hmSessionRenew, 240000);
                     }
                 } else {
+                    //console.log("sessionRenew failed");
                     hmSession = undefined;
-                    $("#login").show();
+
+
+
+
+
+
+
+
                 }
             }, function (data) {
                 //console.log("hmSessionRenew() jsonPost error");
 
                 hmSession = undefined;
-                $("#login").show();
+                var username = storage.get("hqWebUiUsername");
+                var password = storage.get("hqWebUiPassword");
+                //console.log("user=" + username + " pass=" + password);
+
+                if (username != null) {
+                    //console.log("trying to re-login with saved credentials");
+                    jsonLogin(username, password);
+                } else {
+
+                    //console.log("no saved credentials -> show login");
+                    $("#buttonDelCred").attr("disabled", true);
+                    $("#session").hide();
+                    $("#login").show();
+                    $("#password").focus();
+                }
             });
         }
     }
@@ -3335,7 +3438,7 @@ $("document").ready(function () {
         var fileContent = editAreaLoader.getValue("hmScript");
 
         $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/?port=" + port + "&session=" + hmSession,
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi/?port=" + port + "&session=" + hmSession,
             type: "POST",
             dataType: "text",
             data: fileContent,
