@@ -2824,9 +2824,10 @@ console.log("oper=" + oper);
             name = name[1];
             var paramtype;
             switch (valuetype) {
-                case "STATE":
-                    //paramtype = "bool";
-                    //break;
+                case "PRESS_SHORT":
+                case "PRESS_LONG":
+                    paramtype = "bool";
+                    break;
                 default:
                     paramtype = "string";
             }
