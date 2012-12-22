@@ -1,5 +1,13 @@
 Changelog
 =========
+
+2.0.5beta
+---------
+* Fehlerhafte Verwendung von State() statt Value() bei Abfrage der Geräteliste entfernt. Möglicherweise Ursache für CCU Abstürze die zwei User berichtet haben
+* Umbau des Systemprotokolls - Scriptausführung drastisch verkürzt - auch das könnte eine mögliche Ursache für ReGaHss Abstürze sein
+* Systemprotokoll derzeit leider noch nicht verwendbar (kommt in 2.0.5 wieder)
+
+
 2.0.4
 -----
 * Fehler beim neu-einloggen mit gespeicherten User/Passwort behoben

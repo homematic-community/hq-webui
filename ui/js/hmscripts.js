@@ -39,7 +39,7 @@ var scriptStates = "string sDevId;\n" +
     "                                Write(\"' state='\"); WriteXML(oDP.State());\n" +
     "                            }\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
-    "                            Write(\"' value='\"); WriteXML(oDP.State());\n" +
+    "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
     "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
     "                            Write(\"' />\");\n" +
@@ -103,75 +103,46 @@ var scriptVariables = "object oSysVar;\n" +
     "}\n" +
     "Write(\"</systemVariables>\");\n";
 
-var scriptProtocol = "Write(\"<systemProtocol>\");\n" +
-"string drop = \"\";\n" +
-"integer iLastGroupIndex = 1;\n" +
-"string sCollectedNames = \"\";\n" +
-"string sCollectedValues = \"\";\n" +
-"string sCollectedDateTimes = \"\";\n" +
+var scriptProtocol = "var iStart = 0;\n" +
+"var iCount = 0;\n" +
+"var rCount;\n" +
 "string s;\n" +
-"integer iStart = 0;\n" +
-"integer iCount = 0;\n" +
-"integer eCount = dom.GetHistoryDataCount();\n" +
-"integer clear = 0;\n" +
-"integer rCount;\n" +
-"if (iCount == \"0\") {\n" +
-"iCount = eCount;\n" +
-"}\n" +
-"Write(\"<records start=\\\"\" # iStart # \"\\\" show=\\\"\" # iCount # \"\\\" count=\\\"\" # eCount # \"\\\"/>\");\n" +
-"foreach( s, dom.GetHistoryData( iStart, iCount, &rCount ) ) {\n" +
+"string datetime;\n" +
+"object oDP;\n" +
+"boolean desc = true;\n" +
+"string sXml = '';\n" +
+"WriteLine('<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>');\n" +
+"foreach(s, dom.GetHistoryData( iStart, iCount, &rCount)) {\n" +
 "    integer iGroupIndex = s.StrValueByIndex(\";\",0).ToInteger();\n" +
 "    string sDatapointId = s.StrValueByIndex(\";\",1);\n" +
 "    string sRecordedValue = s.StrValueByIndex(\";\",2);\n" +
 "    string sDateTime = s.StrValueByIndex(\";\",3);\n" +
-"    \n" +
 "    string sDatapointName = \"\";\n" +
 "    object oHistDP = dom.GetObject( sDatapointId );\n" +
-"    if( oHistDP ) {\n" +
+"    if(oHistDP) {\n" +
 "        object oDP = dom.GetObject( oHistDP.ArchiveDP() );\n" +
 "        if( oDP ) {\n" +
-"            sDatapointName = oDP.Name();\n" +
-"            boolean bSysVar = (oDP.IsTypeOf(OT_VARDP) || oDP.IsTypeOf(OT_ALARMDP));\n" +
-"            if( !bSysVar ) {\n" +
-"                object oCH = dom.GetObject( oDP.Channel() );\n" +
-"                if( oCH ) {\n" +
-"                    sDatapointName = oCH.Name();\n" +
-"                }\n" +
-"            }\n" +
-"    \n" +
-"            if( iLastGroupIndex != iGroupIndex ) {\n" +
-"                drop = \"<row datetime=\\\"\" # sCollectedDateTimes # \"\\\" names=\\\"\" # sCollectedNames # \"\\\" values=\\\"\" # sCollectedValues # \"\\\" />\n\" # drop;\n" +
-"                sCollectedNames = \"\";\n" +
-"                sCollectedValues = \"\";\n" +
-"                iLastGroupIndex = iGroupIndex;\n" +
-"            }\n" +
-"    \n" +
-"            string id = oDP.ID();\n" +
-"            string sRet = \"\";\n" +
-"            string sValue = sRecordedValue;\n" +
-"            Call(\"/esp/functions.fn::WriteDPText()\");\n" +
-"            sRecordedValue = system.GetVar(\"sRet\");\n" +
-"    \n" +
-"            sCollectedNames = sDatapointName;\n" +
-"            sCollectedDateTimes = sDateTime;\n" +
-"    \n" +
-"            if (!sCollectedValues.Length()) {\n" +
-"                sCollectedValues = sRecordedValue;\n" +
-"            } else {\n" +
-"                sCollectedValues = sCollectedValues#\", \"#sRecordedValue;\n" +
-"            }\n" +
-"    \n" +
+"            string sType = oDP.TypeName();\n" +
 "        }\n" +
 "    }\n" +
-"    \n" +
-"    if( sCollectedValues.Length() ) {\n" +
-"        drop = drop # \"<row datetime=\\\"\" # sCollectedDateTimes # \"\\\" names=\\\"\" # sCollectedNames # \"\\\" values=\\\"\" # sCollectedValues # \"\\\" />\";\n" +
+"    string sLine = '<row datetime=\"' # sDateTime # '\" id=\"' # oHistDP.ArchiveDP() # '\" type=\"' # sType # '\" value=\"' # sRecordedValue # '\"/>';\n" +
+"    if (sXml != '') {\n" +
+"        if (desc) {\n" +
+"            sXml = sXml # '\n';\n" +
+"        } else {\n" +
+"            sXml = '\n' # sXml;\n" +
+"        }\n" +
 "    }\n" +
-"    \n" +
+"    if (desc) {\n" +
+"        sXml = sXml # sLine;\n" +
+"    } else {\n" +
+"        sXml = sLine # sXml;\n" +
+"    }\n" +
 "}\n" +
-"    Write(drop);\n" +
-"Write(\"</systemProtocol>\");\n" +
-"\n";
+"sXml = '<systemProtocol>' # sXml # '</systemProtocol>';\n" +
+"WriteLine(sXml);\n";
+    
+    
 
 
 var scriptDevices = "integer DIR_SENDER      = 1;\n" +

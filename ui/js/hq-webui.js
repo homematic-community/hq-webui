@@ -21,7 +21,7 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0.4";
+    var version =               "2.0.5beta";
 
 
     var statesXML,
