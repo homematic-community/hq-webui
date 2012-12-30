@@ -21,7 +21,7 @@ jQuery.extend(
 
 $("document").ready(function () {
 
-    var version =               "2.0.5beta";
+    var version =               "2.0.6";
 
 
     var statesXML,
@@ -51,6 +51,17 @@ $("document").ready(function () {
     var devicesReady =          false;
     var favoritesReady =        false;
     var firstLoad =             false;
+
+    var statesTime,
+        variablesTime,
+        programsTime,
+        protocolTime,
+        functionsTime,
+        roomsTime,
+        rssiTime,
+        devicesTime,
+        favoritesTime;
+
     var xmlapiVersion;
 
     var tabs =                  $("#tabs");
@@ -883,24 +894,84 @@ $("document").ready(function () {
     ];
 
     var colNamesProtocol = [
+        'id',
+        'Typ',
         'Datum Uhrzeit',
-        'Sender',
-        'Nachricht'
+        'Datenpunkt',
+        'Gerät Name',
+        'Kanal Name',
+        'Wert'
     ];
     var colModelProtocol = [
+        {name:'id', index:'id', width: 43,
+            xmlmap: function (obj) {
+                return $(obj).attr('id');
+            }
+        },
+        {name:'type', index:'type', width: 43,
+            xmlmap: function (obj) {
+                return $(obj).attr('type');
+            }
+        },
         {name:'datetime', index:'datetime', width: 110,
             xmlmap: function (obj) {
                 return $(obj).attr('datetime');
             }
         },
-        {name:'sender', index:'sender', width: 250,
+        {name:'name', index:'name', width: 250,
             xmlmap: function (obj) {
-                return $(obj).attr('names');
+                var type = $(obj).attr('type');
+                var ise_id = $(obj).attr('id');
+                var name;
+                switch (type) {
+                    case "VARDP":
+                    case "ALARMDP":
+                        name = variablesXMLObj.find("systemVariable[ise_id='" + ise_id + "']").attr("name");
+                        break;
+                    default:
+                        name = statesXMLObj.find("datapoint[ise_id='" + ise_id + "']").attr("name");
+
+                }
+                return name;
             }
         },
-        {name:'msg', index:'msg', width: 600,
+        {name:'device', index:'device', width: 80,
             xmlmap: function (obj) {
-                return $(obj).attr('values');
+                var type = $(obj).attr('type');
+                var ise_id = $(obj).attr('id');
+                var name;
+                switch (type) {
+                    case "VARDP":
+                    case "ALARMDP":
+                        name = "-";
+                        break;
+                    default:
+                        name = statesXMLObj.find("datapoint[ise_id='" + ise_id + "']").parent().parent().attr("name");
+
+                }
+                return name;
+            }
+        },
+        {name:'channel', index:'channel', width: 80,
+            xmlmap: function (obj) {
+                var type = $(obj).attr('type');
+                var ise_id = $(obj).attr('id');
+                var name;
+                switch (type) {
+                    case "VARDP":
+                    case "ALARMDP":
+                        name = "-";
+                        break;
+                    default:
+                        name = statesXMLObj.find("datapoint[ise_id='" + ise_id + "']").parent().attr("name");
+
+                }
+                return name;
+            }
+        },
+        {name:'value', index:'value', width: 80,
+            xmlmap: function (obj) {
+                return $(obj).attr('value');
             }
         }
     ];
@@ -945,11 +1016,19 @@ $("document").ready(function () {
         "#gridPagerVariables", {
             caption:"",
             buttonicon:"ui-icon-refresh",
-            onClickButton: function () { refreshVariables(); },
+            onClickButton: function () {
+                storage.set("hqWebUiVariables", null);
+                storage.set("hqWebUiVariablesTime", null);
+                refreshVariables();
+            },
             position: "first",
             title:"Neu laden",
             cursor: "pointer"
         });
+
+    $("#gridPagerVariables_left").append("<span class='timeRefresh' id='timeRefreshVars'/>");
+
+
     function editVariableValue(id) {
         var value       = gridVariables.getCell(id, "value");
         var value_text  = gridVariables.getCell(id, "value_text");
@@ -1028,11 +1107,16 @@ $("document").ready(function () {
         "#gridPagerPrograms", {
             caption:"",
             buttonicon:"ui-icon-refresh",
-            onClickButton: function () { refreshPrograms(); },
+            onClickButton: function () {
+                storage.set("hqWebUiPrograms", null);
+                storage.set("hqWebUiProgramsTime", null);
+                refreshPrograms();
+            },
             position: "first",
             title:"Neu laden",
             cursor: "pointer"
         });
+    $("#gridPagerPrograms_left").append("<span class='timeRefresh' id='timeRefreshPrograms'/>");
 
     gridStates.jqGrid({
         width: 1050, height: hqConf["gridHeight"],
@@ -1094,12 +1178,16 @@ $("document").ready(function () {
             caption:"",
             buttonicon:"ui-icon-refresh",
             onClickButton: function () {
+                storage.set("hqWebUiStates", null);
+                storage.set("hqWebUiStatesTime", null);
+
                 refreshStates();
             },
             position: "first",
             title:"Datenpunkte neu laden",
             cursor: "pointer"
         });
+    $("#gridPagerStates_left").append("<span class='timeRefresh' id='timeRefreshStates'/>");
 
     gridRssi.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -1131,11 +1219,16 @@ $("document").ready(function () {
         "#gridPagerRssi", {
             caption:"",
             buttonicon:"ui-icon-refresh",
-            onClickButton: function () { refreshRssi(); },
+            onClickButton: function () {
+                storage.set("hqWebUiRssi", null);
+                storage.set("hqWebUiRssiTime", null);
+                refreshRssi();
+            },
             position: "first",
             title:"Neu laden",
             cursor: "pointer"
         });
+    $("#gridPagerRssi_left").append("<span class='timeRefresh' id='timeRefreshRssi'/>");
 
     gridProtocol.jqGrid({
         width: hqConf["gridWidth"] - 40,
@@ -1184,6 +1277,7 @@ $("document").ready(function () {
             title:"gesamtes Protokoll löschen",
             cursor: "pointer"
         });
+    $("#gridPagerProtocol_left").append("<span class='timeRefresh' id='timeRefreshProtocol'/>");
 
     gridInfo.jqGrid({
         width: hqConf["gridWidth"] - 40,
@@ -1453,15 +1547,53 @@ console.log("oper=" + oper);
         $("#loaderVariables").show();
         variablesReady = false;
 
+        var cache = storage.get("hqWebUiVariables");
+        if (cache !== null) {
+            //console.log("Cache Hit: Variables");
+            variablesXML = $.parseXML(cache);
+            variablesXMLObj = $(favoritesXML);
+            variablesTime = storage.get("hqWebUiVariablesTime");
+            $("#timeRefreshVars").html(formatTimestamp(variablesTime));
+            gridVariables.setGridParam({
+                loadonce: false,
+                datatype: "xmlstring",
+                datastr: variablesXML
+            }).trigger("reloadGrid").setGridParam({loadonce:true});
+            addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
+
+            variablesReady = true;
+            $("#loaderVariables").hide();
+            if (!programsReady) {
+                refreshPrograms();
+            }
+            return false;
+        }
+        //console.log("Fetching Variables");
+
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
             data: scriptVariables,
             success: function (data) {
-                    variablesReady = true;
-                    variablesXML = data;
-                    variablesXMLObj = $(data);
-                    $("#loaderVariables").hide();
+
+
+
+                variablesReady = true;
+                variablesXML = data;
+                variablesXMLObj = $(data);
+
+
+
+                var dateObj = new Date();
+                variablesTime = Math.floor(dateObj.getTime() / 1000);
+                $("#timeRefreshVars").html(formatTimestamp(variablesTime));
+                storage.set("hqWebUiVariablesTime", variablesTime);
+                var serialized = (new XMLSerializer()).serializeToString(data);
+                storage.set("hqWebUiVariables", serialized);
+
+
+
+                $("#loaderVariables").hide();
                     gridVariables.setGridParam({
                         loadonce: false,
                         datatype: "xmlstring",
@@ -1510,9 +1642,30 @@ console.log("oper=" + oper);
     function refreshPrograms() {
         $("#loaderPrograms").show();
         programsReady = false;
-        
 
 
+        var cache = storage.get("hqWebUiPrograms");
+        if (cache !== null) {
+            //console.log("Cache Hit: Programs");
+            programsXML = $.parseXML(cache);
+            programsXMLObj = $(favoritesXML);
+            programsTime = storage.get("hqWebUiProgramsTime");
+            $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
+            gridPrograms.setGridParam({
+                loadonce: false,
+                datatype: "xmlstring",
+                datastr: programsXML
+            }).trigger("reloadGrid").setGridParam({loadonce:true});
+            addInfo("Anzahl Variablen", programsXMLObj.find("systemVariable").length);
+
+            programsReady = true;
+            $("#loaderPrograms").hide();
+            if (!functionsReady) {
+                xmlapiGetFunctions();
+            }
+            return false;
+        }
+        //console.log("Fetching Programs");
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -1522,6 +1675,18 @@ console.log("oper=" + oper);
                 programsReady = true;
                 programsXML = data;
                 programsXMLObj = $(data);
+
+
+                var dateObj = new Date();
+                programsTime = Math.floor(dateObj.getTime() / 1000);
+                $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
+                storage.set("hqWebUiProgramsTime", programsTime);
+                var serialized = (new XMLSerializer()).serializeToString(data);
+                storage.set("hqWebUiPrograms", serialized);
+
+
+
+
                 $("#loaderPrograms").hide();
                 addInfo("Anzahl Programme", programsXMLObj.find("program").length);
                 gridPrograms.setGridParam({
@@ -1558,9 +1723,31 @@ console.log("oper=" + oper);
     }
 
     function refreshStates() {
+        statesReady = false;
         $("#loaderStates").show();
-        
 
+        var cache = storage.get("hqWebUiStates");
+        if (cache !== null) {
+            //console.log("Cache Hit: States");
+            statesXML = $.parseXML(cache);
+            statesXMLObj = $(statesXML);
+            statesTime = storage.get("hqWebUiStatesTime");
+            $("#timeRefreshStates").html(formatTimestamp(statesTime));
+            gridStates.setGridParam({
+                loadonce: false,
+                datatype: "xmlstring",
+                datastr: statesXML
+            }).trigger("reloadGrid").setGridParam({loadonce:true});
+            addInfo("Anzahl Variablen", statesXMLObj.find("systemVariable").length);
+
+            statesReady = true;
+            $("#loaderStates").hide();
+            if (!rssiReady) {
+                refreshRssi();
+            }
+            return false;
+        }
+        //console.log("Fetching States");
 
 
         $.ajax({
@@ -1569,9 +1756,23 @@ console.log("oper=" + oper);
             datatype: 'text',
             data: scriptStates,
             success: function (data) {
+                statesTime = Math.round((new Date()).getTime() / 1000);
                 statesReady = true;
                 statesXML = data;
                 statesXMLObj = $(data);
+
+
+                var dateObj = new Date();
+                statesTime = Math.floor(dateObj.getTime() / 1000);
+                $("#timeRefreshStates").html(formatTimestamp(favoritesTime));
+                storage.set("hqWebUiStatesTime", favoritesTime);
+                var serialized = (new XMLSerializer()).serializeToString(data);
+                storage.set("hqWebUiStates", serialized);
+
+
+
+
+
                 gridStates.setGridParam({
                     loadonce: false,
                     datatype: "xmlstring",
@@ -1656,12 +1857,30 @@ console.log("oper=" + oper);
 
     function refreshRssi() {
         $("#loaderRssi").show();
-        
-        
-
-        
-        
         rssiReady = false;
+
+        var cache = storage.get("hqWebUiRssi");
+        if (cache !== null) {
+            //console.log("Cache Hit: Rssi");
+            rssiXML = $.parseXML(cache);
+            rssiXMLObj = $(rssiXML);
+            rssiTime = storage.get("hqWebUiRssiTime");
+            $("#timeRefreshRssi").html(formatTimestamp(rssiTime));
+            gridRssi.setGridParam({
+                loadonce: false,
+                datatype: "xmlstring",
+                datastr: rssiXML
+            }).trigger("reloadGrid").setGridParam({loadonce:true});
+            addInfo("Anzahl Variablen", rssiXMLObj.find("systemVariable").length);
+
+            rssiReady = true;
+            $("#loaderRssi").hide();
+            if (!protocolReady) {
+                refreshProtocol();
+            }
+            return false;
+        }
+        //console.log("Fetching RSSI");
 
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
@@ -1671,6 +1890,16 @@ console.log("oper=" + oper);
                 rssiReady = true;
                 rssiXML = data;
                 rssiXMLObj = $(data);
+
+
+                var dateObj = new Date();
+                rssiTime = Math.floor(dateObj.getTime() / 1000);
+                $("#timeRefreshRssi").html(formatTimestamp(rssiTime));
+                storage.set("hqWebUiRssiTime", rssiTime);
+                var serialized = (new XMLSerializer()).serializeToString(data);
+                storage.set("hqWebUiRssi", serialized);
+
+
                 gridRssi.setGridParam({
                     loadonce: false,
                     datatype: "xmlstring",
@@ -1679,6 +1908,7 @@ console.log("oper=" + oper);
                 $("#loaderRssi").hide();
                 rssiReady = true;
                 if (!protocolReady) {
+                    // TODO ...!
                     refreshProtocol();
                 }
             }
@@ -2257,8 +2487,11 @@ console.log("oper=" + oper);
         text: false,
         icons: { primary: "ui-icon-refresh" }
     }).click(function () {
-        xmlapiGetFavorites();
+        storage.set("hqWebUiFavorites", null);
+        storage.set("hqWebUiFavoritesTime", null);
+        refreshFavorites();
     });
+
 
 
     dialogDelScript.dialog({
@@ -2975,6 +3208,10 @@ console.log("oper=" + oper);
     }
 
     function xmlapiGetVariable(ise_id) {
+
+
+
+
         var scriptSysvar = "object oSysVar;\n" +
 "string sSysVarId;\n" +
 "string sShowText=\"true\";\n" +
@@ -3108,10 +3345,25 @@ console.log("oper=" + oper);
         });
     }
 
-    function xmlapiGetFavorites() {
+    function refreshFavorites() {
         $("#loaderFavorites").show();
 
-
+        var cache = storage.get("hqWebUiFavorites");
+        if (cache !== null) {
+            //console.log("Cache Hit: Favorites");
+            favoritesXML = $.parseXML(cache);
+            favoritesXMLObj = $(favoritesXML);
+            favoritesTime = storage.get("hqWebUiFavoritesTime");
+            $("#timeRefreshFavs").html(formatTimestamp(favoritesTime));
+            buildFavorites();
+            favoritesReady = true;
+            $("#loaderFavorites").hide();
+            if (!variablesReady) {
+                refreshVariables();
+            }
+            return false;
+        }
+        //console.log("Fetching Favorites");
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             dataType: 'xml',
@@ -3119,9 +3371,14 @@ console.log("oper=" + oper);
             data: scriptFavorites,
             contentType: "text/xml;charset=ISO-8859-1",
             success: function (data) {
-
+                var dateObj = new Date();
+                favoritesTime = Math.floor(dateObj.getTime() / 1000);
+                $("#timeRefreshFavs").html(formatTimestamp(favoritesTime));
                 favoritesXML = data;
                 favoritesXMLObj = $(data);
+                storage.set("hqWebUiFavoritesTime", favoritesTime);
+                var serialized = (new XMLSerializer()).serializeToString(data);
+                storage.set("hqWebUiFavorites", serialized);
                 buildFavorites();
                 $("#loaderFavorites").hide();
                 favoritesReady = true;
@@ -3244,7 +3501,7 @@ console.log("oper=" + oper);
             var msg;
             switch(data.error.code) {
             case 501:
-                msg = "Zuviele gleichzeitige Verbidnungen";
+                msg = "Zuviele gleichzeitige Verbindungen";
                 break;
             case 502:
                 msg = "Benutzername oder Passwort falsch";
@@ -3520,7 +3777,7 @@ console.log("oper=" + oper);
             error: ajaxError
         });
 
-        xmlapiGetFavorites();
+        refreshFavorites();
         xmlapiGetVersion();
     };
 

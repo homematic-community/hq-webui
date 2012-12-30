@@ -85,24 +85,29 @@ Asap
 ----
 * Anzeige Anzahl Servicemeldungen/Alarme (bei 2 oder mehr Meldungen)
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
+* Service-Meldungen umbauen (AL-Datenpunkte!)
 * Session Fehler abfangen
-* Zeitpunkt letzter aktualisierung anzeigen
 * Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Geräte: Datenpunkte einzeln aktualisieren
+* Geräte: eigene Spalte für Icons
+* Scriptkonsole: Anderen (besseren) Editor einbauen
 
 
 2.1
 ---
-* Anlegen, löschen und ändern von Variablen
-* Zuordnung von Variablen zu Kanälen setzen, löschen
+* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
+* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
+* Sortieren von Favoriten per Drag & Drop
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 
 2.2
 ---
+* Anlegen, löschen und ändern von Variablen
+* Zuordnung von Variablen zu Kanälen setzen, löschen
 * Programme direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
 
@@ -119,11 +124,8 @@ irgendwann
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
-* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Selbst-Update / Auto-Update des HQ WebUI
 * Geräte einstellen
-* CUxD administration
 * Snippets für Editor
 * Anlegen/Bearbeiten/Löschen von Direktverknüpfungen (?)
 * Style, Nomenklatur, komplettes Refactoring
@@ -153,7 +155,7 @@ irgendwann
 
 tendenziell nein
 ----------------
-* Scriptkonsole: ACE Editor statt area_edit?
+* CUxD Administration
 * Backup zurückspielen
 * Firmwareupdate
 

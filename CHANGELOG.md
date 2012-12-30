@@ -1,12 +1,16 @@
 Changelog
 =========
 
+2.0.6
+-----
+* Cache für Favoriten, Variablen, Programme, Status
+* Anzeige des Zeitpunkts der letzten Aktualisierung bei Favoriten und allen Tabellen
+* Fehlerhafte Verwendung von State() statt Value() bei Abfrage der Geräteliste entfernt. Möglicherweise Ursache für CCU Abstürze die zwei User berichtet haben
+* Systemprotokoll umgebaut und (vorläufig) auf maximal 1000 Einträge begrenzt (um ReGaHss Abstürze wegen zu langer Scriptlaufzeit zu verhindern...) Ordentliche Lösung folgt.
+
 2.0.5beta
 ---------
-* Fehlerhafte Verwendung von State() statt Value() bei Abfrage der Geräteliste entfernt. Möglicherweise Ursache für CCU Abstürze die zwei User berichtet haben
-* Umbau des Systemprotokolls - Scriptausführung drastisch verkürzt - auch das könnte eine mögliche Ursache für ReGaHss Abstürze sein
-* Systemprotokoll derzeit leider noch nicht verwendbar (kommt in 2.0.5 wieder)
-
+* ...
 
 2.0.4
 -----

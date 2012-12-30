@@ -292,3 +292,9 @@ button.ui-multiselect {
 .ui-slider-handle {
  user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select:none;
 }
+
+.timeRefresh {
+    padding-left: 2px !important;
+    line-height: 2em !important;
+    vertical-align: middle;
+}

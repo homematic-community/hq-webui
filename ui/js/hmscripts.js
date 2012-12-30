@@ -104,12 +104,12 @@ var scriptVariables = "object oSysVar;\n" +
     "Write(\"</systemVariables>\");\n";
 
 var scriptProtocol = "var iStart = 0;\n" +
-"var iCount = 0;\n" +
+"var iCount = 1000;\n" +
 "var rCount;\n" +
 "string s;\n" +
 "string datetime;\n" +
 "object oDP;\n" +
-"boolean desc = true;\n" +
+"boolean desc = false;\n" +
 "string sXml = '';\n" +
 "WriteLine('<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>');\n" +
 "foreach(s, dom.GetHistoryData( iStart, iCount, &rCount)) {\n" +
@@ -280,7 +280,9 @@ var scriptFavorites = "var show_datapoint=1;\n" +
 "string sFavoriteName;\n" +
 "string sChannelId;\n" +
 "Write(\"<favoriteList>\");\n" +
-"foreach (sFavoriteId, dom.GetObject(ID_FAVORITES).EnumUsedIDs()) {\n" +
+    "   Write(\"\\n<user id='\" # USER_ID # \"'/>\");\n" +
+
+    "foreach (sFavoriteId, dom.GetObject(ID_FAVORITES).EnumUsedIDs()) {\n" +
 "    oFavorite     = dom.GetObject(sFavoriteId);\n" +
 "    Write(\"\\n<favorite name='\"); WriteXML( oFavorite.Name() );\n" +
 "    Write(\"' ise_id='\" # sFavoriteId # \"'>\");\n" +
@@ -368,7 +370,6 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "            } else { Write( \"' />\"); }\n" +
 "    }\n" +
 "    Write(\"\\n</favorite>\");\n" +
-"   Write(\"\\n<user id='\" # USER_ID # \"'/>\");\n" +
 "}\n" +
 "Write(\"\\n</favoriteList>\");";
 
