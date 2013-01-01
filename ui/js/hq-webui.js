@@ -22,7 +22,7 @@ jQuery.extend(
 //(function ($) {
 $("document").ready(function () {
 
-    var version =               "2.1alpha1";
+    var version =               "2.1-alpha1";
 
     var statesXML,
         rssiXML,
