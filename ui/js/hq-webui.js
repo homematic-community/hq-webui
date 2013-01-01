@@ -22,7 +22,7 @@ jQuery.extend(
 //(function ($) {
 $("document").ready(function () {
 
-    var version =               "2.1-alpha1";
+    var version =               "2.1-alpha2";
 
     var statesXML,
         rssiXML,
@@ -141,7 +141,10 @@ $("document").ready(function () {
     var tabChange = false;
     tabs.tabs({
         select: function(event, ui) {
+            clearTimeout(timerRefresh);
+            timerRefresh = setTimeout(update, 50);
             if (!tabChange) {
+
                 history.pushState({}, "", $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href"));
             } else {
                 tabChange = false;
@@ -3812,7 +3815,7 @@ console.log("oper=" + oper);
     function update() {
         clearTimeout(timerRefresh);
         if (ajaxIndicator.is(":visible")) {
-            timerRefresh = setTimeout(update, 500);
+            timerRefresh = setTimeout(update, hqConf.refreshRetry);
             return false;
         }
         updateFirst = true;
@@ -3870,6 +3873,9 @@ console.log("oper=" + oper);
 
         });
         if (updateScript != "") {
+            $("th[id$='active']").addClass("ui-state-active");
+            $("th[id$='timestamp']").addClass("ui-state-active");
+            $("th[id$='value']").addClass("ui-state-active");
             updateScript = 'object o;\nWrite("[");\n' + updateScript + 'Write("]");';
             //console.log({'updateScript':updateScript});
             var ajaxTime = new Date().getTime();
@@ -3949,18 +3955,25 @@ console.log("oper=" + oper);
                     }
                     console.log("next refresh in " + nextRefresh + "ms");
                     timerRefresh = setTimeout(update, nextRefresh);
+                    $("th[id$='active']").removeClass("ui-state-active");
+                    $("th[id$='timestamp']").removeClass("ui-state-active");
+                    $("th[id$='value']").removeClass("ui-state-active");
 
                 },
                 error: function (a,b,c) {
                     ajaxError(a,b,c);
                     alert("auto refresh stopped :-(");
                     hqConf.refreshEnable = false;
+                    $("th[id$='active']").removeClass("ui-state-active");
+                    $("th[id$='timestamp']").removeClass("ui-state-active");
+                    $("th[id$='value']").removeClass("ui-state-active");
+
 
                 }
             });
 
         } else {
-            timerRefresh = setTimeout(update, nextRefresh);
+            timerRefresh = setTimeout(update, hqConf.refreshRetry);
         }
 
     }

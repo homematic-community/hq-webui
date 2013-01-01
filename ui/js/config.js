@@ -21,6 +21,8 @@ var hqConf = {
     // Automatischer Refresh
     refreshEnable:          true,
     refreshPause:           5000,
+    // Wie lange warten wenn es nichts zu refreshen gab?
+    refreshRetry:           500,
 
     // Dynamische Refreshzeit
     // Wartezeit bis zum nächsten Refresh = refreshFactor * Ausführungszeit letzter Refresh

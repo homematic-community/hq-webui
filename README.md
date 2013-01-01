@@ -3,7 +3,6 @@ HQ WebUI 2.0
 Leichtgewichtiges ergänzendes Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Scripten.
 
 
-
 Features
 ========
 * schnelle Ladezeit

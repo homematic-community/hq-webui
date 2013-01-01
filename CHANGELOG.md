@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1-alpha2
+----------
+* Anzeige des Refreshs in den Tabellen-Überschriften
+
 2.1-alpha1
 ----------
 * Automatischer Refresh-Mechanismus (Variablen und Programme). Dynamische Refreshzeiten, siehe auch config.js
