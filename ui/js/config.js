@@ -19,8 +19,15 @@ var hqConf = {
     sessionLoginFade:       undefined,
 
     // Automatischer Refresh
-    refreshEnable:          false,
+    refreshEnable:          true,
     refreshPause:           5000,
+
+    // Dynamische Refreshzeit
+    // Wartezeit bis zum nächsten Refresh = refreshFactor * Ausführungszeit letzter Refresh
+    refreshDynamic:         true,
+    // CCU schonen mit höheren Werten, niedrige Werte bedeuten mehr "Stress" für die CCU
+    // Faktor 9 entspricht circa 10% Durchschnittslast auf der Logikschicht
+    refreshFactor:          9,
 
     // Script Debugging
     // Fehlermeldungen via xmlapi scripterror.cgi aus /var/log/messages lesen

@@ -87,35 +87,37 @@ Asap
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Service-Meldungen umbauen (AL-Datenpunkte!)
 * Session Fehler abfangen
-* Bug fixen: Systemprotokoll wird unter Umständen nicht geladen
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* Geräte: Datenpunkte einzeln aktualisieren
 * Geräte: eigene Spalte für Icons
-* Scriptkonsole: Anderen (besseren) Editor einbauen
+* Buttons bei Variablen und Programmen nach unten in den jqGrid Pager
 
 
 2.1
 ---
-* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
-* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
-* Sortieren von Favoriten per Drag & Drop
+* Automatischer Ressourcenschonender Refresh aller sichtbaren Werte und Timestamps
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
+* Anlegen, Löschen und Ändern von Variablen
+
 
 2.2
 ---
-* Anlegen, löschen und ändern von Variablen
-* Zuordnung von Variablen zu Kanälen setzen, löschen
+* Scriptkonsole: Anderen (besseren) Editor einbauen
 * Programme direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
-
-2.3
----
 * TCL und Shellscripte aus Editor auf CCU Speichern
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
+
+2.3
+---
+* Zuordnung von Variablen zu Kanälen setzen, löschen
+* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
+* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
+* Sortieren von Favoriten per Drag & Drop
+* Verlinkung Variablen und Programme die diese Variable nutzen
 
 
 irgendwann

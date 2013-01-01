@@ -19,10 +19,10 @@ jQuery.extend(
     { reallyvisible : function (a) { return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length); }}
 );
 
+//(function ($) {
 $("document").ready(function () {
 
-    var version =               "2.0.6";
-
+    var version =               "2.1alpha1";
 
     var statesXML,
         rssiXML,
@@ -279,7 +279,7 @@ $("document").ready(function () {
                 var ise_id = $(obj).attr('ise_id');
                 return ise_id;
             },
-            classes: 'ise_id'
+            classes: 'ise_id uVAR'
         },
         {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
@@ -299,6 +299,9 @@ $("document").ready(function () {
         {name:'value', index:'value', width: 150,
             xmlmap: function (obj) {
                 var val = $(obj).attr('value');
+                if (val === undefined) {
+                    return "";
+                }
                 switch ($(obj).attr('subtype')) {
                     case '0':
                         val = parseFloat(val);
@@ -325,7 +328,7 @@ $("document").ready(function () {
                 }
                 return val;
             },
-            classes:'update uVAR'
+            classes:'update uVAR uValue'
 
         },
         {name:'unit', index:'unit', width: 30,
@@ -398,9 +401,13 @@ $("document").ready(function () {
         },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
-                return formatTimestamp($(obj).attr('timestamp'));
+                var timestamp = $(obj).attr('timestamp');
+                if (timestamp === undefined) {
+                    return "";
+                }
+                return formatTimestamp(timestamp);
             },
-            classes:'update uVAR'
+            classes:'update uVAR uTimestamp'
         }
     ];
 
@@ -423,7 +430,7 @@ $("document").ready(function () {
                 var ise_id = $(obj).attr('id');
                 return ise_id;
             },
-            classes: 'ise_id update uPRG'
+            classes: 'ise_id uPRG'
         },
         {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
@@ -440,13 +447,14 @@ $("document").ready(function () {
             xmlmap: function (obj) {
                 return $(obj).attr('active');
             },
-            formatter: 'checkbox'
+            formatter: 'checkbox',
+            classes:'uPRG uActive'
         },
         {name:'timestamp', index:'timestamp', width: 75,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
             },
-            classes:'update uPRG'
+            classes:'update uPRG uTimestamp'
         }
     ];
 
@@ -753,7 +761,7 @@ $("document").ready(function () {
                 }
                 return val;
             },
-            classes:'update uDP'
+            classes:'update uDP uValue'
         },
         {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
             xmlmap: function (obj) {
@@ -769,7 +777,8 @@ $("document").ready(function () {
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
             },
-            classes:'update uDP'
+            classes: 'update uDP uTimestamp'
+
         }
     ];
 
@@ -1551,7 +1560,13 @@ console.log("oper=" + oper);
         if (cache !== null) {
             //console.log("Cache Hit: Variables");
             variablesXML = $.parseXML(cache);
-            variablesXMLObj = $(favoritesXML);
+            variablesXMLObj = $(variablesXML);
+            variablesXMLObj.find("systemVariable").each(function () {
+                $(this).removeAttr("value").removeAttr("timestamp");
+            });
+            //variablesXML = $.parseXML(variablesXMLObj);
+            variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
+            console.log(variablesXML);
             variablesTime = storage.get("hqWebUiVariablesTime");
             $("#timeRefreshVars").html(formatTimestamp(variablesTime));
             gridVariables.setGridParam({
@@ -1875,9 +1890,9 @@ console.log("oper=" + oper);
 
             rssiReady = true;
             $("#loaderRssi").hide();
-            if (!protocolReady) {
+            /*if (!protocolReady) {
                 refreshProtocol();
-            }
+            }*/
             return false;
         }
         //console.log("Fetching RSSI");
@@ -1907,10 +1922,10 @@ console.log("oper=" + oper);
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 $("#loaderRssi").hide();
                 rssiReady = true;
-                if (!protocolReady) {
+                /*if (!protocolReady) {
                     // TODO ...!
                     refreshProtocol();
-                }
+                }*/
             }
         });
                 /*
@@ -1977,6 +1992,7 @@ console.log("oper=" + oper);
 
 
             favoritesXMLObj.find("favorite[ise_id='" + fav_id + "'] channel").each(function () {
+                var firstChDP = true;
                 col += 1;
                 if (col > cols) { col = 1; }
                 var html = "";
@@ -1986,7 +2002,7 @@ console.log("oper=" + oper);
                 html += "<div id='favItem" + fav_id + "_" + channelId + "' class='favItem ui-helper-reset ui-widget ui-widget-content ui-corner-all'>";
                 html += "<table style='width:100%; border-spacing:0px;' class='favItemTable'>";
                 if (orientation == 1) {
-                    html += "<tr><td style='width:100%'><div style='border:none;' class='favItemHeader ui-widget-header ui-corner-top favName'>" + channelName + "</div>";
+                    html += "<tr><td style='width:100%; padding:0px;'><div style='border:none;' class='favItemHeader ui-widget-header ui-corner-top favName'>" + channelName + "</div>";
                 } else {
                     html += "<tr><td style='width:50%'><div class='favName'>" + channelName + "</div>";
                 }
@@ -2005,6 +2021,7 @@ console.log("oper=" + oper);
                 switch ($(this).attr("type")) {
                     case 'SYSVAR':
                         $(this).find("systemVariable").each(function () {
+                            firstChDP = false;
                             var value = $(this).attr("value");
                             var var_unit = $(this).attr("unit");
                             var var_id = $(this).attr("ise_id");
@@ -2092,6 +2109,7 @@ console.log("oper=" + oper);
 
                         break;
                     case 'PROGRAM':
+                        firstChDP = false;
                         var program_id = $(this).attr("ise_id");
                         html += "<div class='favStartProgram'><button id='favProgram" + fav_id + "_" + program_id +"'>Ausführen</button></div>";
                         favInputCell.append(html);
@@ -2123,6 +2141,7 @@ console.log("oper=" + oper);
 
                             var id = $(this).attr("ise_id");
                             html = "";
+
                             switch (type) {
                                 case 'STATE':
                                     //console.log("FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
@@ -2318,7 +2337,12 @@ console.log("oper=" + oper);
 
                                     if (firstUnknown) {
                                         firstUnknown = false;
-                                        favInputCell.find(" .favInput").append("<table class='favDpTable'><tbody></tbody></table>");
+                                        if (!firstDP) {
+                                            var spacer = "<div class='spacer'></div>";
+                                        } else {
+                                            var spacer = "";
+                                        }
+                                        favInputCell.find(" .favInput").append(spacer + "<table class='favDpTable'><tbody></tbody></table>");
                                     }
                                     if (!firstDP) {
                                         html += "<br>";
@@ -2331,9 +2355,9 @@ console.log("oper=" + oper);
                                              if (hqConf.dpDetails[type].formatfunction) {
                                                   value =  hqConf.dpDetails[type].formatfunction(value);
                                              }
-                                             if (hqConf.dpDetails[type].decimals) {
+                                             if (hqConf.dpDetails[type].decimals !== undefined) {
                                                 value = parseFloat(value);
-                                                value = value.toFixed(hqConf.dpDetails[type].decimals);
+                                                value = value.toFixed(parseInt(hqConf.dpDetails[type].decimals, 10));
                                              }
                                              //console.log("label="+label+" name[2]="+name[2]+" value="+value)
                                              if (value == "false" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["FALSE"]) {
@@ -2384,7 +2408,7 @@ console.log("oper=" + oper);
                                     //if (hqConf.dpValueMap[value]) {
                                     //    value = hqConf.dpValueMap[value];
                                     //}
-                                    html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight'>" + value + unit + "</span></td></tr>";
+                                    html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight uFAVDP" + channelId + "'>" + value + unit + "</span></td></tr>";
                                     $("div[id='favContainer" + fav_id + "']").find("td[id='favInputCell" + fav_id + "_" + channelId + "'] .favInput table tbody").append(html);
                                     html = "";
 
@@ -3783,7 +3807,7 @@ console.log("oper=" + oper);
 
     // Refresh Funktionen
 
-    var updateFirst = true;
+    var updateFirst;
     // Diese Funktion wird alle x Sekunden aufgerufen
     function update() {
         clearTimeout(timerRefresh);
@@ -3791,7 +3815,6 @@ console.log("oper=" + oper);
             timerRefresh = setTimeout(update, 500);
             return false;
         }
-     //   console.log("Refresh");
         updateFirst = true;
         updateScript = "";
         $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
@@ -3804,9 +3827,37 @@ console.log("oper=" + oper);
                     updateFirst = false;
                 }
                 updateScript += 'o = dom.GetObject('+id+');\n';
-                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",");\n';
-                updateScript += 'Write("\\"state\\":\\"" # o.State() # "\\",");\n';
-                updateScript += 'Write("\\"time\\":\\"" # o.Timestamp() # "\\"}");\n';
+                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+            }
+
+        });
+        $("td.uPRG[aria-describedby$='_id']:reallyvisible").each(function() {
+            if ($(this).css("display") != "none") {
+                var id = $(this).attr("title");
+                id = parseInt(id, 10);
+                if (!updateFirst) {
+                    updateScript += 'Write(",");\n';
+                } else {
+                    updateFirst = false;
+                }
+                updateScript += 'o = dom.GetObject('+id+');\n';
+                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"p\\",\\"ts\\":\\"" # o.ProgramLastExecuteTime() # "\\",\\"ac\\":\\"" # o.Active() # "\\"}");\n';
+            }
+
+        });
+        $("td.uVAR[aria-describedby$='_id']:reallyvisible").each(function() {
+            if ($(this).css("display") != "none") {
+                var id = $(this).attr("title");
+                id = parseInt(id, 10);
+                if (!updateFirst) {
+                    updateScript += 'Write(",");\n';
+                } else {
+                    updateFirst = false;
+                }
+                updateScript += 'o = dom.GetObject('+id+');\n';
+                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                    'WriteXML(o.Value());\n' +
+                    'Write("\\",\\"t\\":\\"v\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
             }
 
         });
@@ -3819,11 +3870,97 @@ console.log("oper=" + oper);
 
         });
         if (updateScript != "") {
-            updateScript = 'object o;\nWrite("{");\n' + updateScript + 'Write("}");';
-            //console.log(updateScript);
-            timerRefresh = setTimeout(update, hqConf.refreshPause);
+            updateScript = 'object o;\nWrite("[");\n' + updateScript + 'Write("]");';
+            //console.log({'updateScript':updateScript});
+            var ajaxTime = new Date().getTime();
+
+            $.ajax({
+                url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
+                type: 'POST',
+                data: updateScript,
+                contentType: "text/json;charset=ISO-8859-1",
+                dataType: 'json',
+                success: function (data) {
+                    var totalTime = new Date().getTime() - ajaxTime;
+                    console.log("refresh response time " + totalTime + "ms");
+                    //console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+
+                        if (data[i].ac !== undefined) {
+                            if (data[i].ac === "true") {
+                                $("tr[id='" + data[i].id + "'] td.uActive input").attr("checked", true);
+                            } else {
+                                $("tr[id='" + data[i].id + "'] td.uActive input").removeAttr("checked");
+                            }
+
+                        }
+                        if (data[i].vl !== undefined) {
+
+                            var value = $("<div/>").html(data[i].vl).text();
+                                var obj = variablesXMLObj.find("systemVariable[ise_id='" + data[i].id + "']");
+                                var val = value;
+                                if (val === undefined) {
+                                    return "";
+                                }
+                                switch ($(obj).attr('subtype')) {
+                                    case '0':
+                                        val = parseFloat(val);
+                                        val = val.toFixed(2);
+                                        break;
+                                    case '2':
+                                    case '6':
+                                        //console.log("debug " +val);
+                                        if (val == "true") {
+                                            val = $(obj).attr('text_true');
+                                        } else {
+                                            val = $(obj).attr('text_false');
+                                        }
+                                        break;
+                                    case '29':
+                                        val = $(obj).attr('value_text');
+                                        break;
+                                    default:
+                                        if (typeof val == "string" && val.match(/<img/)) {
+                                            //console.log(val + " " + typeof val);
+                                            val = $('<div/>').text(val).html();
+                                        }
+
+                                }
+                                value = val;
+
+
+
+                            $("tr[id='" + data[i].id + "'] td.uVAR.uValue").html(value);
+                        }
+                        var timestamp = data[i].ts;
+                        if (timestamp === undefined || timestamp === "1970-01-01 01:00:00") {
+                            timestamp = "";
+                        }
+
+                        $("tr[id='" + data[i].id + "'] td.uTimestamp").html(timestamp);
+
+
+                       // console.log(data[i].id + " " + value + " " + data[i].ts);
+                    }
+                    if (hqConf.refreshDynamic) {
+                        var nextRefresh = hqConf.refreshFactor * totalTime;
+                    } else {
+                        var nextRefresh = hqConf.refreshPause;
+                    }
+                    console.log("next refresh in " + nextRefresh + "ms");
+                    timerRefresh = setTimeout(update, nextRefresh);
+
+                },
+                error: function (a,b,c) {
+                    ajaxError(a,b,c);
+                    alert("auto refresh stopped :-(");
+                    hqConf.refreshEnable = false;
+
+                }
+            });
+
         } else {
-            timerRefresh = setTimeout(update, hqConf.refreshPause);
+            timerRefresh = setTimeout(update, nextRefresh);
         }
 
     }
@@ -3995,8 +4132,4 @@ function scriptEditorStyle() {
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
-}
-
-
-
-
+}//})(jQuery);

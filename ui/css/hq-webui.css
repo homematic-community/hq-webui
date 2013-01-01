@@ -298,3 +298,8 @@ button.ui-multiselect {
     line-height: 2em !important;
     vertical-align: middle;
 }
+
+div.spacer {
+    height: 5px;
+    display: block;
+}
