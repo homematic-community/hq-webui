@@ -81,8 +81,9 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 Roadmap/Todo/Ideen
 ==================
-Asap
-----
+
+2.1
+---
 * Anzeige Anzahl Servicemeldungen/Alarme (bei 2 oder mehr Meldungen)
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Service-Meldungen umbauen (AL-Datenpunkte!)
@@ -92,10 +93,7 @@ Asap
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Geräte: eigene Spalte für Icons
 * Buttons bei Variablen und Programmen nach unten in den jqGrid Pager
-
-
-2.1
----
+* Systemprotokoll?!?
 * Automatischer Ressourcenschonender Refresh aller sichtbaren Werte und Timestamps
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
@@ -119,6 +117,13 @@ Asap
 * Sortieren von Favoriten per Drag & Drop
 * Verlinkung Variablen und Programme die diese Variable nutzen
 
+2.4
+---
+* Geräte konfigurieren
+* Anlegen/Bearbeiten/Löschen von Direktverknüpfungen
+* Geräte anlernen
+
+
 
 irgendwann
 ----------
@@ -127,9 +132,7 @@ irgendwann
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Selbst-Update / Auto-Update des HQ WebUI
-* Geräte einstellen
 * Snippets für Editor
-* Anlegen/Bearbeiten/Löschen von Direktverknüpfungen (?)
 * Style, Nomenklatur, komplettes Refactoring
 * Intern komplett vom xml auf json umstellen ("Überbleibsel" der xmlapi aus Version 1.x)
 * Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
@@ -139,7 +142,6 @@ irgendwann
 * Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
 * Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
-* Systemprotokoll bei Klick auf aktualisieren nicht komplett neu laden sondern nur neue Einträge nachladen.
 * Raumthermostat Modus setzen
 * Autovervollständigungs und Syntaxhighlight Konfiguration für TCL und Shell Scripte vervollständigen
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
@@ -151,8 +153,6 @@ irgendwann
 * Reboot und Safe-Mode Reboot
 * Firewallkonfiguration
 * Ausbau des Tabs Funk
-* Anlernmodus
-* Direkte Verknüpfungen Anzeigen/Anlegen/Ändern/Löschen? (machbar, aber zu großer Zeitaufwand)
 
 
 tendenziell nein
