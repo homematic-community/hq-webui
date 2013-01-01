@@ -1,10 +1,11 @@
 Changelog
 =========
 
-2.1-beta1
----------
-
-
+2.1-alpha1
+----------
+* Automatischer Refresh-Mechanismus (Variablen und Programme). Dynamische Refreshzeiten, siehe auch config.js
+* Kleine HTML/CSS-Änderungen bei der Favoritenansicht
+* Fehler behoben bei Darstellung der Favoriten (Formatierung Float-Variablen hat Scriptabbruch verursacht.
 
 2.0.6
 -----
