@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1-alpha3
+----------
+* Variablen und Programme Tabelle umgebaut, neue Buttons unten links
+
 2.1-alpha2
 ----------
 * Anzeige des Refreshs in den Tabellen-Überschriften

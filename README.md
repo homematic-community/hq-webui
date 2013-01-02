@@ -88,6 +88,8 @@ Roadmap/Todo/Ideen
 * Service-Meldungen umbauen (AL-Datenpunkte!)
 * Session Fehler abfangen
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
+* neuer Tab "Kanäle"
+* Programme umbenennen
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Geräte: eigene Spalte für Icons
@@ -97,11 +99,12 @@ Roadmap/Todo/Ideen
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 * Anlegen, Löschen und Ändern von Variablen
+* Kontextmenü in allen Tabellen
 
 
 2.2
 ---
-* Scriptkonsole: Anderen (besseren) Editor einbauen
+* Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
 * Programme direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
 * TCL und Shellscripte aus Editor auf CCU Speichern
