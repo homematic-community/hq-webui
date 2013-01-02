@@ -1,5 +1,5 @@
 /**
- *  HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
+ *  HQ WebUI - schnelles Webfrontend für die Homematic CCU
  *  https://github.com/hobbyquaker/hq-webui/
  *
  *  Copyright (c) 2012 hobbyquaker https://github.com/hobbyquaker
@@ -14,13 +14,13 @@
  *
  */
 
-jQuery.extend(
-    jQuery.expr[ ":" ],
-    { reallyvisible : function (a) { return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length); }}
-);
+jQuery.extend(jQuery.expr[ ":" ], {
+    reallyvisible : function (a) {
+        return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length);
+    }
+});
 
-//(function ($) {
-$("document").ready(function () {
+(function ($) { $("document").ready(function () {
 
     var version =               "2.1-alpha2";
 
@@ -252,7 +252,6 @@ $("document").ready(function () {
      *
      */
     var colNamesVariables = [
-        '',
         'id',
         'Name',
         'Beschreibung',
@@ -272,11 +271,11 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelVariables = [
-        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+        /*{name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
             xmlmap: function (obj) {
                 return "<button class='gridButton editVariable' id='editVariable"+$(obj).attr('ise_id')+"'></button>";
             }
-        },
+        },*/
         {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
@@ -402,7 +401,7 @@ $("document").ready(function () {
             },
             formatter: 'checkbox'
         },
-        {name:'timestamp', index:'timestamp', width: 75,
+        {name:'timestamp', index:'timestamp', width: 125, fixed: true,
             xmlmap: function (obj) {
                 var timestamp = $(obj).attr('timestamp');
                 if (timestamp === undefined) {
@@ -415,7 +414,6 @@ $("document").ready(function () {
     ];
 
     var colNamesPrograms = [
-        '',
         'id',
         'Name',
         'Beschreibung',
@@ -423,11 +421,11 @@ $("document").ready(function () {
         'Zeitstempel'
     ];
     var colModelPrograms = [
-        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+        /*{name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
             xmlmap: function (obj) {
                 return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
             }
-        },
+        },*/
         {name:'id', index:'id',  width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('id');
@@ -453,7 +451,7 @@ $("document").ready(function () {
             formatter: 'checkbox',
             classes:'uPRG uActive'
         },
-        {name:'timestamp', index:'timestamp', width: 75,
+        {name:'timestamp', index:'timestamp', width: 125, fixed: true,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
             },
@@ -1021,7 +1019,7 @@ $("document").ready(function () {
 
             });
         }
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerVariables", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
         'navButtonAdd',
@@ -1033,8 +1031,57 @@ $("document").ready(function () {
                 storage.set("hqWebUiVariablesTime", null);
                 refreshVariables();
             },
-            position: "first",
+            position: "last",
             title:"Neu laden",
+            id:"btnRefreshVar",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerVariables", {
+            caption:"",
+            buttonicon:"ui-icon-plus",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            id: "btnAddVar",
+            title:"Variable hinzufügen",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerVariables", {
+            caption:"",
+            buttonicon:"ui-icon-trash",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            id:"btnDelVar",
+            title:"Variable löschen",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerVariables", {
+            caption:"",
+            buttonicon:"ui-icon-wrench",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            id: "btnCfgVar",
+            title:"Variable konfigurieren",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerVariables", {
+            caption:"",
+            id:"btnEditVar",
+            buttonicon:"ui-icon-pencil",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            title:"Wert ändern",
             cursor: "pointer"
         });
 
@@ -1124,8 +1171,52 @@ $("document").ready(function () {
                 storage.set("hqWebUiProgramsTime", null);
                 refreshPrograms();
             },
-            position: "first",
+            position: "last",
             title:"Neu laden",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerPrograms", {
+            caption:"",
+            buttonicon:"ui-icon-plus",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            title:"Neues Programm erstellen",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerPrograms", {
+            caption:"",
+            buttonicon:"ui-icon-trash",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            title:"Programm löschen",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerPrograms", {
+            caption:"",
+            buttonicon:"ui-icon-wrench",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            title:"Programm bearbeiten",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerPrograms", {
+            caption:"",
+            buttonicon:"ui-icon-play",
+            onClickButton: function () {
+                // TODO EDIT
+            },
+            position: "first",
+            title:"Programm ausführen",
             cursor: "pointer"
         });
     $("#gridPagerPrograms_left").append("<span class='timeRefresh' id='timeRefreshPrograms'/>");
@@ -1171,34 +1262,24 @@ $("document").ready(function () {
         'navButtonAdd',
         "#gridPagerStates", {
             caption:"",
-            buttonicon:"ui-icon-arrowrefresh-1-s",
+            buttonicon:"ui-icon-refresh",
             onClickButton: function () {
                 storage.set("hqWebUiRooms", null);
                 storage.set("hqWebUiFunctions", null);
                 storage.set("hqWebUiDevices", null);
+                storage.set("hqWebUiStates", null);
                 roomsReady = false;
                 functionsReady = false;
                 devicesReady = false;
+                statesReady = false;
+
                 xmlapiGetFunctions();
             },
             position: "first",
             title:"Geräte, Gewerke und Räume neu laden",
             cursor: "pointer"
-        }).jqGrid(
-        'navButtonAdd',
-        "#gridPagerStates", {
-            caption:"",
-            buttonicon:"ui-icon-refresh",
-            onClickButton: function () {
-                storage.set("hqWebUiStates", null);
-                storage.set("hqWebUiStatesTime", null);
-
-                refreshStates();
-            },
-            position: "first",
-            title:"Datenpunkte neu laden",
-            cursor: "pointer"
         });
+
     $("#gridPagerStates_left").append("<span class='timeRefresh' id='timeRefreshStates'/>");
 
     gridRssi.jqGrid({
@@ -3300,6 +3381,7 @@ console.log("oper=" + oper);
             devicesReady = true;
             devicesXML = $.parseXML(cache);
             devicesXMLObj = $(devicesXML);
+
             refreshStates();
             return false;
         }
@@ -3316,6 +3398,9 @@ console.log("oper=" + oper);
                 devicesXML = data;
                 devicesXMLObj = $(data);
                 storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(data));
+                storage.set("hqWebUiStates", null);
+                storage.set("hqWebUiStatesTime", null);
+                statesReady = false;
                 refreshStates();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
@@ -4072,7 +4157,7 @@ console.log("oper=" + oper);
 
     editAreaLoader.init(editAreaInit);
 
-});
+})})(jQuery);
 
 // Funktionen für den Script-Editor(editArea steckt in iFrame und arbeitet im globalen Namensraum)
 function scriptFileClose(file) {
@@ -4145,4 +4230,4 @@ function scriptEditorStyle() {
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
-}//})(jQuery);
+}//
