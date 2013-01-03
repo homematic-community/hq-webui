@@ -635,6 +635,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Kanaltyp',
         '',
         '',
+        '',
+        '',
         ''
     ];
     var colModelChannel = [
@@ -716,6 +718,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return $(obj).attr('logged');
             },
             formatter: 'checkbox'
+        },
+        {name:'alarms', index:'alarms', width: 40, fixed: true,
+            xmlmap: function (obj) {
+                return "";
+            }
+        },
+        {name:'tools', index:'tools', width: 40, fixed: true,
+            xmlmap: function (obj) {
+                return "";
+            }
         }
     ];
 
@@ -725,11 +737,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Typ',
         'Typ',
         'Wert',
+        '',
         'Wertetyp',
         'Operationen',
         'Zeitstempel',
-        'Alarmauslösung',
-        ''
+        'Alarmauslösung'
     ];
     var colModelDatapoint = [
         {name:"ise_id", index:"ise_id", align: 'right', width:46, fixed: true, sorttype: 'int',
@@ -772,6 +784,22 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             classes:'update uDP uValue'
         },
+        {name:"editdp",   index:"editdp",   width:28, fixed: true,
+            xmlmap: function (obj) {
+                var id = $(obj).attr('ise_id');
+                var oper = $(obj).attr('oper');
+                var dptype = $(obj).attr('dptype');
+                if (oper & 2) {
+                    switch (dptype) {
+                        case "ALARMDP":
+                            return '<button id="'+id+'" class="btnAlReceipt" title="Meldung bestätigen"></button>';
+                            break;
+                        default:
+                            return '<button id="'+id+'" class="btnEditDP" title="Datenpunkt editieren"></button>';
+                    }
+                }
+            }
+        },
         {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('valuetype');
@@ -795,22 +823,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             classes: 'update uDP uTimealarm'
 
-        },
-        {name:"tools",   index:"tools",   width:60, fixed: true,
-            xmlmap: function (obj) {
-                var id = $(obj).attr('ise_id');
-                var oper = $(obj).attr('oper');
-                var dptype = $(obj).attr('dptype');
-                if (oper & 2) {
-                    switch (dptype) {
-                        case "ALARMDP":
-                            return '<button id="'+id+'" class="btnAlReceipt"></button>';
-                            break;
-                        default:
-                            return '<button id="'+id+'" class="btnEditDP"></button>';
-                    }
-                }
-            }
         }
     ];
 

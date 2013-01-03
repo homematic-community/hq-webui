@@ -7,6 +7,8 @@ Changelog
 * Fehler bei der Darstellung von Favoriten-Datenpunkten behoben (danke Micha602)
 * Integration der AL-Datenpunkte
 * Diverse neue Buttons und Änderungen an der Geräte-Tabelle (noch Baustelle)
+* Geräte: eigene Spalte für Icons
+
 
 2.1-alpha3
 ----------

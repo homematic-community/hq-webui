@@ -44,6 +44,11 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 **Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
+Dankeschön
+==========
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=&tags=github&category=software)
+Ein Flattr Account ist superschnell angelegt und das Guthaben um Spenden zu können lässt sich mit allen gängigen Zahlungsvarianten auffüllen :-)
+
 Bedienung
 =========
 
@@ -84,17 +89,12 @@ Roadmap/Todo/Ideen
 2.1
 ---
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
-* Anzeige Anzahl Servicemeldungen/Alarme (bei 2 oder mehr Meldungen)
-* ERROR-Datenpunkte als Servicemeldungen anzeigen
-* Service-Meldungen umbauen (AL-Datenpunkte!)
 * Session Fehler abfangen
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * neuer Tab "Kanäle"
 * Programme umbenennen
 * addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* Geräte: eigene Spalte für Icons
-* Buttons bei Variablen und Programmen nach unten in den jqGrid Pager
 * Systemprotokoll?!?
 * Automatischer Ressourcenschonender Refresh aller sichtbaren Werte und Timestamps
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
