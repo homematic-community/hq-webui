@@ -47,7 +47,6 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 Dankeschön
 ==========
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=&tags=github&category=software)
-Ein Flattr Account ist superschnell angelegt und das Guthaben um Spenden zu können lässt sich mit allen gängigen Zahlungsvarianten auffüllen :-)
 
 Bedienung
 =========
