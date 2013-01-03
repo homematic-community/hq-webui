@@ -31,7 +31,8 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
-Wer Danke sagen und/oder mich motivieren möchte kann das am besten über diesen Button: [![Flattr Button](http://api.flattr.com/button/button-compact-static-100x17.png "Flattr This!")](https://github.com/hobbyquaker/hq-webui "hq-webui")
+Wer Danke sagen und/oder mich motivieren möchte kann das am besten über diesen Button:
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=de&tags=github&category=software)
 
 Download
 ========
