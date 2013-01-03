@@ -31,6 +31,9 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
+Wer sich bedanken möchte kann das hier tun: [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=&tags=github&category=software)
+
+
 Download
 ========
 http://www.homematic-inside.de/software/download/item/hq-webui-addon
@@ -44,9 +47,6 @@ Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 **Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
-Dankeschön
-==========
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=&tags=github&category=software)
 
 Bedienung
 =========
