@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.1-alpha4
+----------
+* Buttons unten links disabled
+* Fehler bei der Darstellung von Favoriten-Datenpunkten behoben (danke Micha602)
+* Integration der AL-Datenpunkte
+* Diverse neue Buttons und Änderungen an der Geräte-Tabelle (noch Baustelle)
+
 2.1-alpha3
 ----------
 * Variablen und Programme Tabelle umgebaut, neue Buttons unten links

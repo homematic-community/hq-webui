@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha3";
+    var version =               "2.1-alpha4";
 
     var statesXML,
         rssiXML,
@@ -39,18 +39,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
         functionsXMLObj,
         roomsXMLObj,
         devicesXMLObj,
-        favoritesXMLObj;
+        favoritesXMLObj,
+        alarmsData;
 
-    var statesReady =           false;
-    var variablesReady =        false;
-    var programsReady =         false;
-    var protocolReady =         false;
-    var functionsReady =        false;
-    var roomsReady =            false;
-    var rssiReady =             false;
-    var devicesReady =          false;
-    var favoritesReady =        false;
-    var firstLoad =             false;
+    var statesReady =           false,
+        alarmsReady =           false,
+        variablesReady =        false,
+        programsReady =         false,
+        protocolReady =         false,
+        functionsReady =        false,
+        roomsReady =            false,
+        rssiReady =             false,
+        devicesReady =          false,
+        favoritesReady =        false,
+        firstLoad =             false;
 
     var statesTime,
         variablesTime,
@@ -97,6 +99,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var dialogDelScript =       $("#dialogDelScript");
 
     var buttonRefreshFavs =     $("#buttonRefreshFavs");
+
     
     var divStderr =             $("#divStderr");
     var divStdout =             $("#divStdout");
@@ -118,6 +121,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Elemente verstecken
     $("#login").hide();
+
+
     $("#logout").hide();
     $("#session").show();
     $("#hmNewScriptMenu").menu().hide();
@@ -144,8 +149,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
             clearTimeout(timerRefresh);
             timerRefresh = setTimeout(update, 50);
             if (!tabChange) {
+                var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
+                console.log(hash);
 
-                history.pushState({}, "", $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href"));
+                history.pushState({}, "", hash);
             } else {
                 tabChange = false;
             }
@@ -158,6 +165,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("a[href='#tabDashboard']").css("border","1px solid red").unbind("click").click(function () {
         this.href="dashboard.html";
     });
+
     $(window).bind( 'hashchange', function(e) {
         //console.log("change");
         tabChange = true;
@@ -460,6 +468,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     ];
 
     var colNamesStates = [
+        '',
         'id',
         'Name',
         'Adresse',
@@ -471,21 +480,28 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'unreach',
         'sticky_unreach',
         'config_pending',
-        'Servicemeldungen'
+        '',
+        ''
     ];
     var colModelStates = [
-        {name:'ise_id', index:'ise_id', width: 80, fixed: true, sorttype: 'int',
+        {name: 'icon', index:'icon', width: 27, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
 
                 var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
                 if (iface && hqConf.deviceImgEnable) {
-                        if (hqConf.deviceImg[iface]) {
-                            return '<span style="float:left; background-color: #fff; width: 24px; height: 22px; text-align: center; padding-top: 1px;"><img style="" src="' + hqConf.ccuUrl + hqConf.deviceImgPath + hqConf.deviceImg[iface] + '" height="21"/></span>' + '<span style="float:right; padding-top:5px;">' + ise_id + '</span>';
-                        }
+                    if (hqConf.deviceImg[iface]) {
+                        return '<span style="background-color: #fff; width: 24px; height: 22px; text-align: center; padding-top: 1px;"><img style="" src="' + hqConf.ccuUrl + hqConf.deviceImgPath + hqConf.deviceImg[iface] + '" height="21"/></span>' + '<span style="float:right; padding-top:5px;">';
+                    }
                 }
-                return '<span style="float:right">' + ise_id + '</span>';
+                return '';
 
+            },
+            classes: 'deviceIcon'
+        },
+        {name:'ise_id', index:'ise_id', width: 48, fixed: true, sorttype: 'int',
+            xmlmap: function (obj) {
+                return ise_id = $(obj).attr('ise_id');
             },
             classes: 'ise_id'
         },
@@ -586,37 +602,27 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return $(obj).attr('config_pending');
             }
         },
-        {name:'service', index:'service', width: 120,
+        {name:'service', index:'service', width: 40,
             xmlmap: function (obj) {
                 var output = "";
-                $(obj).find("channel:first datapoint").each(function () {
+                /*$(obj).find("channel:first datapoint").each(function () {
                     var ise_id  = $(this).attr("ise_id");
                     var value   = $(this).attr("value");
                     var type    = $(this).attr("type");
-                    switch (type) {
-                        case 'U_SOURCE_FAIL':
-                        case 'U_USBD_OK':
-                        case 'UNREACH':
-                        case 'STICKY_UNREACH':
-                        case 'LOWBAT':
-                        case 'CONFIG_PENDING':
-                        case 'DUTYCYCLE':
-                        case 'BAT_LEVEL':
-                        case 'INSTALL_MODE':
-                            if (value == "true") {
-                                if (output != "") { output += ", "; }
-                                output += type;
-                            }
-                            break;
-                        case 'RSSI_DEVICE':
-                        case 'RSSI_PEER':
-                            break;
-                        default:
-                            if (output != "") { output += ", "; }
-                            output += type + "=" + value;
+                    var dptype  = $(this).attr("dptype");
+                    if (dptype == "ALARMDP") {
+                        type = $(this).attr("name").split(".");
+                        type = type[1];
+                        if (output != "") { output += ", "; }
+                        output += type + "=" + value;
                     }
-                });
+                });*/
                 return output;
+            }
+        },
+        {name:'tools', index:'tools', width: 80,
+            xmlmap: function (obj) {
+                return "";
             }
         }
     ];
@@ -721,7 +727,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Wert',
         'Wertetyp',
         'Operationen',
-        'Zeitstempel'
+        'Zeitstempel',
+        'Alarmauslösung',
+        ''
     ];
     var colModelDatapoint = [
         {name:"ise_id", index:"ise_id", align: 'right', width:46, fixed: true, sorttype: 'int',
@@ -780,6 +788,29 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             classes: 'update uDP uTimestamp'
 
+        },
+        {name:"timealarm",   index:"timealarm",   width:120, fixed: true,
+            xmlmap: function (obj) {
+                return "";
+            },
+            classes: 'update uDP uTimealarm'
+
+        },
+        {name:"tools",   index:"tools",   width:60, fixed: true,
+            xmlmap: function (obj) {
+                var id = $(obj).attr('ise_id');
+                var oper = $(obj).attr('oper');
+                var dptype = $(obj).attr('dptype');
+                if (oper & 2) {
+                    switch (dptype) {
+                        case "ALARMDP":
+                            return '<button id="'+id+'" class="btnAlReceipt"></button>';
+                            break;
+                        default:
+                            return '<button id="'+id+'" class="btnEditDP"></button>';
+                    }
+                }
+            }
         }
     ];
 
@@ -1087,6 +1118,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     $("#gridPagerVariables_left").append("<span class='timeRefresh' id='timeRefreshVars'/>");
 
+    $("#btnRunVar").addClass("ui-state-disabled");
+    $("#btnCfgVar").addClass("ui-state-disabled");
+    $("#btnDelVar").addClass("ui-state-disabled");
+    $("#btnAddVar").addClass("ui-state-disabled");
+
 
     function editVariableValue(id) {
         var value       = gridVariables.getCell(id, "value");
@@ -1173,7 +1209,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             position: "last",
             title:"Neu laden",
-            cursor: "pointer"
+            cursor: "pointer",
+            id: "btnRefreshPrg"
         }).jqGrid(
         'navButtonAdd',
         "#gridPagerPrograms", {
@@ -1184,7 +1221,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             position: "first",
             title:"Neues Programm erstellen",
-            cursor: "pointer"
+            cursor: "pointer",
+            id: "btnAddPrg"
         }).jqGrid(
         'navButtonAdd',
         "#gridPagerPrograms", {
@@ -1195,7 +1233,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             position: "first",
             title:"Programm löschen",
-            cursor: "pointer"
+            cursor: "pointer",
+            id: "btnDelPrg"
         }).jqGrid(
         'navButtonAdd',
         "#gridPagerPrograms", {
@@ -1206,7 +1245,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             position: "first",
             title:"Programm bearbeiten",
-            cursor: "pointer"
+            cursor: "pointer",
+            id: "btnCfgPrg"
         }).jqGrid(
         'navButtonAdd',
         "#gridPagerPrograms", {
@@ -1217,10 +1257,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             position: "first",
             title:"Programm ausführen",
-            cursor: "pointer"
+            cursor: "pointer",
+            btn: "btnRunPrg"
         });
     $("#gridPagerPrograms_left").append("<span class='timeRefresh' id='timeRefreshPrograms'/>");
-
+    $("#btnRunPrg").addClass("ui-state-disabled");
+    $("#btnCfgPrg").addClass("ui-state-disabled");
+    $("#btnDelPrg").addClass("ui-state-disabled");
+    $("#btnAddPrg").addClass("ui-state-disabled");
     gridStates.jqGrid({
         width: 1050, height: hqConf["gridHeight"],
         colNames:colNamesStates,
@@ -1266,14 +1310,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
             onClickButton: function () {
                 storage.set("hqWebUiRooms", null);
                 storage.set("hqWebUiFunctions", null);
+                storage.set("hqWebUiAlarms", null);
                 storage.set("hqWebUiDevices", null);
                 storage.set("hqWebUiStates", null);
                 roomsReady = false;
                 functionsReady = false;
+                alarmsReady = false;
                 devicesReady = false;
                 statesReady = false;
 
-                xmlapiGetFunctions();
+                hmGetFunctions();
             },
             position: "first",
             title:"Geräte, Gewerke und Räume neu laden",
@@ -1471,6 +1517,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
             gridview:true,
             height: "100%",
             rowNum:9999,
+            gridComplete: function() {
+                $("button.btnEditDP").button({
+                    icons: { primary: 'ui-icon-pencil' }
+                });
+                $("button.btnAlReceipt").button({
+                    icons: { primary: 'ui-icon-check' }
+                });
+
+            },
             ondblClickRow: function (id) {
 
 
@@ -1760,7 +1815,7 @@ console.log("oper=" + oper);
             programsReady = true;
             $("#loaderPrograms").hide();
             if (!functionsReady) {
-                xmlapiGetFunctions();
+                hmGetFunctions();
             }
             return false;
         }
@@ -1795,7 +1850,7 @@ console.log("oper=" + oper);
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
 
                 if (!functionsReady) {
-                    xmlapiGetFunctions();
+                    hmGetFunctions();
                 }
             },
             error: function (a,b,c) { alert(a + " " + b + " " + c); }
@@ -1815,19 +1870,20 @@ console.log("oper=" + oper);
                     addInfo("Anzahl Programme", programsXMLObj.find("program").length);
                 }
                 if (!functionsReady) {
-                    xmlapiGetFunctions();
+                    hmGetFunctions();
                 }
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
     }
 
     function refreshStates() {
+        console.log("refreshStates()");
         statesReady = false;
         $("#loaderStates").show();
 
         var cache = storage.get("hqWebUiStates");
         if (cache !== null) {
-            //console.log("Cache Hit: States");
+            console.log("Cache Hit: States");
             statesXML = $.parseXML(cache);
             statesXMLObj = $(statesXML);
             statesTime = storage.get("hqWebUiStatesTime");
@@ -1846,7 +1902,7 @@ console.log("oper=" + oper);
             }
             return false;
         }
-        //console.log("Fetching States");
+        console.log("Fetching States");
 
 
         $.ajax({
@@ -1863,8 +1919,10 @@ console.log("oper=" + oper);
 
                 var dateObj = new Date();
                 statesTime = Math.floor(dateObj.getTime() / 1000);
-                $("#timeRefreshStates").html(formatTimestamp(favoritesTime));
-                storage.set("hqWebUiStatesTime", favoritesTime);
+                $("#timeRefreshStates").html(formatTimestamp(statesTime));
+                storage.set("hqWebUiStatesTime", statesTime);
+                insertAlarms();
+
                 var serialized = (new XMLSerializer()).serializeToString(data);
                 storage.set("hqWebUiStates", serialized);
 
@@ -2121,7 +2179,7 @@ console.log("oper=" + oper);
                                     html = "";
                                     $("#favInputSelect" + fav_id + "_" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + fav_id + "_" + var_id).change(function () {
-                                        xmlapiSetState(var_id, $("#favInputSelect" + fav_id + "_" + var_id + " option:selected").val());
+                                        hmSetState(var_id, $("#favInputSelect" + fav_id + "_" + var_id + " option:selected").val());
                                     }).multiselect({
                                             multiple: false,
                                             header: false,
@@ -2144,7 +2202,7 @@ console.log("oper=" + oper);
                                         //console.log($("#favInputSelect" + fav_id + " " + var_id).html());
                                         var select_val = $("#favInputSelect" + fav_id + " " + var_id + " option:selected").val();
                                         //console.log("fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
-                                        xmlapiSetState(var_id, select_val);
+                                        hmSetState(var_id, select_val);
                                     }).multiselect({
                                             multiple: false,
                                             header: false,
@@ -2164,7 +2222,7 @@ console.log("oper=" + oper);
                                     html = "";
                                     $("#favInputText" + fav_id + "_" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
+                                            hmSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
                                         }
                                     });
                                     break;
@@ -2179,7 +2237,7 @@ console.log("oper=" + oper);
                                     html = "";
                                     $("#favInputText" + fav_id + "_" + var_id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
+                                            hmSetState(var_id, $("#favInputText" + fav_id + "_" + var_id).val());
                                         }
                                     });
 
@@ -2289,12 +2347,12 @@ console.log("oper=" + oper);
 
                                             favInputCell.find("input#favRadioOn" + fav_id + "_" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
-                                                    xmlapiSetState(id, 1);
+                                                    hmSetState(id, 1);
                                                 }
                                             });
                                             favInputCell.find("input#favRadioOff" + fav_id + "_" + id).change(function (eventdata, handler) {
                                                 if ($(this).is(":checked")) {
-                                                    xmlapiSetState(id, 0);
+                                                    hmSetState(id, 0);
                                                 }
                                             });
                                     }
@@ -2340,8 +2398,8 @@ console.log("oper=" + oper);
                                                     $("label[for='favRadioOn" + fav_id + "_" + id + "']").addClass("ui-state-active");
                                                     $("input#favRadioOn" + fav_id + "_" + id).attr("checked", true);
                                                 }
-                                               // xmlapiSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
-                                                xmlapiSetState(id, ui.value);
+                                               // hmSetState(ui.handle.parentElement.id.replace('favSlider', ''), ui.value);
+                                                hmSetState(id, ui.value);
 
                                             }
 
@@ -2350,13 +2408,13 @@ console.log("oper=" + oper);
 
                                         favInputCell.find("input#favRadioOn" + fav_id + "_" + id).change(function (eventdata, handler) {
                                             if ($(this).is(":checked")) {
-                                                xmlapiSetState(id, 1);
+                                                hmSetState(id, 1);
                                                 $("#favSlider" + fav_id + "_" + id).slider({ value: 1.00 });
                                             }
                                         });
                                         favInputCell.find("input#favRadioOff" + fav_id + "_" + id).change(function (eventdata, handler) {
                                             if ($(this).is(":checked")) {
-                                                xmlapiSetState(id, 0);
+                                                hmSetState(id, 0);
                                                 $("#favSlider" + fav_id + "_" + id).slider({ value: 0.00 });
                                             }
                                         });
@@ -2374,7 +2432,7 @@ console.log("oper=" + oper);
                                     html = "";
                                     $("#favInputText" + fav_id + "_" + id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            xmlapiSetState(var_id, $("#favInputText" + fav_id + "_" + id).val());
+                                            hmSetState(var_id, $("#favInputText" + fav_id + "_" + id).val());
                                         }
                                     });
                                     break;
@@ -2384,7 +2442,7 @@ console.log("oper=" + oper);
                                     favInputCell.find(" .favInput").append(html);
                                     html = "";
                                     $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
-                                        xmlapiSetState($(this).attr("ise_id"), "true");
+                                        hmSetState($(this).attr("ise_id"), "true");
                                     });
                                     break;
                                 case 'OPEN':
@@ -2392,7 +2450,7 @@ console.log("oper=" + oper);
                                     favInputCell.find(" .favInput").append(html);
                                     html = "";
                                     $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
-                                        xmlapiSetState($(this).attr("ise_id"), "true");
+                                        hmSetState($(this).attr("ise_id"), "true");
                                     });
                                     break;
                                     break;
@@ -2439,7 +2497,7 @@ console.log("oper=" + oper);
                                              if (hqConf.dpDetails[type].formatfunction) {
                                                   value =  hqConf.dpDetails[type].formatfunction(value);
                                              }
-                                             if (hqConf.dpDetails[type].decimals !== undefined) {
+                                             if (hqConf.dpDetails[type].decimals !== undefined && hqConf.dpDetails[type].decimals !== -1) {
                                                 value = parseFloat(value);
                                                 value = value.toFixed(parseInt(hqConf.dpDetails[type].decimals, 10));
                                              }
@@ -2453,7 +2511,8 @@ console.log("oper=" + oper);
                                              if (hqConf.dpDetails[type].unit) {
                                                  unit = hqConf.dpDetails[type].unit;
                                              }
-                                           // dpDesc = hqConf.dpDetails[type].desc;
+                                               // dpDesc = hqConf.dpDetails[type].desc;
+
 
                                         }
 
@@ -2702,7 +2761,7 @@ console.log("oper=" + oper);
                 } else {
                     value = $("#variableValue").val();
                 }
-                xmlapiSetState(variableId.val(), value,
+                hmSetState(variableId.val(), value,
                     function () {
                         xmlapiGetVariable(variableId.val());
                     }
@@ -2720,9 +2779,9 @@ console.log("oper=" + oper);
         modal: true,
         buttons: {
             'Ok': function () {
-                xmlapiSetState($("#datapointId").val(), $("#datapointInput #datapointValue").val(),
+                hmSetState($("#datapointId").val(), $("#datapointInput #datapointValue").val(),
                     function () {
-                        xmlapiGetState($("#datapointId").val(), $("#datapointGridId").val());
+                        hmSetState($("#datapointId").val(), $("#datapointGridId").val());
                     }
                 );
                 $(this).dialog('close');
@@ -3144,7 +3203,7 @@ console.log("oper=" + oper);
         });
     }
 
-    function xmlapiSetState(ise_id, new_value, successFunction) {
+    function hmSetState(ise_id, new_value, successFunction) {
         var name = $(statesXMLObj).find("datapoint[ise_id='"+ise_id+"']").attr("name")
        // console.log("setState id=" + ise_id + " name=" + name);
         if (name) {
@@ -3212,17 +3271,17 @@ console.log("oper=" + oper);
         });*/
     }
 
-    function xmlapiGetState(ise_id, grid_id) {
+    function hmSetState(ise_id, grid_id) {
         // Naja...
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 1000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 1500);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 2000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 3000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 5000);
-        setTimeout(function () { xmlApiGetStateAjax(ise_id, grid_id); }, 30000);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 1000);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 1500);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 2000);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 3000);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 5000);
+        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 30000);
     }
 
-    function xmlApiGetStateAjax(ise_id, grid_id) {
+    function hmSetStateAjax(ise_id, grid_id) {
         var scriptState = "string sDevId = \"\";\n" +
 "string sChannelId = \"\";\n" +
 "string sDatapointId = \"" + ise_id + "\";\n" +
@@ -3375,7 +3434,10 @@ console.log("oper=" + oper);
            }); */
     }
 
-    function xmlapiGetDevices() {
+    function hmGetDevices() {
+        console.log("hmGetDevices");
+        $("#loaderStates").show();
+
         var cache = storage.get("hqWebUiDevices");
         if (cache !== null) {
             devicesReady = true;
@@ -3407,14 +3469,15 @@ console.log("oper=" + oper);
         });
     }
 
-    function xmlapiGetFunctions() {
+    function hmGetFunctions() {
+        console.log("hmGetFunctions()");
         $("#loaderStates").show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
             functionsReady = true;
             functionsXML = $.parseXML(cache);
             functionsXMLObj = $(functionsXML);
-            xmlapiGetRooms();
+            hmGetAlarms();
             return false;
         }
         $.ajax({
@@ -3427,19 +3490,116 @@ console.log("oper=" + oper);
                 functionsXML = data;
                 functionsXMLObj = $(data);
                 storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(data));
-                xmlapiGetRooms();
+                hmGetAlarms();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
 
-    function xmlapiGetRooms() {
+    function hmGetAlarms() {
+        console.log("hmGetAlarms()");
+        var cache = storage.get("hqWebUiAlarms");
+        if (cache !== null && cache !== undefined) {
+            console.log("Cache Hit Alarms")
+            alarmsReady = true;
+            alarmsData = cache;
+            hmGetRooms();
+            return false;
+        }
+
+        var scriptAlarms = "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
+"Write(\"[\");\n" +
+"var first = true;\n" +
+"if (oTmpArray) {\n" +
+"string sTmp;\n" +
+"foreach (sTmp, oTmpArray.EnumIDs()) {\n" +
+"object oTmp = dom.GetObject(sTmp);\n" +
+"if (oTmp) {\n" +
+"if (oTmp.IsTypeOf(OT_ALARMDP)) {\n" +
+"var trigDP = dom.GetObject(oTmp.AlTriggerDP());\n" +
+"if (!first) { WriteLine(\",\"); } else { first = false; }\n" +
+"Write('{\"did\":\"' # trigDP.AlDestMapDP().ID() # '\",\"oper\":\"' # trigDP.Operations() # '\",\"name\":\"' # oTmp.Name() # '\",\"id\":\"' # oTmp.ID() # '\"}');\n" +
+"}\n" +
+"}\n" +
+"}\n" +
+"}\n" +
+"Write(\"]\");";
+
+
+        
+        $("#loaderStates").show();
+         $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
+            type: 'POST',
+            data: scriptAlarms,
+            dataType: 'json',
+            success: function (data) {
+                $("#loaderStates").hide();
+                alarmsReady = true;
+                alarmsData = data;
+                storage.set("hqWebUiAlarms", data);
+
+                hmGetRooms();
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $("#loaderStates").hide();
+
+                ajaxError(xhr, ajaxOptions, thrownError);
+                hmGetRooms();
+            }
+        });
+    }
+
+    function hmRefreshAlarms() {
+        $("#loaderStates").show();
+        var cache = storage.get("hqWebUiFunctions");
+        if (cache !== null) {
+            functionsReady = true;
+            functionsXML = $.parseXML(cache);
+            functionsXMLObj = $(functionsXML);
+            hmGetRooms();
+            return false;
+        }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
+            type: 'POST',
+            data: scriptFunctions,
+            dataType: 'xml',
+            success: function (data) {
+
+                hmInsertAlarms(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+        });
+    }
+
+    function insertAlarms(data) {
+        console.log("\n\n\n--- BEFORE ---");
+        //console.log(statesXMLObj);
+        console.log(statesXML);
+
+        for (var i = 0; i < alarmsData.length; i++) {
+
+            //$('<datapoint ise_id="'+alarmsData[i].id+'" oper="'+alarmsData[i].oper+'" name="'+alarmsData[i].name+'" value="" dptype="ALARMDP"/>').insertBefore(statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']"));
+        statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']").parent().append($('<datapoint ise_id="'+alarmsData[i].id+'" oper="'+alarmsData[i].oper+'" name="'+alarmsData[i].name+'" value="" timestamp="" dptype="ALARMDP"/>'));
+            console.log(statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']").parent());
+        }
+
+        statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
+       console.log("\n\n\n--- AFTER ---");
+       //console.log(statesXMLObj);
+       console.log(statesXML);
+    }
+
+    function hmGetRooms() {
+        console.log("hmGetRooms()");
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
             roomsReady = true;
             roomsXML = $.parseXML(cache);
             roomsXMLObj = $(roomsXML);
-            xmlapiGetDevices();
+            hmGetDevices();
             return false;
         }
         $.ajax({
@@ -3451,7 +3611,7 @@ console.log("oper=" + oper);
                 roomsXML = data;
                 roomsXMLObj = $(data);
                 storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(data));
-                xmlapiGetDevices();
+                hmGetDevices();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
@@ -3884,13 +4044,19 @@ console.log("oper=" + oper);
 
                     }
                 }
+                refreshFavorites();
+                //xmlapiGetVersion();
                 //console.log(lang);
             },
-            error: ajaxError
+            error: function (a,b,c) {
+                ajaxError(a,b,c);
+                refreshFavorites();
+                //xmlapiGetVersion();
+            }
+
         });
 
-        refreshFavorites();
-        xmlapiGetVersion();
+
     };
 
     // Refresh Funktionen
@@ -3898,24 +4064,37 @@ console.log("oper=" + oper);
     var updateFirst;
     // Diese Funktion wird alle x Sekunden aufgerufen
     function update() {
+        var updateCount;
+        var updateScript = "";
         clearTimeout(timerRefresh);
         if (ajaxIndicator.is(":visible")) {
             timerRefresh = setTimeout(update, hqConf.refreshRetry);
             return false;
         }
         updateFirst = true;
-        updateScript = "";
+
+
         $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
             if ($(this).css("display") != "none") {
                 var id = $(this).attr("title");
-                id = parseInt(id, 10);
-                if (!updateFirst) {
-                    updateScript += 'Write(",");\n';
-                } else {
-                    updateFirst = false;
+                var type = $(this).parent().find("td[aria-describedby$='_dptype']").html();
+                type = type.split(" ");
+                if (type[0] !== "ALARMDP") {
+                    updateCount += 1;
+                    id = parseInt(id, 10);
+                    console.log();
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    if (type[1].search(/r/) !== -1) {
+                        updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                    } else {
+                        updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                    }
                 }
-                updateScript += 'o = dom.GetObject('+id+');\n';
-                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
             }
 
         });
@@ -3957,7 +4136,22 @@ console.log("oper=" + oper);
             }
 
         });
-        if (updateScript != "") {
+
+
+        if (updateScript != "") {/*
+            updateScript += "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
+                "string sTmp;\n" +
+                "foreach (sTmp, oTmpArray.EnumIDs()) {\n" +
+                "    object oTmp = dom.GetObject(sTmp);\n" +
+                "    if (oTmp) {\n" +
+                "        if (oTmp.IsTypeOf(OT_ALARMDP) && oTmp.AlState() == asOncoming) {\n" +
+                "            var trigDP = dom.GetObject(oTmp.AlTriggerDP());\n" +
+                "            WriteLine(\",\");\n" +
+                "            Write('{\"id\":\"' # oTmp.ID() # '\",\"t\":\"a\",\"vl\":\"' # oTmp.AlState() # '\",\"ts\":\"' # oTmp.LastTriggerTime() # '\",\"ta\":\"' # oTmp.AlOccurrenceTime() # '\"}');\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";*/
+
             $("th[id$='active']").addClass("ui-state-active");
             $("th[id$='timestamp']").addClass("ui-state-active");
             $("th[id$='value']").addClass("ui-state-active");

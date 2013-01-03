@@ -83,6 +83,7 @@ Roadmap/Todo/Ideen
 
 2.1
 ---
+* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Anzeige Anzahl Servicemeldungen/Alarme (bei 2 oder mehr Meldungen)
 * ERROR-Datenpunkte als Servicemeldungen anzeigen
 * Service-Meldungen umbauen (AL-Datenpunkte!)

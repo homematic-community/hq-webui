@@ -112,6 +112,7 @@ div.favStartProgram button, div.favInput button {
    height: 28px;
 }
 .ui-jqgrid tr.jqgrow td.ise_id {
+    text-align: right;
     padding-right: 8px;
 }
 
@@ -302,4 +303,10 @@ button.ui-multiselect {
 div.spacer {
     height: 5px;
     display: block;
+}
+
+.btnEditDP, .btnAlReceipt {
+    height: 18px;
+    width: 26px;
+    margin-top: 2px;
 }
