@@ -108,25 +108,17 @@ Roadmap/Todo/Ideen
 * Session Fehler abfangen
 
 
-
 2.2
 ---
+* Geräte konfigurieren
+* Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
 * Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
-* Kontextmenü
-
-2.3
----
-* Geräte konfigurieren
-
-2.4
----
-* Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
 * TCL und Shellscripte aus Editor auf CCU Speichern
-* Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
 
-2.5
+
+2.3
 ---
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
@@ -136,6 +128,8 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
+* Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
+* Kontextmenü
 * Ajax-Indicator dicker werden lassen wenn Request länger als 1s läuft
 * Exportfunktionen (.csv)
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
