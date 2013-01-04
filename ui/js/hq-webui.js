@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha4";
+    var version =               "2.1-alpha5";
 
     var statesXML,
         rssiXML,
@@ -150,8 +150,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             timerRefresh = setTimeout(update, 50);
             if (!tabChange) {
                 var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
-                console.log(hash);
-
+                if (hqConf.debug) { console.log(hash); }
                 history.pushState({}, "", hash);
             } else {
                 tabChange = false;
@@ -412,10 +411,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'timestamp', index:'timestamp', width: 125, fixed: true,
             xmlmap: function (obj) {
                 var timestamp = $(obj).attr('timestamp');
-                if (timestamp === undefined) {
+                if (timestamp === undefined || timestamp == "1970-01-01 01:00:00") {
                     return "";
                 }
-                return formatTimestamp(timestamp);
+                return timestamp;
             },
             classes:'update uVAR uTimestamp'
         }
@@ -461,7 +460,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:'timestamp', index:'timestamp', width: 125, fixed: true,
             xmlmap: function (obj) {
-                return formatTimestamp($(obj).attr('timestamp'));
+                //return formatTimestamp($(obj).attr('timestamp'));
+                var ts =  $(obj).attr('timestamp');
+                if (ts == "1970-01-01 01:00:00") {
+                    ts = "";
+                }
+                return ts;
             },
             classes:'update uPRG uTimestamp'
         }
@@ -477,9 +481,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Räume',
         'Gewerke',
         'Protokolliert',
-        'unreach',
-        'sticky_unreach',
-        'config_pending',
         '',
         ''
     ];
@@ -527,7 +528,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
             }
         },
-        {name:'iface', index:'iface', width: 120, fixed: true,
+        {name:'iface', index:'iface', width: 88, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("interface");
@@ -551,7 +552,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             }
         },
-        {name:'rooms', index:'rooms', width: 120, fixed: true,
+        {name:'rooms', index:'rooms', width: 130, fixed: true,
             xmlmap: function (obj) {
                 var rooms = "";
                 $(obj).find("channel").each(function () {
@@ -566,7 +567,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return rooms;
             }
         },
-        {name:'functions', index:'functions', width: 120, fixed: true,
+        {name:'functions', index:'functions', width: 130, fixed: true,
             xmlmap: function (obj) {
                 var functions = "";
                 $(obj).find("channel").each(function () {
@@ -581,28 +582,19 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return functions;
             }
         },
-        {name:'logged', index:'logged', width: 40, edittype: 'checkbox', fixed: true,
+        {name:'logged', index:'logged', width: 27, edittype: 'checkbox', fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
             },
             formatter: 'checkbox'
         },
-        {name:'unreach', index:'unreach', width: 80, hidden: true,
+        {name:'tools', index:'tools', width: 81, fixed: true,
             xmlmap: function (obj) {
-                return $(obj).attr('unreach');
+                var id = $(obj).attr("ise_id");
+                return '<button id="'+id+'" class="btnGrid btnDevRename" title="Gerät umbenennen"></button>';
             }
         },
-        {name:'sticky_unreach', index:'sticky_unreach', width: 80, hidden: true,
-            xmlmap: function (obj) {
-                return $(obj).attr('sticky_unreach');
-            }
-        },
-        {name:'config_pending', index:'config_pending', width: 80, hidden: true,
-            xmlmap: function (obj) {
-                return $(obj).attr('config_pending');
-            }
-        },
-        {name:'service', index:'service', width: 40,
+        {name:'service', index:'service', width:130, fixed: false,
             xmlmap: function (obj) {
                 var output = "";
                 /*$(obj).find("channel:first datapoint").each(function () {
@@ -618,11 +610,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                 });*/
                 return output;
-            }
-        },
-        {name:'tools', index:'tools', width: 80,
-            xmlmap: function (obj) {
-                return "";
             }
         }
     ];
@@ -672,7 +659,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return address;
             }
         },
-        {name:"direction",   index:"direction",   width:120, fixed: true,
+        {name:"direction",   index:"direction",   width:88, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
                 var direction = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
@@ -694,7 +681,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             }
         },
-        {name:"rooms", index:"rooms",   width:120, fixed: true,
+        {name:"rooms", index:"rooms",   width:130, fixed: true,
             xmlmap: function (obj) {
                 var output = "";
                 roomsXMLObj.find("channel[ise_id='" + $(obj).attr('ise_id') + "']").each(function () {
@@ -708,25 +695,53 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
             }
         },
-        {name:"functions", index:"functions",   width:120, fixed: true,
+        {name:"functions", index:"functions",   width:130, fixed: true,
             xmlmap: function (obj) {
                 return $(functionsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").parent().attr("name");
             }
         },
-        {name:'logged', index:'logged', width: 40, edittype: 'checkbox', fixed: true,
+        {name:'logged', index:'logged', width: 27, edittype: 'checkbox', fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
             },
             formatter: 'checkbox'
         },
-        {name:'alarms', index:'alarms', width: 40, fixed: true,
+        {name:'tools', index:'tools', width: 81, fixed: true,
             xmlmap: function (obj) {
-                return "";
+
+                var id = $(obj).attr("ise_id");
+                var ch = $(obj).attr("name")
+                if (ch !== undefined) {
+                    ch = ch.split(":");
+                    if (ch[1] !== undefined) {
+                        if (ch[1] != "0") {
+                            return '<button id="'+id+'" class="btnGrid btnChRename" title="Kanal umbenennen"></button>';
+                        } else {
+                            return "";
+                        }
+                    }
+                }
+
+                return '<button id="'+id+'" class="btnGrid btnChRename" title="Kanal umbenennen"></button>';
+
             }
         },
-        {name:'tools', index:'tools', width: 40, fixed: true,
+        {name:'service', index:'service', width: 65, fixed: false,
             xmlmap: function (obj) {
-                return "";
+                var output = "";
+                /*$(obj).find("channel:first datapoint").each(function () {
+                 var ise_id  = $(this).attr("ise_id");
+                 var value   = $(this).attr("value");
+                 var type    = $(this).attr("type");
+                 var dptype  = $(this).attr("dptype");
+                 if (dptype == "ALARMDP") {
+                 type = $(this).attr("name").split(".");
+                 type = type[1];
+                 if (output != "") { output += ", "; }
+                 output += type + "=" + value;
+                 }
+                 });*/
+                return output;
             }
         }
     ];
@@ -736,12 +751,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Datenpunkt Name',
         'Typ',
         'Typ',
-        'Wert',
-        '',
-        'Wertetyp',
         'Operationen',
+        'Werte-Typ',
+        'Wert',
         'Zeitstempel',
-        'Alarmauslösung'
+        'Alarmauslösung',
+        '',
+        ''
     ];
     var colModelDatapoint = [
         {name:"ise_id", index:"ise_id", align: 'right', width:46, fixed: true, sorttype: 'int',
@@ -753,63 +769,53 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:"name",   index:"name",   width:240, fixed: true, xmlmap: function (obj) {
             return $(obj).attr('name');
         }},
-        {name:"type",   index:"type",   width:60, hidden: true, xmlmap: function (obj) {
+        {name:"type",   index:"type",  hidden: true, xmlmap: function (obj) {
             return $(obj).attr('type');
         }},
-        {name:"dptype",   index:"dptype",   width:90, hidden: false,
+        {name:"dptype",   index:"dptype",   width:90, fixed: true,
             xmlmap: function (obj) {
                 var val;
-                val = $(obj).attr('dptype') + " (";
-                var oper = $(obj).attr('oper');
-                if (oper & 1) {
-                    val += "r";
-                }
-                if (oper & 2) {
-                    val += "w";
-                }
-                if (oper & 4) {
-                    val += "e";
-                }
-                return val + ")";
-            }
-        },
-        {name:"value",   index:"value",   width:120, fixed: true,
-            xmlmap: function (obj) {
-                var val = $(obj).attr('value');
-                if ($(obj).attr('valuetype') == 6) {
-                    val = parseFloat(val);
-                    val = val.toFixed(2);
-                }
+                val = $(obj).attr('dptype');
                 return val;
-            },
-            classes:'update uDP uValue'
-        },
-        {name:"editdp",   index:"editdp",   width:28, fixed: true,
-            xmlmap: function (obj) {
-                var id = $(obj).attr('ise_id');
-                var oper = $(obj).attr('oper');
-                var dptype = $(obj).attr('dptype');
-                if (oper & 2) {
-                    switch (dptype) {
-                        case "ALARMDP":
-                            return '<button id="'+id+'" class="btnAlReceipt" title="Meldung bestätigen"></button>';
-                            break;
-                        default:
-                            return '<button id="'+id+'" class="btnEditDP" title="Datenpunkt editieren"></button>';
-                    }
-                }
             }
         },
-        {name:"valuetype",   index:"valuetype",   width:80, hidden: true,
+        {name:"oper",   index:"oper",   width:88, fixed: true,
+
+                xmlmap: function (obj) {
+                    var val = "";
+                    var oper = $(obj).attr('oper');
+                    if (oper & 1) {
+                        val += "R";
+                    }
+                    if (oper & 2) {
+                        val += "W";
+                    }
+                    if (oper & 4) {
+                        val += "E";
+                    }
+                    return val;
+                }
+
+        },
+        {name:"valuetype",   index:"valuetype", hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('valuetype');
             }
         },
-        {name:"oper",   index:"oper",   width:80, hidden: true,
+        {name:"value",   index:"value",   width:130, fixed: true,
             xmlmap: function (obj) {
-                return $(obj).attr('oper');
-            }
+                var val = $(obj).attr('value');
+                /*if ($(obj).attr('valuetype') == 6) {
+                    val = parseFloat(val);
+                    val = val.toFixed(2);
+                }*/
+                return val;
+            },
+            classes:'update uDP uValue'
         },
+
+
+
         {name:"timestamp",   index:"timestamp",   width:130, fixed: true,
             xmlmap: function (obj) {
                 return formatTimestamp($(obj).attr('timestamp'));
@@ -817,13 +823,34 @@ jQuery.extend(jQuery.expr[ ":" ], {
             classes: 'update uDP uTimestamp'
 
         },
-        {name:"timealarm",   index:"timealarm",   width:120, fixed: true,
+        {name:"timealarm",   index:"timealarm",   width:130, fixed: true,
             xmlmap: function (obj) {
                 return "";
             },
             classes: 'update uDP uTimealarm'
 
-        }
+        },
+        {name:'logged', index:'logged', width: 27, fixed: true,
+            xmlmap: function (obj) {
+                return ""
+            }
+        },
+        {name:"editdp",   index:"editdp",   width:81, fixed: true,
+            xmlmap: function (obj) {
+                var id = $(obj).attr('ise_id');
+                var oper = $(obj).attr('oper');
+                var dptype = $(obj).attr('dptype');
+                if (oper & 2) {
+                    switch (dptype) {
+                        case "ALARMDP":
+                            return '<button id="'+id+'" class="btnGrid btnAlReceipt" title="Meldung bestätigen"></button>';
+                            break;
+                        default:
+                            return '<button id="'+id+'" class="btnGrid btnEditDP" title="Datenpunkt editieren"></button>';
+                    }
+                }
+            }
+        },
     ];
 
     var colNamesRssi = [
@@ -1029,13 +1056,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     ];
 
-
     gridVariables.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesVariables,
         colModel: colModelVariables,
         pager: "#gridPagerVariables",
-        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
         viewrecords:    true,
         gridview:       true,
         caption:        'Variablen',
@@ -1050,9 +1076,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
             id: "[ise_id]",
             repeatitems: false
         },
+        onSelectRow: function (rowid, status, e) {
+            if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
+            $("#btnEditVar").removeClass("ui-state-disabled");
+            $("#btnCfgVar").removeClass("ui-state-disabled");
+
+        },
         ondblClickRow: editVariableValue,
         gridComplete: function () {
-            $(".gridButton.editVariable").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-pencil" }});
+          /*  $(".gridButton.editVariable").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-pencil" }});
             $(".gridButton.editVariable").each(function () {
                 var id = $(this).attr("id").slice(12);
                 //console.log(id);
@@ -1060,8 +1092,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     editVariableValue(id);
                 });
 
-            });
+            }); */
         }
+
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerVariables", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
@@ -1072,7 +1105,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             onClickButton: function () {
                 storage.set("hqWebUiVariables", null);
                 storage.set("hqWebUiVariablesTime", null);
-                refreshVariables();
+                hmGetVariables();
             },
             position: "last",
             title:"Neu laden",
@@ -1129,12 +1162,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
 
     $("#gridPagerVariables_left").append("<span class='timeRefresh' id='timeRefreshVars'/>");
-
-    $("#btnRunVar").addClass("ui-state-disabled");
-    $("#btnCfgVar").addClass("ui-state-disabled");
+    $("#btnEditVar").addClass("ui-state-disabled").click(function() {
+        editVariableValue(gridVariables.jqGrid('getGridParam','selrow'));
+    });
+    $("#btnCfgVar").addClass("ui-state-disabled").click(function() {
+        editVariable(gridVariables.jqGrid('getGridParam','selrow'));
+    });
     $("#btnDelVar").addClass("ui-state-disabled");
     $("#btnAddVar").addClass("ui-state-disabled");
 
+    function editVariable(id) {
+        $("#cfgVarName").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name"));
+        $("#cfgVarDesc").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("desc"));
+        $("#dialogCfgVariable").dialog("open");
+    }
 
     function editVariableValue(id) {
         var value       = gridVariables.getCell(id, "value");
@@ -1154,7 +1195,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             case 'Werteliste':
                 variableInput.html("<select id='variableValue'>" + selectOptions(value_list) + "</select>");
                 if (value == "true") { value = "1"; } else if (value == "false") { value = "0"; }
-                $("#variableValue option[value='" + value + "']").attr("selected", true);
+                $("#variableValue option:contains('"+value+"')").attr("selected", true);
                 break;
             default:
                 variableInput.html("<input size='' name='' type='text' id='variableValue' value='" + value + "'>" + unit);
@@ -1171,7 +1212,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         colNames: colNamesPrograms,
         colModel: colModelPrograms,
         pager: "#gridPagerPrograms",
-        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
         viewrecords:    true,
         gridview:       true,
         caption:        'Programme',
@@ -1188,11 +1229,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
             id: "[id]",
             repeatitems: false
         },
-        ondblClickRow: function (rowid) {
-            gridPrograms.editRow(rowid, true, undefined, undefined, 'clientArray', undefined, saveProgram);
+        ondblClickRow: function (id) {
+            //gridPrograms.editRow(rowid, true, undefined, undefined, 'clientArray', undefined, saveProgram);
+
+                programName.html(gridPrograms.getCell(id, "name"));
+                programId.val(id);
+                dialogRunProgram.dialog("open");
+
         },
         gridComplete: function () {
-            $(".gridButton.runProgram").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-play" }});
+            /*$(".gridButton.runProgram").css("height", "18px").css("margin-top", "2px").button({text: false, icons: { primary: "ui-icon-play" }});
             $(".gridButton.runProgram").each(function () {
                 var id = $(this).attr("id").slice(10);
                 //console.log(id);
@@ -1202,7 +1248,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                    dialogRunProgram.dialog("open");
                });
 
-            });
+            });*/
+        },
+        onSelectRow: function (rowid, status, e) {
+            if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
+            $("#btnRunPrg").removeClass("ui-state-disabled");
+            $("#btnCfgPrg").removeClass("ui-state-disabled");
+
         }
 
 
@@ -1217,7 +1269,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             onClickButton: function () {
                 storage.set("hqWebUiPrograms", null);
                 storage.set("hqWebUiProgramsTime", null);
-                refreshPrograms();
+                hmGetPrograms();
             },
             position: "last",
             title:"Neu laden",
@@ -1253,7 +1305,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-wrench",
             onClickButton: function () {
-                // TODO EDIT
+                var id = gridPrograms.jqGrid("getGridParam", "selrow");
+                var obj = programsXMLObj.find("program[id='"+id+"']");
+                $("#cfgPrgId").val(id);
+                $("#cfgPrgName").val(obj.attr("name"));
+                $("#cfgPrgDesc").val(obj.attr("desc"));
+                if (obj.attr("active") == "true") {
+                    $("#cfgPrgActive").attr("checked", true);
+                } else {
+                    $("#cfgPrgActive").removeAttr("checked")
+                }
+                $("#dialogCfgProgram").dialog("open");
             },
             position: "first",
             title:"Programm bearbeiten",
@@ -1265,24 +1327,28 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-play",
             onClickButton: function () {
-                // TODO EDIT
+                var id = gridPrograms.jqGrid("getGridParam", "selrow");
+                programName.html(gridPrograms.getCell(id, "name"));
+                programId.val(id);
+                dialogRunProgram.dialog("open");
             },
             position: "first",
             title:"Programm ausführen",
             cursor: "pointer",
-            btn: "btnRunPrg"
+            id: "btnRunPrg"
         });
     $("#gridPagerPrograms_left").append("<span class='timeRefresh' id='timeRefreshPrograms'/>");
     $("#btnRunPrg").addClass("ui-state-disabled");
     $("#btnCfgPrg").addClass("ui-state-disabled");
-    $("#btnDelPrg").addClass("ui-state-disabled");
-    $("#btnAddPrg").addClass("ui-state-disabled");
+    $("#btnDelPrg").addClass("ui-state-disabled").css("opacity", 0);
+    $("#btnAddPrg").addClass("ui-state-disabled").css("opacity", 0);
+
     gridStates.jqGrid({
         width: 1050, height: hqConf["gridHeight"],
         colNames:colNamesStates,
         colModel :colModelStates,
         pager: "#gridPagerStates",
-        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
         viewrecords:    true,
         gridview:       true,
         caption:        'Geräte',
@@ -1300,6 +1366,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         sortable: true,
         subGrid: true,
+        gridComplete: function() {
+            $("button.btnDevRename").button({
+                icons: { primary: 'ui-icon-pencil' }
+            });
+
+
+        },
         subGridRowExpanded: function(grid_id, row_id) {
             subGridChannel(grid_id, row_id);
         },
@@ -1345,7 +1418,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         colNames:colNamesRssi,
         colModel :colModelRssi,
         pager: "#gridPagerRssi",
-        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
         viewrecords:    true,
         gridview:       true,
         caption:        'RSSI',
@@ -1373,7 +1446,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             onClickButton: function () {
                 storage.set("hqWebUiRssi", null);
                 storage.set("hqWebUiRssiTime", null);
-                refreshRssi();
+                hmGetRssi();
             },
             position: "first",
             title:"Neu laden",
@@ -1387,7 +1460,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         colNames:colNamesProtocol,
         colModel :colModelProtocol,
         pager: "#gridPagerProtocol",
-        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"], 
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
@@ -1496,6 +1569,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
             height: "100%",
             rowNum:1000,
             subGrid: true,
+            gridComplete: function() {
+                $("button.btnChRename").button({
+                    icons: { primary: 'ui-icon-pencil' }
+                });
+
+
+            },
             subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
             ondblClickRow: function(row_id, iRow, iCol, e) {
                 if (!$("tr[id='" + row_id + "'] td:first").attr('aria-describedby').match(/_t_[0-9]+_t_/)) {
@@ -1540,13 +1620,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             ondblClickRow: function (id) {
 
-
+                console.log("dblclick Datapoint id=" + id);
 
                 var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
                 var valuetype = $("#" + subgrid_table_id).getCell(id, "valuetype");
                 var oper = $("#" + subgrid_table_id).getCell(id, "oper");
-console.log("oper=" + oper);
-                if (!(oper & 2)) {
+                if (oper.search(/W/) == -1) {
                     return false;
                 }
 
@@ -1703,21 +1782,22 @@ console.log("oper=" + oper);
         });
     }
 
-    function refreshVariables() {
+    function hmGetVariables() {
+        if (hqConf.debug) { console.log("hmGetVariables()"); }
         $("#loaderVariables").show();
         variablesReady = false;
 
         var cache = storage.get("hqWebUiVariables");
         if (cache !== null) {
-            //console.log("Cache Hit: Variables");
+            if (hqConf.debug) { console.log("Cache Hit: Variables"); }
             variablesXML = $.parseXML(cache);
             variablesXMLObj = $(variablesXML);
-            variablesXMLObj.find("systemVariable").each(function () {
+            /*variablesXMLObj.find("systemVariable").each(function () {
                 $(this).removeAttr("value").removeAttr("timestamp");
             });
             //variablesXML = $.parseXML(variablesXMLObj);
             variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
-            console.log(variablesXML);
+            console.log(variablesXML);*/
             variablesTime = storage.get("hqWebUiVariablesTime");
             $("#timeRefreshVars").html(formatTimestamp(variablesTime));
             gridVariables.setGridParam({
@@ -1730,12 +1810,11 @@ console.log("oper=" + oper);
             variablesReady = true;
             $("#loaderVariables").hide();
             if (!programsReady) {
-                refreshPrograms();
+                hmGetPrograms();
             }
             return false;
         }
-        //console.log("Fetching Variables");
-
+        if (hqConf.debug) { console.log("Fetching Variables"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -1773,7 +1852,7 @@ console.log("oper=" + oper);
                     }
 
                  if (!programsReady) {
-                    refreshPrograms();
+                    hmGetPrograms();
                 }
             }
         });
@@ -1798,23 +1877,24 @@ console.log("oper=" + oper);
 
                 }
                 if (!programsReady) {
-                    refreshPrograms();
+                    hmGetPrograms();
                 }
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true});
         */
     }
 
-    function refreshPrograms() {
+    function hmGetPrograms() {
+        if (hqConf.debug) { console.log("hmGetPrograms()"); }
         $("#loaderPrograms").show();
         programsReady = false;
 
 
         var cache = storage.get("hqWebUiPrograms");
         if (cache !== null) {
-            //console.log("Cache Hit: Programs");
+            if (hqConf.debug) { console.log("Cache Hit: Programs"); }
             programsXML = $.parseXML(cache);
-            programsXMLObj = $(favoritesXML);
+            programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
             $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
             gridPrograms.setGridParam({
@@ -1831,7 +1911,7 @@ console.log("oper=" + oper);
             }
             return false;
         }
-        //console.log("Fetching Programs");
+        if (hqConf.debug) { console.log("Fetching Programs"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -1889,13 +1969,13 @@ console.log("oper=" + oper);
     }
 
     function refreshStates() {
-        console.log("refreshStates()");
+        if (hqConf.debug) { console.log("refreshStates()"); }
         statesReady = false;
         $("#loaderStates").show();
 
         var cache = storage.get("hqWebUiStates");
         if (cache !== null) {
-            console.log("Cache Hit: States");
+            if (hqConf.debug) { console.log("Cache Hit: States"); }
             statesXML = $.parseXML(cache);
             statesXMLObj = $(statesXML);
             statesTime = storage.get("hqWebUiStatesTime");
@@ -1910,12 +1990,11 @@ console.log("oper=" + oper);
             statesReady = true;
             $("#loaderStates").hide();
             if (!rssiReady) {
-                refreshRssi();
+                hmGetRssi();
             }
             return false;
         }
-        console.log("Fetching States");
-
+        if (hqConf.debug) { console.log("Fetching States"); }
 
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
@@ -1960,7 +2039,7 @@ console.log("oper=" + oper);
                     $("#serivce").hide();
                 }
                 if (!rssiReady) {
-                    refreshRssi();
+                    hmGetRssi();
                 }
             }
         });
@@ -1994,7 +2073,7 @@ console.log("oper=" + oper);
                     }
                 }
                 if (!rssiReady) {
-                    refreshRssi();
+                    hmGetRssi();
                 }
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
@@ -2024,13 +2103,14 @@ console.log("oper=" + oper);
 
     }
 
-    function refreshRssi() {
+    function hmGetRssi() {
+        if (hqConf.debug) { console.log("hmGetRssi()"); }
         $("#loaderRssi").show();
         rssiReady = false;
 
         var cache = storage.get("hqWebUiRssi");
         if (cache !== null) {
-            //console.log("Cache Hit: Rssi");
+            if (hqConf.debug) { console.log("Cache Hit: Rssi"); }
             rssiXML = $.parseXML(cache);
             rssiXMLObj = $(rssiXML);
             rssiTime = storage.get("hqWebUiRssiTime");
@@ -2049,8 +2129,7 @@ console.log("oper=" + oper);
             }*/
             return false;
         }
-        //console.log("Fetching RSSI");
-
+        if (hqConf.debug) { console.log("Fetching RSSI"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -2269,7 +2348,7 @@ console.log("oper=" + oper);
                         favInputCell.append(html);
                         html = "";
                         $("button[id='favProgram" + fav_id + "_" + program_id +"']").button({icons: { primary: "ui-icon-play" }}).click(function () {
-                            xmlapiRunProgram(program_id);
+                            hmRunProgram(program_id);
                         });
                         break;
                     case 'CHANNEL':
@@ -2668,7 +2747,7 @@ console.log("oper=" + oper);
     }).click(function () {
         storage.set("hqWebUiFavorites", null);
         storage.set("hqWebUiFavoritesTime", null);
-        refreshFavorites();
+        hmGetFavorites();
     });
 
 
@@ -2676,6 +2755,38 @@ console.log("oper=" + oper);
     dialogDelScript.dialog({
         autoOpen: false
     });
+
+    $("#dialogCfgVariable").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 600,
+        height: 340,
+        buttons: {
+            'Änderungen übernehmen': function () {
+
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
+    $("#dialogCfgProgram").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 600,
+        height: 340,
+        buttons: {
+            'Änderungen übernehmen': function () {
+                saveProgram();
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
 
     dialogRename.dialog({
         autoOpen: false,
@@ -2701,19 +2812,25 @@ console.log("oper=" + oper);
 
 
                 }
+                if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
                 jsonPost(request, function () {
+                    var row_id = $("#renameId").val();
                     switch ($("#renameType").val()) {
                         case "DEVICE":
                             $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby='gridStates_name']").html($("#rename").val());
                             devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
                             statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                            //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                            //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
                             break;
                         case "CHANNEL":
                             $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby$='t_name']").html($("#rename").val());
-                            channelXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
                             statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
                             favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                            //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                            //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
+                            //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
                             break;
                     }
 
@@ -2735,7 +2852,7 @@ console.log("oper=" + oper);
         buttons: {
             'Ausführen': function () {
                 $(this).dialog('close');
-                xmlapiRunProgram(programId.val());
+                hmRunProgram(programId.val());
             },
             'Abbrechen': function () {
                 $(this).dialog('close');
@@ -2773,11 +2890,11 @@ console.log("oper=" + oper);
                 } else {
                     value = $("#variableValue").val();
                 }
-                hmSetState(variableId.val(), value,
+                hmSetState(variableId.val(), value/*,
                     function () {
                         xmlapiGetVariable(variableId.val());
                     }
-                );
+                */);
                 $(this).dialog('close');
             },
             'Abbrechen': function () {
@@ -2811,7 +2928,7 @@ console.log("oper=" + oper);
         buttons: {
             'Löschen': function () {
                 $(this).dialog('close');
-                xmlapiClearProtocol();
+                hmClearProtocol();
 
             },
             'Abbrechen': function () {
@@ -3189,12 +3306,14 @@ console.log("oper=" + oper);
         e.preventDefault();
     });
 
-    // XML-API Funktionen
-    function xmlapiClearProtocol() {
+    // Homematic Funktionen
+    function hmClearProtocol() {
+        var script = "dom.ClearHistoryData();";
+        if (hqConf.debug) { console.log(script); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "POST",
-            data: "var clearHistory = dom.ClearHistoryData(); Write(clearHistory);",
+            data: script,
             success: function () {
                 refreshProtocol();
             },
@@ -3202,23 +3321,24 @@ console.log("oper=" + oper);
         });
     }
 
-    function xmlapiRunProgram(program_id) {
-        var scriptRunProgram = "object obj = dom.GetObject(" + program_id + "); if (obj) { obj.ProgramExecute(); Write(obj); }";
+    function hmRunProgram(program_id) {
+        var scriptRunProgram = "dom.GetObject(" + program_id + ").ProgramExecute();";
+        if (hqConf.debug) { console.log(scriptRunProgram); }
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: 'POST',
             data: scriptRunProgram,
             success: function (data) {
-                refreshPrograms();
+                hmGetPrograms();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
 
     function hmSetState(ise_id, new_value, successFunction) {
-        var name = $(statesXMLObj).find("datapoint[ise_id='"+ise_id+"']").attr("name")
-       // console.log("setState id=" + ise_id + " name=" + name);
-        if (name) {
+        var variable = $(variablesXMLObj).find("systemVariable[ise_id='"+ise_id+"']").attr("name");
+        var name = $(statesXMLObj).find("datapoint[ise_id='"+ise_id+"']").attr("name");
+        if (variable === undefined && name !== undefined) {
             name = name.split(".");
             var interface = name[0];
             var port;
@@ -3245,18 +3365,20 @@ console.log("oper=" + oper);
             }
             //console.log("name=" + name + " valuetype=" + valuetype + " value=" + new_value + " paramtype=" + paramtype);
             var xmlrpc = "<?xml version=\"1.0\"?><methodCall><methodName>setValue</methodName><params><param><value><string>" + name + "</string></value></param><param><value><string>" + valuetype + "</string></value></param><param><value><" + paramtype + ">" + new_value + "</" + paramtype + "></value></param></params></methodCall>";
+            if (hqConf.debug) { console.log(xmlrpc); }
             $.ajax({
                 url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi?port=" + port + "&session=" + hmSession,
                 type: "POST",
                 dataType: "text",
                 data: xmlrpc,
                 error: function () {
-                    alert("xmlrpc ajax error");
+                    alert("xmlrpc error");
                 }
             });
 
         } else {
             var script = "Write(dom.GetObject(" + ise_id + ").State('" + new_value + "'));";
+            if (hqConf.debug) { console.log(script); }
             $.ajax({
                 url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
                 type: "post",
@@ -3283,175 +3405,16 @@ console.log("oper=" + oper);
         });*/
     }
 
-    function hmSetState(ise_id, grid_id) {
-        // Naja...
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 1000);
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 1500);
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 2000);
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 3000);
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 5000);
-        setTimeout(function () { hmSetStateAjax(ise_id, grid_id); }, 30000);
-    }
-
-    function hmSetStateAjax(ise_id, grid_id) {
-        var scriptState = "string sDevId = \"\";\n" +
-"string sChannelId = \"\";\n" +
-"string sDatapointId = \"" + ise_id + "\";\n" +
-"string sChnId;\n" +
-"string sDPId;\n" +
-"Write(\"<state>\");\n" +
-"if (sDatapointId.Length() > 0 ) {\n" +
-"    object oDatapoint = dom.GetObject(sDatapointId);\n" +
-"    if (oDatapoint.IsTypeOf(OT_DP)){\n" +
-"        WriteLine(oDatapoint.Value());\n" +
-"    }\n" +
-"\n" +
-"} else {\n" +
-"\n" +
-"    if (sChannelId.Length() > 0 ) {\n" +
-"        object oChannel2 = dom.GetObject(sChannelId);\n" +
-"        sDevId = oChannel2.Device();\n" +
-"    }\n" +
-"\n" +
-"    object oDevice = dom.GetObject(sDevId);\n" +
-"\n" +
-"    if(oDevice.ReadyConfig() && (oDevice.Name() != \"Zentrale\") && (oDevice.Name() != \"HMW-RCV-50 BidCoS-Wir\") && oDevice.IsTypeOf(OT_DEVICE)) {\n" +
-"        Write(\"<device\");\n" +
-"        Write(\" name='\" # oDevice.Name() # \"'\");\n" +
-"        Write(\" ise_id='\" # sDevId # \"'\");\n" +
-"\n" +
-"        string interfaceid = oDevice.Interface();\n" +
-"        string servicechan = \"\" # dom.GetObject(interfaceid).Name() #\".\"#oDevice.Address()#\":0\";\n" +
-"        object schan = dom.GetObject(servicechan#\".UNREACH\");\n" +
-"        if(schan) { Write(\" unreach='\" # schan.Value() #\"'\"); }\n" +
-"        object schan = dom.GetObject(servicechan#\".STICKY_UNREACH\");\n" +
-"        if(schan) { Write(\" sticky_unreach='\" # schan.Value() #\"'\"); }\n" +
-"        object schan = dom.GetObject(servicechan#\".CONFIG_PENDING\");\n" +
-"        if(schan) { Write(\" config_pending='\" # schan.Value() #\"'\"); }\n" +
-"\n" +
-"        Write(\" >\");  ! device tag schliessen\n" +
-"\n" +
-"        foreach(sChnId, oDevice.Channels())	{\n" +
-"            object oChannel = dom.GetObject(sChnId);\n" +
-"            if ((!oChannel.Internal()) || oChannel.Internal()) {\n" +
-"\n" +
-"                Write(\"<channel name='\");\n" +
-"                WriteXML( oChannel.Name() );\n" +
-"                Write(\"' ise_id='\" # sChnId # \"'>\");\n" +
-"\n" +
-"                foreach(sDPId, oChannel.DPs().EnumUsedIDs()) {\n" +
-"                    object oDP = dom.GetObject(sDPId);\n" +
-"                    if(oDP) {\n" +
-"                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
-"\n" +
-"                        if( (dp != \"ON_TIME\") && (dp != \"INHIBIT\") ) {\n" +
-"                            Write(\"<datapoint\");\n" +
-"                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
-"                            Write(\"' type='\"); WriteXML(oDP.Name().StrValueByIndex(\".\", 2))\n" +
-"                            Write(\"' ise_id='\" # sDPId );\n" +
-"                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
-"                            !Write(\"' state='\"); WriteXML(oDP.State());\n" +
-"                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
-"                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
-"                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
-"                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
-"                            Write(\"' />\");\n" +
-"                        }\n" +
-"                    }\n" +
-"                }\n" +
-"                Write(\"</channel>\");\n" +
-"            }\n" +
-"        }\n" +
-"        Write(\"</device>\");\n" +
-"    }\n" +
-"}\n" +
-"Write(\"</state>\");\n";
-        
-        
-        $.ajax({
-
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
-            type: "post",
-            data: scriptState,
-            async: false,
-
-            success: function (data) {
-               $("tr#" + ise_id + " td[aria-describedby$='value']").each(function () {
-                    var value = $(data).text()
-                    $(this).html(value);
-               });
-                // Todo - neuen Wert in statesXML schreiben!
-            },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });
-    }
-
-    function xmlapiGetVariable(ise_id) {
 
 
-
-
-        var scriptSysvar = "object oSysVar;\n" +
-"string sSysVarId;\n" +
-"string sShowText=\"true\";\n" +
-"string sSysVarId=" + ise_id + ";\n" +
-"oSysVar = dom.GetObject(sSysVarId);\n" +
-"Write(\"<systemVariables>\")\n" +
-"Write(\"<systemVariable\");\n" +
-"Write(\" name='\"); WriteXML( oSysVar.Name() );\n" +
-"Write(\"' variable='\"); WriteXML( oSysVar.Variable());\n" +
-"Write(\"' value='\"); WriteXML( oSysVar.Value());\n" +
-"if (sShowText == \"true\") {\n" +
-"    Write(\"' value_list='\"); WriteXML( oSysVar.ValueList());\n" +
-"    Write(\"' value_text='\"); WriteXML( oSysVar.ValueList().StrValueByIndex(';', oSysVar.Value()));\n" +
-"}\n" +
-"Write(\"' ise_id='\" # oSysVar.ID() );\n" +
-"Write(\"' min='\"); WriteXML( oSysVar.ValueMin());\n" +
-"Write(\"' max='\"); WriteXML( oSysVar.ValueMax());\n" +
-"Write(\"' unit='\"); WriteXML( oSysVar.ValueUnit());\n" +
-"Write(\"' type='\" # oSysVar.ValueType() # \"' subtype='\" # oSysVar.ValueSubType());\n" +
-"Write(\"' timestamp='\" # oSysVar.Timestamp().ToInteger());\n" +
-"Write(\"'/>\");\n" +
-"Write(\"</systemVariables>\")\n";
-
-
-            $.ajax({
-            url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
-            type: "post",
-            data: scriptSysvar,
-            success: function (data) {
-                var variable = $(data).find("systemVariable");
-                gridVariables.find("tr#" + ise_id + " td[aria-describedby$='value']").html(variable.attr('value'));
-                gridVariables.find("tr#" + ise_id + " td[aria-describedby$='value_text']").html(variable.attr('value_text'));
-                gridVariables.find("tr#" + ise_id + " td[aria-describedby$='variable']").html(variable.attr('variable'));
-                gridVariables.find("tr#" + ise_id + " td[aria-describedby$='timestamp']").html(formatTimestamp(variable.attr('timestamp')));
-            },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });
-            /* $.ajax({
-               url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/sysvar.cgi',
-               type: 'GET',
-               async: false,
-               data: {
-                   ise_id: ise_id
-               },
-               success: function (data) {
-                   var variable = $(data).find("systemVariable");
-                   gridVariables.find("tr#" + ise_id + " td[aria-describedby$='value']").html(variable.attr('value'));
-                   gridVariables.find("tr#" + ise_id + " td[aria-describedby$='value_text']").html(variable.attr('value_text'));
-                   gridVariables.find("tr#" + ise_id + " td[aria-describedby$='variable']").html(variable.attr('variable'));
-                   gridVariables.find("tr#" + ise_id + " td[aria-describedby$='timestamp']").html(formatTimestamp(variable.attr('timestamp')));
-               },
-               error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-           }); */
-    }
 
     function hmGetDevices() {
-        console.log("hmGetDevices");
+        if (hqConf.debug) { console.log("hmGetDevices()"); }
         $("#loaderStates").show();
 
         var cache = storage.get("hqWebUiDevices");
         if (cache !== null) {
+            if (hqConf.debug) { console.log("Cache Hit Devices"); }
             devicesReady = true;
             devicesXML = $.parseXML(cache);
             devicesXMLObj = $(devicesXML);
@@ -3461,7 +3424,7 @@ console.log("oper=" + oper);
         }
 
 
-
+        if (hqConf.debug) { console.log("Fetching Devices"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -3482,16 +3445,18 @@ console.log("oper=" + oper);
     }
 
     function hmGetFunctions() {
-        console.log("hmGetFunctions()");
+        if (hqConf.debug) { console.log("hmGetFunctions()"); }
         $("#loaderStates").show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
+            if (hqConf.debug) { console.log("Cache Hit Functions"); }
             functionsReady = true;
             functionsXML = $.parseXML(cache);
             functionsXMLObj = $(functionsXML);
             hmGetAlarms();
             return false;
         }
+        if (hqConf.debug) { console.log("Fetching Functions"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -3509,10 +3474,10 @@ console.log("oper=" + oper);
     }
 
     function hmGetAlarms() {
-        console.log("hmGetAlarms()");
+        if (hqConf.debug) { console.log("hmGetAlarms()"); }
         var cache = storage.get("hqWebUiAlarms");
         if (cache !== null && cache !== undefined) {
-            console.log("Cache Hit Alarms")
+            if (hqConf.debug) { console.log("Cache Hit Alarms") }
             alarmsReady = true;
             alarmsData = cache;
             hmGetRooms();
@@ -3538,7 +3503,7 @@ console.log("oper=" + oper);
 "Write(\"]\");";
 
 
-        
+        if (hqConf.debug) { console.log("Fetching Alarm-Datapoints"); }
         $("#loaderStates").show();
          $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
@@ -3564,56 +3529,37 @@ console.log("oper=" + oper);
     }
 
     function hmRefreshAlarms() {
-        $("#loaderStates").show();
-        var cache = storage.get("hqWebUiFunctions");
-        if (cache !== null) {
-            functionsReady = true;
-            functionsXML = $.parseXML(cache);
-            functionsXMLObj = $(functionsXML);
-            hmGetRooms();
-            return false;
-        }
-        $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
-            type: 'POST',
-            data: scriptFunctions,
-            dataType: 'xml',
-            success: function (data) {
-
-                hmInsertAlarms(data);
-            },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });
+        if (hqConf.debug) { console.log("hmRefreshAlarms()"); }
     }
 
     function insertAlarms(data) {
-        console.log("\n\n\n--- BEFORE ---");
+        //console.log("\n\n\n--- BEFORE ---");
         //console.log(statesXMLObj);
-        console.log(statesXML);
-
         for (var i = 0; i < alarmsData.length; i++) {
 
             //$('<datapoint ise_id="'+alarmsData[i].id+'" oper="'+alarmsData[i].oper+'" name="'+alarmsData[i].name+'" value="" dptype="ALARMDP"/>').insertBefore(statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']"));
         statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']").parent().append($('<datapoint ise_id="'+alarmsData[i].id+'" oper="'+alarmsData[i].oper+'" name="'+alarmsData[i].name+'" value="" timestamp="" dptype="ALARMDP"/>'));
-            console.log(statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']").parent());
+           //console.log(statesXMLObj.find("datapoint[ise_id='"+alarmsData[i].did+"']").parent());
         }
 
         statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-       console.log("\n\n\n--- AFTER ---");
+       //console.log("\n\n\n--- AFTER ---");
        //console.log(statesXMLObj);
-       console.log(statesXML);
+       //console.log(statesXML);
     }
 
     function hmGetRooms() {
-        console.log("hmGetRooms()");
+        if (hqConf.debug) { console.log("hmGetRooms()"); }
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
+            if (hqConf.debug) { console.log("Cache Hit Rooms"); }
             roomsReady = true;
             roomsXML = $.parseXML(cache);
             roomsXMLObj = $(roomsXML);
             hmGetDevices();
             return false;
         }
+        if (hqConf.debug) { console.log("Fetching Rooms"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -3629,12 +3575,13 @@ console.log("oper=" + oper);
         });
     }
 
-    function refreshFavorites() {
+    function hmGetFavorites() {
+        if (hqConf.debug) { console.log("hmGetFavorites()"); }
         $("#loaderFavorites").show();
 
         var cache = storage.get("hqWebUiFavorites");
         if (cache !== null) {
-            //console.log("Cache Hit: Favorites");
+            if (hqConf.debug) { console.log("Cache Hit: Favorites"); }
             favoritesXML = $.parseXML(cache);
             favoritesXMLObj = $(favoritesXML);
             favoritesTime = storage.get("hqWebUiFavoritesTime");
@@ -3643,11 +3590,11 @@ console.log("oper=" + oper);
             favoritesReady = true;
             $("#loaderFavorites").hide();
             if (!variablesReady) {
-                refreshVariables();
+                hmGetVariables();
             }
             return false;
         }
-        //console.log("Fetching Favorites");
+        if (hqConf.debug) { console.log("Fetching Favorites"); }
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             dataType: 'xml',
@@ -3668,7 +3615,7 @@ console.log("oper=" + oper);
                 favoritesReady = true;
 
                 if (!variablesReady) {
-                    refreshVariables();
+                    hmGetVariables();
                 }
 
 
@@ -3681,7 +3628,7 @@ console.log("oper=" + oper);
 
     }
 
-    function xmlapiGetVersion() {
+    function getVersion() {
         gridInfo.jqGrid('addRowData', "HQ WebUI Version", {'key': "HQ WebUI Version", 'value': version});
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/version.txt",
@@ -3715,12 +3662,14 @@ console.log("oper=" + oper);
    // jsonLogin();
 
     function sessionStart() {
-        //console.log("sessionStart()");
+        if (hqConf.debug) { console.log("sessionStart()"); }
         var username = storage.get("hqWebUiUsername");
         var password = storage.get("hqWebUiPassword");
-        //console.log("user=" + username + " pass=" + password);
+        if (username !== null && password != null) {
+            if (hqConf.debug) { console.log("Cache Hit: Username and Password"); }
+        }
         if (hqConf.sessionPersistent) {
-            //console.log("sessionPersitant==true");
+            if (hqConf.debug) { console.log("sessionPersistant=true"); }
             var tmp = storage.get("hqWebUiSession");
             if (tmp != null) {
 
@@ -3750,8 +3699,7 @@ console.log("oper=" + oper);
     };
 
     function jsonLogin(username, password) {
-        //console.log("jsonLogin()");
-
+        if (hqConf.debug) { console.log("JSON RPC: Session.login username=" + username); }
         jsonPost({
             "method": "Session.login",
             "params":  {
@@ -3759,8 +3707,7 @@ console.log("oper=" + oper);
                 "password" : password
             }
         }, function (data) {
-            //console.log("jsonLogin() jsonPost success");
-
+            if (hqConf.debug) { console.log("JSON RPC: Session.login Successfull"); }
             hmSession = data.result;
             $("#session").hide();
             webuiStart();
@@ -3781,7 +3728,7 @@ console.log("oper=" + oper);
                 });
             }
         }, function (data) {
-            //console.log("jsonLogin failed");
+            if (hqConf.debug) { console.log("JSON RPC: Session.login Failed"); }
             var msg;
             switch(data.error.code) {
             case 501:
@@ -3809,6 +3756,7 @@ console.log("oper=" + oper);
         clearTimeout(timerRefresh);
         clearTimeout(timerSession);
         if (hmSession) {
+            if (hqConf.debug) { console.log("JSON RPC: Session.logout"); }
             $("#logout").show("fade", hqConf.sessionLogoutFade);
             jsonPost({
                 "method":   "Session.logout",
@@ -3829,29 +3777,27 @@ console.log("oper=" + oper);
     }
 
     function hmSessionRenew(firstLoad) {
-        //console.log("hmSessionRenew()");
+        if (hqConf.debug) { console.log("hmSessionRenew("+firstLoad+")"); }
         clearTimeout(timerSession);
         if (hmSession) {
-            //console.log("hmSession=" + hmSession);
+            if (hqConf.debug) { console.log("JSON RPC: Session.renew _session_id_=" + hmSession); }
             jsonPost({
                     "method":   "Session.renew",
                     "params":   {
                         "_session_id_": hmSession
                     }
             }, function (data) {
-                //console.log("hmSessionRenew() jsonPost success");
 
                 if (data.result) {
+                    if (hqConf.debug) { console.log("JSON RPC: Session.renew Successful"); }
                     $("#login").hide();
                     $("#session").hide();
                     if (firstLoad) {
-                        //console.log("sessionRenew success");
-
                         webuiStart();
-                        timerSession =          setTimeout(hmSessionRenew, 240000);
+                        timerSession = setTimeout(hmSessionRenew, 240000);
                     }
                 } else {
-                    //console.log("sessionRenew failed");
+                    if (hqConf.debug) { console.log("JSON RPC: Session.renew Failed"); }
                     hmSession = undefined;
 
 
@@ -3863,15 +3809,14 @@ console.log("oper=" + oper);
 
                 }
             }, function (data) {
-                //console.log("hmSessionRenew() jsonPost error");
-
+                if (hqConf.debug) { console.log("JSON RPC error"); }
                 hmSession = undefined;
                 var username = storage.get("hqWebUiUsername");
                 var password = storage.get("hqWebUiPassword");
                 //console.log("user=" + username + " pass=" + password);
 
                 if (username != null) {
-                    //console.log("trying to re-login with saved credentials");
+                    if (hqConf.debug) { console.log("Trying to re-login with cached credentials"); }
                     jsonLogin(username, password);
                 } else {
 
@@ -3931,7 +3876,7 @@ console.log("oper=" + oper);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 ajaxError(xhr, ajaxOptions, thrownError);
-        
+
             }
         });
     }
@@ -3997,15 +3942,16 @@ console.log("oper=" + oper);
     }
 
 
-    function saveProgram(id) {
-        var name = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_name']").html();
-        var description = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_description']").html();
-        description = (description == "&nbsp;" ? "" : description);
-        var active = $("tr[id='" + id + "'] td[aria-describedby='gridPrograms_active'] input").is(":checked");
+    function saveProgram() {
+        var id = $("#cfgPrgId").val();
+        var name = $("#cfgPrgName").val();
+        var description = $("#cfgPrgDesc").val();
+        var active = $("#cfgPrgActive").is(":checked");
         var script = "object o = dom.GetObject(" + id + ");\n" +
             "o.Name('" + name + "');\n" +
             "o.PrgInfo('" + description + "');\n" +
             "o.Active(" + active + ");\n";
+        if (hqConf.debug) { console.log(script); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             data: script,
@@ -4017,58 +3963,65 @@ console.log("oper=" + oper);
     }
 
     function webuiStart() {
-        // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus xmlapiGetFavorites heraus angestoßen
-        //console.log("webuistart");
+        // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus hmGetFavorites heraus angestoßen
+        if (hqConf.debug) { console.log("webuiStart()"); }
+        var cache = storage.get("hqWebUiStringtable");
 
-        // Sprach-Datei laden und in Objekt "verpacken"
-        $.ajax({
-            url: hqConf.ccuUrl + "/config/stringtable_de.txt",
-            type: "GET",
-            dataType: "text",
-            success: function (data) {
-                lang = {};
-                var dataArr = data.split("\n");
-                for (var i = 0; i < dataArr.length; i++) {
-                    var line = dataArr[i];
-                    if (line && line != "") {
-                        var resultArr = line.match(/^([A-Z0-9_-]+)\|?([A-Z0-9_-]+)?=?([A-Z0-9_-]+)?[ \t]+(.+)$/);
-                        if (resultArr) {
-                            if (!lang[resultArr[1]]) {
-                                lang[resultArr[1]] = {};
+        if (cache !== null) {
+            if (hqConf.debug) { console.log("Cache Hit: Stringtable"); }
+            lang = cache;
+            hmGetFavorites();
+        } else {
+            // Sprach-Datei laden und in Objekt "verpacken"
+            if (hqConf.debug) { console.log("Fetching Stringtable"); }
+            $.ajax({
+                url: hqConf.ccuUrl + "/config/stringtable_de.txt",
+                type: "GET",
+                dataType: "text",
+                success: function (data) {
+                    lang = {};
+                    var dataArr = data.split("\n");
+                    for (var i = 0; i < dataArr.length; i++) {
+                        var line = dataArr[i];
+                        if (line && line != "") {
+                            var resultArr = line.match(/^([A-Z0-9_-]+)\|?([A-Z0-9_-]+)?=?([A-Z0-9_-]+)?[ \t]+(.+)$/);
+                            if (resultArr) {
+                                if (!lang[resultArr[1]]) {
+                                    lang[resultArr[1]] = {};
+                                }
+                                if (resultArr[3]) {
+                                    if (!lang[resultArr[1]][resultArr[2]]) {
+                                        lang[resultArr[1]][resultArr[2]] = {};
+                                    }
+                                    if (!lang[resultArr[1]][resultArr[2]][resultArr[3]]) {
+                                        lang[resultArr[1]][resultArr[2]][resultArr[3]] = {};
+                                    }
+                                    lang[resultArr[1]][resultArr[2]][resultArr[3]].text = resultArr[4];
+                                } else if (resultArr[2]) {
+                                    if (!lang[resultArr[1]][resultArr[2]]) {
+                                        lang[resultArr[1]][resultArr[2]] = {};
+                                    }
+                                    lang[resultArr[1]][resultArr[2]].text = resultArr[4];
+                                } else {
+                                    lang[resultArr[1]].text = resultArr[4];
+                                }
                             }
-                            if (resultArr[3]) {
-                                if (!lang[resultArr[1]][resultArr[2]]) {
-                                    lang[resultArr[1]][resultArr[2]] = {};
-                                }
-                                if (!lang[resultArr[1]][resultArr[2]][resultArr[3]]) {
-                                    lang[resultArr[1]][resultArr[2]][resultArr[3]] = {};
-                                }
-                                lang[resultArr[1]][resultArr[2]][resultArr[3]].text = resultArr[4];
-                            } else if (resultArr[2]) {
-                                if (!lang[resultArr[1]][resultArr[2]]) {
-                                    lang[resultArr[1]][resultArr[2]] = {};
-                                }
-                                lang[resultArr[1]][resultArr[2]].text = resultArr[4];
-                            } else {
-                                lang[resultArr[1]].text = resultArr[4];
-                            }
+
                         }
-
+                        storage.set("hqWebUiStringtable", lang);
                     }
+                    hmGetFavorites();
+                    //getVersion();
+                    //console.log(lang);
+                },
+                error: function (a,b,c) {
+                    ajaxError(a,b,c);
+                    hmGetFavorites();
+                    //getVersion();
                 }
-                refreshFavorites();
-                //xmlapiGetVersion();
-                //console.log(lang);
-            },
-            error: function (a,b,c) {
-                ajaxError(a,b,c);
-                refreshFavorites();
-                //xmlapiGetVersion();
-            }
 
-        });
-
-
+            });
+        }
     };
 
     // Refresh Funktionen
@@ -4090,18 +4043,17 @@ console.log("oper=" + oper);
             if ($(this).css("display") != "none") {
                 var id = $(this).attr("title");
                 var type = $(this).parent().find("td[aria-describedby$='_dptype']").html();
-                type = type.split(" ");
+                var oper = $(this).parent().find("td[aria-describedby$='_oper']").html();
                 if (type[0] !== "ALARMDP") {
                     updateCount += 1;
                     id = parseInt(id, 10);
-                    console.log();
                     if (!updateFirst) {
                         updateScript += 'Write(",");\n';
                     } else {
                         updateFirst = false;
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
-                    if (type[1].search(/r/) !== -1) {
+                    if (oper.search(/R/) !== -1) {
                         updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                     } else {
                         updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
@@ -4179,13 +4131,14 @@ console.log("oper=" + oper);
                 dataType: 'json',
                 success: function (data) {
                     var totalTime = new Date().getTime() - ajaxTime;
-                    console.log("refresh response time " + totalTime + "ms");
+                    if (hqConf.debug) { console.log("refresh response time " + totalTime + "ms"); }
                     //console.log(data);
                     for (var i = 0; i < data.length; i++) {
 
                         if (data[i].ac !== undefined) {
                             if (data[i].ac === "true") {
                                 $("tr[id='" + data[i].id + "'] td.uActive input").attr("checked", true);
+
                             } else {
                                 $("tr[id='" + data[i].id + "'] td.uActive input").removeAttr("checked");
                             }
@@ -4194,11 +4147,9 @@ console.log("oper=" + oper);
                         if (data[i].vl !== undefined) {
 
                             var value = $("<div/>").html(data[i].vl).text();
-                                var obj = variablesXMLObj.find("systemVariable[ise_id='" + data[i].id + "']");
+                            var obj = variablesXMLObj.find("systemVariable[ise_id='" + data[i].id + "']");
+                            if (obj !== null) {
                                 var val = value;
-                                if (val === undefined) {
-                                    return "";
-                                }
                                 switch ($(obj).attr('subtype')) {
                                     case '0':
                                         val = parseFloat(val);
@@ -4214,7 +4165,8 @@ console.log("oper=" + oper);
                                         }
                                         break;
                                     case '29':
-                                        val = $(obj).attr('value_text');
+                                        var value_list = $(obj).attr('value_list').split(";");
+                                        val = value_list[val];
                                         break;
                                     default:
                                         if (typeof val == "string" && val.match(/<img/)) {
@@ -4224,12 +4176,17 @@ console.log("oper=" + oper);
 
                                 }
                                 value = val;
+                                $("tr[id='" + data[i].id + "'] td.uVAR.uValue").html(value);
+                            }
+                            var obj = statesXMLObj.find("datapoint[ise_id='" + data[i].id + "']");
+                            if (obj !== null) {
+                                $("tr[id='" + data[i].id + "'] td.uDP.uValue").html(value);
+                            }
 
-
-
-                            $("tr[id='" + data[i].id + "'] td.uVAR.uValue").html(value);
                         }
                         var timestamp = data[i].ts;
+                        programsXMLObj.find("program[id='"+data[i].id+"']").attr("timestamp", data[i].ts).attr("active", data[i].ac);
+                        variablesXMLObj.find("systemVariable[ise_id='"+data[i].id+"']").attr("timestamp", data[i].ts).attr("value", data[i].vl);
                         if (timestamp === undefined || timestamp === "1970-01-01 01:00:00") {
                             timestamp = "";
                         }
@@ -4239,12 +4196,21 @@ console.log("oper=" + oper);
 
                        // console.log(data[i].id + " " + value + " " + data[i].ts);
                     }
+
+                    // Update Cache
+                    programsXML = $.parseXML((new XMLSerializer()).serializeToString(programsXMLObj[0]));
+                    variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
+                    storage.set("hqWebUiPrograms", (new XMLSerializer()).serializeToString(programsXML));
+                    storage.set("hqWebUiVariables", (new XMLSerializer()).serializeToString(variablesXML));
+
+
+
                     if (hqConf.refreshDynamic) {
                         var nextRefresh = hqConf.refreshFactor * totalTime;
                     } else {
                         var nextRefresh = hqConf.refreshPause;
                     }
-                    console.log("next refresh in " + nextRefresh + "ms");
+                    if (hqConf.debug) { console.log("next refresh in " + nextRefresh + "ms"); }
                     timerRefresh = setTimeout(update, nextRefresh);
                     $("th[id$='active']").removeClass("ui-state-active");
                     $("th[id$='timestamp']").removeClass("ui-state-active");
@@ -4252,8 +4218,7 @@ console.log("oper=" + oper);
 
                 },
                 error: function (a,b,c) {
-                    ajaxError(a,b,c);
-                    alert("auto refresh stopped :-(");
+                    ajaxError("Update: " + a,b,c);
                     hqConf.refreshEnable = false;
                     $("th[id$='active']").removeClass("ui-state-active");
                     $("th[id$='timestamp']").removeClass("ui-state-active");

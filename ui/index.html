@@ -287,6 +287,89 @@
         <input id="rename" type="text"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
         <br>
     </div>
+    <div class="dialog" id="dialogCfgVariable" title="Variable editieren">
+        <br>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><input id="cfgVarName" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Beschreibung</td>
+                <td><input id="cfgVarDesc" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Typ</td>
+                <td>
+                    <select id="cfgVarType">
+                        <option value="">Logikwert</option>
+                        <option value="">Werteliste</option>
+                        <option value="">Zahl</option>
+                        <option value="">Alarm</option>
+                        <option value="">Zeichenkette</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="cfgVarOptBool">
+                <td>Text falsch</td>
+                <td><input id="cfgVarTextBoolFalse" type="text"/></td>
+            </tr>
+            <tr class="cfgVarOptBool">
+                <td>Text wahr</td>
+                <td><input id="cfgVarTextBoolTrue" type="text"/></td>
+            </tr>
+            <tr class="cfgVarOptAlarm">
+                <td>Text nicht ausgelöst</td>
+                <td><input class="cfgVarOptAlarm" id="cfgVarTextAlarmFalse" type="text" size="60"/></td>
+            </tr>
+            <tr class="cfgVarOptAlarm">
+                <td>Text ausgelöst</td>
+                <td><input class="cfgVarOptAlarm" id="cfgVarTextAlarmTrue" type="text" size="60"/></td>
+            </tr>
+            <tr class="cfgVarOptReal">
+                <td>Minimum</td>
+                <td><input class="cfgVarOptReal" id="cfgVarTextRealMin" type="text"/></td>
+            </tr>
+            <tr class="cfgVarOptReal">
+                <td>Maximum</td>
+                <td><input class="cfgVarOptReal" id="cfgVarTextRealMax" type="text"/></td>
+            </tr>
+            <tr class="cfgVarOptEnum">
+                <td>Werteliste</td>
+                <td><input class="cfgVarOptEnum" id="cfgVarTextEnum" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Einheit</td>
+                <td><input id="cfgVarUnit" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Protokolliert</td>
+                <td><input id="cfgVarLogged" type="checkbox"/></td>
+            </tr>
+
+        </table>
+        <input type="hidden" id="cfgVarId"/>
+    </div>
+    <div class="dialog" id="dialogCfgProgram" title="Programm editieren">
+        <br>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><input id="cfgPrgName" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Beschreibung</td>
+                <td><input id="cfgPrgDesc" type="text" size="60"/></td>
+            </tr>
+
+            <tr>
+                <td>Aktiv</td>
+                <td><input id="cfgPrgActive" type="checkbox"/></td>
+            </tr>
+
+        </table>
+        <input type="hidden" id="cfgPrgId"/>
+    </div>
     <div class="" id="login">
         <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
             <div id="widgetLogin" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">

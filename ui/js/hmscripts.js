@@ -63,7 +63,7 @@ var scriptPrograms = "string sProgramId;\n" +
     "    if(oProgram != null)\n" +
     "    {\n" +
     "        Write(\"<program id='\" # sProgramId #\"' active='\" # oProgram.Active() # \"'\")\n" +
-    "        Write(\" timestamp='\" # oProgram.ProgramLastExecuteTime().ToInteger() #\"' name='\");\n" +
+    "        Write(\" timestamp='\" # oProgram.ProgramLastExecuteTime() #\"' name='\");\n" +
     "        WriteXML( oProgram.Name() );\n" +
     "        Write(\"' description='\");\n" +
     "        WriteXML(oProgram.PrgInfo());\n" +
@@ -98,7 +98,7 @@ var scriptVariables = "object oSysVar;\n" +
     "    Write(\"' type='\" # oSysVar.ValueType() # \"' subtype='\" # oSysVar.ValueSubType());\n" +
     "    Write(\"' logged='\"); WriteXML( oSysVar.DPArchive());\n" +
     "    Write(\"' visible='\"); WriteXML( oSysVar.Visible());\n" +
-    "    Write(\"' timestamp='\" # oSysVar.Timestamp().ToInteger());\n" +
+    "    Write(\"' timestamp='\" # oSysVar.Timestamp());\n" +
     "    Write(\"'/>\");\n" +
     "}\n" +
     "Write(\"</systemVariables>\");\n";

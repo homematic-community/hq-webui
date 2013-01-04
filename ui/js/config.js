@@ -18,6 +18,10 @@ var hqConf = {
     sessionLogoutFade:      500,
     sessionLoginFade:       undefined,
 
+    // Debug-Modus
+    // Schreibt Debug-Ausgabe in die Browser-Konsole
+    debug:                  true,
+
     // Automatischer Refresh
     // Alle Zeitangaben in Millisekunden
     refreshEnable:          true,

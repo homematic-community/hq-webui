@@ -1,5 +1,12 @@
 Changelog
 =========
+2.1-alpha5
+----------
+* Diverse neue Buttons und Änderungen an der Geräte-Tabelle (noch Baustelle)
+* Neuer Dialog "Variable konfigurieren" (noch Baustelle)
+* Neuer Dialog Programme editieren (Name und Beschreibung ändern, aktivieren/deaktivieren)
+* Debug-Ausgabe in Browser-Konsole über config.js aktivierbar
+* Diverse Fehler beim Umbenennen von Geräten/Kanälen und Setzen von Werten behoben
 
 2.1-alpha4
 ----------
