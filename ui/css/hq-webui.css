@@ -165,6 +165,7 @@ li a:focus {
 
 .smallButton {
     width: 29px; height: 26px;
+    padding-left: 3px;
 
 }
 
@@ -309,4 +310,10 @@ div.spacer {
     height: 18px;
     width: 26px;
     margin-top: 2px;
+}
+
+td.deviceIcon {
+    background-color:#fff;
+    padding-top: 1px !important;
+    text-align: center !important;
 }

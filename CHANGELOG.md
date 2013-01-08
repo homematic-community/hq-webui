@@ -1,5 +1,16 @@
 Changelog
 =========
+
+2.1-alpha6
+----------
+* Verlinkungen auf andere Zusatzsoftware (CUxD, Webmatic, QA)
+* Kleine Styleanpassungen (Abstände Buttons oben rechts, Abstände Tab-Reiter)
+* Styleanpassungen Geräteicons (Zentriert, Hintergrundfarbe #fff)
+* Button Cache löschen hinzugefügt im Einstellungs-Dialog
+* Diverse Fehler beim befüllen der Info-Tabelle behoben, addInfo() überschreibt nun einen bereits vorhandenen Eintrag in der Info-Tabelle statt ihn neu hinzuzufügen
+
+
+
 2.1-alpha5
 ----------
 * Diverse neue Buttons und Änderungen an der Geräte-Tabelle (noch Baustelle)

@@ -87,21 +87,16 @@ Roadmap/Todo/Ideen
 
 2.1.0
 -----
-* Servicemeldungen!!!
+* Servicemeldungen
+* Alarmvariablen
 * Refresh der Favoriten
-* Systemprotokoll?!?
+* Systemprotokoll
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* addInfo() soll einen bereits vorhandenen Eintrag überschreiben statt ihn neu hinzuzufügen
 * Ändern von Variablen
 * Tabellenheader anpassen
 * Variablen/Datenpunkte Wert editieren -> sofort in Grid schreiben
-* Styleanpassungen Geräteicons, Icons oben rechts
 * (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen "Webmatic" Style)
-* Verlinkungen auf andere installierte Zusatzsoftware
-
-2.1.1
------
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen

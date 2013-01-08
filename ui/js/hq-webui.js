@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha5";
+    var version =               "2.1-alpha6";
 
     var statesXML,
         rssiXML,
@@ -147,7 +147,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     tabs.tabs({
         select: function(event, ui) {
             clearTimeout(timerRefresh);
-            timerRefresh = setTimeout(update, 50);
+            timerRefresh = setTimeout(refresh, 50);
             if (!tabChange) {
                 var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
                 if (hqConf.debug) { console.log(hash); }
@@ -227,8 +227,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Buttons ins Tabs-Panel einfügen
     $("#mainNav").
-        append("<button title='Abmelden' class='smallButton' style='float:right;' id='buttonLogout'></button>").
+        append("<button title='Abmelden' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLogout'></button>").
         append("<button title='Theme wählen' value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ").
+        append("<button title='Links' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLinks'></button>").
         append("<button title='Hilfe' class='smallButton' style='float:right;' id='buttonAbout'></button>").
         append("<span style='width:15px; height:15px; padding-top:5px; margin-right:10px; float:right;'><span title='CCU Kommunikation' id='ajaxIndicator' style='width:15px; height: 15px;' class='ui-icon ui-icon-transfer-e-w'></span></span>");
 
@@ -1827,6 +1828,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 variablesXML = data;
                 variablesXMLObj = $(data);
 
+                addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
 
 
                 var dateObj = new Date();
@@ -1896,13 +1898,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
             programsXML = $.parseXML(cache);
             programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
+            addInfo("Anzahl Programme", programsXMLObj.find("program").length);
+
             $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
             gridPrograms.setGridParam({
                 loadonce: false,
                 datatype: "xmlstring",
                 datastr: programsXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
-            addInfo("Anzahl Variablen", programsXMLObj.find("systemVariable").length);
 
             programsReady = true;
             $("#loaderPrograms").hide();
@@ -1985,7 +1988,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 datatype: "xmlstring",
                 datastr: statesXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
-            addInfo("Anzahl Variablen", statesXMLObj.find("systemVariable").length);
+            addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
+            addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
+            addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
+            var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
+            addInfo("CCU Batteriestatus", ccuBat + "%");
 
             statesReady = true;
             $("#loaderStates").hide();
@@ -2120,7 +2127,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 datatype: "xmlstring",
                 datastr: rssiXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
-            addInfo("Anzahl Variablen", rssiXMLObj.find("systemVariable").length);
 
             rssiReady = true;
             $("#loaderRssi").hide();
@@ -2966,6 +2972,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
+    $("#dialogLinks").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Schließen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
     $("#hqWebUiVersion").html(version);
     $("#selectUiTheme").change(function () {
         changeTheme($("#selectUiTheme option:selected").val());
@@ -2973,10 +2988,24 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#buttonDelCred").button({
 
     }).click(function () {
-        storage.set("hqWebUiUsername", null);
-        storage.set("hqWebUiPassword", null);
-        $("#buttonDelCred").attr("disabled", true);
-    });
+            storage.set("hqWebUiUsername", null);
+            storage.set("hqWebUiPassword", null);
+            $("#buttonDelCred").attr("disabled", true);
+        });
+    $("#buttonDelCache").button({
+
+    }).click(function () {
+            storage.set("hqWebUiStringtable", null);
+            storage.set("hqWebUiFunctions", null);
+            storage.set("hqWebUiAlarms", null);
+            storage.set("hqWebUiRooms", null);
+            storage.set("hqWebUiVariables", null);
+            storage.set("hqWebUiPrograms", null);
+            storage.set("hqWebUiDevices", null);
+            storage.set("hqWebUiStates", null);
+            storage.set("hqWebUiRssi", null);
+            $("#buttonDelCache").attr("disabled", true);
+        });
 
     dialogDebugScript.dialog({
         autoOpen: false,
@@ -3217,7 +3246,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }).click(function () {
         dialogAbout.dialog("open");
     });
-
+    $("#buttonLinks").button({
+        icons: { primary: "ui-icon-link" },
+        text: false
+    }).click(function () {
+            $("#dialogLinks").dialog("open");
+        });
     $(".smallButton span.ui-icon").css("margin-left", "-9px").css("margin-top", "-9px");
     $("button#hmRunScript").button({
         icons: { primary: "ui-icon-play" }
@@ -3530,6 +3564,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmRefreshAlarms() {
         if (hqConf.debug) { console.log("hmRefreshAlarms()"); }
+        var updateScript = undefined;
     }
 
     function insertAlarms(data) {
@@ -3629,6 +3664,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function getVersion() {
+        if (hqConf.debug) { console.log("getVersion()"); }
         gridInfo.jqGrid('addRowData', "HQ WebUI Version", {'key': "HQ WebUI Version", 'value': version});
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/version.txt",
@@ -3971,6 +4007,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             if (hqConf.debug) { console.log("Cache Hit: Stringtable"); }
             lang = cache;
             hmGetFavorites();
+            getVersion();
+
         } else {
             // Sprach-Datei laden und in Objekt "verpacken"
             if (hqConf.debug) { console.log("Fetching Stringtable"); }
@@ -4011,13 +4049,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         storage.set("hqWebUiStringtable", lang);
                     }
                     hmGetFavorites();
-                    //getVersion();
+                    getVersion();
                     //console.log(lang);
                 },
                 error: function (a,b,c) {
                     ajaxError(a,b,c);
                     hmGetFavorites();
-                    //getVersion();
+                    getVersion();
                 }
 
             });
@@ -4028,12 +4066,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     var updateFirst;
     // Diese Funktion wird alle x Sekunden aufgerufen
-    function update() {
+    function refresh() {
         var updateCount;
         var updateScript = "";
-        clearTimeout(timerRefresh);
+         clearTimeout(timerRefresh);
         if (ajaxIndicator.is(":visible")) {
-            timerRefresh = setTimeout(update, hqConf.refreshRetry);
+            timerRefresh = setTimeout(refresh, hqConf.refreshRetry);
             return false;
         }
         updateFirst = true;
@@ -4103,6 +4141,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         if (updateScript != "") {/*
+
+
+
             updateScript += "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
                 "string sTmp;\n" +
                 "foreach (sTmp, oTmpArray.EnumIDs()) {\n" +
@@ -4211,7 +4252,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         var nextRefresh = hqConf.refreshPause;
                     }
                     if (hqConf.debug) { console.log("next refresh in " + nextRefresh + "ms"); }
-                    timerRefresh = setTimeout(update, nextRefresh);
+                    timerRefresh = setTimeout(refresh, nextRefresh);
                     $("th[id$='active']").removeClass("ui-state-active");
                     $("th[id$='timestamp']").removeClass("ui-state-active");
                     $("th[id$='value']").removeClass("ui-state-active");
@@ -4229,12 +4270,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             });
 
         } else {
-            timerRefresh = setTimeout(update, hqConf.refreshRetry);
+            timerRefresh = setTimeout(refresh, hqConf.refreshRetry);
         }
 
     }
     if (hqConf.refreshEnable) {
-        update();
+        refresh();
     }
 
     function updateState() {
@@ -4258,7 +4299,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
     // Misc
     // Eine Zeile zur Info-Tabelle hinzufügen
     function addInfo(key, value) {
-        gridInfo.jqGrid('addRowData', key, {'key': key, 'value': value});
+        var idArray = gridInfo.jqGrid("getDataIDs");
+        if (idArray.indexOf(key) > -1) {
+            gridInfo.jqGrid('setRowData', key, {'key': key, 'value': value});
+        } else {
+            gridInfo.jqGrid('addRowData', key, {'key': key, 'value': value});
+        }
+
     }
 
     // <select><option> aus Werteliste aufbauen
