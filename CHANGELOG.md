@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.1-alpha8
+----------
+* Fehler behoben bei Autorefresh der auftrat wenn Zeilenumbrüchen und Sonderzeichen in Zeichenketten-Variablen waren
+
+
 2.1-alpha7
 ----------
 * Anzahl der ausgelösten Alarm-Variablen wird nun im Reiter Variablen angezeigt

@@ -88,44 +88,49 @@ Roadmap/Todo/Ideen
 2.1
 ---
 * Fehler beheben: Keymatic Türe-Öffnen-Button funktioniert nicht
-* Fehler beheben: Bei bestimmten Variableninhalt (Beispiel von Micha602) schlägt Refresh fehl
 * Servicemeldungen
 * Refresh der Favoriten vervollständigen
 * Systemprotokoll
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* Ändern von Variablen
+* Variablen: Umbenennen, Beschreibung editieren, Protokollierung an/aus
 * Tabellenheader anpassen
-* Variablen/Datenpunkte Wert editieren -> sofort in Grid schreiben
 * (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic" Style)
-* Anlegen und Löschen von Variablen
-* Zuordnen von Variablen zu Kanälen
-* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
-* Session Fehler abfangen
+* Buttons von noch nicht implementierten Features ausblenden
 
 
 2.2
 ---
-* Geräte konfigurieren
-* Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
-* Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
-* Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
-* Programme anzeigen, anlegen, editieren, löschen.
-* TCL und Shellscripte aus Editor auf CCU Speichern
-
+* Ändern von Variablen
+* Anlegen und Löschen von Variablen
+* Zuordnen von Variablen zu Kanälen
 
 2.3
+---
+* Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
+* Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
+* Geräte konfigurieren
+
+2.4
+---
+* Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
+* Programme anzeigen, anlegen, editieren, löschen.
+* Verlinkung Variablen und Programme die diese Variable nutzen
+
+2.5
 ---
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Sortieren von Favoriten per Drag & Drop
-* Verlinkung Variablen und Programme die diese Variable nutzen
 
 
 irgendwann
 ----------
+* TCL und Shellscripte aus Editor auf CCU Speichern
+* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
+* Session Fehler abfangen
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
-* Kontextmenü
+* Kontextmenü in Grid-Ansichten
 * Ajax-Indicator dicker werden lassen wenn Request länger als 1s läuft
 * Exportfunktionen (.csv)
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE

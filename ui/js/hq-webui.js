@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha7";
+    var version =               "2.1-alpha8";
 
     var statesXML,
         rssiXML,
@@ -4164,7 +4164,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
                     updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                        'WriteXML(o.Value());\n' +
+                        'WriteURL(o.Value());\n' +
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
@@ -4184,7 +4184,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
                     updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                        'WriteXML(o.Value());\n' +
+                        'WriteURL(o.Value());\n' +
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
@@ -4204,7 +4204,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
                     updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                        'WriteXML(o.Value());\n' +
+                        'WriteURL(o.Value());\n' +
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
@@ -4224,7 +4224,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
                     updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                        'WriteXML(o.Value());\n' +
+                        'WriteURL(o.Value());\n' +
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
@@ -4244,7 +4244,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
                     updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                        'WriteXML(o.Value());\n' +
+                        'WriteURL(o.Value());\n' +
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
@@ -4289,7 +4289,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         }
                         updateScript += 'o = dom.GetObject('+id+');\n';
                         if (oper.search(/R/) !== -1) {
-                            updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                            updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"");\n' +
+                                'WriteURL(o.Value() # "\n");\n"' +
+                                'Write("\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                         } else {
                             updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                         }
@@ -4341,7 +4343,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
                 updateScript += 'o = dom.GetObject('+id+');\n';
                 updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
-                    'WriteXML(o.Value());\n' +
+                    'WriteURL(o.Value());\n' +
                     'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
             }
         });
@@ -4396,7 +4398,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         }
                         if (data[i].vl !== undefined) {
 
-                            var value = $("<div/>").html(data[i].vl).text();
+                            //var value = $("<div/>").html(data[i].vl).text();
+                            var value = data[i].vl;
+                            //console.log("DECODE  " + value);
+                            //console.log("DECODED " + unescape(value));
+                            value = unescape(value);
+
+
                             var obj = statesXMLObj.find("datapoint[ise_id='" + data[i].id + "']");
                             if (obj.attr("name") !== undefined) {
                                 console.log(obj.attr("name")+" "+obj.attr("type"));
@@ -4457,9 +4465,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                                 }
                                 value = val;
-                                console.log(obj.attr("name")+" "+obj.attr("subtype")+" "+value);
+                               // console.log(obj.attr("name")+" "+obj.attr("subtype")+" "+value);
 
-                                $("input[id^='favInputText'][id$='_" + data[i].id + "']").val(obj.attr("value") + " " + value);
+                                $("input[id^='favInputText'][id$='_" + data[i].id + "']").val(value);
 
                                 $("tr[id='" + data[i].id + "'] td.uVAR.uValue").html(value);
                             }
@@ -4467,7 +4475,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         }
                         var timestamp = data[i].ts;
                         programsXMLObj.find("program[id='"+data[i].id+"']").attr("timestamp", data[i].ts).attr("active", data[i].ac);
-                        variablesXMLObj.find("systemVariable[ise_id='"+data[i].id+"']").attr("timestamp", data[i].ts).attr("value", data[i].vl);
+                        variablesXMLObj.find("systemVariable[ise_id='"+data[i].id+"']").attr("timestamp", data[i].ts).attr("value", value);
                         if (timestamp === undefined || timestamp === "1970-01-01 01:00:00") {
                             timestamp = "";
                         }
