@@ -85,18 +85,19 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 Roadmap/Todo/Ideen
 ==================
 
-2.1.0
------
+2.1
+---
+* Fehler beheben: Keymatic Türe-Öffnen-Button funktioniert nicht
+* Fehler beheben: Bei bestimmten Variableninhalt (Beispiel von Micha602) schlägt Refresh fehl
 * Servicemeldungen
-* Alarmvariablen
-* Refresh der Favoriten
+* Refresh der Favoriten vervollständigen
 * Systemprotokoll
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Ändern von Variablen
 * Tabellenheader anpassen
 * Variablen/Datenpunkte Wert editieren -> sofort in Grid schreiben
-* (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen "Webmatic" Style)
+* (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic" Style)
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen

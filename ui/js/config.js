@@ -27,7 +27,7 @@ var hqConf = {
     refreshEnable:          true,
     refreshPause:           5000,
     // Wie oft sollen Servicemeldungen refreshed werden?
-    refreshPauseAlarms:     60000,
+    refreshPauseAlarms:     180000,
     // Wie lange warten wenn es nichts zu refreshen gab?
     refreshRetry:           500,
 

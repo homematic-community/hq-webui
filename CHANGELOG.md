@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.1-alpha7
+----------
+* Anzahl der ausgelösten Alarm-Variablen wird nun im Reiter Variablen angezeigt
+* Beim Ändern einer Variable wird die Ansicht sofort aktualisiert
+* Favoriten: Slider, Radiobuttons und Variablen-Inputs werden nun automatisch aktualisiert
+
 2.1-alpha6
 ----------
 * Verlinkungen auf andere Zusatzsoftware (CUxD, Webmatic, QA)
@@ -8,7 +14,6 @@ Changelog
 * Styleanpassungen Geräteicons (Zentriert, Hintergrundfarbe #fff)
 * Button Cache löschen hinzugefügt im Einstellungs-Dialog
 * Diverse Fehler beim befüllen der Info-Tabelle behoben, addInfo() überschreibt nun einen bereits vorhandenen Eintrag in der Info-Tabelle statt ihn neu hinzuzufügen
-
 
 
 2.1-alpha5

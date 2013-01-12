@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha6";
+    var version =               "2.1-alpha7";
 
     var statesXML,
         rssiXML,
@@ -40,7 +40,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         roomsXMLObj,
         devicesXMLObj,
         favoritesXMLObj,
-        alarmsData;
+        alarmsData,
+        tabActive;
 
     var statesReady =           false,
         alarmsReady =           false,
@@ -62,7 +63,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         roomsTime,
         rssiTime,
         devicesTime,
-        favoritesTime;
+        favoritesTime,
+        activeAlarms,
+        activeMessages;
 
     var xmlapiVersion;
 
@@ -110,7 +113,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var alarmIndicator =        $("#alarm");
     var ajaxIndicator;
 
+    var spanAlarmCount =        $("#alarmcount");
+    var spanMsgCount =          $("#msgcount");
+
     var timerRefresh;
+    var timerMessages;
     var timerSession =          setTimeout(hmSessionRenew, 150000);
 
     var hmSession;
@@ -144,14 +151,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Tabs Init und Navigation
     var tabChange = false;
-    tabs.tabs({
+    tabActive = "#tabFavorites";
+        tabs.tabs({
         select: function(event, ui) {
             clearTimeout(timerRefresh);
-            timerRefresh = setTimeout(refresh, 50);
+            timerRefresh = setTimeout(hmRefresh, 50);
             if (!tabChange) {
                 var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
                 if (hqConf.debug) { console.log(hash); }
                 history.pushState({}, "", hash);
+                tabActive = hash;
             } else {
                 tabChange = false;
             }
@@ -228,9 +237,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
     // Buttons ins Tabs-Panel einfügen
     $("#mainNav").
         append("<button title='Abmelden' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLogout'></button>").
-        append("<button title='Theme wählen' value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ").
-        append("<button title='Links' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLinks'></button>").
         append("<button title='Hilfe' class='smallButton' style='float:right;' id='buttonAbout'></button>").
+        append("<button title='Einstellungen' value='Theme wählen' class='smallButton' style='float:right' id='buttonSelectTheme'></button> ").
+        append("<button title='Links' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLinks'></button>").
         append("<span style='width:15px; height:15px; padding-top:5px; margin-right:10px; float:right;'><span title='CCU Kommunikation' id='ajaxIndicator' style='width:15px; height: 15px;' class='ui-icon ui-icon-transfer-e-w'></span></span>");
 
     ajaxIndicator = $("#ajaxIndicator");
@@ -2648,7 +2657,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     //if (hqConf.dpValueMap[value]) {
                                     //    value = hqConf.dpValueMap[value];
                                     //}
-                                    html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight uFAVDP" + channelId + "'>" + value + unit + "</span></td></tr>";
+                                    html = "<tr><td class='favDpLeft'>" + dpDesc + "</td><td class='favDpRight' id='uFAVDP" + fav_id + "_" + id + "'>" + value + unit + "</span></td></tr>";
                                     $("div[id='favContainer" + fav_id + "']").find("td[id='favInputCell" + fav_id + "_" + channelId + "'] .favInput table tbody").append(html);
                                     html = "";
 
@@ -2890,17 +2899,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
         modal: true,
         buttons: {
             'Ok': function () {
-                var value;
+                var value; //
+                //var text;
                 if (variableInput.find("select").attr("id")) {
                     value = $("#variableValue option:selected").val();
+                //    text = $("#variableValue option:selected").text();
                 } else {
                     value = $("#variableValue").val();
+                //    text = value;
                 }
                 hmSetState(variableId.val(), value/*,
                     function () {
                         xmlapiGetVariable(variableId.val());
                     }
                 */);
+                //gridVariables.jqGrid("setCell", variableId.val(), "value", text);
                 $(this).dialog('close');
             },
             'Abbrechen': function () {
@@ -3370,6 +3383,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmSetState(ise_id, new_value, successFunction) {
+        clearTimeout(timerRefresh);
         var variable = $(variablesXMLObj).find("systemVariable[ise_id='"+ise_id+"']").attr("name");
         var name = $(statesXMLObj).find("datapoint[ise_id='"+ise_id+"']").attr("name");
         if (variable === undefined && name !== undefined) {
@@ -3406,7 +3420,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 dataType: "text",
                 data: xmlrpc,
                 error: function () {
+                    timerRefresh = setTimeout(hmRefresh, 5);
                     alert("xmlrpc error");
+                },
+                success: function () {
+                    timerRefresh = setTimeout(hmRefresh, 5);
+
                 }
             });
 
@@ -3417,8 +3436,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
                 type: "post",
                 data: script,
-                success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
-                error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
+                success: function (data) {
+                    timerRefresh = setTimeout(hmRefresh, 5);
+
+                    if (successFunction !== undefined) {
+                        successFunction(data);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    timerRefresh = setTimeout(hmRefresh, 5);
+
+                    ajaxError(xhr, ajaxOptions, thrownError);
+                }
             });
 
         }
@@ -3563,8 +3592,41 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmRefreshAlarms() {
+        clearTimeout(timerMessages);
+        if (ajaxIndicator.is(":visible")) {
+            timerMessages = setTimeout(hmRefreshAlarms, hqConf.refreshRetry);
+            return false;
+        }
         if (hqConf.debug) { console.log("hmRefreshAlarms()"); }
-        var updateScript = undefined;
+        var updateScript = "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
+            "Write(\"[\");\n" +
+            "var first = true;\n" +
+            "if (oTmpArray) {\n" +
+            "  string sTmp;\n" +
+            "  foreach (sTmp, oTmpArray.EnumIDs()) {\n" +
+            "    object oTmp = dom.GetObject(sTmp);\n" +
+            "    if (oTmp) {\n" +
+            "      if (oTmp.IsTypeOf(OT_ALARMDP) && oTmp.AlState() == asOncoming) {\n" +
+            "        var trigDP = dom.GetObject(oTmp.AlTriggerDP());\n" +
+            "        if (!first) { WriteLine(\",\"); } else { first = false; }\n" +
+            "        Write('{\"id\":\"' # oTmp.ID() # '\",\"t\":\"a\",\"vl\":\"' # oTmp.AlState() # '\",\"ts\":\"' # oTmp.LastTriggerTime() # '\",\"ta\":\"' # oTmp.AlOccurrenceTime() # '\"}');\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "Write(\"]\");";
+            $.ajax({
+                url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
+                type: 'POST',
+                data: updateScript,
+                dataType: 'json',
+                success: function (data) {
+
+
+
+                    timerMessages = setTimeout(hmRefreshAlarms, hqConf.refreshPauseAlarms);
+                }
+            });
     }
 
     function insertAlarms(data) {
@@ -3790,6 +3852,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function jsonLogout() {
         clearTimeout(timerRefresh);
+        clearTimeout(timerMessages);
         clearTimeout(timerSession);
         if (hmSession) {
             if (hqConf.debug) { console.log("JSON RPC: Session.logout"); }
@@ -4064,26 +4127,181 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Refresh Funktionen
 
-    var updateFirst;
-    // Diese Funktion wird alle x Sekunden aufgerufen
-    function refresh() {
+    // Alle sichtbaren Datenpunkte und Variablen sowie alle Alarm-Variablen abfragen und im UI refreshen
+    function hmRefresh() {
+        var datapoints = [];
+        var updateFirst;
         var updateCount;
         var updateScript = "";
+        var tJson = "v";
          clearTimeout(timerRefresh);
         if (ajaxIndicator.is(":visible")) {
-            timerRefresh = setTimeout(refresh, hqConf.refreshRetry);
+            timerRefresh = setTimeout(hmRefresh, hqConf.refreshRetry);
             return false;
         }
         updateFirst = true;
 
+        if (tabActive == "#tabFavorites") {
+            var accno = accordionFavorites.accordion("option", "active") + 1;
+            var selector = "div[id^='favContainer']:nth-child(" + accno + ") div[id^='fav']";
+            var accObj = $(selector);
 
-        $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
-            if ($(this).css("display") != "none") {
-                var id = $(this).attr("title");
-                var type = $(this).parent().find("td[aria-describedby$='_dptype']").html();
-                var oper = $(this).parent().find("td[aria-describedby$='_oper']").html();
-                if (type[0] !== "ALARMDP") {
+            //console.log(selector + " -> " + accObj.attr("id"));
+
+
+            accObj.find("select[id^='favInputSelect']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    //console.log(hid);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+
+            accObj.find("input[id^='favInputText']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    //console.log(hid);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+
+            accObj.find("div[id^='favSlider']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    //console.log(hid);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+
+            accObj.find("div[id^='favRadio']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    //console.log(hid);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+
+            accObj.find("td[id^='uFAVDP']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    //console.log(hid);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+
+            /*
+            $("td[id^='favInputCell']").each(function () {
+                updateCount += 1;
+                var hid = $(this).attr("id");
+                var id = hid.split("_");
+                id = id[1];
+                if (datapoints.indexOf(id) === -1) {
+                    datapoints.push(id);
+                    if (!updateFirst) {
+                        updateScript += 'Write(",");\n';
+                    } else {
+                        updateFirst = false;
+                    }
+                    updateScript += 'o = dom.GetObject('+id+');\n';
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
+                        'WriteXML(o.Value());\n' +
+                        'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                }
+            });
+            */
+
+        } else {
+
+
+
+            $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
+                if ($(this).css("display") != "none") {
+                    var id = $(this).attr("title");
+                    var type = $(this).parent().find("td[aria-describedby$='_dptype']").html();
+                    var oper = $(this).parent().find("td[aria-describedby$='_oper']").html();
+                    if (type[0] !== "ALARMDP") {
+                        updateCount += 1;
+                        id = parseInt(id, 10);
+                        if (!updateFirst) {
+                            updateScript += 'Write(",");\n';
+                        } else {
+                            updateFirst = false;
+                        }
+                        updateScript += 'o = dom.GetObject('+id+');\n';
+                        if (oper.search(/R/) !== -1) {
+                            updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                        } else {
+                            updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                        }
+                    }
+                }
+
+            });
+
+            $("td.uPRG[aria-describedby$='_id']:reallyvisible").each(function() {
+                if ($(this).css("display") != "none") {
                     updateCount += 1;
+                    var id = $(this).attr("title");
                     id = parseInt(id, 10);
                     if (!updateFirst) {
                         updateScript += 'Write(",");\n';
@@ -4091,32 +4309,30 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         updateFirst = false;
                     }
                     updateScript += 'o = dom.GetObject('+id+');\n';
-                    if (oper.search(/R/) !== -1) {
-                        updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"" # o.Value() # "\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
-                    } else {
-                        updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"d\\",\\"vl\\":\\"\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
-                    }
+                    updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"p\\",\\"ts\\":\\"" # o.ProgramLastExecuteTime() # "\\",\\"ac\\":\\"" # o.Active() # "\\"}");\n';
                 }
-            }
+            });
 
-        });
-        $("td.uPRG[aria-describedby$='_id']:reallyvisible").each(function() {
-            if ($(this).css("display") != "none") {
-                var id = $(this).attr("title");
-                id = parseInt(id, 10);
-                if (!updateFirst) {
-                    updateScript += 'Write(",");\n';
-                } else {
-                    updateFirst = false;
+
+
+            /*$("div[id^='favItem']:reallyvisible").each(function() {
+                if ($(this).css("display") != "none") {
+                    var id = $(this).attr("id");
+                    //id = parseInt(id, 10);
+                    //updateQueue.push(id);
                 }
-                updateScript += 'o = dom.GetObject('+id+');\n';
-                updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"t\\":\\"p\\",\\"ts\\":\\"" # o.ProgramLastExecuteTime() # "\\",\\"ac\\":\\"" # o.Active() # "\\"}");\n';
-            }
 
-        });
-        $("td.uVAR[aria-describedby$='_id']:reallyvisible").each(function() {
-            if ($(this).css("display") != "none") {
+            });*/
+
+        }
+
+        $("td.uVAR[aria-describedby$='_id']").each(function() {
+            var isAlarm = $(this).parent().find("td[aria-describedby='gridVariables_subtype']").html() == "Alarm";
+            if (($(this).is(":reallyvisible") && $(this).css("display") != "none") || isAlarm) {
+                updateCount += 1;
                 var id = $(this).attr("title");
+                var tJson;
+                if (isAlarm) { tJson = "a"; } else { tJson = "v"; }
                 id = parseInt(id, 10);
                 if (!updateFirst) {
                     updateScript += 'Write(",");\n';
@@ -4126,19 +4342,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 updateScript += 'o = dom.GetObject('+id+');\n';
                 updateScript += 'Write("{\\"id\\":\\"'+id+'\\",\\"vl\\":\\"");\n' +
                     'WriteXML(o.Value());\n' +
-                    'Write("\\",\\"t\\":\\"v\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
+                    'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
             }
-
         });
-        $("div[id^='favItem']:reallyvisible").each(function() {
-            if ($(this).css("display") != "none") {
-                var id = $(this).attr("id");
-                //id = parseInt(id, 10);
-                //updateQueue.push(id);
-            }
-
-        });
-
 
         if (updateScript != "") {/*
 
@@ -4172,10 +4378,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 dataType: 'json',
                 success: function (data) {
                     var totalTime = new Date().getTime() - ajaxTime;
-                    if (hqConf.debug) { console.log("refresh response time " + totalTime + "ms"); }
-                    //console.log(data);
-                    for (var i = 0; i < data.length; i++) {
 
+                    //console.log(data);
+                    activeAlarms = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].t === "a" && data[i].vl === "true") {
+                            activeAlarms += 1;
+                        }
                         if (data[i].ac !== undefined) {
                             if (data[i].ac === "true") {
                                 $("tr[id='" + data[i].id + "'] td.uActive input").attr("checked", true);
@@ -4188,25 +4397,56 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         if (data[i].vl !== undefined) {
 
                             var value = $("<div/>").html(data[i].vl).text();
+                            var obj = statesXMLObj.find("datapoint[ise_id='" + data[i].id + "']");
+                            if (obj.attr("name") !== undefined) {
+                                console.log(obj.attr("name")+" "+obj.attr("type"));
+                                var selector = "div.favInputSlider[id$='_" + data[i].id + "']";
+                                //console.log(selector);
+                                $(selector).each(function () {
+                                    $(this).slider("value", value);
+                                });
+
+                                //console.log($("input[id^='favRadioOff'][id$='_" + data[i].id + "']").attr("id") + " " + value);
+                                $("label[for^='favRadioOn'][for$='_" + data[i].id + "']").removeClass("ui-state-active");
+                                $("label[for^='favRadioOff'][for$='_" + data[i].id + "']").removeClass("ui-state-active");
+
+                                if (value == 0 || value == "false") {
+                                    //console.log("0");
+                                    $("label[for^='favRadioOff'][for$='_" + data[i].id + "']").addClass("ui-state-active");
+                                    $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").attr("checked", true);
+                                    $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").removeAttr("checked");
+                                } else if (value == 1 || value == "true") {
+                                    //console.log("1");
+                                    $("label[for^='favRadioOn'][for$='_" + data[i].id + "']").addClass("ui-state-active");
+                                    $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").attr("checked", true);
+                                    $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").removeAttr("checked");
+                                } else {
+                                    //console.log("0.01-0.99");
+                                    $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").removeAttr("checked");
+                                    $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").removeAttr("checked");
+                                }
+                                $("tr[id='" + data[i].id + "'] td.uDP.uValue").html(value);
+                            }
                             var obj = variablesXMLObj.find("systemVariable[ise_id='" + data[i].id + "']");
-                            if (obj !== null) {
+                            if (obj.attr("name") !== undefined) {
                                 var val = value;
-                                switch ($(obj).attr('subtype')) {
+                                switch (obj.attr('subtype')) {
                                     case '0':
                                         val = parseFloat(val);
                                         val = val.toFixed(2);
+
                                         break;
                                     case '2':
                                     case '6':
                                         //console.log("debug " +val);
                                         if (val == "true") {
-                                            val = $(obj).attr('text_true');
+                                            val = obj.attr('text_true');
                                         } else {
-                                            val = $(obj).attr('text_false');
+                                            val = obj.attr('text_false');
                                         }
                                         break;
                                     case '29':
-                                        var value_list = $(obj).attr('value_list').split(";");
+                                        var value_list = obj.attr('value_list').split(";");
                                         val = value_list[val];
                                         break;
                                     default:
@@ -4217,11 +4457,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                                 }
                                 value = val;
+                                console.log(obj.attr("name")+" "+obj.attr("subtype")+" "+value);
+
+                                $("input[id^='favInputText'][id$='_" + data[i].id + "']").val(obj.attr("value") + " " + value);
+
                                 $("tr[id='" + data[i].id + "'] td.uVAR.uValue").html(value);
-                            }
-                            var obj = statesXMLObj.find("datapoint[ise_id='" + data[i].id + "']");
-                            if (obj !== null) {
-                                $("tr[id='" + data[i].id + "'] td.uDP.uValue").html(value);
                             }
 
                         }
@@ -4238,6 +4478,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
                        // console.log(data[i].id + " " + value + " " + data[i].ts);
                     }
 
+                    // Update Alarms
+                    switch (activeAlarms) {
+                        case 0:
+                            alarmIndicator.hide();
+                            break;
+                        case 1:
+                            alarmIndicator.show();
+                            spanAlarmCount.html("");
+                            break;
+                        default:
+                            alarmIndicator.show();
+                            spanAlarmCount.html(activeAlarms.toString(10));
+                    }
+
                     // Update Cache
                     programsXML = $.parseXML((new XMLSerializer()).serializeToString(programsXMLObj[0]));
                     variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
@@ -4251,8 +4505,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     } else {
                         var nextRefresh = hqConf.refreshPause;
                     }
-                    if (hqConf.debug) { console.log("next refresh in " + nextRefresh + "ms"); }
-                    timerRefresh = setTimeout(refresh, nextRefresh);
+                    if (hqConf.debug) { console.log("hmRefresh() responseTime=" + totalTime + "ms datapointCount=" + data.length + " pause=" + nextRefresh + "ms"); }
+                    timerRefresh = setTimeout(hmRefresh, nextRefresh);
                     $("th[id$='active']").removeClass("ui-state-active");
                     $("th[id$='timestamp']").removeClass("ui-state-active");
                     $("th[id$='value']").removeClass("ui-state-active");
@@ -4270,12 +4524,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
             });
 
         } else {
-            timerRefresh = setTimeout(refresh, hqConf.refreshRetry);
+            timerRefresh = setTimeout(hmRefresh, hqConf.refreshRetry);
         }
 
     }
     if (hqConf.refreshEnable) {
-        refresh();
+        hmRefresh();
+        hmRefreshAlarms();
     }
 
     function updateState() {
@@ -4449,3 +4704,4 @@ function scriptEditorStyle() {
     $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
 }//
+
