@@ -89,13 +89,12 @@ Roadmap/Todo/Ideen
 ---
 * Fehler beheben: Keymatic Türe-Öffnen-Button funktioniert nicht
 * Servicemeldungen
-* Refresh der Favoriten vervollständigen
 * Systemprotokoll
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Variablen: Umbenennen, Beschreibung editieren, Protokollierung an/aus
-* Tabellenheader anpassen
 * (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic" Style)
+* Tabellenheader anpassen
 * Buttons von noch nicht implementierten Features ausblenden
 
 
@@ -136,7 +135,6 @@ irgendwann
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
 * neuer Tab "Kanäle"
-* Tab Favoriten: stringtable_de.txt konsequent überall verwenden, Möglichkeit schaffen via config.js einzelne Werte zu überschreiben
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?

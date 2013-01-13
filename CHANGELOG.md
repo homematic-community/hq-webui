@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.1-alpha9
+----------
+* Fehler behoben beim Refresh von Geräten/Kanälen/Datenpunkten
+* Favoriten-Aktualisierung vervollständigt
+* CCU-Anfragen die länger als 1s dauern werden signalisiert durch einen dickeren doppel-Pfeil (oben rechts)
+* Servicemeldungen werden nun korrekt im Reiter Geräte signalisiert (mit Anzahl)
+
 2.1-alpha8
 ----------
 * Fehler behoben bei Autorefresh der auftrat wenn Zeilenumbrüchen und Sonderzeichen in Zeichenketten-Variablen waren

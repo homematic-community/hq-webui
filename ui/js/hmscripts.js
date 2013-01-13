@@ -41,6 +41,7 @@ var scriptStates = "string sDevId;\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
     "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
+    "                            Write(\"' unit='\" # oDP.ValueUnit());\n" +
     "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
     "                            Write(\"' />\");\n" +
     "                        !}\n" +
