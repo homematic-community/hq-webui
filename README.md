@@ -88,18 +88,13 @@ Roadmap/Todo/Ideen
 2.1
 ---
 * Fehler beheben: Keymatic Türe-Öffnen-Button funktioniert nicht
-* Servicemeldungen
 * Systemprotokoll
-* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
-* Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* Variablen: Umbenennen, Beschreibung editieren, Protokollierung an/aus
-* (r) am Ende einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic" Style)
-* Tabellenheader anpassen
-* Buttons von noch nicht implementierten Features ausblenden
 
 
 2.2
 ---
+* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
+* Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Ändern von Variablen
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
@@ -125,6 +120,8 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
+* Tabellenheader anpassen (Sortierung, Filter - Selects)
+* (r) in einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic Style")
 * TCL und Shellscripte aus Editor auf CCU Speichern
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen

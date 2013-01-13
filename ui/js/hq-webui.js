@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha9";
+    var version =               "2.1-alpha10";
 
     var statesXML,
         rssiXML,
@@ -158,7 +158,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             timerRefresh = setTimeout(hmRefresh, 50);
             if (!tabChange) {
                 var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
-                if (hqConf.debug) { console.log(hash); }
+                //if (hqConf.debug) { console.log(hash); }
                 history.pushState({}, "", hash);
                 tabActive = hash;
             } else {
@@ -177,7 +177,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $(window).bind( 'hashchange', function(e) {
         //console.log("change");
         tabChange = true;
-        tabs.tabs('select', window.location.hash);
+        tabActive = window.location.hash;
+        tabs.tabs('select', tabActive);
     });
     $("#subTabCcu").tabs();
 
@@ -506,7 +507,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Gewerke',
         'Protokolliert',
         '',
-        ''
+        'Servicemeldungen'
     ];
     var colModelStates = [
         {name: 'icon', index:'icon', width: 27, fixed: true,
@@ -620,8 +621,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:'service', index:'service', width:130, fixed: false,
             xmlmap: function (obj) {
-                var output = "";
-                /*$(obj).find("channel:first datapoint").each(function () {
+                /*var output = "";
+                $(obj).find("channel:first datapoint").each(function () {
                     var ise_id  = $(this).attr("ise_id");
                     var value   = $(this).attr("value");
                     var type    = $(this).attr("type");
@@ -633,7 +634,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         output += type + "=" + value;
                     }
                 });*/
-                return output;
+                return $(obj).attr("service");
             }
         }
     ];
@@ -750,10 +751,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
             }
         },
-        {name:'service', index:'service', width: 65, fixed: false,
+        {name:'service', index:'service', width: 130, fixed: false,
             xmlmap: function (obj) {
-                var output = "";
-                /*$(obj).find("channel:first datapoint").each(function () {
+                /* var output = "";
+                 $(obj).find("channel:first datapoint").each(function () {
                  var ise_id  = $(this).attr("ise_id");
                  var value   = $(this).attr("value");
                  var type    = $(this).attr("type");
@@ -765,7 +766,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                  output += type + "=" + value;
                  }
                  });*/
-                return output;
+                return $(obj).attr("service");
             }
         }
     ];
@@ -1192,12 +1193,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#btnCfgVar").addClass("ui-state-disabled").click(function() {
         editVariable(gridVariables.jqGrid('getGridParam','selrow'));
     });
-    $("#btnDelVar").addClass("ui-state-disabled");
-    $("#btnAddVar").addClass("ui-state-disabled");
+    $("#btnDelVar").addClass("ui-state-disabled").css("opacity", 0);
+    $("#btnAddVar").addClass("ui-state-disabled").css("opacity", 0);
 
     function editVariable(id) {
+        $("#cfgVarId").val(id);
         $("#cfgVarName").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name"));
         $("#cfgVarDesc").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("desc"));
+        var logged = variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("logged");
+        if (logged == "true") {
+            $("#cfgVarLogged").attr("checked", true);
+        } else {
+            $("#cfgVarLogged").removeAttr("checked");
+        }
+
+
         $("#dialogCfgVariable").dialog("open");
     }
 
@@ -1333,7 +1343,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var obj = programsXMLObj.find("program[id='"+id+"']");
                 $("#cfgPrgId").val(id);
                 $("#cfgPrgName").val(obj.attr("name"));
-                $("#cfgPrgDesc").val(obj.attr("desc"));
+                $("#cfgPrgDesc").val(obj.attr("description"));
                 if (obj.attr("active") == "true") {
                     $("#cfgPrgActive").attr("checked", true);
                 } else {
@@ -1393,6 +1403,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         gridComplete: function() {
             $("button.btnDevRename").button({
                 icons: { primary: 'ui-icon-pencil' }
+            }).click(function () {
+                hmEditDeviceName($(this).parent().parent().attr("id"));
             });
 
 
@@ -1401,13 +1413,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             subGridChannel(grid_id, row_id);
         },
         ondblClickRow: function(row_id) {
-            if ($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html() != null) {
-                $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
-                $("#renameId").val(row_id);
-                $("#renameType").val("DEVICE");
-                dialogRename.dialog('open');
 
-            }
         }
     }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
         'navGrid',
@@ -1434,6 +1440,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
             title:"Geräte, Gewerke und Räume neu laden",
             cursor: "pointer"
         });
+
+    function hmEditDeviceName(row_id) {
+        if ($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html() != null) {
+            $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
+            $("#renameId").val(row_id);
+            $("#renameType").val("DEVICE");
+            dialogRename.dialog('open');
+        }
+    }
 
     $("#gridPagerStates_left").append("<span class='timeRefresh' id='timeRefreshStates'/>");
 
@@ -1596,23 +1611,29 @@ jQuery.extend(jQuery.expr[ ":" ], {
             gridComplete: function() {
                 $("button.btnChRename").button({
                     icons: { primary: 'ui-icon-pencil' }
-                });
+                }).click(function () {
+                        hmEditChannelName($(this).parent().parent().attr("id"));
+                    });
 
 
             },
             subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
             ondblClickRow: function(row_id, iRow, iCol, e) {
-                if (!$("tr[id='" + row_id + "'] td:first").attr('aria-describedby').match(/_t_[0-9]+_t_/)) {
-                    var channel = $("tr[id='" + row_id + "'] td[aria-describedby$='t_address']").html().split(":");
-                    if (channel[channel.length - 1] != 0) {
-                        $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
-                        $("#renameId").val(row_id);
-                        $("#renameType").val("CHANNEL");
-                        dialogRename.dialog('open');
-                    }
-                }
+
             }
         });
+    }
+
+    function hmEditChannelName(row_id) {
+        if (!$("tr[id='" + row_id + "'] td:first").attr('aria-describedby').match(/_t_[0-9]+_t_/)) {
+            var channel = $("tr[id='" + row_id + "'] td[aria-describedby$='t_address']").html().split(":");
+            if (channel[channel.length - 1] != 0) {
+                $("#rename").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
+                $("#renameId").val(row_id);
+                $("#renameType").val("CHANNEL");
+                dialogRename.dialog('open');
+            }
+        }
     }
 
     // Subgrid von subGridChannel
@@ -1636,70 +1657,79 @@ jQuery.extend(jQuery.expr[ ":" ], {
             gridComplete: function() {
                 $("button.btnEditDP").button({
                     icons: { primary: 'ui-icon-pencil' }
+                }).click(function () {
+
+                    hmEditDatapoint($(this).parent().parent().attr("id"), subgrid_table_id);
                 });
                 $("button.btnAlReceipt").button({
                     icons: { primary: 'ui-icon-check' }
-                });
+                }).click(function () {
+                        hmReceiptAlarm($(this).parent().parent().attr("id"));
+                    });
 
             },
             ondblClickRow: function (id) {
 
-                //console.log("dblclick Datapoint id=" + id);
-
-                var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
-                var valuetype = $("#" + subgrid_table_id).getCell(id, "valuetype");
-                var oper = $("#" + subgrid_table_id).getCell(id, "oper");
-                if (oper.search(/W/) == -1) {
-                    return false;
-                }
-
-                $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
-                $("#datapointId").val(id);
-                $("#datapointGridId").val(subgrid_table_id);
-
-                switch (valuetype) {
-                    case '2':
-                        datapointInput.html("<select id='datapointValue'><option value='false'>False</option><option value='true'>True</option></select>");
-                        $("#datapointValue option[value='" + value + "']").attr("selected", true);
-                        break;
-                    case '6':
-                        datapointInput.html("<div id='sliderDatapoint'></div><br>" +
-                            "<div id='radioDatapoint'>" +
-                            "<input type='radio' name='radioDatapoint' id='radioDatapointOff'><label for='radioDatapointOff'>Aus</label>" +
-                            "<input type='radio' name='radioDatapoint' id='radioDatapointOn'><label for='radioDatapointOn'>An</label>" +
-                            "</div><br>" +
-                            "<input type='text' id='datapointValue' value='" + value + "'>");
-
-                        $("#radioDatapoint").buttonset();
-                        $("#sliderDatapoint").slider({
-                            min: 0.00,
-                            max: 1.00,
-                            step: 0.01,
-                            value: value,
-                            stop: function (e, ui) {
-                                value = ui.value;
-                                $("input#datapointValue").val(ui.value);
-                            }
-                        });$("#radioDatapointOff").click(function () {
-                            $("#datapointValue").val("0.00");
-                            $("#sliderDatapoint").slider('value', 0.00);
-                        });
-                        $("#radioDatapointOn").click(function () {
-                            $("#datapointValue").val("1.00");
-                            $("#sliderDatapoint").slider('value', 1.00);
-                        });
-                        $("#datapointValue").change(function () {
-                            $("#sliderDatapoint").slider('value', $("#datapointValue").val());
-                        });
-                        break;
-                    default:
-
-                        datapointInput.html("<input type='text' id='datapointValue' value='" + value + "'>");
-
-                }
-                dialogEditDatapoint.dialog("open");
+                hmEditDatapoint(id, subgrid_table_id);
             }
         });
+    }
+
+    function hmEditDatapoint(id, subgrid_table_id) {
+        //console.log("dblclick Datapoint id=" + id);
+
+        var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
+        var valuetype = $("#" + subgrid_table_id).getCell(id, "valuetype");
+        var oper = $("#" + subgrid_table_id).getCell(id, "oper");
+        if (oper.search(/W/) == -1) {
+            return false;
+        }
+
+        $("#datapointName").html($("#" + subgrid_table_id).getCell(id, "name"));
+        $("#datapointId").val(id);
+        $("#datapointGridId").val(subgrid_table_id);
+
+        switch (valuetype) {
+            case '2':
+                datapointInput.html("<select id='datapointValue'><option value='false'>False</option><option value='true'>True</option></select>");
+                $("#datapointValue option[value='" + value + "']").attr("selected", true);
+                break;
+            case '6':
+                datapointInput.html("<div id='sliderDatapoint'></div><br>" +
+                    "<div id='radioDatapoint'>" +
+                    "<input type='radio' name='radioDatapoint' id='radioDatapointOff'><label for='radioDatapointOff'>Aus</label>" +
+                    "<input type='radio' name='radioDatapoint' id='radioDatapointOn'><label for='radioDatapointOn'>An</label>" +
+                    "</div><br>" +
+                    "<input type='text' id='datapointValue' value='" + value + "'>");
+
+                $("#radioDatapoint").buttonset();
+                $("#sliderDatapoint").slider({
+                    min: 0.00,
+                    max: 1.00,
+                    step: 0.01,
+                    value: value,
+                    stop: function (e, ui) {
+                        value = ui.value;
+                        $("input#datapointValue").val(ui.value);
+                    }
+                });$("#radioDatapointOff").click(function () {
+                $("#datapointValue").val("0.00");
+                $("#sliderDatapoint").slider('value', 0.00);
+            });
+                $("#radioDatapointOn").click(function () {
+                    $("#datapointValue").val("1.00");
+                    $("#sliderDatapoint").slider('value', 1.00);
+                });
+                $("#datapointValue").change(function () {
+                    $("#sliderDatapoint").slider('value', $("#datapointValue").val());
+                });
+                break;
+            default:
+
+                datapointInput.html("<input type='text' id='datapointValue' value='" + value + "'>");
+
+        }
+        dialogEditDatapoint.dialog("open");
     }
 
     // Grid Formatter
@@ -2330,8 +2360,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     $("#favInputSelect" + fav_id + "_" + var_id + " option[value='" + value + "']").attr("selected", true);
                                     $("#favInputSelect" + fav_id + "_" + var_id).change(function () {
                                         //console.log($("#favInputSelect" + fav_id + " " + var_id).html());
-                                        var select_val = $("#favInputSelect" + fav_id + " " + var_id + " option:selected").val();
-                                        //console.log("fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
+                                        var select_val = $("#favInputSelect" + fav_id + "_" + var_id + " option:selected").val();
+                                       // console.log("fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
                                         hmSetState(var_id, select_val);
                                     }).multiselect({
                                             multiple: false,
@@ -2804,6 +2834,41 @@ jQuery.extend(jQuery.expr[ ":" ], {
         height: 340,
         buttons: {
             'Änderungen übernehmen': function () {
+                var id = $("#cfgVarId").val();
+                var name = $("#cfgVarName").val();
+                var desc = $("#cfgVarDesc").val();
+                var logged = $("#cfgVarLogged").is(":checked");
+                var script = "object o = dom.GetObject("+id+");\n" +
+                    "o.Name('"+name+"');\n" +
+                    "o.DPInfo('"+desc+"');\n" +
+                    "o.DPArchive("+logged+");";
+                console.log(script);
+                $.ajax({
+                    url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+                    type: "POST",
+                    data: script,
+                    success: function () {
+                        variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name", name).attr("desc", desc).attr("logged", logged);
+                        variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
+                        gridVariables.jqGrid("setCell", id, "name", name);
+                        gridVariables.jqGrid("setCell", id, "desc", desc);
+                        gridVariables.jqGrid("setCell", id, "logged", logged);
+
+                        gridVariables.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: variablesXML
+                        });
+                        storage.set("hqWebUiVariables", (new XMLSerializer()).serializeToString(variablesXML));
+
+                        $("#dialogCfgVariable").dialog('close');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        $("#dialogCfgVariable").dialog('close');
+                        ajaxError(xhr, ajaxOptions, thrownError);
+
+                    }
+                });
 
             },
             'Abbrechen': function () {
@@ -3463,7 +3528,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 type: "post",
                 data: script,
                 success: function (data) {
-                    timerRefresh = setTimeout(hmRefresh, 5);
+                    timerRefresh = setTimeout(hmRefresh, 80);
 
                     if (successFunction !== undefined) {
                         successFunction(data);
@@ -3635,7 +3700,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             "      if (oTmp.IsTypeOf(OT_ALARMDP) && oTmp.AlState() == asOncoming) {\n" +
             "        var trigDP = dom.GetObject(oTmp.AlTriggerDP());\n" +
             "        if (!first) { WriteLine(\",\"); } else { first = false; }\n" +
-            "        Write('{\"id\":\"' # oTmp.ID() # '\",\"t\":\"a\",\"vl\":\"' # oTmp.AlState() # '\",\"ts\":\"' # oTmp.LastTriggerTime() # '\",\"ta\":\"' # oTmp.AlOccurrenceTime() # '\"}');\n" +
+            "        Write('{\"id\":\"' # oTmp.ID() # '\",\"did\":\"' # oTmp.AlTriggerDP() # '\",\"t\":\"a\",\"vl\":\"' # oTmp.AlState() # '\",\"ts\":\"' # oTmp.LastTriggerTime() # '\",\"ta\":\"' # oTmp.AlOccurrenceTime() # '\"}');\n" +
             "      }\n" +
             "    }\n" +
             "  }\n" +
@@ -3652,6 +3717,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     switch (activeMessages) {
                         case 0:
                             serviceIndicator.hide();
+                            spanMsgCount.html("");
                             break;
                         case 1:
                             serviceIndicator.show();
@@ -3662,11 +3728,78 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             spanMsgCount.html(activeMessages.toString(10));
                     }
 
+                    statesXMLObj.find("datapoint").each(function() {
+                        $(this).attr("service", "");
+                    });
+                    $("table[id^='gridStates_'] tr").each(function () {
+                        if ($(this).find("td[aria-describedby$='_t_dptype']").html() == "ALARMDP") {
+                            $(this).find("td[aria-describedby$='_t_value']").html("");
+                        }
+                        $(this).find("td[aria-describedby$='_t_service']").html("");
+                    });
+                    statesXMLObj.find("channel").each(function() {
+                        $(this).attr("service", "");
+                    });
+                    statesXMLObj.find("device").each(function() {
+                        $(this).attr("service", "");
+                    });
+                    $("table#gridStates tr").each(function () {
+                        $("td[aria-describedby='gridStates_service']").html("");
+                    });
+
+                    for (var i = 0; i < activeMessages; i++) {
+                        var chid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("ise_id");
+                        var devid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("ise_id");
+
+                        var message = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("name").split(".")[1];
+
+                        //console.log(message+" "+devid+" "+chid+" "+data[i].id);
+
+                        message = "<span class='ui-state-active'>"+message+"</span>";
+
+                        var devcell = $("table#gridStates tr[id='" + devid + "'] td[aria-describedby='gridStates_service']");
+                        devcell.html(devcell.html() + " " + message);
+                        var chcell = $("tr#" + chid + " td[aria-describedby$='_t_service']");
+                        chcell.html(chcell.html() + " " + message);
+
+                        $("tr#" + data[i].id + " td[aria-describedby$='_t_value']").html(message);
+
+
+                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("value", message);
+                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("service", statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("service") + " " + message);
+                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("service", statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("service") + " " + message);
+
+                        statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
+                        gridStates.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: statesXML
+                        });
+
+                    }
+
                     timerMessages = setTimeout(hmRefreshAlarms, hqConf.refreshPauseAlarms);
                 }
             });
     }
 
+    function hmReceiptAlarm(id) {
+        clearTimeout(timerMessages);
+        var script = "dom.GetObject(" + id + ").AlReceipt();";
+        console.log(script);
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+            type: 'POST',
+            data: script,
+            success: function (data) {
+                timerMessages = setTimeout(hmRefreshAlarms, 10);
+            },
+            error: function () {
+                timerMessages = setTimeout(hmRefreshAlarms, 10);
+
+            }
+        });
+    }
     function insertAlarms(data) {
         //console.log("\n\n\n--- BEFORE ---");
         //console.log(statesXMLObj);
@@ -4094,6 +4227,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
             data: script,
             type: 'POST',
             success: function () {
+                programsXMLObj.find("program[id='"+id+"']").attr("name", name).attr("description", description).attr("active", active);
+                programsXML = $.parseXML((new XMLSerializer()).serializeToString(programsXMLObj[0]));
+                gridVariables.jqGrid("setCell", id, "name", name);
+                gridVariables.jqGrid("setCell", id, "description", description);
+                gridVariables.jqGrid("setCell", id, "active", active);
+
+                gridPrograms.setGridParam({
+                    loadonce: false,
+                    datatype: "xmlstring",
+                    datastr: programsXML
+                }).trigger("reloadGrid");
+                storage.set("hqWebUiPrograms", (new XMLSerializer()).serializeToString(programsXML));
+
+
                 //console.log("saveProgram(" + id + ")");
             }
         });
@@ -4358,7 +4505,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     var id = $(this).attr("title");
                     var type = $(this).parent().find("td[aria-describedby$='_dptype']").html();
                     var oper = $(this).parent().find("td[aria-describedby$='_oper']").html();
-                    if (type[0] !== "ALARMDP") {
+                    if (type !== "ALARMDP") {
                         updateCount += 1;
                         id = parseInt(id, 10);
                         if (!updateFirst) {
@@ -4702,6 +4849,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     switch (activeAlarms) {
                         case 0:
                             alarmIndicator.hide();
+                            spanAlarmCount.html("");
                             break;
                         case 1:
                             alarmIndicator.show();

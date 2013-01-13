@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.1-alpha10
+-----------
+* Anzeige der Servicemeldungen in der Geräte-, Kanäle- und Datenpunkttabelle
+* Fehler bei Anzeige Anzahl Servicemeldungen behoben
+* Editieren- und Servicemeldung-Bestätigen-Button in Datenpunkt-Tabelle implementiert
+* Umbenennen-Button bei Geräten und Kanälen implementiert
+* Favoriten: Fehler behoben beim editieren von Variablen des Typs Werteliste
+* config.js: Aktualisierungsintervall-Faktor auf 4 geändert. Entspricht circa 20% Last auf der Logikschicht und führt in der Praxis zu Aktualisierungsintervallen zwischen 1,2 und 5 Sekunden.
+* Variablen/Programme: Editieren von Name und Beschreibung, Programme aktiv/inaktiv, Variablen Protokollieren
+
 2.1-alpha9
 ----------
 * Fehler behoben beim Refresh von Geräten/Kanälen/Datenpunkten
