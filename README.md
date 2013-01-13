@@ -11,12 +11,12 @@ Features
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung
 * Editor unterstützt Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
-* Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen
+* Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen und der "RSSI-List" in übersichtlichen Tabellen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * Schreibender Zugriff auf Datenpunkte
-* Ändern des Wertes eine Variable
+* Ändern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
-* Umbenennen von Geräten und Kanälen
+* Umbenennen, Geräten und Kanälen
 * Übersichtliche Favoritenansicht
 * Themes, jQuery UI basiert.
 * ...geplante Features siehe "Todo"
@@ -54,23 +54,27 @@ Bedienung
 Allgemein
 ---------
 Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die Daten neu zu laden. Bei den Systemprotokollen ist hier außerdem ein Lösch-Button zu finden.
-Die Gerätedaten, die Räume und die Gewerke werden lokal zwischengespeichert und lassen sich über den zweiten Reload-Button in der Geräteansicht unten Links aktualisieren, der erste Reload-Button lädt lediglich die Status der Datenpunkte neu.
+Alle Sichtbaren Datenpunkten werden ständig automatisch aktualisiert, die Reload-Buttons sind eigentlich nur dann zu verwenden wenn Änderungen ausserhalb des HQ WebUI vorgenommen wurden (z.B. neues Gerät oder Programm, ...)
+Im Einstellungsmenü (Zahnrad-Button oben rechts) kann man alle zwischengespeicherten Daten löschen.
 Rechts oben befindet sich der Logout-Button, der Einstellungen-Button (in den Einstellungen kann das Theme gewählt werden und gespeicherte Login-Daten können gelöscht werden), sowie ein Hilfe-Button.
-Eigene Themes können quasi ohne HTML/CSS hier "zusammengecklickt" werden: http://jqueryui.com/themeroller/
+Eigene Themes können quasi ohne HTML/CSS-Kenntnisse hier zusammengecklickt werden: http://jqueryui.com/themeroller/
+Diverse Konfigurationsoptionen können in der Datei ui/js/config.js editiert werden.
 
 Favoriten
 ---------
 Die Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir automatisch im LocalStorage gespeichert. Unten Links befindet sich ein Refresh-Button.
 
-Geräte und Variablen
---------------------
-In der Geräteliste befindet sich ganz links in der Tabelle bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
-Datenpunkte und Variablen lassen sich einfach über Doppelklick auf die Tabellenzeile editieren.
-Geräte und Kanäle können über Doppelklick umbenannt werden.
 
-Programme
----------
-Programme können über einen Doppelklick auf die Tabellenzelle umbenannt und aktiviert/deaktiviert werden. Links in jeder Zeile befindet sich ein "Play-Button", hiermit können Programme gestartet werden.
+Variablen & Programme
+---------------------
+Variablen und Programme können über einfach-Klick markiert werden, dann werden unten Links 2 Buttons aktiv, einer zum Ändern des Variablen-Werts (bzw zum starten eines Programms), einer zum editieren des Namens und der Beschreibung.
+
+
+Geräte
+------
+In der Geräteliste befindet sich ganz links in den Tabellen-Zeilen bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
+Datenpunkte lassen sich über einen Button rechts in der jeweiligen Zeile editieren, hier können auch Servicemeldungen bestätigt werden. Geräte und Kanäle können ebenfalls über den Button rechts umbenannt werden.
+
 
 Entwicklung
 -----------
@@ -93,11 +97,11 @@ Roadmap/Todo/Ideen
 
 2.2
 ---
-* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
-* Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Ändern von Variablen
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
+* Geräte: Kanäle Protokollierung aktivieren/deaktivieren
+* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 
 2.3
 ---

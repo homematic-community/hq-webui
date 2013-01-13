@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1-beta1
+---------
+
+
 2.1-alpha10
 -----------
 * Anzeige der Servicemeldungen in der Geräte-, Kanäle- und Datenpunkttabelle
