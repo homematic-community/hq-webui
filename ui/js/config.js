@@ -20,7 +20,7 @@ var hqConf = {
 
     // Debug-Modus
     // Schreibt Debug-Ausgabe in die Browser-Konsole
-    debug:                  true,
+    debug:                  false,
 
     // Automatischer Refresh
     // Alle Zeitangaben in Millisekunden
