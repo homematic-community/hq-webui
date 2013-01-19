@@ -1,7 +1,11 @@
 Changelog
 =========
 
-
+2.1-beta1
+---------
+* Favoriten: Fehler behoben bei Tastern und Keymatic-Öffnen
+* Servicemeldungen: Fehler behoben bei Anzeige Alarm-Auslöse-Zeitpunkt
+* Systemprotokoll neu aufgebaut
 
 2.1-alpha10
 -----------

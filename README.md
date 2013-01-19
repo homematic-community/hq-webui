@@ -89,12 +89,6 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 Roadmap/Todo/Ideen
 ==================
 
-2.1
----
-* Fehler beheben: Keymatic Türe-Öffnen-Button funktioniert nicht
-* Systemprotokoll
-
-
 2.2
 ---
 * Ändern von Variablen

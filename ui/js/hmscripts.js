@@ -42,7 +42,7 @@ var scriptStates = "string sDevId;\n" +
     "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
     "                            Write(\"' unit='\" # oDP.ValueUnit());\n" +
-    "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
+    "                            Write(\"' timestamp='\" # oDP.Timestamp());\n" +
     "                            Write(\"' />\");\n" +
     "                        !}\n" +
     "                    }\n" +
@@ -104,15 +104,13 @@ var scriptVariables = "object oSysVar;\n" +
     "}\n" +
     "Write(\"</systemVariables>\");\n";
 
-var scriptProtocol = "var iStart = 0;\n" +
-"var iCount = 1000;\n" +
-"var rCount;\n" +
+var scriptProtocol = "var rCount;\n" +
 "string s;\n" +
 "string datetime;\n" +
 "object oDP;\n" +
-"boolean desc = false;\n" +
-"string sXml = '';\n" +
+"var counter = iStart;\n" +
 "WriteLine('<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>');\n" +
+"WriteLine('<systemprotocol>');\n" +
 "foreach(s, dom.GetHistoryData( iStart, iCount, &rCount)) {\n" +
 "    integer iGroupIndex = s.StrValueByIndex(\";\",0).ToInteger();\n" +
 "    string sDatapointId = s.StrValueByIndex(\";\",1);\n" +
@@ -126,22 +124,10 @@ var scriptProtocol = "var iStart = 0;\n" +
 "            string sType = oDP.TypeName();\n" +
 "        }\n" +
 "    }\n" +
-"    string sLine = '<row datetime=\"' # sDateTime # '\" id=\"' # oHistDP.ArchiveDP() # '\" type=\"' # sType # '\" value=\"' # sRecordedValue # '\"/>';\n" +
-"    if (sXml != '') {\n" +
-"        if (desc) {\n" +
-"            sXml = sXml # '\n';\n" +
-"        } else {\n" +
-"            sXml = '\n' # sXml;\n" +
-"        }\n" +
-"    }\n" +
-"    if (desc) {\n" +
-"        sXml = sXml # sLine;\n" +
-"    } else {\n" +
-"        sXml = sLine # sXml;\n" +
-"    }\n" +
+"    WriteLine('<row datetime=\"' # sDateTime # '\" id=\"' # counter # '\" did=\"' # oHistDP.ArchiveDP() # '\" type=\"' # sType # '\" value=\"' # sRecordedValue # '\"/>');\n" +
+"    counter = counter + 1;\n" +
 "}\n" +
-"sXml = '<systemProtocol>' # sXml # '</systemProtocol>';\n" +
-"WriteLine(sXml);\n";
+"WriteLine('<records count=\"' # rCount # '\"/>\\n</systemprotocol>');\n";
     
     
 

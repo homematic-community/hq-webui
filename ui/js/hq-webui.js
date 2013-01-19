@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1-alpha10";
+    var version =               "2.1-beta1";
 
     var statesXML,
         rssiXML,
@@ -42,6 +42,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         favoritesXMLObj,
         alarmsData,
         tabActive;
+
+    var protocolXML, protocolXMLObj, protocolRecords;
 
     var statesReady =           false,
         alarmsReady =           false,
@@ -151,7 +153,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Tabs Init und Navigation
     var tabChange = false;
-    tabActive = "#tabFavorites";
+    tabActive = window.location.hash;
+    if (tabActive == "") { tabActive = "#tabFavorites"; }
         tabs.tabs({
         select: function(event, ui) {
             clearTimeout(timerRefresh);
@@ -843,14 +846,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         {name:"timestamp",   index:"timestamp",   width:130, fixed: true,
             xmlmap: function (obj) {
-                return formatTimestamp($(obj).attr('timestamp'));
+                return $(obj).attr('timestamp');
             },
             classes: 'update uDP uTimestamp'
 
         },
         {name:"timealarm",   index:"timealarm",   width:130, fixed: true,
             xmlmap: function (obj) {
-                return "";
+                return $(obj).attr('timealarm');
             },
             classes: 'update uDP uTimealarm'
 
@@ -1010,7 +1013,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var colModelProtocol = [
         {name:'id', index:'id', width: 43,
             xmlmap: function (obj) {
-                return $(obj).attr('id');
+                return $(obj).attr('did');
             }
         },
         {name:'type', index:'type', width: 43,
@@ -1026,7 +1029,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'name', index:'name', width: 250,
             xmlmap: function (obj) {
                 var type = $(obj).attr('type');
-                var ise_id = $(obj).attr('id');
+                var ise_id = $(obj).attr('did');
                 var name;
                 switch (type) {
                     case "VARDP":
@@ -1043,7 +1046,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'device', index:'device', width: 80,
             xmlmap: function (obj) {
                 var type = $(obj).attr('type');
-                var ise_id = $(obj).attr('id');
+                var ise_id = $(obj).attr('did');
                 var name;
                 switch (type) {
                     case "VARDP":
@@ -1060,7 +1063,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'channel', index:'channel', width: 80,
             xmlmap: function (obj) {
                 var type = $(obj).attr('type');
-                var ise_id = $(obj).attr('id');
+                var ise_id = $(obj).attr('did');
                 var name;
                 switch (type) {
                     case "VARDP":
@@ -1074,7 +1077,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return name;
             }
         },
-        {name:'value', index:'value', width: 80,
+        {name:'pvalue', index:'pvalue', width: 80,
             xmlmap: function (obj) {
                 return $(obj).attr('value');
             }
@@ -1503,7 +1506,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         viewrecords:    true,
         gridview:       true,
         caption:        'Systemprotokoll',
-        datatype:       'clientSide',
+        datatype:       'xmlstring',
         loadonce:       true,
         loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
         data: {
@@ -1513,7 +1516,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         sortname: "datetime",
         sortorder: "desc",
         xmlReader : {
-            root: "systemProtocol",
+            root: "systemprotocol",
             row: "row",
             repeatitems: false
         }
@@ -1824,11 +1827,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             }
         });
-        gridProtocol.setGridParam({
+        /*gridProtocol.setGridParam({
             loadComplete: function () {
                 protocolReady = true;
             }
-        });
+        });*/
         gridRssi.setGridParam({
             loadComplete: function () {
                 rssiReady = true;
@@ -2149,28 +2152,59 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
     }
 
-    function refreshProtocol() {
-        $("#loaderProtocol").show();
-        protocolReady = false;
 
+    function refreshProtocol() {
+        protocolXMLObj = $("<systemProtocol/>");
+        protocolRecords = 0;
+        protocolReady = false;
+        $("#loaderProtocol").show();
+        hmGetProtocol(protocolRecords, 1000);
+    }
+
+
+    function hmGetProtocol(start, count) {
+
+        var script = "var iStart = "+start+";\n" +
+            "var iCount = "+count+";\n" + scriptProtocol;
+        if (hqConf.debug) { console.log("hmGetProtocol("+start+", "+count+")"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
-            data: scriptProtocol,
+            data: script,
             success: function (data) {
-                gridProtocol.setGridParam({
-                     loadonce: false,
-                    datatype: "xmlstring",
-                    datastr: data,
-                    sortname: 'datetime',
-                    sortorder: 'desc'
-                }).trigger("reloadGrid").setGridParam({loadonce:true});
-                $("#loaderProtocol").hide();
+                var rcount = parseInt($(data).find("records").attr("count"), 10);
+                protocolRecords += rcount;
+
+                $(data).find("row").each(function () {
+                    protocolXMLObj.prepend(this);
+                    if (protocolReady) {
+                        // TODO: Liveupdate (Zeilen in geladenes Grid einfügen)
+                    }
+                });
+
+
+                if (rcount >= count) {
+                    hmGetProtocol(protocolRecords, count);
+                } else {
+                    protocolXML = $.parseXML((new XMLSerializer()).serializeToString(protocolXMLObj[0]));
+                    gridProtocol.setGridParam({
+                        loadonce: false,
+                        datatype: "xmlstring",
+                        datastr: protocolXML,
+                        sortname: 'datetime',
+                        sortorder: 'desc'
+                    });
+                    if (!protocolReady) {
+                        gridProtocol.trigger("reloadGrid").setGridParam({sortname: 'datetime', sortorder: 'desc', loadonce:true});
+                        $("#loaderProtocol").hide();
+                        protocolReady = true;
+                    }
+
+                }
+
             },
             error: ajaxError
         });
-
-
     }
 
     function hmGetRssi() {
@@ -2594,7 +2628,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     html = "";
                                     $("#favInputText" + fav_id + "_" + id).keyup(function(e) {
                                         if(e.keyCode == 13) {
-                                            hmSetState(var_id, $("#favInputText" + fav_id + "_" + id).val());
+                                            hmSetState(id, $("#favInputText" + fav_id + "_" + id).val());
                                         }
                                     });
                                     break;
@@ -2604,7 +2638,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     favCell.find(" .favInput").append(html);
                                     html = "";
                                     $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow" + (type == "PRESS_LONG" ? "thick" : "") + "stop-1-s" }}).click(function () {
-                                        hmSetState($(this).attr("ise_id"), "true");
+                                        hmSetState(id, "true");
                                     });
                                     break;
                                 case 'OPEN':
@@ -2612,7 +2646,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     favCell.find(" .favInput").append(html);
                                     html = "";
                                     $("button[id='favPressKey" + fav_id + "_" + $(this).attr("ise_id") +"']").button({icons: { primary: "ui-icon-arrow-stop-1-s" }}).click(function () {
-                                        hmSetState($(this).attr("ise_id"), "true");
+                                        hmSetState(id, "true");
                                     });
                                     break;
                                     break;
@@ -3734,6 +3768,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("table[id^='gridStates_'] tr").each(function () {
                         if ($(this).find("td[aria-describedby$='_t_dptype']").html() == "ALARMDP") {
                             $(this).find("td[aria-describedby$='_t_value']").html("");
+                            $(this).find("td[aria-describedby$='_t_timealarm']").html("");
+                            $(this).find("td[aria-describedby$='_t_timestamp']").html("");
                         }
                         $(this).find("td[aria-describedby$='_t_service']").html("");
                     });
@@ -3752,9 +3788,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         var devid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("ise_id");
 
                         var message = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("name").split(".")[1];
+                        //var message = "true";
+                        var timestamp = data[i].ts;
+                        var timealarm = data[i].ta;
+                        //console.log(message+" "+timestamp+" "+timealarm+" "+data[i].id);
 
-                        //console.log(message+" "+devid+" "+chid+" "+data[i].id);
-
+                        timealarm = "<span class='ui-state-active'>"+timealarm+"</span>";
                         message = "<span class='ui-state-active'>"+message+"</span>";
 
                         var devcell = $("table#gridStates tr[id='" + devid + "'] td[aria-describedby='gridStates_service']");
@@ -3762,10 +3801,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         var chcell = $("tr#" + chid + " td[aria-describedby$='_t_service']");
                         chcell.html(chcell.html() + " " + message);
 
-                        $("tr#" + data[i].id + " td[aria-describedby$='_t_value']").html(message);
+                        $("tr#" + data[i].id + " td[aria-describedby$='_t_value']").html("true");
+                        $("tr#" + data[i].id + " td[aria-describedby$='_t_timestamp']").html(timestamp);
+                        $("tr#" + data[i].id + " td[aria-describedby$='_t_timealarm']").html(timealarm);
 
 
-                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("value", message);
+                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("value", "true").attr("timestamp", timestamp).attr("timealarm", timealarm);
                         statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("service", statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("service") + " " + message);
                         statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("service", statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("service") + " " + message);
 
@@ -4591,9 +4632,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 "    }\n" +
                 "}";*/
 
-            $("th[id$='active']").addClass("ui-state-active");
-            $("th[id$='timestamp']").addClass("ui-state-active");
-            $("th[id$='value']").addClass("ui-state-active");
+            $("th[id$='_active']").addClass("ui-state-active");
+            $("th[id$='_timestamp']").addClass("ui-state-active");
+            $("th[id$='_value']").addClass("ui-state-active");
             updateScript = 'object o;\nWrite("[");\n' + updateScript + 'Write("]");';
             //console.log({'updateScript':updateScript});
             var ajaxTime = new Date().getTime();
@@ -4874,17 +4915,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     }
                     if (hqConf.debug) { console.log("hmRefresh() responseTime=" + totalTime + "ms datapointCount=" + data.length + " pause=" + nextRefresh + "ms"); }
                     timerRefresh = setTimeout(hmRefresh, nextRefresh);
-                    $("th[id$='active']").removeClass("ui-state-active");
-                    $("th[id$='timestamp']").removeClass("ui-state-active");
-                    $("th[id$='value']").removeClass("ui-state-active");
+                    $("th[id$='_active']").removeClass("ui-state-active");
+                    $("th[id$='_timestamp']").removeClass("ui-state-active");
+                    $("th[id$='_value']").removeClass("ui-state-active");
 
                 },
                 error: function (a,b,c) {
                     ajaxError("Update: " + a,b,c);
                     hqConf.refreshEnable = false;
-                    $("th[id$='active']").removeClass("ui-state-active");
-                    $("th[id$='timestamp']").removeClass("ui-state-active");
-                    $("th[id$='value']").removeClass("ui-state-active");
+                    $("th[id$='_active']").removeClass("ui-state-active");
+                    $("th[id$='_timestamp']").removeClass("ui-state-active");
+                    $("th[id$='_value']").removeClass("ui-state-active");
 
 
                 }
