@@ -31,8 +31,6 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
-Wer Danke sagen und/oder mich motivieren möchte kann das am besten über diesen Button:
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=hobbyquaker&url=https://github.com/hobbyquaker/hq-webui&title=hq-webui&language=de&tags=github&category=software)
 
 Download
 ========
@@ -41,11 +39,11 @@ http://www.homematic-inside.de/software/download/item/hq-webui-addon
 
 Installation
 ============
+**Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
+
 Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ui/ erreichbar.
 
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
-
-**Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
 
 Bedienung
@@ -75,11 +73,19 @@ Geräte
 In der Geräteliste befindet sich ganz links in den Tabellen-Zeilen bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
 Datenpunkte lassen sich über einen Button rechts in der jeweiligen Zeile editieren, hier können auch Servicemeldungen bestätigt werden. Geräte und Kanäle können ebenfalls über den Button rechts umbenannt werden.
 
+Geräte/Servicemeldungen
+-----------------------
+Wenn Servicemeldungen vorhanden sind werden diese im Reiter Geräte mit Anzahl angezeigt. Klappt man Geräte und Kanäle mit aktiven Servicemeldungen auf kann man über den "Checkmark" Button die Servicemeldung bestätigen.
+
 
 Entwicklung
 -----------
 Beim Ausführen von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergänzt.
 Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
+
+Zentrale/Systemprotokoll
+------------------------
+Da das laden des Systemprotokolls die CCU u.U. für längere Zeit unter Voll-Last setzt wird hier nicht automatisch geladen. Um das Systemprotokoll anzuzeigen muss also der Refresh-Button unten links angeklickt werden.
 
 Changelog
 =========
@@ -91,6 +97,7 @@ Roadmap/Todo/Ideen
 
 2.2
 ---
+* Automatisches aktualisieren des Systemprotokolls
 * Ändern von Variablen
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
