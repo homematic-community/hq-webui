@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.1-beta2
----------
+2.1.0
+-----
 * Favoriten: Fehler behoben bei Keymatic-Öffnen
 
 2.1-beta1
