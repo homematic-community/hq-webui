@@ -293,27 +293,35 @@
         <input id="rename" type="text"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
         <br>
     </div>
-    <div class="dialog" id="dialogCfgVariable" title="Variable editieren">
+    <div class="dialog" id="dialogDelVariable" title="Variable löschen">
         <br>
+        Hiermit löschen Sie die Variable<br>
+        <span style="font-weight: bold; padding-left: 20px;" id="variableDeleteReally"></span><br>
+        unwiederruflich.<br><br>
+        Sind Sie sich sicher?
+        <input type="hidden" id="delVarId"/>
+    </div>
+    <div class="dialog" id="dialogCfgVariable" title="Variable editieren">
+        <br><input type="hidden" id="cfgVarNew"/>
         <table>
             <tr>
-                <td>Name</td>
+                <td style="width: 180px;">Name</td>
                 <td><input id="cfgVarName" type="text" size="60"/></td>
             </tr>
             <tr>
                 <td>Beschreibung</td>
                 <td><input id="cfgVarDesc" type="text" size="60"/></td>
             </tr>
-            <!--
+
             <tr>
                 <td>Typ</td>
                 <td>
                     <select id="cfgVarType">
-                        <option value="">Logikwert</option>
-                        <option value="">Werteliste</option>
-                        <option value="">Zahl</option>
-                        <option value="">Alarm</option>
-                        <option value="">Zeichenkette</option>
+                        <option value="2">Logikwert</option>
+                        <option value="29">Werteliste</option>
+                        <option value="0">Zahl</option>
+                        <option value="6">Alarm</option>
+                        <option value="11">Zeichenkette</option>
                     </select>
                 </td>
             </tr>
@@ -345,11 +353,19 @@
                 <td>Werteliste</td>
                 <td><input class="cfgVarOptEnum" id="cfgVarTextEnum" type="text" size="60"/></td>
             </tr>
+            <tr class="cfgVarOptEnum">
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
             <tr>
                 <td>Einheit</td>
                 <td><input id="cfgVarUnit" type="text"/></td>
             </tr>
-            -->
+
             <tr>
                 <td>Protokolliert</td>
                 <td><input id="cfgVarLogged" type="checkbox"/></td>

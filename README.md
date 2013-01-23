@@ -125,6 +125,7 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
+* Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * (r) in einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic Style")
 * TCL und Shellscripte aus Editor auf CCU Speichern
@@ -132,7 +133,6 @@ irgendwann
 * Session Fehler abfangen
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
 * Kontextmenü in Grid-Ansichten
-* Ajax-Indicator dicker werden lassen wenn Request länger als 1s läuft
 * Exportfunktionen (.csv)
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)

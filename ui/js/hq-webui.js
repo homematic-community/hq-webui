@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.1.0";
+    var version =               "2.2.0-beta1";
 
     var statesXML,
         rssiXML,
@@ -1108,6 +1108,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             //if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
             $("#btnEditVar").removeClass("ui-state-disabled");
             $("#btnCfgVar").removeClass("ui-state-disabled");
+            $("#btnDelVar").removeClass("ui-state-disabled");
 
         },
         ondblClickRow: editVariableValue,
@@ -1145,7 +1146,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-plus",
             onClickButton: function () {
-                // TODO EDIT
+                addVariable(gridVariables.jqGrid('getGridParam','selrow'));
             },
             position: "first",
             id: "btnAddVar",
@@ -1157,7 +1158,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-trash",
             onClickButton: function () {
-                // TODO EDIT
+                delVariable(gridVariables.jqGrid('getGridParam','selrow'));
             },
             position: "first",
             id:"btnDelVar",
@@ -1194,24 +1195,104 @@ jQuery.extend(jQuery.expr[ ":" ], {
         editVariableValue(gridVariables.jqGrid('getGridParam','selrow'));
     });
     $("#btnCfgVar").addClass("ui-state-disabled").click(function() {
+        $("#dialogCfgVariable").find("span.ui-dialog-title").html("Variable editieren");
         editVariable(gridVariables.jqGrid('getGridParam','selrow'));
     });
-    $("#btnDelVar").addClass("ui-state-disabled").css("opacity", 0);
-    $("#btnAddVar").addClass("ui-state-disabled").css("opacity", 0);
+    $("#btnDelVar").addClass("ui-state-disabled"); //.css("opacity", 0);
+    //$("#btnAddVar").addClass("ui-state-disabled").css("opacity", 0);
+
+    function delVariable(id) {
+        var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
+
+
+        $("#variableDeleteReally").html(varObj.attr("name"));
+        $("#delVarId").val(id);
+        $("#dialogDelVariable").dialog("open");
+    }
+
+    function addVariable() {
+        $("#cfgVarName").val("");
+        $("#cfgVarDesc").val("");
+        $("#cfgVarUnit").val("");
+        $("#cfgVarLogged").removeAttr("checked");
+        $("#cfgVarTextBoolFalse").val("");
+        $("#cfgVarTextBoolTrue").val("");
+        $("#cfgVarTextAlarmFalse").val("");
+        $("#cfgVarTextRealMin").val(0);
+        $("#cfgVarTextRealMax").val(65000);
+        $("#cfgVarTextEnum").val("");
+
+        $("#cfgVarType option").removeAttr("selected");
+        $("#cfgVarType option[value='2']").attr("selected", true);
+
+        $("tr[class^='cfgVarOpt']").hide();
+        $("tr.cfgVarOptBool").show();
+
+        $("#cfgVarNew").val(1);
+
+        $("#cfgVarType option").removeAttr("disabled");
+
+        $("#dialogCfgVariable").dialog('option', 'title', 'Variable hinzufügen').dialog("open");
+
+    }
 
     function editVariable(id) {
+        $("tr[class^='cfgVarOpt']").hide();
         $("#cfgVarId").val(id);
-        $("#cfgVarName").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name"));
-        $("#cfgVarDesc").val(variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("desc"));
-        var logged = variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("logged");
+        var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
+        
+        $("#cfgVarName").val(varObj.attr("name"));
+        $("#cfgVarDesc").val(varObj.attr("desc"));
+        $("#cfgVarUnit").val(varObj.attr("unit"));
+
+
+        var logged = varObj.attr("logged");
+        var subtype = varObj.attr("subtype");
+
+        $("#cfgVarType option[value='"+subtype+"']").attr("selected", true);
+        $("#cfgVarType option").removeAttr("disabled");
+
+        switch (subtype) {
+            case "0":
+                $("tr.cfgVarOptReal").show();
+                $("#cfgVarType option[value='6']").attr("disabled", true);
+                break;
+            case "2":
+                $("tr.cfgVarOptBool").show();
+                $("#cfgVarType option[value='6']").attr("disabled", true);
+                break;
+            case "6":
+                $("tr.cfgVarOptAlarm").show();
+                $("#cfgVarType option[value!='6']").attr("disabled", true);
+
+                break;
+            case "11":
+                $("#cfgVarType option[value='6']").attr("disabled", true);
+                break;
+            case "29":
+                $("tr.cfgVarOptEnum").show();
+                $("#cfgVarType option[value='6']").attr("disabled", true);
+                break;
+        }
+
         if (logged == "true") {
             $("#cfgVarLogged").attr("checked", true);
         } else {
             $("#cfgVarLogged").removeAttr("checked");
         }
 
+        $("#cfgVarTextEnum").val(varObj.attr("value_list"));
+        $("#cfgVarTextRealMin").val(varObj.attr("min"));
+        $("#cfgVarTextRealMax").val(varObj.attr("max"));
+        $("#cfgVarTextBoolFalse").val(varObj.attr("text_false"));
+        $("#cfgVarTextBoolTrue").val(varObj.attr("text_true"));
+        $("#cfgVarTextAlarmFalse").val(varObj.attr("text_false"));
+        $("#cfgVarTextAlarmTrue").val(varObj.attr("text_true"));
 
-        $("#dialogCfgVariable").dialog("open");
+        $("#cfgVarNew").val(0);
+
+        $("#dialogCfgVariable").dialog('option', 'title', 'Variable editieren').dialog("open");
+
     }
 
     function editVariableValue(id) {
@@ -1241,7 +1322,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         variableName.html(gridVariables.getCell(id, "name"));
         variableId.val(id);
-
         dialogEditVariable.dialog("open");
     }
     gridPrograms.jqGrid({
@@ -2867,15 +2947,96 @@ jQuery.extend(jQuery.expr[ ":" ], {
         width: 600,
         height: 340,
         buttons: {
-            'Änderungen übernehmen': function () {
+            'Speichern': function () {
+                var script;
                 var id = $("#cfgVarId").val();
                 var name = $("#cfgVarName").val();
                 var desc = $("#cfgVarDesc").val();
+                var subtype = $("#cfgVarType option:selected").val();
                 var logged = $("#cfgVarLogged").is(":checked");
-                var script = "object o = dom.GetObject("+id+");\n" +
-                    "o.Name('"+name+"');\n" +
-                    "o.DPInfo('"+desc+"');\n" +
-                    "o.DPArchive("+logged+");";
+                switch ($("#cfgVarNew").val()) {
+                    case "0":
+                        if (subtype != "6") {
+                            console.log("edit var");
+                            script = "object o = dom.GetObject("+id+");\n" +
+                                "object ch = dom.GetObject(o.Channel());\n" +
+                                "if (ch) {\n  ch.DPs().Remove(o.ID());\n}\n" +
+                                "o.Name('"+name+"');\n" +
+                                "o.DPInfo('"+desc+"');\n" +
+                                "o.DPArchive("+logged+");\n" +
+                                "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
+
+                            switch (subtype) {
+                                case "0":
+                                    script = script + "o.ValueMin('" + $("#cfgVarMin").val() + "');\n" +
+                                        "o.ValueMin('" + $("#cfgVarMin").val() + "');\n";
+                                    break;
+                                case "2":
+                                    script = script + "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
+                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n";
+                                    break;
+                                case "11":
+                                    break;
+                                case "29":
+                                    break;
+                            }
+
+
+
+                        } else {
+                            console.log("edit alarm");
+                            script = script + "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
+                                "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n";
+
+                        }
+                        break;
+                    case "1":
+                        if (subtype != "6") {
+                            console.log("add var");
+                            script = "object o = dom.CreateObject(OT_VARDP);\n" +
+                                "o.Name('" + name + "');\n" +
+                                "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                                "o.Name('"+name+"');\n" +
+                                "o.DPInfo('"+desc+"');\n" +
+                                "o.DPArchive("+logged+");\n" +
+                                "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
+
+                            switch (subtype) {
+                                case "0":
+                                    script = script + "o.ValueMin('" + $("#cfgVarMin").val() + "');\n" +
+                                        "o.ValueMin('" + $("#cfgVarMin").val() + "');\n";
+                                    break;
+                                case "2":
+                                    script = script + "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
+                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n";
+                                    break;
+                                case "6":
+                                    script = script + "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
+                                        "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n";
+                                    break;
+                                case "11":
+                                    break;
+                                case "29":
+                                    break;
+                            }
+                        } else {
+                            console.log("add alarm");
+                            script = "object o = dom.CreateObject(OT_ALARMDP);\n" +
+                                "o.Name('" + name + "');\n" +
+                                "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                                "o.Name('"+name+"');\n" +
+                                "o.DPInfo('"+desc+"');\n" +
+                                "o.DPArchive("+logged+");\n" +
+                                "o.AlType(atSystem);" +
+                                "o.AlArm(true);";
+
+                        }
+
+                        break;
+                }
+
+
+
                 console.log(script);
                 $.ajax({
                     url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
@@ -3019,6 +3180,41 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
 
+    $("#dialogDelVariable").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Löschen': function () {
+                clearTimeout(timerRefresh);
+                var id = $("#delVarId").val();
+                script = "object o = dom.GetObject("+id+");\n" +
+                    "object ch = dom.GetObject(o.Channel());\n" +
+                    "if (ch) {\n  ch.DPs().Remove(o.ID());\n}\n" +
+                    "dom.DeleteObject("+id+");";
+                $(this).dialog('close');
+                $.ajax({
+                    url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+                    type: "POST",
+                    data: script,
+                    success: function () {
+                        // TODO löschen ohne Reload!
+                        storage.set("hqWebUiVariables", null);
+                        storage.set("hqWebUiVariablesTime", null);
+                        hmGetVariables();
+                        timerRefresh = setTimeout(hmRefresh, 1000);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        timerRefresh = setTimeout(hmRefresh, 1000);
+                        ajaxError(xhr, ajaxOptions, thrownError);
+                    }
+                });
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
     dialogEditVariable.dialog({
         autoOpen: false,
         modal: true,
@@ -3045,6 +3241,26 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $(this).dialog('close');
             }
         }
+    });
+
+    $("#cfgVarType").change(function () {
+        var subtype = $("#cfgVarType option:selected").val();
+        $("tr[class^='cfgVarOpt']").hide();
+        switch (subtype) {
+            case "0":
+                $("tr.cfgVarOptReal").show();
+                break;
+            case "2":
+                $("tr.cfgVarOptBool").show();
+                break;
+            case "6":
+                $("tr.cfgVarOptAlarm").show();
+                break;
+            case "29":
+                $("tr.cfgVarOptEnum").show();
+                break;
+        }
+
     });
 
     dialogEditDatapoint.dialog({
@@ -3546,11 +3762,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 dataType: "text",
                 data: xmlrpc,
                 error: function () {
-                    timerRefresh = setTimeout(hmRefresh, 5);
+                    timerRefresh = setTimeout(hmRefresh, 3000);
                     alert("xmlrpc error");
                 },
                 success: function () {
-                    timerRefresh = setTimeout(hmRefresh, 5);
+                    timerRefresh = setTimeout(hmRefresh, 3000);
 
                 }
             });
@@ -3563,14 +3779,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 type: "post",
                 data: script,
                 success: function (data) {
-                    timerRefresh = setTimeout(hmRefresh, 80);
+                    timerRefresh = setTimeout(hmRefresh, 3000);
 
                     if (successFunction !== undefined) {
                         successFunction(data);
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    timerRefresh = setTimeout(hmRefresh, 5);
+                    timerRefresh = setTimeout(hmRefresh, 3000);
 
                     ajaxError(xhr, ajaxOptions, thrownError);
                 }
