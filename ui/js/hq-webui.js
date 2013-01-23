@@ -1211,6 +1211,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function addVariable() {
+        $("#cfgVarId").val('-1');
         $("#cfgVarName").val("");
         $("#cfgVarDesc").val("");
         $("#cfgVarUnit").val("");
@@ -2956,20 +2957,19 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var logged = $("#cfgVarLogged").is(":checked");
                 switch ($("#cfgVarNew").val()) {
                     case "0":
-                        if (subtype != "6") {
-                            console.log("edit var");
-                            script = "object o = dom.GetObject("+id+");\n" +
-                                "object ch = dom.GetObject(o.Channel());\n" +
-                                "if (ch) {\n  ch.DPs().Remove(o.ID());\n}\n" +
-                                "o.Name('"+name+"');\n" +
-                                "o.DPInfo('"+desc+"');\n" +
-                                "o.DPArchive("+logged+");\n" +
-                                "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
+                        script = "object o = dom.GetObject("+id+");\n" +
+                            //"object ch = dom.GetObject(o.Channel());\n" +
+                            //"if (ch) {\n  ch.DPs().Remove(o.ID());\n}\n" +
+                            "o.Name('"+name+"');\n" +
+                            "o.DPInfo('"+desc+"');\n" +
+                            "o.DPArchive("+logged+");\n" +
+                            "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
 
+                        if (subtype != "6") {
                             switch (subtype) {
                                 case "0":
-                                    script = script + "o.ValueMin('" + $("#cfgVarMin").val() + "');\n" +
-                                        "o.ValueMin('" + $("#cfgVarMin").val() + "');\n";
+                                    script = script + "o.ValueMin('" + $("#cfgVarTextRealMin").val() + "');\n" +
+                                        "o.ValueMax('" + $("#cfgVarTextRealMax").val() + "');\n";
                                     break;
                                 case "2":
                                     script = script + "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
@@ -2978,58 +2978,67 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                 case "11":
                                     break;
                                 case "29":
+                                    script = script + "o.ValueList('" + $("#cfgVarTextEnum").val() + "');\n";
                                     break;
                             }
-
-
-
                         } else {
-                            console.log("edit alarm");
                             script = script + "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
                                 "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n";
-
                         }
                         break;
                     case "1":
                         if (subtype != "6") {
-                            console.log("add var");
                             script = "object o = dom.CreateObject(OT_VARDP);\n" +
                                 "o.Name('" + name + "');\n" +
                                 "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
-                                "o.Name('"+name+"');\n" +
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
                                 "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
 
                             switch (subtype) {
                                 case "0":
-                                    script = script + "o.ValueMin('" + $("#cfgVarMin").val() + "');\n" +
-                                        "o.ValueMin('" + $("#cfgVarMin").val() + "');\n";
+                                    script = script + "o.ValueType(ivtFloat);\n" +
+                                        "o.ValueSubType(istGeneric);\n" +
+                                        "o.ValueMin('" + $("#cfgVarTextRealMin").val() + "');\n" +
+                                        "o.ValueMax('" + $("#cfgVarTextRealMax").val() + "');\n" +
+                                        "o.State('" + $("#cfgVarMin").val() + "');";
+
                                     break;
                                 case "2":
-                                    script = script + "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
-                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n";
-                                    break;
-                                case "6":
-                                    script = script + "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
-                                        "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n";
+                                    script = script + "o.ValueType(ivtBinary);\n" +
+                                        "o.ValueSubType(istBool);\n" +
+                                        "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
+                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n" +
+                                        "o.State(0);";
                                     break;
                                 case "11":
+                                    script = script + "o.ValueType(ivtString);\n" +
+                                        "o.ValueSubType(istChar8859);\n" +
+                                        "o.State('');";
                                     break;
                                 case "29":
+                                    script = script + "o.ValueType(ivtInteger);\n" +
+                                        "o.ValueSubType(istEnum);\n" +
+                                        "o.ValueList('" + $("#cfgVarTextEnum").val() + "');\n" +
+                                        "o.State(0);";
                                     break;
                             }
+
                         } else {
-                            console.log("add alarm");
                             script = "object o = dom.CreateObject(OT_ALARMDP);\n" +
                                 "o.Name('" + name + "');\n" +
+                                "o.AlSetBinaryCondition()\n" +
                                 "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                                "o.ValueType(ivtBinary);\n" +
+                                "o.ValueSubType(istAlarm);\n" +
                                 "o.Name('"+name+"');\n" +
+                                "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
+                                "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n"+
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
-                                "o.AlType(atSystem);" +
-                                "o.AlArm(true);";
-
+                                "o.AlType(atSystem)\n;" +
+                                "o.AlArm(true);\n" +
+                                "o.State(false);";
                         }
 
                         break;

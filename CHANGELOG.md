@@ -1,15 +1,21 @@
 Changelog
 =========
 
+2.2-alpha2
+----------
+* Kanalzuordnungen bleiben beim editieren von Variablen nun erhalten
+* Variablen: Hinzufügen und Ändern vervollständigt, Fehler behoben
+
+
 2.2-alpha1
-------------
+----------
 
 Achtung!!! Beim Ändern von Variablen/Alarmen wird eine evtl. bestehende Kanalzuordnung gelöscht!
 
 * Variablen: löschen
 * Variablen: Ändern von Alarmen
 * Variablen: Ändern von Variablen des Typs Logikwert und Zahl
-* Variablen: Anlegen von Alarmen und Variablen des Typs Logikwert und Zahl
+* Variablen: Hinzufügen von Alarmen und Variablen des Typs Logikwert und Zahl
 
 2.1.0
 -----
