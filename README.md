@@ -137,7 +137,7 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
-* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen
+* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 * Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
 * Tabellenheader anpassen (Sortierung, Filter - Selects)

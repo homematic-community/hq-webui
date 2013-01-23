@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.2-alpha3
+----------
+*
+
 2.2-alpha2
 ----------
 * Kanalzuordnungen bleiben beim editieren von Variablen nun erhalten
