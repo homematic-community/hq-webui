@@ -116,6 +116,8 @@ Roadmap/Todo/Ideen
 * Umbennen von "Dateien" im Scripteditor
 * Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
+* Benchmark-Funktion für Homematic-Scripte
+
 
 2.5
 ---
@@ -135,8 +137,8 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
+* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
-* Benchmark-Funktion für Homematic-Scripte
 * Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * (r) in einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic Style")
@@ -144,11 +146,13 @@ irgendwann
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
-* Kontextmenü in Grid-Ansichten
+* Kontextmenü (rechts-klick) in Grid-Ansichten
 * Exportfunktionen (.csv)
+* Programme exportieren/importieren? Aufwendig - beim Import müssten Variablen/Kanäle komfortabel neu zugeordnet werden...
+* Programme-Drucken funktion implementieren (Anli?)
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
-* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden)
-* neuer Tab "Kanäle"
+* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
+* neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
