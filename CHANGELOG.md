@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2.0-alpha1
+2.2-alpha1
 ------------
 
 Achtung!!! Beim Ändern von Variablen/Alarmen wird eine evtl. bestehende Kanalzuordnung gelöscht!
