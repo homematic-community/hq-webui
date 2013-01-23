@@ -97,12 +97,14 @@ Roadmap/Todo/Ideen
 
 2.2
 ---
+* Neuer Dialog "Kanalauswahl" mit kleinem Grid
 * Automatisches aktualisieren des Systemprotokolls
 * Ändern von Variablen
 * Anlegen und Löschen von Variablen
 * Zuordnen von Variablen zu Kanälen
 * Geräte: Kanäle Protokollierung aktivieren/deaktivieren
 * Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
+* Beim Umbenennen und neu Anlegen auf bereits vorhandenen Namen prüfen (Variablen, Programme, Geräte, Kanäle)
 
 2.3
 ---
@@ -111,23 +113,30 @@ Roadmap/Todo/Ideen
 
 2.4
 ---
+* Umbennen von "Dateien" im Scripteditor
 * Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
 * Programme anzeigen, anlegen, editieren, löschen.
-* Verlinkung Variablen und Programme die diese Variable nutzen
 
 2.5
----
-* Geräte konfigurieren
-
-2.6
 ---
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Sortieren von Favoriten per Drag & Drop
 
+2.6
+---
+* Geräte konfigurieren
+
+3.0
+---
+* Refactoring, ordentliche Nomenklatur einführen, Perfomance optimieren, ...
+
+
 
 irgendwann
 ----------
+* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
+* Benchmark-Funktion für Homematic-Scripte
 * Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * (r) in einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic Style")
@@ -145,13 +154,10 @@ irgendwann
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Selbst-Update / Auto-Update des HQ WebUI
 * Snippets für Editor
-* Style, Nomenklatur, komplettes Refactoring
 * Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
-* Zusatzsoftware installieren (wenn möglich optional ohne Zwangsreboot) und deinstallieren
-* Nicht quadratische Geräte-Icons
-* Script-Editor buggt im Firefox. Fehler in edit_area/autocompletion.js - daher keine Autovervollständigung mit Firefox
-* Befindet man sich in der letzten Zeile eines Scriptes buggt die Autovervollständigung (Anfangsbuchstabe erscheint doppelt)
+* Zusatzsoftware installieren - optional ohne Zwangsreboot - und deinstallieren
+* Style-Korrektur für nicht-quadratische Geräte-Icons
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * rssilist: Einfärben der RX/TX Werte?
