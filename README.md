@@ -106,9 +106,8 @@ Roadmap/Todo/Ideen
 
 2.3
 ---
-* Hinzufügen/Entfernen von Kanälen Gewerken und Räumen
+* Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
-* Geräte konfigurieren
 
 2.4
 ---
@@ -117,6 +116,10 @@ Roadmap/Todo/Ideen
 * Verlinkung Variablen und Programme die diese Variable nutzen
 
 2.5
+---
+* Geräte konfigurieren
+
+2.6
 ---
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
