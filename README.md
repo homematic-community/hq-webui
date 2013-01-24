@@ -33,6 +33,14 @@ Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind j
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
+Zielsetzung
+===========
+Das HQ WebUI soll langfristig das originale WebUI bis auf folgende wenige Ausnahmen ersetzen können:
+* Geräte anlernen, Geräte konfigurieren, Geräte ablernen/löschen
+* Direktverknüpfungen anlegen/editieren/löschen
+* Firmwareupdate durchführen
+* Backup zurückspielen
+
 
 Download
 ========
@@ -117,15 +125,6 @@ Roadmap/Todo/Ideen
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Sortieren von Favoriten per Drag & Drop
-
-2.6
----
-* Geräte konfigurieren
-
-3.0
----
-* Refactoring, ordentliche Nomenklatur einführen, Perfomance optimieren, ...
-
 
 
 irgendwann
