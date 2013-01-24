@@ -1,14 +1,16 @@
 Changelog
 =========
 
+2.2.0
+-----
+* Debug-Ausgaben entfernt
+
 2.2-beta1
 ----------
 * Zeitpunkt des letzten Refreshs wird angezeigt
 * Mit Kanälen verknüpfte Variablen können nun auch über einen Button in der Datenpunkt-Tabelle editiert werden
 * Variablen/Programme/Geräte/Kanäle: Beim Umbenennen wird nun geprüft ob Name bereits verwendet wird und ob Name gültig ist
 * Diverse Style-Anpassungen und Fehlerbehebungen
-* Debug-Ausgaben entfernt
-
 
 2.2-alpha4
 ----------

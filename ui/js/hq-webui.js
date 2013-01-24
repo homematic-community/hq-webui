@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.2-beta1";
+    var version =               "2.2.0";
 
     $(".hq-version").html(version);
 
