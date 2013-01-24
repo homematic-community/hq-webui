@@ -100,6 +100,7 @@ var scriptVariables = "object oSysVar;\n" +
     "    Write(\"' logged='\"); WriteXML( oSysVar.DPArchive());\n" +
     "    Write(\"' visible='\"); WriteXML( oSysVar.Visible());\n" +
     "    Write(\"' timestamp='\" # oSysVar.Timestamp());\n" +
+    "    Write(\"' channel='\" # oSysVar.Channel());\n" +
     "    Write(\"'/>\");\n" +
     "}\n" +
     "Write(\"</systemVariables>\");\n";

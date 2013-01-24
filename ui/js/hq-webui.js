@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.2-alpha2";
+    var version =               "2.2-alpha3";
 
     var statesXML,
         rssiXML,
@@ -303,6 +303,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Typ',
         'Sichtbar',
         'Protokolliert',
+        'Kanalzuordnung',
         'Zeitstempel'
     ];
     var colModelVariables = [
@@ -430,9 +431,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
             },
             formatter: 'checkbox'
         },
-        {name:'logged', index:'logged', width: 40, edittype: 'checkbox',
+        {name:'logged', index:'logged', width: 30, edittype: 'checkbox', fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
+            },
+            formatter: 'checkbox'
+        },
+        {name:'channel', index:'channel', width: 30, fixed: true,
+            xmlmap: function (obj) {
+                var ch = $(obj).attr('channel');
+                if (ch == "65535") {
+                    return false;
+                } else {
+                    return true;
+                }
+
             },
             formatter: 'checkbox'
         },
@@ -1211,17 +1224,19 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function addVariable() {
+        // TODO Bezeichner aus stringtable benutzen!
         $("#cfgVarId").val('-1');
         $("#cfgVarName").val("");
         $("#cfgVarDesc").val("");
         $("#cfgVarUnit").val("");
         $("#cfgVarLogged").removeAttr("checked");
-        $("#cfgVarTextBoolFalse").val("");
-        $("#cfgVarTextBoolTrue").val("");
-        $("#cfgVarTextAlarmFalse").val("");
+        $("#cfgVarTextBoolFalse").val("ist falsch");
+        $("#cfgVarTextBoolTrue").val("ist wahr");
+        $("#cfgVarTextAlarmFalse").val("nicht ausgelöst");
+        $("#cfgVarTextAlarmTrue").val("ausgelöst");
         $("#cfgVarTextRealMin").val(0);
         $("#cfgVarTextRealMax").val(65000);
-        $("#cfgVarTextEnum").val("");
+        $("#cfgVarTextEnum").val("Wert1;Wert2;Wert3");
 
         $("#cfgVarType option").removeAttr("selected");
         $("#cfgVarType option[value='2']").attr("selected", true);
@@ -1245,7 +1260,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#cfgVarName").val(varObj.attr("name"));
         $("#cfgVarDesc").val(varObj.attr("desc"));
         $("#cfgVarUnit").val(varObj.attr("unit"));
-
+        $("#cfgVarChannelId").val(varObj.attr("channel"));
+        if (varObj.attr("channel") == "65535") {
+            $("#cfgVarChannel").val("-");
+        } else {
+            $("#cfgVarChannel").val(statesXMLObj.find("channel[ise_id='"+varObj.attr("channel")+"']").attr("name") +
+            " (" + statesXMLObj.find("channel[ise_id='"+varObj.attr("channel")+"']").parent().attr("name") + ")");
+        }
 
         var logged = varObj.attr("logged");
         var subtype = varObj.attr("subtype");
@@ -2945,86 +2966,145 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#dialogCfgVariable").dialog({
         autoOpen: false,
         modal: true,
-        width: 600,
-        height: 340,
+        width: 720,
+        height: 410,
         buttons: {
             'Speichern': function () {
                 var script;
-                var id = $("#cfgVarId").val();
                 var name = $("#cfgVarName").val();
                 var desc = $("#cfgVarDesc").val();
                 var subtype = $("#cfgVarType option:selected").val();
+                var type;
+                switch (subtype) {
+                    case "0":
+                        type = "4";
+                        break;
+                    case "2":
+                    case "6":
+                        type = "2";
+                        break;
+                    case "11":
+                        type = "20";
+                        break;
+                    case "29":
+                        type = "16";
+                        break;
+                }
+
                 var logged = $("#cfgVarLogged").is(":checked");
+                var unit = $("#cfgVarUnit").val();
+                var min = $("#cfgVarTextRealMin").val();
+                if (min == "" || min === undefined || min == null) {
+                    min = 0;
+                }
+                var max = $("#cfgVarTextRealMax").val();
+                if (max == "" || max === undefined || max == null) {
+                    max = 65000;
+                }
+                var bool_false = $("#cfgVarTextBoolFalse").val();
+                var bool_true = $("#cfgVarTextBoolTrue").val();
+                var alarm_false = $("#cfgVarTextAlarmFalse").val();
+                var alarm_true = $("#cfgVarTextAlarmTrue").val();
+                var value_list = $("#cfgVarTextEnum").val();
+
                 switch ($("#cfgVarNew").val()) {
                     case "0":
+                        // Variable Editieren
+                        var id = $("#cfgVarId").val();
+                        var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
+                        console.log(varObj);
+
+
                         script = "object o = dom.GetObject("+id+");\n" +
-                            //"object ch = dom.GetObject(o.Channel());\n" +
-                            //"if (ch) {\n  ch.DPs().Remove(o.ID());\n}\n" +
-                            "o.Name('"+name+"');\n" +
+                            "object ch = dom.GetObject(o.Channel());\n" +
+                            "if (ch) {\n  ch.DPs().Remove(o.ID());\n  o.Channel(ID_ERROR);\n}\n" +
                             "o.DPInfo('"+desc+"');\n" +
                             "o.DPArchive("+logged+");\n" +
-                            "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
+                            "o.ValueUnit('"+unit+"');\n";
 
-                        if (subtype != "6") {
+                        // Änderung des Variablen-Namens
+                        if (name != varObj.attr("name")) {
+                            console.log("change variable name old="+varObj.attr("name") + " new=" + name);
+                            script = script + "o.Name('"+name+"');\n";
+                        }
+
+                        // Änderung des Variablen-Typs
+                        if (subtype != varObj.attr("subtype")) {
+                            console.log("change variable subtype old="+varObj.attr("subtype") + " new=" + subtype);
+                            script = script + "o.ValueType("+type+");\n" +
+                                "o.ValueSubType("+subtype+");\n";
                             switch (subtype) {
                                 case "0":
-                                    script = script + "o.ValueMin('" + $("#cfgVarTextRealMin").val() + "');\n" +
-                                        "o.ValueMax('" + $("#cfgVarTextRealMax").val() + "');\n";
+                                    script = script + "o.State("+min+");\n";
                                     break;
                                 case "2":
-                                    script = script + "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
-                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n";
+                                    script = script + "o.State(0);\n";
                                     break;
                                 case "11":
+                                    script = script + "o.State('');\n";
                                     break;
                                 case "29":
-                                    script = script + "o.ValueList('" + $("#cfgVarTextEnum").val() + "');\n";
+                                    script = script + "o.State(0);\n";
                                     break;
                             }
-                        } else {
-                            script = script + "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
-                                "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n";
+                        }
+
+
+                        switch (subtype) {
+                            case "0":
+                                script = script + "o.ValueMin('"+min+"');\n" +
+                                    "o.ValueMax('"+max+"');\n";
+                                break;
+                            case "2":
+                                script = script + "o.ValueName0('"+bool_false+"');\n" +
+                                    "o.ValueName1('"+bool_true+"');\n";
+                                break;
+                            case "6":
+                                script = script + "o.ValueName0('"+alarm_false+"');\n" +
+                                    "o.ValueName1('"+alarm_true+"');\n";
+                                break;
+                            case "11":
+                                break;
+                            case "29":
+                                script = script + "o.ValueList('"+value_list+"');\n";
+                                break;
                         }
                         break;
                     case "1":
-                        if (subtype != "6") {
+                         // Variable neu anlegen
+                         if (subtype != "6") {
+                             // Kein Alarm
                             script = "object o = dom.CreateObject(OT_VARDP);\n" +
                                 "o.Name('" + name + "');\n" +
                                 "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
-                                "o.ValueUnit('" + $("#cfgVarUnit").val() + "');\n";
+                                "o.ValueUnit('"+unit+"');\n" +
+                                "o.ValueType("+type+");\n" +
+                                "o.ValueSubType("+subtype+");\n";
 
                             switch (subtype) {
                                 case "0":
-                                    script = script + "o.ValueType(ivtFloat);\n" +
-                                        "o.ValueSubType(istGeneric);\n" +
-                                        "o.ValueMin('" + $("#cfgVarTextRealMin").val() + "');\n" +
-                                        "o.ValueMax('" + $("#cfgVarTextRealMax").val() + "');\n" +
-                                        "o.State('" + $("#cfgVarMin").val() + "');";
-
+                                    script = script + "o.ValueMin("+min+");\n" +
+                                        "o.ValueMax("+max+");\n" +
+                                        "o.State("+min+");";
                                     break;
                                 case "2":
-                                    script = script + "o.ValueType(ivtBinary);\n" +
-                                        "o.ValueSubType(istBool);\n" +
-                                        "o.ValueName0('" + $("#cfgVarTextBoolFalse").val() + "');\n" +
-                                        "o.ValueName1('" + $("#cfgVarTextBoolTrue").val() + "');\n" +
+                                    script = script + "o.ValueName0('"+bool_false+"');\n" +
+                                        "o.ValueName1('"+bool_true+"');\n" +
                                         "o.State(0);";
                                     break;
                                 case "11":
-                                    script = script + "o.ValueType(ivtString);\n" +
-                                        "o.ValueSubType(istChar8859);\n" +
-                                        "o.State('');";
+                                    script = script + "o.State('');";
                                     break;
                                 case "29":
-                                    script = script + "o.ValueType(ivtInteger);\n" +
-                                        "o.ValueSubType(istEnum);\n" +
-                                        "o.ValueList('" + $("#cfgVarTextEnum").val() + "');\n" +
+                                    script = script + "o.ValueList('"+value_list+"');\n" +
                                         "o.State(0);";
                                     break;
                             }
 
                         } else {
+                             // Alarm
                             script = "object o = dom.CreateObject(OT_ALARMDP);\n" +
                                 "o.Name('" + name + "');\n" +
                                 "o.AlSetBinaryCondition()\n" +
@@ -3032,11 +3112,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                 "o.ValueType(ivtBinary);\n" +
                                 "o.ValueSubType(istAlarm);\n" +
                                 "o.Name('"+name+"');\n" +
-                                "o.ValueName0('" + $("#cfgVarTextAlarmFalse").val() + "');\n" +
-                                "o.ValueName1('" + $("#cfgVarTextAlarmTrue").val() + "');\n"+
+                                "o.ValueName0('"+alarm_false+"');\n" +
+                                "o.ValueName1('"+alarm_true+"');\n"+
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
-                                "o.AlType(atSystem)\n;" +
+                                "o.AlType(atSystem);\n" +
                                 "o.AlArm(true);\n" +
                                 "o.State(false);";
                         }
@@ -3044,7 +3124,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         break;
                 }
 
+                var channel = $("#cfgVarChannelId").val();
 
+                if (channel != "65535" && channel !== undefined && channel !== null) {
+                    script = script + "\nobject oChn = dom.GetObject("+channel+");\n" +
+                        "oChn.DPs().Add(o.ID());\n" +
+                        "o.Channel("+channel+");";
+                }
 
                 console.log(script);
                 $.ajax({
@@ -3080,6 +3166,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
+    $("#cfgVarSetChannel").button();
+    $("#cfgVarDelChannel").button().click(function () {
+        $("#cfgVarChannelId").val(65535);
+        $("#cfgVarChannel").val("-");
+    });
+
 
     $("#dialogCfgProgram").dialog({
         autoOpen: false,
@@ -3254,6 +3346,36 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     $("#cfgVarType").change(function () {
         var subtype = $("#cfgVarType option:selected").val();
+        var min = $("#cfgVarTextRealMin");
+        if (min.val() == "" || min.val() === undefined || min.val() == null) {
+            min.val(0);
+        }
+        var max = $("#cfgVarTextRealMax");
+        if (max.val() == "" || max.val() === undefined || max.val() == null) {
+            max.val(65000);
+        }
+        // TODO Bezeichner aus Stringtable benutzen
+        var bool_false = $("#cfgVarTextBoolFalse");
+        if (bool_false.val() == "" || bool_false.val() === undefined || bool_false.val() == null) {
+            bool_false.val("ist falsch");
+        }
+        var bool_true = $("#cfgVarTextBoolTrue");
+        if (bool_true.val() == "" || bool_true.val() === undefined || bool_true.val() == null) {
+            bool_true.val("ist wahr");
+        }
+        var alarm_false = $("#cfgVarTextAlarmFalse");
+        if (alarm_false.val() == "" || alarm_false.val() === undefined || alarm_false.val() == null) {
+            alarm_false.val("nicht ausgelöst");
+        }
+        var alarm_true = $("#cfgVarTextAlarmTrue");
+        if (alarm_true.val() == "" || alarm_true.val() === undefined || alarm_true.val() == null) {
+            alarm_true.val("ausgelöst");
+        }
+        var value_list = $("#cfgVarTextEnum");
+        if (value_list.val() == "" || value_list.val() === undefined || value_list.val() == null) {
+            value_list.val("Wert1;Wert2;Wert3");
+        }
+
         $("tr[class^='cfgVarOpt']").hide();
         switch (subtype) {
             case "0":

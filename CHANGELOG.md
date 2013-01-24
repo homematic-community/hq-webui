@@ -3,12 +3,14 @@ Changelog
 
 2.2-alpha3
 ----------
-*
+* Variablen: Ändern vervollständigt, Fehler behoben
+* Variablen: Neue Spalte "Kanalzuordnung"
+* Variablen: Kanalzuordnung kann nun entfernt werden. Zuordnungen neu anlegen/ändern fehlt noch
 
 2.2-alpha2
 ----------
 * Kanalzuordnungen bleiben beim editieren von Variablen nun erhalten
-* Variablen: Hinzufügen und Ändern vervollständigt, Fehler behoben
+* Variablen: Hinzufügen vervollständigt, Fehler behoben
 
 
 2.2-alpha1
