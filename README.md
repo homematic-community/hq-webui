@@ -1,4 +1,4 @@
-HQ WebUI 2.1
+HQ WebUI 2.2
 ============
 Schnelles Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 
