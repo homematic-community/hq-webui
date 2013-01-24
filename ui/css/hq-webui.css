@@ -295,11 +295,6 @@ button.ui-multiselect {
  user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select:none;
 }
 
-.timeRefresh {
-    padding-left: 2px !important;
-    line-height: 2em !important;
-    vertical-align: middle;
-}
 
 div.spacer {
     height: 5px;
@@ -316,4 +311,8 @@ td.deviceIcon {
     background-color:#fff;
     padding-top: 1px !important;
     text-align: center !important;
+}
+
+span.timeDisplay {
+
 }

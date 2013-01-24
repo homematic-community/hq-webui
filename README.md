@@ -11,14 +11,16 @@ Features
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung
 * Editor unterstützt Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
+* Übersichtliche Favoritenansicht
+* Themes, jQuery UI basiert
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen und der "RSSI-List" in übersichtlichen Tabellen
-* Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
+* Anlegen und Löschen von Variablen, ändern des Variablentyps
+* Zuordnung von Variablen zu Kanälen
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
 * Umbenennen, Geräten und Kanälen
-* Übersichtliche Favoritenansicht
-* Themes, jQuery UI basiert.
+* Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * ...geplante Features siehe "Todo"
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
@@ -95,21 +97,12 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 Roadmap/Todo/Ideen
 ==================
 
-2.2
----
-* Neuer Dialog "Kanalauswahl" mit kleinem Grid
-* Automatisches aktualisieren des Systemprotokolls
-* Ändern von Variablen
-* Anlegen und Löschen von Variablen
-* Zuordnen von Variablen zu Kanälen
-* Geräte: Kanäle Protokollierung aktivieren/deaktivieren
-* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
-* Beim Umbenennen und neu Anlegen auf bereits vorhandenen Namen prüfen (Variablen, Programme, Geräte, Kanäle)
-
 2.3
 ---
 * Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
+* Kanäle: Protokollierung aktivieren/deaktivieren
+* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
 
 2.4
 ---
@@ -137,6 +130,7 @@ Roadmap/Todo/Ideen
 
 irgendwann
 ----------
+* Automatisches aktualisieren des Systemprotokolls
 * Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 * Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
@@ -197,9 +191,9 @@ in HQ WebUI verwendete Software
 
 Copyright, Lizenz, Bedingungen
 ==============================
-HQ WebUI - lightweight and fast Webfrontend for the Homematic CCU
+HQ WebUI - fast Webfrontend for the Homematic CCU
 
-Copyright (c) 2012 hobbyquaker https://github.com/hobbyquaker
+Copyright (c) 2012, 2013 hobbyquaker https://github.com/hobbyquaker
 
 This software is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

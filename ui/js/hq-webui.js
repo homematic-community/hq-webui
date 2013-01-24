@@ -2,7 +2,7 @@
  *  HQ WebUI - schnelles Webfrontend für die Homematic CCU
  *  https://github.com/hobbyquaker/hq-webui/
  *
- *  Copyright (c) 2012 hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2012, 2013 hobbyquaker https://github.com/hobbyquaker
  *
  *  This Software is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -22,7 +22,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.2-alpha4";
+
+
+
+    var version =               "2.2-beta1";
+
+    $(".hq-version").html(version);
 
     var statesXML,
         rssiXML,
@@ -148,7 +153,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     // Theme laden
+
+
     getTheme();
+
+
 
 
 
@@ -239,6 +248,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
 
+
     // Buttons ins Tabs-Panel einfügen
     $("#mainNav").
         append("<button title='Abmelden' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLogout'></button>").
@@ -280,6 +290,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Los gehts!
     sessionStart();
+
+
 
     /*
      *          jqGrid colNames and colModels
@@ -1069,12 +1081,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         case "ALARMDP":
                             return '<button id="'+id+'" class="btnGrid btnAlReceipt" title="Meldung bestätigen"></button>';
                             break;
+                        case "VARDP":
+                            return '<button id="'+id+'" class="btnGrid btnEditDP" title="Wert Ändern"></button>' +
+                                '<button id="editVarDP_'+id+'" class="btnGrid btnEditVarDP" title="Variable bearbeiten"></button> ';
+                            break;
                         default:
-                            return '<button id="'+id+'" class="btnGrid btnEditDP" title="Datenpunkt editieren"></button>';
+                            return '<button id="'+id+'" class="btnGrid btnEditDP" title="Wert Ändern"></button>';
+
                     }
                 }
             }
-        },
+        }
     ];
 
     var colNamesRssi = [
@@ -1280,6 +1297,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     ];
 
+
+
+
     gridVariables.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesVariables,
@@ -1386,7 +1406,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer"
         });
 
-    $("#gridPagerVariables_left").append("<span class='timeRefresh' id='timeRefreshVars'/>");
+    $("#gridPagerVariables_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshVars'/>");
     $("#btnEditVar").addClass("ui-state-disabled").click(function() {
         editVariableValue(gridVariables.jqGrid('getGridParam','selrow'));
     });
@@ -1529,6 +1549,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         variableId.val(id);
         dialogEditVariable.dialog("open");
     }
+
+
     gridPrograms.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesPrograms,
@@ -1659,11 +1681,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer",
             id: "btnRunPrg"
         });
-    $("#gridPagerPrograms_left").append("<span class='timeRefresh' id='timeRefreshPrograms'/>");
+    $("#gridPagerPrograms_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshPrograms'/>");
     $("#btnRunPrg").addClass("ui-state-disabled");
     $("#btnCfgPrg").addClass("ui-state-disabled");
     $("#btnDelPrg").addClass("ui-state-disabled").css("opacity", 0);
     $("#btnAddPrg").addClass("ui-state-disabled").css("opacity", 0);
+
 
     gridStates.jqGrid({
         width: 1050, height: hqConf["gridHeight"],
@@ -1738,8 +1761,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     }
 
-    $("#gridPagerStates_left").append("<span class='timeRefresh' id='timeRefreshStates'/>");
+    $("#gridPagerStates_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshStates'/>");
     $("#gridPagerChannelChooser_left").append("<span class='timeRefresh' id='timeRefreshStates2'/>");
+
 
     gridRssi.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -1781,6 +1805,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer"
         });
     $("#gridPagerRssi_left").append("<span class='timeRefresh' id='timeRefreshRssi'/>");
+
 
     gridProtocol.jqGrid({
         width: hqConf["gridWidth"] - 40,
@@ -1850,6 +1875,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false});
+
 
     gridScriptVariables.jqGrid({
         width: 343,
@@ -1950,6 +1976,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                     hmEditDatapoint($(this).parent().parent().attr("id"), subgrid_table_id);
                 });
+                $("button.btnEditVarDP").button({
+                    icons: { primary: 'ui-icon-wrench' }
+                }).click(function () {
+
+                        editVariable($(this).parent().parent().attr("id"))
+                    });
+
+
                 $("button.btnAlReceipt").button({
                     icons: { primary: 'ui-icon-check' }
                 }).click(function () {
@@ -2502,11 +2536,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetRssi() {
         if (hqConf.debug) { console.log("hmGetRssi()"); }
+
+
         $("#loaderRssi").show();
         rssiReady = false;
 
         var cache = storage.get("hqWebUiRssi");
         if (cache !== null) {
+
+
             if (hqConf.debug) { console.log("Cache Hit: Rssi"); }
             rssiXML = $.parseXML(cache);
             rssiXMLObj = $(rssiXML);
@@ -2526,6 +2564,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             return false;
         }
         if (hqConf.debug) { console.log("Fetching RSSI"); }
+
+
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -2575,6 +2615,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Favoritenansicht aufbauen
     function buildFavorites() {
+
+
         if (favoritesReady) {
             accordionFavorites.accordion("destroy");
         }
@@ -3138,6 +3180,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
 
+
     /* Buttons, Dialoge */
     buttonRefreshFavs.button({
         text: false,
@@ -3154,6 +3197,37 @@ jQuery.extend(jQuery.expr[ ":" ], {
         autoOpen: false
     });
 
+    $("#dialogReallyRename").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Ja': function () {
+                $("#dialogReallyRename").dialog("close");
+            },
+            'Nein': function () {
+                $("#dialogReallyRename").dialog("close");
+            }
+        }
+    });
+    $("#dialogCantRename").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Schließen': function () {
+                $("#dialogCantRename").dialog("close");
+            }
+        }
+    });
+    $("#dialogErrorRename").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Schließen': function () {
+                $("#dialogErrorRename").dialog("close");
+            }
+        }
+    });
+
     $("#dialogCfgVariable").dialog({
         autoOpen: false,
         modal: true,
@@ -3161,196 +3235,204 @@ jQuery.extend(jQuery.expr[ ":" ], {
         height: 410,
         buttons: {
             'Speichern': function () {
-                var script;
-                var name = $("#cfgVarName").val();
-                var desc = $("#cfgVarDesc").val();
-                var subtype = $("#cfgVarType option:selected").val();
-                var type;
-                switch (subtype) {
-                    case "0":
-                        type = "4";
-                        break;
-                    case "2":
-                    case "6":
-                        type = "2";
-                        break;
-                    case "11":
-                        type = "20";
-                        break;
-                    case "29":
-                        type = "16";
-                        break;
-                }
+                checkName($("#cfgVarId").val(), $("#cfgVarName").val(), "VARDP", function() {
+                    var script;
+                    var name = $("#cfgVarName").val();
+                    var desc = $("#cfgVarDesc").val();
+                    var subtype = $("#cfgVarType option:selected").val();
+                    var type;
+                    switch (subtype) {
+                        case "0":
+                            type = "4";
+                            break;
+                        case "2":
+                        case "6":
+                            type = "2";
+                            break;
+                        case "11":
+                            type = "20";
+                            break;
+                        case "29":
+                            type = "16";
+                            break;
+                    }
 
-                var logged = $("#cfgVarLogged").is(":checked");
-                var unit = $("#cfgVarUnit").val();
-                var min = $("#cfgVarTextRealMin").val();
-                if (min == "" || min === undefined || min == null) {
-                    min = 0;
-                }
-                var max = $("#cfgVarTextRealMax").val();
-                if (max == "" || max === undefined || max == null) {
-                    max = 65000;
-                }
-                var bool_false = $("#cfgVarTextBoolFalse").val();
-                var bool_true = $("#cfgVarTextBoolTrue").val();
-                var alarm_false = $("#cfgVarTextAlarmFalse").val();
-                var alarm_true = $("#cfgVarTextAlarmTrue").val();
-                var value_list = $("#cfgVarTextEnum").val();
+                    var logged = $("#cfgVarLogged").is(":checked");
+                    var unit = $("#cfgVarUnit").val();
+                    var min = $("#cfgVarTextRealMin").val();
+                    if (min == "" || min === undefined || min == null) {
+                        min = 0;
+                    }
+                    var max = $("#cfgVarTextRealMax").val();
+                    if (max == "" || max === undefined || max == null) {
+                        max = 65000;
+                    }
+                    var bool_false = $("#cfgVarTextBoolFalse").val();
+                    var bool_true = $("#cfgVarTextBoolTrue").val();
+                    var alarm_false = $("#cfgVarTextAlarmFalse").val();
+                    var alarm_true = $("#cfgVarTextAlarmTrue").val();
+                    var value_list = $("#cfgVarTextEnum").val();
 
-                switch ($("#cfgVarNew").val()) {
-                    case "0":
-                        // Variable Editieren
-                        var id = $("#cfgVarId").val();
-                        var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
-                        console.log(varObj);
-
-
-                        script = "object o = dom.GetObject("+id+");\n" +
-                            "object ch = dom.GetObject(o.Channel());\n" +
-                            "if (ch) {\n  ch.DPs().Remove(o.ID());\n  o.Channel(ID_ERROR);\n}\n" +
-                            "o.DPInfo('"+desc+"');\n" +
-                            "o.DPArchive("+logged+");\n" +
-                            "o.ValueUnit('"+unit+"');\n";
-
-                        // Änderung des Variablen-Namens
-                        if (name != varObj.attr("name")) {
-                            console.log("change variable name old="+varObj.attr("name") + " new=" + name);
-                            script = script + "o.Name('"+name+"');\n";
-                        }
-
-                        // Änderung des Variablen-Typs
-                        if (subtype != varObj.attr("subtype")) {
-                            console.log("change variable subtype old="+varObj.attr("subtype") + " new=" + subtype);
-                            script = script + "o.ValueType("+type+");\n" +
-                                "o.ValueSubType("+subtype+");\n";
-                            switch (subtype) {
-                                case "0":
-                                    script = script + "o.State("+min+");\n";
-                                    break;
-                                case "2":
-                                    script = script + "o.State(0);\n";
-                                    break;
-                                case "11":
-                                    script = script + "o.State('');\n";
-                                    break;
-                                case "29":
-                                    script = script + "o.State(0);\n";
-                                    break;
-                            }
-                        }
+                    switch ($("#cfgVarNew").val()) {
+                        case "0":
+                            // Variable Editieren
+                            var id = $("#cfgVarId").val();
+                            var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
+                            //console.log(varObj);
 
 
-                        switch (subtype) {
-                            case "0":
-                                script = script + "o.ValueMin('"+min+"');\n" +
-                                    "o.ValueMax('"+max+"');\n";
-                                break;
-                            case "2":
-                                script = script + "o.ValueName0('"+bool_false+"');\n" +
-                                    "o.ValueName1('"+bool_true+"');\n";
-                                break;
-                            case "6":
-                                script = script + "o.ValueName0('"+alarm_false+"');\n" +
-                                    "o.ValueName1('"+alarm_true+"');\n";
-                                break;
-                            case "11":
-                                break;
-                            case "29":
-                                script = script + "o.ValueList('"+value_list+"');\n";
-                                break;
-                        }
-                        break;
-                    case "1":
-                         // Variable neu anlegen
-                         if (subtype != "6") {
-                             // Kein Alarm
-                            script = "object o = dom.CreateObject(OT_VARDP);\n" +
-                                "o.Name('" + name + "');\n" +
-                                "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                            script = "object o = dom.GetObject("+id+");\n" +
+                                "object ch = dom.GetObject(o.Channel());\n" +
+                                "if (ch) {\n  ch.DPs().Remove(o.ID());\n  o.Channel(ID_ERROR);\n}\n" +
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
-                                "o.ValueUnit('"+unit+"');\n" +
-                                "o.ValueType("+type+");\n" +
-                                "o.ValueSubType("+subtype+");\n";
+                                "o.ValueUnit('"+unit+"');\n";
+
+                            // Änderung des Variablen-Namens
+                            if (name != varObj.attr("name")) {
+                                //console.log("change variable name old="+varObj.attr("name") + " new=" + name);
+                                script = script + "o.Name('"+name+"');\n";
+                            }
+
+                            // Änderung des Variablen-Typs
+                            if (subtype != varObj.attr("subtype")) {
+                                //console.log("change variable subtype old="+varObj.attr("subtype") + " new=" + subtype);
+                                script = script + "o.ValueType("+type+");\n" +
+                                    "o.ValueSubType("+subtype+");\n";
+                                switch (subtype) {
+                                    case "0":
+                                        script = script + "o.State("+min+");\n";
+                                        break;
+                                    case "2":
+                                        script = script + "o.State(0);\n";
+                                        break;
+                                    case "11":
+                                        script = script + "o.State('');\n";
+                                        break;
+                                    case "29":
+                                        script = script + "o.State(0);\n";
+                                        break;
+                                }
+                            }
+
 
                             switch (subtype) {
                                 case "0":
-                                    script = script + "o.ValueMin("+min+");\n" +
-                                        "o.ValueMax("+max+");\n" +
-                                        "o.State("+min+");";
+                                    script = script + "o.ValueMin('"+min+"');\n" +
+                                        "o.ValueMax('"+max+"');\n";
                                     break;
                                 case "2":
                                     script = script + "o.ValueName0('"+bool_false+"');\n" +
-                                        "o.ValueName1('"+bool_true+"');\n" +
-                                        "o.State(0);";
+                                        "o.ValueName1('"+bool_true+"');\n";
+                                    break;
+                                case "6":
+                                    script = script + "o.ValueName0('"+alarm_false+"');\n" +
+                                        "o.ValueName1('"+alarm_true+"');\n";
                                     break;
                                 case "11":
-                                    script = script + "o.State('');";
                                     break;
                                 case "29":
-                                    script = script + "o.ValueList('"+value_list+"');\n" +
-                                        "o.State(0);";
+                                    script = script + "o.ValueList('"+value_list+"');\n";
                                     break;
                             }
+                            break;
+                        case "1":
+                             // Variable neu anlegen
+                             if (subtype != "6") {
+                                 // Kein Alarm
+                                script = "object o = dom.CreateObject(OT_VARDP);\n" +
+                                    "o.Name('" + name + "');\n" +
+                                    "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                                    "o.DPInfo('"+desc+"');\n" +
+                                    "o.DPArchive("+logged+");\n" +
+                                    "o.ValueUnit('"+unit+"');\n" +
+                                    "o.ValueType("+type+");\n" +
+                                    "o.ValueSubType("+subtype+");\n";
 
-                        } else {
-                             // Alarm
-                            script = "object o = dom.CreateObject(OT_ALARMDP);\n" +
-                                "o.Name('" + name + "');\n" +
-                                "o.AlSetBinaryCondition()\n" +
-                                "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
-                                "o.ValueType(ivtBinary);\n" +
-                                "o.ValueSubType(istAlarm);\n" +
-                                "o.Name('"+name+"');\n" +
-                                "o.ValueName0('"+alarm_false+"');\n" +
-                                "o.ValueName1('"+alarm_true+"');\n"+
-                                "o.DPInfo('"+desc+"');\n" +
-                                "o.DPArchive("+logged+");\n" +
-                                "o.AlType(atSystem);\n" +
-                                "o.AlArm(true);\n" +
-                                "o.State(false);";
-                        }
+                                switch (subtype) {
+                                    case "0":
+                                        script = script + "o.ValueMin("+min+");\n" +
+                                            "o.ValueMax("+max+");\n" +
+                                            "o.State("+min+");";
+                                        break;
+                                    case "2":
+                                        script = script + "o.ValueName0('"+bool_false+"');\n" +
+                                            "o.ValueName1('"+bool_true+"');\n" +
+                                            "o.State(0);";
+                                        break;
+                                    case "11":
+                                        script = script + "o.State('');";
+                                        break;
+                                    case "29":
+                                        script = script + "o.ValueList('"+value_list+"');\n" +
+                                            "o.State(0);";
+                                        break;
+                                }
 
-                        break;
-                }
+                            } else {
+                                 // Alarm
+                                script = "object o = dom.CreateObject(OT_ALARMDP);\n" +
+                                    "o.Name('" + name + "');\n" +
+                                    "o.AlSetBinaryCondition()\n" +
+                                    "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
+                                    "o.ValueType(ivtBinary);\n" +
+                                    "o.ValueSubType(istAlarm);\n" +
+                                    "o.Name('"+name+"');\n" +
+                                    "o.ValueName0('"+alarm_false+"');\n" +
+                                    "o.ValueName1('"+alarm_true+"');\n"+
+                                    "o.DPInfo('"+desc+"');\n" +
+                                    "o.DPArchive("+logged+");\n" +
+                                    "o.AlType(atSystem);\n" +
+                                    "o.AlArm(true);\n" +
+                                    "o.State(false);";
+                            }
 
-                var channel = $("#cfgVarChannelId").val();
-
-                if (channel != "65535" && channel !== undefined && channel !== null) {
-                    script = script + "\nobject oChn = dom.GetObject("+channel+");\n" +
-                        "oChn.DPs().Add(o.ID());\n" +
-                        "o.Channel("+channel+");";
-                }
-
-                console.log(script);
-                $.ajax({
-                    url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
-                    type: "POST",
-                    data: script,
-                    success: function () {
-                        variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name", name).attr("desc", desc).attr("logged", logged);
-                        variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
-                        gridVariables.jqGrid("setCell", id, "name", name);
-                        gridVariables.jqGrid("setCell", id, "desc", desc);
-                        gridVariables.jqGrid("setCell", id, "logged", logged);
-
-                        gridVariables.setGridParam({
-                            loadonce: false,
-                            datatype: "xmlstring",
-                            datastr: variablesXML
-                        });
-                        storage.set("hqWebUiVariables", (new XMLSerializer()).serializeToString(variablesXML));
-
-                        $("#dialogCfgVariable").dialog('close');
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        $("#dialogCfgVariable").dialog('close');
-                        ajaxError(xhr, ajaxOptions, thrownError);
-
+                            break;
                     }
-                });
 
+                    var channel = $("#cfgVarChannelId").val();
+
+                    if (channel != "65535" && channel !== undefined && channel !== null) {
+                        script = script + "\nobject oChn = dom.GetObject("+channel+");\n" +
+                            "oChn.DPs().Add(o.ID());\n" +
+                            "o.Channel("+channel+");";
+                    }
+
+                    if (hqConf.debug) { console.log(script) };
+                    $.ajax({
+                        url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+                        type: "POST",
+                        data: script,
+                        success: function () {
+
+                            // Todo - Refreshen der Werte ohne kompletten Reload von der CCU!
+                           /* variablesXMLObj.find("systemVariable[ise_id='"+id+"']").attr("name", name).attr("desc", desc).attr("logged", logged);
+                            variablesXML = $.parseXML((new XMLSerializer()).serializeToString(variablesXMLObj[0]));
+                            gridVariables.jqGrid("setCell", id, "name", name);
+                            gridVariables.jqGrid("setCell", id, "desc", desc);
+                            gridVariables.jqGrid("setCell", id, "logged", logged);
+
+                            gridVariables.setGridParam({
+                                loadonce: false,
+                                datatype: "xmlstring",
+                                datastr: variablesXML
+                            });
+                            storage.set("hqWebUiVariables", (new XMLSerializer()).serializeToString(variablesXML));*/
+
+                            storage.set("hqWebUiVariables", null);
+                            storage.set("hqWebUiVariablesTime", null);
+                            hmGetVariables();
+
+                            $("#dialogCfgVariable").dialog('close');
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            $("#dialogCfgVariable").dialog('close');
+                            ajaxError(xhr, ajaxOptions, thrownError);
+
+                        }
+                    });
+
+                });
             },
             'Abbrechen': function () {
                 $(this).dialog('close');
@@ -3364,6 +3446,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function chooseChannel(dialogObj) {
         $("#btnChannelChoose").unbind("click").click(function () {
             var id = gridChannelChooser.jqGrid('getGridParam','selrow');
+            if (!id) { return false; }
             dialogObj.find("input.channel-id").val(id);
             dialogObj.find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+id+"']").parent().attr("name") + ")");
             $("#dialogChannelChooser").dialog("close");
@@ -3385,8 +3468,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         height: 340,
         buttons: {
             'Änderungen übernehmen': function () {
-                saveProgram();
-                $(this).dialog('close');
+                checkName($("#cfgPrgId").val(), $("#cfgPrgName").val(), "PROGRAM", function () {
+                    saveProgram();
+                    $("#dialogCfgProgram").dialog('close');
+                });
+
             },
             'Abbrechen': function () {
                 $(this).dialog('close');
@@ -3394,56 +3480,173 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
 
+    function checkName(id, name, type, successfunction, errorfunction) {
+        //console.log("checkName("+id+", "+name+", "+type+")");
+        if (name == "" || name === undefined || name === null || !name.match(/^[a-zA-ZäöüÄÖÜ]/)) {
+            $("#dialogErrorRename").dialog("open");
+            return false;
+        }
+        var otherNames = [];
+        switch (type) {
+            case "VARDP":
+                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
+                if (varObj.attr("ise_id") != undefined && varObj.attr("ise_id") != id) {
+                    $("#dialogCantRenameType").html("eine Variable");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                var devObj = statesXMLObj.find("device[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("ein Gerät");
+                }
+                var devObj = statesXMLObj.find("channel[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("einen Kanal");
+                }
+                var devObj = programsXMLObj.find("program[name='"+name+"']");
+                if (devObj.attr("id")) {
+                    otherNames.push("ein Programm");
+                }
+                break;
+            case "DEVICE":
+                var devObj = statesXMLObj.find("device[name='"+name+"']");
+                if (devObj.attr("ise_id") != undefined && devObj.attr("ise_id") != id) {
+                    $("#dialogCantRenameType").html("ein Gerät");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
+                if (varObj.attr("ise_id")) {
+                    otherNames.push("eine Variable");
+                }
+                var devObj = statesXMLObj.find("channel[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("einen Kanal");
+                }
+                var devObj = programsXMLObj.find("program[name='"+name+"']");
+                if (devObj.attr("id")) {
+                    otherNames.push("ein Programm");
+                }
+
+                break;
+            case "CHANNEL":
+                var devObj = statesXMLObj.find("channel[name='"+name+"']");
+                if (devObj.attr("ise_id") != undefined && devObj.attr("ise_id") != id) {
+                    $("#dialogCantRenameType").html("einen Kanal");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
+                if (varObj.attr("ise_id")) {
+                    otherNames.push("eine Variable");
+                }
+                var devObj = statesXMLObj.find("device[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("ein Gerät");
+                }
+                var devObj = programsXMLObj.find("program[name='"+name+"']");
+                if (devObj.attr("id")) {
+                    otherNames.push("ein Programm");
+                }
+                break;
+            case "PROGRAM":
+                var devObj = programsXMLObj.find("program[name='"+name+"']");
+                if (devObj.attr("id") && devObj.attr("id") != id) {
+                    $("#dialogCantRenameType").html("ein Programm");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
+                if (varObj.attr("ise_id")) {
+                    otherNames.push("eine Variable");
+                }
+                var devObj = statesXMLObj.find("device[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("ein Gerät");
+                }
+                var devObj = statesXMLObj.find("channel[name='"+name+"']");
+                if (devObj.attr("ise_id")) {
+                    otherNames.push("einen Kanal");
+                }
+                break;
+        }
+        var others = otherNames.length;
+        var otherList = "";
+        if (others > 0) {
+            if (others == 1) {
+                otherList = otherNames[0];
+            } else if (others == 2) {
+                otherList = otherNames[0] + " und " + otherNames[1];
+            } else if (others > 2) {
+                for (var i = 0; i < others-1; i++) {
+                    if (i > 0) {
+                        otherList += ", ";
+                    }
+                    otherList += othersName[i];
+                }
+                otherList += " und " + othersName[others - 1];
+            }
+            $("#dialogReallyRenameType").html(otherList);
+            $("#dialogReallyRename").dialog("open");
+            return false;
+        }
+
+        successfunction();
+        return true;
+    }
 
     dialogRename.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
             'Ok': function () {
-                $(this).dialog('close');
-                var request = {
-                    "method": '',
-                    "params": {
-                        "id": $("#renameId").val(),
-                        "name": $("#rename").val(),
-                        "_session_id_": hmSession
-                    }
-                };
-                switch ($("#renameType").val()) {
-                    case "DEVICE":
-                        request.method = "Device.setName";
-                        break;
-                    case "CHANNEL":
-                        request.method = "Channel.setName";
-                        break;
-
-
-                }
-                if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
-                jsonPost(request, function () {
-                    var row_id = $("#renameId").val();
+                checkName($("#renameId").val(), $("#rename").val(), $("#renameType").val(), function() {
+                    dialogRename.dialog('close');
+                    var request = {
+                        "method": '',
+                        "params": {
+                            "id": $("#renameId").val(),
+                            "name": $("#rename").val(),
+                            "_session_id_": hmSession
+                        }
+                    };
                     switch ($("#renameType").val()) {
                         case "DEVICE":
-                            $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby='gridStates_name']").html($("#rename").val());
-                            devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
-                            //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
+                            request.method = "Device.setName";
                             break;
                         case "CHANNEL":
-                            $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby$='t_name']").html($("#rename").val());
-                            devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
-                            //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
-                            //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
-                            //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
+                            request.method = "Channel.setName";
                             break;
+
+
                     }
+                    if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
+                    jsonPost(request, function () {
+                        var row_id = $("#renameId").val();
+                        switch ($("#renameType").val()) {
+                            case "DEVICE":
+                                $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby='gridStates_name']").html($("#rename").val());
+                                devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                                statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                                //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                                //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
+                                break;
+                            case "CHANNEL":
+                                $("tr[id='" + $("#renameId").val() + "'] td[aria-describedby$='t_name']").html($("#rename").val());
+                                devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                                statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                                favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#rename").val());
+                                //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                                //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
+                                //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
+                                break;
+                        }
 
 
 
+                    });
                 });
+
 
             },
             'Abbrechen': function () {
@@ -4030,6 +4233,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         e.preventDefault();
     });
 
+
+
+
     // Homematic Funktionen
     function hmClearProtocol() {
         var script = "dom.ClearHistoryData();";
@@ -4153,8 +4359,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         if (hqConf.debug) { console.log("hmGetDevices()"); }
         $("#loaderStates").show();
 
+
         var cache = storage.get("hqWebUiDevices");
         if (cache !== null) {
+
             if (hqConf.debug) { console.log("Cache Hit Devices"); }
             devicesReady = true;
             devicesXML = $.parseXML(cache);
@@ -4166,6 +4374,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         if (hqConf.debug) { console.log("Fetching Devices"); }
+
+
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -4187,9 +4397,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetFunctions() {
         if (hqConf.debug) { console.log("hmGetFunctions()"); }
+
+
         $("#loaderStates").show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
+
             if (hqConf.debug) { console.log("Cache Hit Functions"); }
             functionsReady = true;
             functionsXML = $.parseXML(cache);
@@ -4198,6 +4411,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             return false;
         }
         if (hqConf.debug) { console.log("Fetching Functions"); }
+
+
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -4216,8 +4431,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetAlarms() {
         if (hqConf.debug) { console.log("hmGetAlarms()"); }
+
+
         var cache = storage.get("hqWebUiAlarms");
         if (cache !== null && cache !== undefined) {
+
+
             if (hqConf.debug) { console.log("Cache Hit Alarms") }
             alarmsReady = true;
             alarmsData = cache;
@@ -4245,6 +4464,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         if (hqConf.debug) { console.log("Fetching Alarm-Datapoints"); }
+
+
         $("#loaderStates").show();
          $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
@@ -4380,7 +4601,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function hmReceiptAlarm(id) {
         clearTimeout(timerMessages);
         var script = "dom.GetObject(" + id + ").AlReceipt();";
-        console.log(script);
+        if (hqConf.debug) { console.log(script) };
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: 'POST',
@@ -4395,6 +4616,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
     }
     function insertAlarms(data) {
+
+
         //console.log("\n\n\n--- BEFORE ---");
         //console.log(statesXMLObj);
         for (var i = 0; i < alarmsData.length; i++) {
@@ -4412,9 +4635,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetRooms() {
         if (hqConf.debug) { console.log("hmGetRooms()"); }
+
+
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
             if (hqConf.debug) { console.log("Cache Hit Rooms"); }
+
+
             roomsReady = true;
             roomsXML = $.parseXML(cache);
             roomsXMLObj = $(roomsXML);
@@ -4422,6 +4649,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             return false;
         }
         if (hqConf.debug) { console.log("Fetching Rooms"); }
+
+
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -4439,10 +4668,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetFavorites() {
         if (hqConf.debug) { console.log("hmGetFavorites()"); }
+
+
         $("#loaderFavorites").show();
 
         var cache = storage.get("hqWebUiFavorites");
         if (cache !== null) {
+
+
             if (hqConf.debug) { console.log("Cache Hit: Favorites"); }
             favoritesXML = $.parseXML(cache);
             favoritesXMLObj = $(favoritesXML);
@@ -4457,6 +4690,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             return false;
         }
         if (hqConf.debug) { console.log("Fetching Favorites"); }
+
+
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             dataType: 'xml',
@@ -4526,6 +4761,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function sessionStart() {
         if (hqConf.debug) { console.log("sessionStart()"); }
+
+
         var username = storage.get("hqWebUiUsername");
         var password = storage.get("hqWebUiPassword");
         if (username !== null && password != null) {
@@ -4546,6 +4783,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
         if (username != null) {
+
+
             jsonLogin(username, password);
         } else {
             $("#buttonDelCred").attr("disabled", true);
@@ -4563,6 +4802,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function jsonLogin(username, password) {
         if (hqConf.debug) { console.log("JSON RPC: Session.login username=" + username); }
+
+
         jsonPost({
             "method": "Session.login",
             "params":  {
@@ -4571,6 +4812,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }, function (data) {
             if (hqConf.debug) { console.log("JSON RPC: Session.login Successfull"); }
+
+
             hmSession = data.result;
             $("#session").hide();
             webuiStart();
@@ -4642,9 +4885,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmSessionRenew(firstLoad) {
         if (hqConf.debug) { console.log("hmSessionRenew("+firstLoad+")"); }
+
+
         clearTimeout(timerSession);
         if (hmSession) {
             if (hqConf.debug) { console.log("JSON RPC: Session.renew _session_id_=" + hmSession); }
+
+
             jsonPost({
                     "method":   "Session.renew",
                     "params":   {
@@ -4681,6 +4928,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 if (username != null) {
                     if (hqConf.debug) { console.log("Trying to re-login with cached credentials"); }
+
+
                     jsonLogin(username, password);
                 } else {
 
@@ -4841,6 +5090,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function webuiStart() {
+
+
         // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus hmGetFavorites heraus angestoßen
         if (hqConf.debug) { console.log("webuiStart()"); }
         var cache = storage.get("hqWebUiStringtable");
@@ -5191,6 +5442,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
             updateScript = 'object o;\nWrite("[");\n' + updateScript + 'Write("]");';
             //console.log({'updateScript':updateScript});
             var ajaxTime = new Date().getTime();
+            var dateObj = new Date();
+            var updateTime = Math.floor(dateObj.getTime() / 1000);
+            $("div#"+tabActive.replace(/#/, "")).find("span.timeUpdate").html("" + formatTimestamp(updateTime));
 
             $.ajax({
                 url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
@@ -5629,6 +5883,9 @@ function scriptEditorReady() {
     }
 
 }
+
+
+
 
 function scriptEditorStyle() {
     // Umstylen anhand jQuery UI Theme... Pfusch...
