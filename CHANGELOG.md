@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.2-alpha4
+----------
+* In den Suchfiltern muss die Enter-Taste nun nicht mehr benutzt werden
+* Dialog Kanalauswahl implementiert - Variablen können nun Kanälen zugeordnet werden
+
 2.2-alpha3
 ----------
 * Variablen: Ändern vervollständigt, Fehler behoben

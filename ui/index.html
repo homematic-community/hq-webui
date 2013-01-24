@@ -159,6 +159,10 @@
                             <div id="gridPagerProtocol"></div>
                         </div>
                     </div>
+                    <!--<div class="tabs" id="tabCcuCharts">
+                        Todo
+                    </div>
+                    -->
                     <div class="tabs" id="tabCcuInfo">
                         <div class="tabContainer">
                             <table class="gridSub" id="gridInfo"></table>
@@ -282,12 +286,9 @@
         </ul>
     </div>
     <div class="dialog" id="dialogLinks" title="Links">
-        <ul>
-            <li><a href="/" target="_blank">originales WebUI</a></li>
-            <li><a href="/addons/cuxd" target="_blank">CUxD</a></li>
-            <li><a href="/addons/webmatic"target="_blank">Webmatic</a></li>
-        </ul>
-
+        <h3><a href="/" target="_blank">originales WebUI</a></h3>
+        <h3><a href="/addons/cuxd" target="_blank">CUxD</a></h3>
+        <h3><a href="/addons/webmatic"target="_blank">Webmatic</a></h3>
     </div>
     <div class="dialog" id="dialogDelScript" title="Script löschen">
         <br>
@@ -296,9 +297,19 @@
         unwiederruflich.<br><br>
         Sind Sie sich sicher?
     </div>
+    <div class="dialog" id="dialogReallyRename" title="Script löschen">
+        <br>
+        Dieser Name ist bereits für <span id="dialogReallyRenameType"></span> vergeben.<br><br>
+        Möchten Sie ihn dennoch verwenden?
+    </div>
+    <div class="dialog" id="dialogCantRename" title="Script löschen">
+        <br>
+        Dieser Name ist bereits für <span id="dialogCantRenameType"></span> vergeben.<br><br>
+        Sie müssen einen anderen Namen verwenden.
+    </div>
     <div class="dialog" id="dialogRename" title="Name ändern">
         <br>
-        <input id="rename" type="text"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
+        <input id="rename" type="text" size="40"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
         <br>
     </div>
     <div class="dialog" id="dialogDelVariable" title="Variable löschen">
@@ -385,8 +396,8 @@
             <tr>
                 <td>Kanalzuordnung</td>
                 <td>
-                    <input id="cfgVarChannelId" type="hidden"/>
-                    <input id="cfgVarChannel" type="text" size="60" disabled="disabled"/>
+                    <input class="channel-id" id="cfgVarChannelId" type="hidden"/>
+                    <input class="channel-name" id="cfgVarChannel" type="text" size="60" disabled="disabled"/>
                     <button id="cfgVarSetChannel">setzen</button>
                     <button id="cfgVarDelChannel">löschen</button>
                 </td>

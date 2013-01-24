@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.2-alpha3";
+    var version =               "2.2-alpha4";
 
     var statesXML,
         rssiXML,
@@ -82,6 +82,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var gridRssi =              $("#gridRssi");
     var gridScriptVariables =   $("#gridScriptVariables");
     var gridInfo =              $("#gridInfo");
+    var gridChannelChooser =    $("#gridChannelChooser");
 
     var variableInput =         $("#variableInput");
     var variableName =          $("#variableName");
@@ -286,6 +287,188 @@ jQuery.extend(jQuery.expr[ ":" ], {
      *          siehe http://www.trirand.com/jqgridwiki/doku.php?id=wiki:colmodel_options
      *
      */
+
+    var colNamesChannelChooser = [
+        'id',
+        'Kanal Name',
+        'Gerät Name',
+        'Adresse',
+        'Richtung',
+        'Kanaltyp',
+        'Räume',
+        'Gewerke'
+    ];
+    var colModelChannelChooser = [
+        {name:"ise_id", align: 'right', index:"ise_id",   width:38, fixed: true, sorttype: 'int',
+            xmlmap: function (obj) {
+                return $(obj).attr('ise_id');
+            },
+            classes: 'ise_id'
+        },
+        {name:"name",   index:"name",   width:200, fixed: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('name');
+            }
+        },
+        {name:"device",   index:"device",   width:200, fixed: true,
+            xmlmap: function (obj) {
+                var id = $(obj).attr('ise_id');
+                return statesXMLObj.find("channel[ise_id='" + id + "']").parent().attr('name');
+            }
+        },
+        {name:"address",   index:"address",   width:90, fixed: true,
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('ise_id');
+                var address = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('address');
+                if (statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('name') == "CCUWIR:0") {
+                    address = "BidCos-Wir:0";
+                }
+                if (address == undefined) {
+                    var dp_name = statesXMLObj.find("channel[ise_id='" + ise_id + "'] datapoint").attr('name');
+                    if (dp_name == undefined) {
+                        // Kommt das nur bei HM-TC-CC vor?
+                        address = "";
+                    } else {
+                        var dp_names = dp_name.split(".");
+                        address = dp_names[1];
+                    }
+
+                }
+                return address;
+            }
+        },
+        {name:"direction",   index:"direction",   width:88, fixed: true,
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('ise_id');
+                var direction = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
+                if (direction != undefined) {
+                    return direction;
+                } else {
+                    return "";
+                }
+            }
+        },
+        {name:"hsstype",   index:"hsstype",   width:110, fixed: true,
+            xmlmap: function (obj) {
+                var ise_id = $(obj).attr('ise_id');
+                var hsstype = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
+                if (hsstype != undefined) {
+                    return hsstype;
+                } else {
+                    return "";
+                }
+            }
+        },
+        {name:"rooms", index:"rooms",   width:110, fixed: true,
+            xmlmap: function (obj) {
+                var output = "";
+                roomsXMLObj.find("channel[ise_id='" + $(obj).attr('ise_id') + "']").each(function () {
+                    if (output == "") {
+                        output = $(this).parent().attr("name");
+                    } else {
+                        output += ", " + $(this).parent().attr("name");
+                    }
+                });
+                return output;
+
+            }
+        },
+        {name:"functions", index:"functions",   width:110, fixed: true,
+            xmlmap: function (obj) {
+                return $(functionsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").parent().attr("name");
+            }
+        }
+
+    ];
+
+    gridChannelChooser.jqGrid({
+        colNames: colNamesChannelChooser,
+        colModel: colModelChannelChooser,
+        width: 992, height: 410,
+        pager: "#gridPagerChannelChooser",
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Kanäle',
+        loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
+        datatype:       'xmlstring',
+        data: {
+        },
+        ignoreCase: true,
+        sortable: true,
+        ondblClickRow: function(row_id) {
+            // Todo Dialogobjekt dynamisch!
+            $("#dialogCfgVariable").find("input.channel-id").val(row_id);
+            $("#dialogCfgVariable").find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+row_id+"']").parent().attr("name") + ")");
+            $("#dialogChannelChooser").dialog("close");
+        },
+
+        xmlReader: {
+            root:"stateList",
+            row:"channel",
+            id:"[ise_id]",
+            repeatitems: false
+        },
+        rowNum:100
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
+        'navGrid',
+        "#gridPagerChannelChooser", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerChannelChooser", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () {
+                storage.set("hqWebUiRooms", null);
+                storage.set("hqWebUiFunctions", null);
+                storage.set("hqWebUiAlarms", null);
+                storage.set("hqWebUiDevices", null);
+                storage.set("hqWebUiStates", null);
+                roomsReady = false;
+                functionsReady = false;
+                alarmsReady = false;
+                devicesReady = false;
+                statesReady = false;
+
+                hmGetFunctions();
+            },
+            position: "last",
+            title:"Neu laden",
+            id:"btnRefreshChannelChooser",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerChannelChooser", {
+            caption:"",
+            buttonicon:"ui-icon-close",
+            onClickButton: function () {
+                $("#dialogChannelChooser").dialog("close");
+            },
+            position: "first",
+            id:"btnChannelClose",
+            title:"Abbrechen",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerChannelChooser", {
+            caption:"",
+            buttonicon:"ui-icon-check",
+            onClickButton: function () {
+            },
+            position: "first",
+            id: "btnChannelChoose",
+            title:"Auswählen",
+            cursor: "pointer"
+        });
+
+    $("#dialogChannelChooser").dialog({
+        width: 1020,
+        height: 560,
+        autoOpen: false,
+        modal: true,
+        resizable: false
+    });
+
     var colNamesVariables = [
         'id',
         'Name',
@@ -1398,7 +1581,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
 
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerPrograms", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
         'navButtonAdd',
@@ -1520,7 +1703,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         ondblClickRow: function(row_id) {
 
         }
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerStates", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
         'navButtonAdd',
@@ -1556,6 +1739,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     $("#gridPagerStates_left").append("<span class='timeRefresh' id='timeRefreshStates'/>");
+    $("#gridPagerChannelChooser_left").append("<span class='timeRefresh' id='timeRefreshStates2'/>");
 
     gridRssi.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -1580,7 +1764,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         sortable: true
 
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerRssi", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
         'navButtonAdd',
@@ -1624,7 +1808,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
 
 
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid(
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerProtocol", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
         'navButtonAdd',
@@ -1665,7 +1849,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
 
-    }).filterToolbar({defaultSearch: 'cn'});
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false});
 
     gridScriptVariables.jqGrid({
         width: 343,
@@ -1688,7 +1872,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         sortable: true,
         ignoreCase: true
-    }).filterToolbar({defaultSearch: 'cn'}).jqGrid('gridResize');
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid('gridResize');
 
     // Zuklapp-Button verstecken
     $("a.ui-jqgrid-titlebar-close").hide();
@@ -2141,7 +2325,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
             statesXMLObj = $(statesXML);
             statesTime = storage.get("hqWebUiStatesTime");
             $("#timeRefreshStates").html(formatTimestamp(statesTime));
+            $("#timeRefreshStates2").html(formatTimestamp(statesTime));
             gridStates.setGridParam({
+                loadonce: false,
+                datatype: "xmlstring",
+                datastr: statesXML
+            }).trigger("reloadGrid").setGridParam({loadonce:true});
+            gridChannelChooser.setGridParam({
                 loadonce: false,
                 datatype: "xmlstring",
                 datastr: statesXML
@@ -2181,6 +2371,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var dateObj = new Date();
                 statesTime = Math.floor(dateObj.getTime() / 1000);
                 $("#timeRefreshStates").html(formatTimestamp(statesTime));
+                $("#timeRefreshStates2").html(formatTimestamp(statesTime));
                 storage.set("hqWebUiStatesTime", statesTime);
                 insertAlarms();
 
@@ -3166,7 +3357,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
-    $("#cfgVarSetChannel").button();
+    $("#cfgVarSetChannel").button().click(function () {
+        chooseChannel($("#dialogCfgVariable"));
+    });
+
+    function chooseChannel(dialogObj) {
+        $("#btnChannelChoose").unbind("click").click(function () {
+            var id = gridChannelChooser.jqGrid('getGridParam','selrow');
+            dialogObj.find("input.channel-id").val(id);
+            dialogObj.find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+id+"']").parent().attr("name") + ")");
+            $("#dialogChannelChooser").dialog("close");
+        });
+
+        $("#dialogChannelChooser").dialog("open");
+    }
+
     $("#cfgVarDelChannel").button().click(function () {
         $("#cfgVarChannelId").val(65535);
         $("#cfgVarChannel").val("-");
