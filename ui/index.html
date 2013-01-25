@@ -17,6 +17,7 @@
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/jquery.multiselect.min.js"></script>
     <script type="text/javascript" src="js/jquery.jsonview.js"></script>
+    <script type="text/javascript" src="js/highcharts.js"></script>
     <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/hmscripts.js"></script>
     <script type="text/javascript" src="js/tclscripts.js"></script>
@@ -149,24 +150,35 @@
             <div class="tabs" id="tabCcu">
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
-                        <!--<li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li><!--
                         <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
-                    -->    <li><a href="#tabCcuProtocol">Protokoll<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
-                        <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
+                    -->    <li><a href="#tabCcuProtocol">Protokoll-Tabelle<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuChart">Protokoll-Graph<span class="loader"><img id="loaderProtocol2" src="img/loader-bright.gif"></span></a></li>
                     </ul>
-                    <!--<div class="tabs" id="tabCcuSystem">Todo</div>-->
+                    <div class="tabs" id="tabCcuSystem">
+                        <div id="tabSystemContainer">
+                            <button id="createBackup">Sicherung erstellen</button><br/>
+                            <!--<button id="saveRegadom">homematic.regadom speichern</button><br/>
+                            <button id="ccuReboot">Zentrale neu starten</button><br/>
+                            <button id="ccuSafeReboot">Zentrale im abgesicherten Modus neustarten</button>-->
+                        </div>
+
+
+                    </div>
+
                     <div class="tabs" id="tabCcuProtocol">
                         <div class="tabContainer">
                             <table class="gridSub" id="gridProtocol"></table>
                             <div id="gridPagerProtocol"></div>
                         </div>
                     </div>
-                    <!--<div class="tabs" id="tabCcuCharts">
-                        Todo
+                    <div class="tabs" id="tabCcuChart">
+                        <div id="chartProtocol"></div>
                     </div>
-                    -->
+
                     <div class="tabs" id="tabCcuInfo">
                         <div class="tabContainer">
                             <table class="gridSub" id="gridInfo"></table>

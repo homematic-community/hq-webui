@@ -1,5 +1,10 @@
 Changelog
 =========
+2.3-alpha1
+----------
+* Systembackups können erzeugt werden (Neuer Tab: Zentrale/System)
+* Grafische Darstellung des Systemprotokolls (Neuer Tab: Zentrale/Protokoll-Graph)
+
 
 2.2.0
 -----

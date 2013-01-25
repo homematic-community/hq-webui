@@ -110,7 +110,6 @@ var scriptProtocol = "var rCount;\n" +
 "string datetime;\n" +
 "object oDP;\n" +
 "var counter = iStart;\n" +
-"WriteLine('<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>');\n" +
 "WriteLine('<systemprotocol>');\n" +
 "foreach(s, dom.GetHistoryData( iStart, iCount, &rCount)) {\n" +
 "    integer iGroupIndex = s.StrValueByIndex(\";\",0).ToInteger();\n" +

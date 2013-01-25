@@ -20,11 +20,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 });
 
+
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.2.0";
+    var version =               "2.3-alpha1";
 
     $(".hq-version").html(version);
+
+    var chartProtocol, chartDPs = [],
+        chartProtocolSeries = [];
 
     var statesXML,
         rssiXML,
@@ -190,7 +194,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
         tabActive = window.location.hash;
         tabs.tabs('select', tabActive);
     });
-    $("#subTabCcu").tabs();
+    $("#subTabCcu").tabs({
+        activate: function( event, ui ) {
+
+            if (ui.newTab[0].children[0].hash == "#tabCcuChart") {
+                console.log("chart redraw");
+                chartProtocol.setSize($(window).width()-92,$(window).height()-140);
+
+            }
+        }
+    });
 
     // Resize
     $(window).resize(function() {
@@ -216,8 +229,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
         divStdout.css('width', x - 775);
         gridScriptVariables.setGridWidth(x - 775);
         $("#tabFavorites").css("height", $("#tabVariables").height());
-        //$("#tabDev").css("height", $("#tabVariables").height());
+        //$("#tabCcu").css("height", $("#tabVariables").height());
+        $("#chartProtocol").css("width", gridWidth - 46);
+        $("#chartProtocol").css("height", $("#tabCcuProtocol").height());
+        $("#tabSystemContainer").css("width", gridWidth - 46);
+        $("#tabSystemContainer").css("height", $("#tabCcuProtocol").height());
         resizeFavHeight();
+        chartProtocol.setSize($(window).width()-92,$(window).height()-140);
+
     }
 
     function resizeFavHeight() {
@@ -2481,6 +2500,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         protocolXMLObj = $("<systemProtocol/>");
         protocolRecords = 0;
         protocolReady = false;
+        chartProtocolSeries = [];
         $("#loaderProtocol").show();
         hmGetProtocol(protocolRecords, 1000);
     }
@@ -2501,6 +2521,65 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 $(data).find("row").each(function () {
                     protocolXMLObj.prepend(this);
+                    if (!$.isArray(chartProtocolSeries[$(this).attr("did")])) {
+                        chartProtocolSeries[$(this).attr("did")] = [];
+                    }
+                    if (chartDPs[$(this).attr("did")] === undefined) {
+                        var dpname, dptype, name, type, charttype, unit = "", step = false, factor = 1;
+                        type = $(this).attr("type");
+                        switch (type) {
+                            case "VARDP":
+                            case "ALARMDP":
+                                name = variablesXMLObj.find("systemVariable[ise_id='" + $(this).attr("did") + "']").attr("name");
+                                break;
+                            default:
+                                dpname = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").attr("name");
+                                name = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").parent().attr("name");
+                                dptype = dpname.split(".");
+
+                                dptype = dptype[dptype.length - 1];
+                                name = name + " ("+dptype+")";
+                                switch (dptype) {
+                                    case "TEMPERATURE":
+                                        charttype = "spline";
+                                        unit = "°C";
+                                        break;
+                                    case "HUMIDITY":
+                                        charttype = "spline";
+                                        unit = "%";
+                                        break;
+                                    case "LEVEL":
+                                        charttype = "line";
+                                        step = "left";
+                                        unit = "%";
+                                        factor = 100;
+                                        break;
+
+                                    case "PRESS_SHORT":
+                                    case "PRESS_LONG":
+                                    case "PRESS_OPEN":
+                                        charttype = "scatter";
+                                        break;
+                                    default:
+                                        charttype = "line";
+                                        step = "left";
+
+
+                                }
+                        }
+
+                        chartDPs[$(this).attr("did")] = {
+                            type: type,
+                            name: name,
+                            chartType: charttype,
+                            step: step,
+                            factor: factor,
+                            unit: unit
+                        }
+
+                    }
+                    chartProtocolSeries[$(this).attr("did")].push([Date.parse($(this).attr("datetime")) + 3600000, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
+
                     if (protocolReady) {
                         // TODO: Liveupdate (Zeilen in geladenes Grid einfügen)
                     }
@@ -2521,6 +2600,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     if (!protocolReady) {
                         gridProtocol.trigger("reloadGrid").setGridParam({sortname: 'datetime', sortorder: 'desc', loadonce:true});
                         $("#loaderProtocol").hide();
+                        console.log(chartProtocolSeries);
+                        for (var key in chartProtocolSeries) {
+                            if (key === 'length' || !chartProtocolSeries.hasOwnProperty(key)) continue;
+                            console.log(chartDPs[key]);
+
+
+                            chartProtocol.addSeries({
+                                name: chartDPs[key].name,
+                                type: chartDPs[key].chartType,
+                                step: chartDPs[key].step,
+                                data: chartProtocolSeries[key],
+                                visible: false
+                            });
+                        }
                         protocolReady = true;
                     }
 
@@ -2530,8 +2623,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             error: ajaxError
         });
     }
-
-    function hmGetRssi() {
+   function hmGetRssi() {
         if (hqConf.debug) { console.log("hmGetRssi()"); }
 
 
@@ -3179,6 +3271,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     /* Buttons, Dialoge */
+
+
+    $("#createBackup").button().click(function () {
+        newwindow=window.open("backup.html",'Backup','toolbar=no,location=no,directories=no,status =no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,height=120,width=360');
+        if (window.focus) {newwindow.focus()}
+        return false;
+    });
+
     buttonRefreshFavs.button({
         text: false,
         icons: { primary: "ui-icon-refresh" }
@@ -5805,6 +5905,45 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
         setTimeout(scriptEditorStyle,2000);
     }
+
+
+    // Highcharts
+    chartProtocol = new Highcharts.Chart({
+        chart: {
+            renderTo: 'chartProtocol',
+            zoomType: 'xy'
+        },
+        title: {
+            text: 'Systemprotokoll'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            verticalAlign: 'top'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                month: '%e. %b',
+                year: '%Y'
+            }
+        },
+        yAxis: {
+            title: {
+                text: ''
+            },
+            min: 0
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%Y-%m-%d %H:%i:%s', this.x) +': '+ this.y;
+            }
+        }
+    });
 
 
     // Script-Editor

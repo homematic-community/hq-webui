@@ -191,7 +191,7 @@ in HQ WebUI verwendete Software
 * editarea http://www.cdolivet.com/editarea/
 * lostorage.js https://github.com/js-coder/loStorage.js
 * jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
-
+* Highcharts http://www.highcharts.com
 
 
 Copyright, Lizenz, Bedingungen
