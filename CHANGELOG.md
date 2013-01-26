@@ -1,5 +1,17 @@
 Changelog
 =========
+2.3-alpha2
+----------
+* Icons für WebMatic und CUxD im Link-Dialog hinzugefügt (Danke kaju)
+* kleine Änderungen am Protokoll-Graphen
+* Icons in der Gerätetabelle angepasst
+* Diverse Style-Anpassungen
+* Neue Optionen im Einstellungsdialog (Updateintervall, Debugmodus)
+* Zwischengespeicherte Daten können nun angezeigt werden (Button im Einstellungs-Dialog)
+* Dialog Kanal bearbeiten erweitert (Gewerke/Räume-Multiselect und Protokolliert-Checkbox) - funktioniert noch nicht
+* Neuer Dialog Gerät bearbeiten - funktioniert noch nicht
+* Neuer Tab Zentrale/Gewerke und Räume - Anlegen/Editieren/Löschen funktioniert noch nicht
+
 2.3-alpha1
 ----------
 * Systembackups können erzeugt werden (Neuer Tab: Zentrale/System)

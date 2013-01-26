@@ -113,11 +113,6 @@
                                 <li><a id="editorNewJson" href="#">JSON RPC</a></li>
                                 <li><a id="editorNewXml" href="#">XML RPC</a></li>
                             </ul>
-                            <button style="float:left;" id="editorCcu">CCU</button>
-                            <ul id="hmCcuMenu">
-                                <li><a id="editorCcuSave" href="#">auf CCU speichern</a></li>
-                                <li><a id="editorCcuLoad" href="#">von CCU laden</a></li>
-                            </ul>
                             <button style="float:right" id="editorHelp">Doku</button>
                             <button id="hmSaveScript"></button>
                         </div>
@@ -151,7 +146,8 @@
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
-                        <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuMain" src="img/loader-bright.gif"></span></a></li><!--
+                        <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuSystem" src="img/loader-bright.gif"></span></a></li>
+                        <li><a href="#tabCcuRooms">Gewerke und Räume<span class="loader"><img id="loaderCcuRooms" src="img/loader-bright.gif"></span></a></li><!--
                         <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
@@ -177,6 +173,20 @@
                     </div>
                     <div class="tabs" id="tabCcuChart">
                         <div id="chartProtocol"></div>
+                    </div>
+                    <div class="tabs" id="tabCcuRooms">
+                        <table>
+                            <tr>
+                                <td>
+                                    <table id="gridRooms" class="gridSubHalf"></table>
+                                    <div id="gridPagerRooms"></div>
+                                </td>
+                                <td>
+                                    <table id="gridFunctions" class="gridSubHalf"></table>
+                                    <div id="gridPagerFunctions"></div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="tabs" id="tabCcuInfo">
@@ -235,7 +245,7 @@
         <h3>Gespeicherte Anmeldedaten</h3>
         <button id="buttonDelCred">Löschen</button>
         <h3>Zwischengespeicherte CCU Daten</h3>
-        <button id="buttonDelCache">Löschen</button>
+        <button id="buttonDelCache">Löschen</button> <button id="buttonShowCache">Anzeigen</button>
         <h3>Theme auswählen</h3>
         <select id="selectUiTheme">
             <option value="base">base</option>
@@ -264,6 +274,25 @@
             <option value="ui-lightness">ui-lightness</option>
             <option value="vader">vader</option>
         </select>
+        <h3>Refresh-Intervall</h3>
+        <h5>Aktualisierung ungefähr alle <span id="refreshEstimation"></span> Sekunden</h5>
+        <table style="width:520px;">
+            <tr>
+                <td colspan="2" style="padding-left: 10px; padding-right: 10px;">
+                    <div id="sliderRefresh"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;  font-size: 0.8em;">
+                    Langsames Aktualisieren,<br>niedrige Belastung der CCU
+                </td>
+                <td style="text-align: right; font-size: 0.8em;">
+                    Häufiges Aktualisieren,<br>hohe Belastung der CCU
+                </td>
+            </tr>
+        </table>
+        <h3>Debugmodus</h3>
+        <input type="checkbox" id="debugMode"/> Ausgabe von Informationen zur Fehlerbehebung in der Browserconsole
     </div>
     <div class="dialog" id="dialogDebugScript" title="Ausführung">
         <br>
@@ -302,9 +331,19 @@
         </ul>
     </div>
     <div class="dialog" id="dialogLinks" title="Links">
+        <table style="text-align: center; vertical-align: middle"><tr><td style="width: 120px;">
+            <a href="/addons/webmatic" target="_blank"><img src="img/webmatic.png"/></a>
+        </td><td style="width: 120px;">
+            <a href="/" target="_blank"><img src="img/homematic.png"/></a>
+        </td><td style="width: 120px;">
+            <a href="/addons/cuxd" target="_blank"><img src="img/cuxd.png"/></a>
+        </td></tr><tr><td style="width: 120px;">
+            <h3><a href="/addons/webmatic"target="_blank">WebMatic</a></h3>
+        </td><td style="width: 120px;">
         <h3><a href="/" target="_blank">originales WebUI</a></h3>
-        <h3><a href="/addons/cuxd" target="_blank">CUxD</a></h3>
-        <h3><a href="/addons/webmatic"target="_blank">Webmatic</a></h3>
+    </td><td style="width: 120px;">
+            <h3><a href="/addons/cuxd" target="_blank">CUxD</a></h3>
+        </td></tr></table>
     </div>
     <div class="dialog" id="dialogDelScript" title="Script löschen">
         <br>
@@ -327,9 +366,27 @@
         <br><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
         Der eingegebene Name ist ungültig!
     </div>
-    <div class="dialog" id="dialogRename" title="Name ändern">
+    <div class="dialog" id="dialogCfgChannel" title="Kanal bearbeiten">
+        <table>
+            <tr>
+                <td>Name</td><td><input id="cfgChannelName" type="text" size="40"/></td>
+            </tr>
+            <tr>
+                <td>Räume</td><td><select id="selectRooms" multiple="multiple"></select></td>
+            </tr>
+            <tr>
+                <td>Gewerke</td><td><select id="selectFunctions" multiple="multiple"></select></td>
+            </tr>
+            <tr>
+                <td>Protokolliert</td><td><input type="checkbox" id="cfgChannelProtocol"/> </td>
+            </tr>
+
+        </table>
+        <input type="hidden" id="cfgChannelId"/>
+    </div>
+    <div class="dialog" id="dialogCfgDevice" title="Gerät bearbeiten">
         <br>
-        <input id="rename" type="text" size="40"/><input type="hidden" id="renameId"/><input type="hidden" id="renameType"/>
+        <input id="cfgDeviceName" type="text" size="40"/><input type="hidden" id="cfgDeviceId"/><br>
         <br>
     </div>
     <div class="dialog" id="dialogDelVariable" title="Variable löschen">
@@ -445,6 +502,34 @@
 
         </table>
         <input type="hidden" id="cfgPrgId"/>
+    </div>
+    <div class="dialog" id="dialogCfgRoom" title="Raum editieren">
+        <br>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><input id="cfgRoomName" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Beschreibung</td>
+                <td><input id="cfgRoomDesc" type="text" size="60"/></td>
+            </tr>
+        </table>
+        <input type="hidden" id="cfgRoomId"/>
+    </div>
+    <div class="dialog" id="dialogCfgFunction" title="Gewerk editieren">
+        <br>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><input id="cfgFunctionName" type="text" size="60"/></td>
+            </tr>
+            <tr>
+                <td>Beschreibung</td>
+                <td><input id="cfgFunctionDesc" type="text" size="60"/></td>
+            </tr>
+        </table>
+        <input type="hidden" id="cfgFunctionId"/>
     </div>
     <div class="" id="login">
         <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>

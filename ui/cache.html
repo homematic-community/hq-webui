@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="ISO-8859-1">
+    <title>HQ WebUI</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lostorage.min.js"></script>
+    <style type="text/css">
+        body { font-size: 0.8em; font-family: sans-serif; background-color: #e9e9e9; color: #222; }
+        
+    </style>
+    <script type="text/javascript">
+        (function ($) { $("document").ready(function () {
+            var tmp = storage.get("hqWebUiSession");
+            if (tmp != null) {
+                $("#stringtable td textarea").html(JSON.stringify(storage.get("hqWebUiStringtable")));
+                $("#variablesXML td textarea").html(storage.get("hqWebUiVariables"));
+                $("#favoritesXML td textarea").html(storage.get("hqWebUiFavorites"));
+                $("#programsXML td textarea").html(storage.get("hqWebUiPrograms"));
+                $("#roomsXML td textarea").html(storage.get("hqWebUiRooms"));
+                $("#functionsXML td textarea").html(storage.get("hqWebUiFunctions"));
+                $("#devicesXML td textarea").html(storage.get("hqWebUiDevices"));
+                $("#statesXML td textarea").html(storage.get("hqWebUiStates"));
+                $("#alarmsXML td textarea").html(JSON.stringify(storage.get("hqWebUiAlarms")));
+                $("#rssiXML td textarea").html(storage.get("hqWebUiRssi"));
+
+            } else {
+                $("body").html("Sitzung ungültig.");
+            }
+
+        })})(jQuery);
+    </script>
+</head>
+<body>
+<table>
+    <h2>HQ WebUI Cache</h2>
+    <tr id="stringtable">
+        <td>Übersetzungen<br><i>JSON</i><br>(aus stringtable_de.txt)</td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="variablesXML">
+        <td>Variablen<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="programsXML">
+        <td>Programme<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="roomsXML">
+        <td>Räume<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="functionsXML">
+        <td>Gewerke<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="devicesXML">
+        <td>Geräte<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="statesXML">
+        <td>Status<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="alarmsXML">
+        <td>AL-Datenpunkte<br><i>JSON</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+    <tr id="rssiXML">
+        <td>Funk<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
+</table>
+</body>
+</html>

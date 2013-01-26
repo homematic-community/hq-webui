@@ -14,7 +14,8 @@
             var tmp = storage.get("hqWebUiSession");
             if (tmp != null) {
                 $("body").html('<h3>Sicherung wird erstellt</h3>' +
-                        '<img src="img/loader-dark.gif"/> Bitte warten und dieses Fenster nicht schlieﬂen!' +
+                        //'<img src="img/loader-dark.gif"/>Bitte warten und dieses Fenster nicht schlieﬂen!' +
+                        'Bitte warten und dieses Fenster erst schlieﬂen wenn die Sicherungsdatei heruntergeladen wurde!' +
                         '<iframe id="iframeBackup" border="0" id="iframeBackup" width="0" height="0"></iframe>');
 
                 $("#iframeBackup").load(function () {

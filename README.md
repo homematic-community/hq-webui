@@ -38,6 +38,8 @@ Zielsetzung
 Das HQ WebUI soll langfristig das originale WebUI bis auf folgende wenige Ausnahmen ersetzen können:
 * Firmwareupdate durchführen
 * Backup zurückspielen
+* Sicherheitsschlüssel setzen
+
 
 
 Download
