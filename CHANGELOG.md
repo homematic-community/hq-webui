@@ -1,10 +1,19 @@
 Changelog
 =========
+2.3-alpha5
+---------
+* Hinzufügen/Umbenennen/Entfernen von Gewerken und Räumen
+* Anzahl Kanäle wird in Gewerke-Tabelle angezeigt
+* Einstellungs-Dialog: Verhalten von checkNames() im konfigurierbar (Nachfragen bei Namensgleichheit)
+* checkNames() für Räume und Gewerke erweitert (Funktion zum Prüfen der Namen beim Umbenennen)
+* Einstellungs-Dialog: Löschen der zwischengespeicherten Daten bewirkt einen kompletten Reload des HQ WebUI
+* css ergänzt: blaue Rahmen um aktive Buttons und Sliderknöpfe entfernt
+
 2.3-alpha4
 ----------
 * Graphen: Linientyp von Variablen angepasst
 * Graphen: Deutsche Übersetzung der Wochentage und Monate
-* Tabs Graph und System: Anpassung der Höhe korrigiert
+* Tabs Graph und System: Fehler beim Anpassen der Seitenhöhe korrigiert
 
 2.3-alpha3
 ----------

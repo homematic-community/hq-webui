@@ -99,21 +99,19 @@ Roadmap/Todo/Ideen
 2.3
 ---
 * Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
-* Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
 * Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
 
 
 2.4
 ---
-* devicesXML komplett entfernen und in statesXML integrieren. AL-Datenpunkten ebenfalls in statesXML aufnehmen und cachen
+* devicesXML komplett entfernen und in statesXML integrieren. AL-Datenpunkten ebenfalls in statesXML aufnehmen und cachen - dürfte Ladezeit halbieren...
 * hq-webui.js aufräumen
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Kontextmenü (rechts-klick) in allen Tabellenansichten
 * Anzeige der Auslöser eines Programms in der Programm-Tabelle
-* Programme ohne Einschränkungen anzeigen, anlegen, editieren, löschen
+* Programme anzeigen, anlegen, editieren, löschen
 * Umbennen von "Dateien" im Scripteditor
 * Benchmark-Funktion für Homematic-Scripte
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Automatisches aktualisieren des System-Protokolls und Graphen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 
@@ -134,6 +132,7 @@ Roadmap/Todo/Ideen
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE (auto-vervollständigung?!)
 * neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 
 
 bald/irgendwann/vielleicht
@@ -151,7 +150,7 @@ bald/irgendwann/vielleicht
 * Style-Korrektur für nicht-quadratische Geräte-Icons
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Ausbau des Tabs Funk, Einfärben der RX/TX Werte?
-
+* Thermostatmodus setzen
 
 tendenziell eher nicht
 ----------------------

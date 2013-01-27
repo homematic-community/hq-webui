@@ -17,6 +17,9 @@ var hqConf = {
     sessionLogoutFade:      500,
     sessionLoginFade:       undefined,
 
+    // Nachfragen falls der gleiche Name mehrfach verwendet werden soll
+    namingConfirm:          true,
+
     // Debug-Modus
     // Schreibt Debug-Ausgabe in die Browser-Konsole
     debug:                  false,

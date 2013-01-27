@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-alpha4";
+    var version =               "2.3-alpha5";
 
     $(".hq-version").html(version);
 
@@ -104,12 +104,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var dialogEditVariable =    $("#dialogEditVariable");
     var dialogEditDatapoint =   $("#dialogEditDatapoint");
     var dialogSettings =        $("#dialogSettings");
+    var dialogCfgVariable =     $("#dialogCfgVariable");
     var dialogCfgChannel =      $("#dialogCfgChannel");
     var dialogCfgDevice =       $("#dialogCfgDevice");
+    var dialogDelVariable =     $("#dialogDelVariable");
+    var dialogDelRoom =         $("#dialogDelRoom");
+    var dialogDelFunction =     $("#dialogDelFunction");
     var dialogDocu =            $("#dialogDocu");
     var dialogAbout =           $("#dialogAbout");
     var dialogDebugScript =     $("#dialogDebugScript");
     var dialogDelScript =       $("#dialogDelScript");
+    var dialogChannelChooser =  $("#dialogChannelChooser");
 
     var buttonRefreshFavs =     $("#buttonRefreshFavs");
 
@@ -178,6 +183,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
             if (hqConfLocal.refreshFactor !== undefined) {
                 hqConf.refreshFactor = hqConfLocal.refreshFactor;
             }
+            if (hqConfLocal.namingConfirm !== undefined) {
+                hqConf.namingConfirm = hqConfLocal.namingConfirm;
+            }
         } else {
             hqConfLocal = {}
         }
@@ -190,9 +198,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
         } else {
             debugMode.removeAttr("checked");
         }
+        if (hqConf.namingConfirm) {
+            $("#namingConfirm").attr("checked", true);
+        } else {
+            $("#namingConfirm").removeAttr("checked");
+        }
         debugMode.change(function () {
             var mode = debugMode.is(":checked");
             setConfigItem("debug", mode);
+        });
+        $("#namingConfirm").change(function () {
+            var mode = $("#namingConfirm").is(":checked");
+            setConfigItem("namingConfirm", mode);
         });
         refreshEstimation.html(Math.ceil(0.5 + (hqConf.refreshFactor * 0.5)));
         sliderRefresh.slider({
@@ -495,9 +512,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         sortable: true,
         ondblClickRow: function(row_id) {
             // Todo Dialogobjekt dynamisch!
-            $("#dialogCfgVariable").find("input.channel-id").val(row_id);
-            $("#dialogCfgVariable").find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+row_id+"']").parent().attr("name") + ")");
-            $("#dialogChannelChooser").dialog("close");
+            dialogCfgVariable.find("input.channel-id").val(row_id);
+            dialogCfgVariable.find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+row_id+"']").parent().attr("name") + ")");
+            dialogChannelChooser.dialog("close");
         },
 
         xmlReader: {
@@ -538,7 +555,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-close",
             onClickButton: function () {
-                $("#dialogChannelChooser").dialog("close");
+                dialogChannelChooser.dialog("close");
             },
             position: "first",
             id:"btnChannelClose",
@@ -557,7 +574,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer"
         });
 
-    $("#dialogChannelChooser").dialog({
+    dialogChannelChooser.dialog({
         width: 1020,
         height: 560,
         autoOpen: false,
@@ -1232,7 +1249,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:'count', index:'count',  width: 70,
             xmlmap: function (obj) {
-                return "";
+                return functionsXMLObj.find("function[ise_id='"+$(obj).attr("ise_id")+"'] channel").length;
             }
         }
     ];
@@ -1553,7 +1570,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         editVariableValue(gridVariables.jqGrid('getGridParam','selrow'));
     });
     $("#btnCfgVar").addClass("ui-state-disabled").click(function() {
-        $("#dialogCfgVariable").find("span.ui-dialog-title").html("Variable editieren");
+        dialogCfgVariable.find("span.ui-dialog-title").html("Variable editieren");
         editVariable(gridVariables.jqGrid('getGridParam','selrow'));
     });
     $("#btnDelVar").addClass("ui-state-disabled"); //.css("opacity", 0);
@@ -1565,7 +1582,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         $("#variableDeleteReally").html(varObj.attr("name"));
         $("#delVarId").val(id);
-        $("#dialogDelVariable").dialog("open");
+        dialogDelVariable.dialog("open");
     }
 
     function addVariable() {
@@ -1593,7 +1610,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         $("#cfgVarType option").removeAttr("disabled");
 
-        $("#dialogCfgVariable").dialog('option', 'title', 'Variable hinzufügen').dialog("open");
+        dialogCfgVariable.dialog('option', 'title', 'Variable hinzufügen').dialog("open");
 
     }
 
@@ -1658,7 +1675,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         $("#cfgVarNew").val(0);
 
-        $("#dialogCfgVariable").dialog('option', 'title', 'Variable editieren').dialog("open");
+        dialogCfgVariable.dialog('option', 'title', 'Variable editieren').dialog("open");
 
     }
 
@@ -1958,7 +1975,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-plus",
             onClickButton: function () {
-                addRoom();
+                $("#cfgRoomId").val("-1");
+                $("#cfgRoomNew").val("1");
+                $("#cfgRoomName").val("");
+                $("#cfgRoomDesc").val("");
+                $("#dialogCfgRoom").dialog("open");
             },
             position: "first",
             id: "btnAddRoom",
@@ -1970,7 +1991,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-trash",
             onClickButton: function () {
-                delRoom(gridRooms.jqGrid('getGridParam','selrow'));
+                var id = gridRooms.jqGrid('getGridParam','selrow');
+                $("#roomReallyDelete").html(roomsXMLObj.find("room[ise_id='"+id+"']").attr("name"));
+                $("#delRoomId").val(id);
+                dialogDelRoom.dialog("open");
+                //delRoom();
             },
             position: "first",
             id:"btnDelRoom",
@@ -1985,9 +2010,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var id = gridRooms.jqGrid("getGridParam", "selrow");
                 var obj = roomsXMLObj.find("room[ise_id='"+id+"']");
                 $("#cfgRoomId").val(id);
+                $("#cfgRoomNew").val("");
                 $("#cfgRoomName").val(obj.attr("name"));
                 $("#cfgRoomDesc").val(obj.attr("description"));
-                $("#dialogCfgRoom").dialog("open");},
+                $("#dialogCfgRoom").dialog("open");
+            },
             position: "first",
             id: "btnCfgRoom",
             title:"Raum konfigurieren",
@@ -2031,7 +2058,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-plus",
             onClickButton: function () {
-                addFunction();
+                $("#cfgFunctionId").val("-1");
+                $("#cfgFunctionNew").val("1");
+                $("#cfgFunctionName").val("");
+                $("#cfgFunctionDesc").val("");
+                $("#dialogCfgFunction").dialog("open");
             },
             position: "first",
             id: "btnAddFunction",
@@ -2043,7 +2074,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-trash",
             onClickButton: function () {
-                delFunction(gridFunctions.jqGrid('getGridParam','selrow'));
+                var id = gridFunctions.jqGrid('getGridParam','selrow');
+                $("#functionReallyDelete").html(functionsXMLObj.find("function[ise_id='"+id+"']").attr("name"));
+                $("#delFunctionId").val(id);
+                dialogDelFunction.dialog("open");
             },
             position: "first",
             id:"btnDelFunction",
@@ -3474,6 +3508,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     var value_text =    $(this).attr("value_text");
                                     var value_type =    $(this).attr("valuetype");
 
+                                    if (lang[label] && lang[label][type] && lang[label][type][(value == "true" ? "TRUE" : "FALSE")]) {
+                                        value_text = lang[label][type][(value == "true" ? "TRUE" : "FALSE")].text;
+                                    }
 
                                     var unit = $(this).attr("unit");
                                     if (unit == undefined) { unit = ""; }
@@ -3708,7 +3745,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
 
-    $("#dialogCfgVariable").dialog({
+    dialogCfgVariable.dialog({
         autoOpen: false,
         modal: true,
         width: 720,
@@ -3903,10 +3940,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             storage.set("hqWebUiVariablesTime", null);
                             hmGetVariables();
 
-                            $("#dialogCfgVariable").dialog('close');
+                            dialogCfgVariable.dialog('close');
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            $("#dialogCfgVariable").dialog('close');
+                            dialogCfgVariable.dialog('close');
                             ajaxError(xhr, ajaxOptions, thrownError);
 
                         }
@@ -3929,10 +3966,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
             if (!id) { return false; }
             dialogObj.find("input.channel-id").val(id);
             dialogObj.find("input.channel-name").val(statesXMLObj.find("channel[ise_id='"+id+"']").attr("name")+ " (" + statesXMLObj.find("channel[ise_id='"+id+"']").parent().attr("name") + ")");
-            $("#dialogChannelChooser").dialog("close");
+            dialogChannelChooser.dialog("close");
         });
 
-        $("#dialogChannelChooser").dialog("open");
+        dialogChannelChooser.dialog("open");
     }
 
     $("#cfgVarDelChannel").button().click(function () {
@@ -3962,8 +3999,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#dialogCfgRoom").dialog({
         autoOpen: false,
         modal: true,
-        width: 600,
-        height: 340,
+        width: 470,
+        height: 200,
         buttons: {
             'Änderungen übernehmen': function () {
                 checkName($("#cfgRoomId").val(), $("#cfgRoomName").val(), "ROOM", function () {
@@ -3977,11 +4014,119 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
+    function saveRoom() {
+        var id = $("#cfgRoomId").val();
+        var roomNew = $("#cfgRoomNew").val();
+        if (roomNew == "") {
+            var name = $("#cfgRoomName").val();
+            var desc = $("#cfgRoomDesc").val();
+            script = "object o = dom.GetObject("+id+");\n" +
+                "o.Name('"+name+"');\n" +
+                "o.EnumInfo('"+desc+"');\n";
+            $("tr[id='"+id+"'] td[aria-describedby$='name']").html(name);
+            $("tr[id='"+id+"'] td[aria-describedby$='info']").html(desc);
+            roomsXMLObj.find("room[ise_id='"+id+"']").attr("name", name).attr("description", desc);
+            roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
+            storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
+            gridStates.setGridParam({loadonce: false}).trigger("reloadGrid").setGridParam({loadonce:true});
+            initSelectRooms();
+
+        } else {
+            var name = $("#cfgRoomName").val();
+            var desc = $("#cfgRoomDesc").val();
+            script = "object o = dom.CreateObject(OT_ENUM);\n" +
+                "if (o) {\n" +
+                "  o.EnumType(etRoom);\n" +
+                "  o.Name('"+name+"');\n" +
+                "  o.EnumInfo('"+desc+"');\n" +
+                "  boolean res = dom.GetObject(ID_ROOMS).Add(o);" +
+                "  if(!res) {\n    Write('-1');\n    dom.DeleteObject(o.ID());\n  } else {\n" +
+                "    WriteLine(o.ID());\n}\n" +
+                "  }\n} else {\n  Write('-1');\n}\n";
+
+        }
+        if (hqConf.debug) { console.log(script); }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+            type: "POST",
+            data: script,
+            success: function (data) {
+                if (roomNew == "1") {
+                    var new_id = parseInt(data,10);
+                    if (new_id > 0) {
+                        roomsXMLObj.find("roomList").append($('<room name="'+name+'" description="'+desc+'" ise_id="'+new_id+'"/>'));
+                        roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
+                        storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
+                        gridRooms.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: roomsXML
+                        }).trigger("reloadGrid").setGridParam({loadonce:true});
+                        initSelectRooms();
+                    }
+
+                }
+            },
+            errror: function () {
+
+            }
+        });
+    }
+    function delFunction(id) {
+        script = "object o = dom.GetObject("+id+");\n" +
+            "if (o) {\n" +
+            "  if (!o.Unerasable()) {\n" +
+            "    Write(dom.DeleteObject(o));\n" +
+            "  }\n" +
+            "}\n";
+        $("tr[id='"+id+"']").remove();
+        functionsXMLObj.find("function[ise_id='"+id+"']").remove();
+        functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
+        storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
+        gridStates.setGridParam({loadonce: false}).trigger("reloadGrid").setGridParam({loadonce:true});
+        initSelectFunctions();
+        if (hqConf.debug) { console.log(script); }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+            type: "POST",
+            data: script,
+            success: function (data) {
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function delRoom(id) {
+        script = "object o = dom.GetObject("+id+");\n" +
+            "if (o) {\n" +
+            "  if (!o.Unerasable()) {\n" +
+            "    Write(dom.DeleteObject(o));\n" +
+            "  }\n" +
+            "}\n";
+        $("tr[id='"+id+"']").remove();
+        roomsXMLObj.find("room[ise_id='"+id+"']").remove();
+        roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
+        storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
+        gridStates.setGridParam({loadonce: false}).trigger("reloadGrid").setGridParam({loadonce:true});
+        initSelectRooms();
+        if (hqConf.debug) { console.log(script); }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+            type: "POST",
+            data: script,
+            success: function (data) {
+            },
+            error: function () {
+
+            }
+        });
+    }
     $("#dialogCfgFunction").dialog({
         autoOpen: false,
         modal: true,
-        width: 600,
-        height: 340,
+        width: 470,
+        height: 200,
         buttons: {
             'Änderungen übernehmen': function () {
                 checkName($("#cfgFunctionId").val(), $("#cfgFunctionName").val(), "FUNCTION", function () {
@@ -3995,6 +4140,64 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
+    function saveFunction() {
+        var id = $("#cfgFunctionId").val();
+        var functionNew = $("#cfgFunctionNew").val();
+        if (functionNew == "") {
+            var name = $("#cfgFunctionName").val();
+            var desc = $("#cfgFunctionDesc").val();
+            script = "object o = dom.GetObject("+id+");\n" +
+                "o.Name('"+name+"');\n" +
+                "o.EnumInfo('"+desc+"');\n";
+            $("tr[id='"+id+"'] td[aria-describedby$='name']").html(name);
+            $("tr[id='"+id+"'] td[aria-describedby$='info']").html(desc);
+            functionsXMLObj.find("function[ise_id='"+id+"']").attr("name", name).attr("description", desc);
+            functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
+            storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
+            gridStates.setGridParam({loadonce: false}).trigger("reloadGrid").setGridParam({loadonce:true});
+            initSelectFunctions();
+
+        } else {
+            var name = $("#cfgFunctionName").val();
+            var desc = $("#cfgFunctionDesc").val();
+            script = "object o = dom.CreateObject(OT_ENUM);\n" +
+                "if (o) {\n" +
+                "  o.EnumType(etFunction);\n" +
+                "  o.Name('"+name+"');\n" +
+                "  o.EnumInfo('"+desc+"');\n" +
+                "  boolean res = dom.GetObject(ID_FUNCTIONS).Add(o);" +
+                "  if(!res) {\n    Write('-1');\n    dom.DeleteObject(o.ID());\n  } else {\n" +
+                "    WriteLine(o.ID());\n}\n" +
+                "  }\n} else {\n  Write('-1');\n}\n";
+
+        }
+        if (hqConf.debug) { console.log(script); }
+        $.ajax({
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+            type: "POST",
+            data: script,
+            success: function (data) {
+                if (functionNew == "1") {
+                    var new_id = parseInt(data,10);
+                    if (new_id > 0) {
+                        functionsXMLObj.find("functionList").append($('<function name="'+name+'" description="'+desc+'" ise_id="'+new_id+'"/>'));
+                        functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
+                        storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
+                        gridFunctions.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: functionsXML
+                        }).trigger("reloadGrid").setGridParam({loadonce:true});
+                        initSelectFunctions();
+                    }
+
+                }
+            },
+            errror: function () {
+
+            }
+        });
+    }
     var reallyRename;
     var reallyRenameId;
     var reallyRenameName;
@@ -4002,11 +4205,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function checkName(id, name, type, successfunction, errorfunction) {
         //console.log("checkName("+id+", "+name+", "+type+")");
         if (name == "" || name === undefined || name === null || !name.match(/^[a-zA-ZäöüÄÖÜ]/)) {
+            // Prüfen ob Name gültig ist
             $("#dialogErrorRename").dialog("open");
             return false;
         }
         var otherNames = [];
         switch (type) {
+            // Prüfen ob der Name bereits in Verwendung ist
             case "VARDP":
                 var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
                 if (varObj.attr("ise_id") != undefined && varObj.attr("ise_id") != id) {
@@ -4014,27 +4219,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#dialogCantRename").dialog("open");
                     return false;
                 }
-                var devObj = statesXMLObj.find("device[name='"+name+"']");
-                if (devObj.attr("ise_id")) {
-                    otherNames.push("ein Gerät");
-                }
-                var devObj = statesXMLObj.find("channel[name='"+name+"']");
-                if (devObj.attr("ise_id")) {
-                    otherNames.push("einen Kanal");
-                }
-                var devObj = programsXMLObj.find("program[name='"+name+"']");
-                if (devObj.attr("id")) {
-                    otherNames.push("ein Programm");
-                }
-                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
-                if (roomObj.attr("id")) {
-                    otherNames.push("ein Raum");
-                }
-                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
-                if (functionObj.attr("id")) {
-                    otherNames.push("ein Gewerk");
-                }
-                break;
+               break;
             case "DEVICE":
                 var devObj = statesXMLObj.find("device[name='"+name+"']");
                 if (devObj.attr("ise_id") != undefined && devObj.attr("ise_id") != id) {
@@ -4042,27 +4227,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#dialogCantRename").dialog("open");
                     return false;
                 }
-                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
-                if (varObj.attr("ise_id")) {
-                    otherNames.push("eine Variable");
-                }
-                var devObj = statesXMLObj.find("channel[name='"+name+"']");
-                if (devObj.attr("ise_id")) {
-                    otherNames.push("einen Kanal");
-                }
-                var devObj = programsXMLObj.find("program[name='"+name+"']");
-                if (devObj.attr("id")) {
-                    otherNames.push("ein Programm");
-                }
-                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
-                if (roomObj.attr("id")) {
-                    otherNames.push("ein Raum");
-                }
-                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
-                if (functionObj.attr("id")) {
-                    otherNames.push("ein Gewerk");
-                }
-
                 break;
             case "CHANNEL":
                 var devObj = statesXMLObj.find("channel[name='"+name+"']");
@@ -4070,26 +4234,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#dialogCantRenameType").html("einen Kanal");
                     $("#dialogCantRename").dialog("open");
                     return false;
-                }
-                var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
-                if (varObj.attr("ise_id")) {
-                    otherNames.push("eine Variable");
-                }
-                var devObj = statesXMLObj.find("device[name='"+name+"']");
-                if (devObj.attr("ise_id")) {
-                    otherNames.push("ein Gerät");
-                }
-                var devObj = programsXMLObj.find("program[name='"+name+"']");
-                if (devObj.attr("id")) {
-                    otherNames.push("ein Programm");
-                }
-                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
-                if (roomObj.attr("id")) {
-                    otherNames.push("ein Raum");
-                }
-                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
-                if (functionObj.attr("id")) {
-                    otherNames.push("ein Gewerk");
                 }
                 break;
             case "PROGRAM":
@@ -4099,50 +4243,87 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#dialogCantRename").dialog("open");
                     return false;
                 }
+                break;
+            case "ROOM":
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("ise_id") && roomObj.attr("ise_id") != id) {
+                    $("#dialogCantRenameType").html("einen Raum");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                break;
+            case "FUNCTION":
+                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
+                if (functionObj.attr("ise_id") && functionObj.attr("ise_id") != id) {
+                    $("#dialogCantRenameType").html("ein Gewerk");
+                    $("#dialogCantRename").dialog("open");
+                    return false;
+                }
+                break;
+        }
+        if (hqConf.namingConfirm) {
+            // Prüfen ob gleicher Name anderswo verwendet wird
+            if (type != "VARIABLE") {
                 var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
                 if (varObj.attr("ise_id")) {
                     otherNames.push("eine Variable");
                 }
+            }
+            if (type != "DEVICE") {
                 var devObj = statesXMLObj.find("device[name='"+name+"']");
                 if (devObj.attr("ise_id")) {
                     otherNames.push("ein Gerät");
                 }
+            }
+            if (type != "CHANNEL") {
                 var devObj = statesXMLObj.find("channel[name='"+name+"']");
                 if (devObj.attr("ise_id")) {
                     otherNames.push("einen Kanal");
                 }
-                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
-                if (roomObj.attr("id")) {
-                    otherNames.push("ein Raum");
+            }
+            if (type != "PROGRAM") {
+                var devObj = programsXMLObj.find("program[name='"+name+"']");
+                if (devObj.attr("id")) {
+                    otherNames.push("ein Programm");
                 }
+            }
+            if (type != "ROOM") {
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("ise_id")) {
+                    otherNames.push("einen Raum");
+                }
+            }
+            if (type != "FUNCTION") {
                 var functionObj = functionsXMLObj.find("function[name='"+name+"']");
-                if (functionObj.attr("id")) {
+                if (functionObj.attr("ise_id")) {
                     otherNames.push("ein Gewerk");
                 }
-                break;
-        }
-        var others = otherNames.length;
-        var otherList = "";
-        if (others > 0) {
-            if (others == 1) {
-                otherList = otherNames[0];
-            } else if (others == 2) {
-                otherList = otherNames[0] + " und " + otherNames[1];
-            } else if (others > 2) {
-                for (var i = 0; i < others-1; i++) {
-                    if (i > 0) {
-                        otherList += ", ";
-                    }
-                    otherList += othersName[i];
-                }
-                otherList += " und " + othersName[others - 1];
             }
-            $("#dialogReallyRenameType").html(otherList);
-            reallyRename = successfunction;
-            reallyRenameId = id;
-            reallyRenameName = name;
-            $("#dialogReallyRename").dialog("open");
-            return false;
+
+            var others = otherNames.length;
+            var otherList = "";
+            if (others > 0) {
+                if (others == 1) {
+                    otherList = otherNames[0];
+                } else if (others == 2) {
+                    otherList = otherNames[0] + " und " + otherNames[1];
+                } else if (others > 2) {
+                    for (var i = 0; i < others-1; i++) {
+                        if (i > 0) {
+                            otherList += ", ";
+                        }
+                        otherList += othersName[i];
+                    }
+                    otherList += " und " + othersName[others - 1];
+                }
+                $("#dialogReallyRenameType").html(otherList);
+                reallyRename = successfunction;
+                reallyRenameId = id;
+                reallyRenameName = name;
+                $("#dialogReallyRename").dialog("open");
+                return false;
+            }
+
         }
 
         successfunction(id, name);
@@ -4301,7 +4482,35 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
 
-    $("#dialogDelVariable").dialog({
+    dialogDelRoom.dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Löschen': function () {
+                delRoom($("#delRoomId").val());
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+    dialogDelFunction.dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Löschen': function () {
+                delFunction($("#delFunctionId").val());
+                $(this).dialog('close');
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
+            }
+        }
+
+    });
+
+    dialogDelVariable.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
@@ -4450,7 +4659,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     dialogSettings.dialog({
         width: 550,
-        height: 520,
+        height: 590,
         autoOpen: false,
         modal: true,
         buttons: {
@@ -4512,13 +4721,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
             storage.set("hqWebUiStringtable", null);
             storage.set("hqWebUiFunctions", null);
             storage.set("hqWebUiRooms", null);
-            storage.set("hqWebUiVariables", null);
-            storage.set("hqWebUiPrograms", null);
             storage.set("hqWebUiRssi", null);
             storage.set("hqWebUiAlarms", null);
             storage.set("hqWebUiDevices", null);
             storage.set("hqWebUiStates", null);
-
+            storage.set("hqWebUiPrograms", null);
+            storage.set("hqWebUiVariables", null);
+            location.reload();
             // $("#buttonDelCache").attr("disabled", true);
         });
 

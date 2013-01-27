@@ -1,3 +1,6 @@
+* {
+    outline: 0;
+}
 html, body, div#container, div.tabs {
     margin:0;
 

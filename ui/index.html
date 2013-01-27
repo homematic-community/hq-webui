@@ -245,7 +245,7 @@
         <h3>Gespeicherte Anmeldedaten</h3>
         <button id="buttonDelCred">Löschen</button>
         <h3>Zwischengespeicherte CCU Daten</h3>
-        <button id="buttonDelCache">Löschen</button> <button id="buttonShowCache">Anzeigen</button>
+        <button id="buttonDelCache">Löschen und neu laden</button> <button id="buttonShowCache">Anzeigen</button>
         <h3>Theme auswählen</h3>
         <select id="selectUiTheme">
             <option value="base">base</option>
@@ -274,6 +274,8 @@
             <option value="ui-lightness">ui-lightness</option>
             <option value="vader">vader</option>
         </select>
+        <h3>Nachfragen</h3>
+        <input type="checkbox" id="namingConfirm"/> Nachfragen falls versucht wird den gleichen Namen mehrfach zu verwenden
         <h3>Refresh-Intervall</h3>
         <h5>Aktualisierung ungefähr alle <span id="refreshEstimation"></span> Sekunden</h5>
         <table style="width:520px;">
@@ -413,6 +415,22 @@
         Sind Sie sich sicher?
         <input type="hidden" id="delVarId"/>
     </div>
+    <div class="dialog" id="dialogDelRoom" title="Raum löschen">
+        <br>
+        Hiermit löschen Sie den Raum<br>
+        <span style="font-weight: bold; padding-left: 20px;" id="roomReallyDelete"></span><br>
+        unwiederruflich.<br><br>
+        Sind Sie sich sicher?
+        <input type="hidden" id="delRoomId"/>
+    </div>
+    <div class="dialog" id="dialogDelFunction" title="Gewerk löschen">
+        <br>
+        Hiermit löschen Sie das Gewerk<br>
+        <span style="font-weight: bold; padding-left: 20px;" id="functionReallyDelete"></span><br>
+        unwiederruflich.<br><br>
+        Sind Sie sich sicher?
+        <input type="hidden" id="delFunctionId"/>
+    </div>
     <div class="dialog" id="dialogCfgVariable" title="Variable editieren">
         <br><input type="hidden" id="cfgVarNew"/>
         <table>
@@ -520,7 +538,7 @@
         <input type="hidden" id="cfgPrgId"/>
     </div>
     <div class="dialog" id="dialogCfgRoom" title="Raum editieren">
-        <br>
+        <br><input type="hidden" id="cfgRoomNew"/>
         <table>
             <tr>
                 <td>Name</td>
@@ -534,7 +552,7 @@
         <input type="hidden" id="cfgRoomId"/>
     </div>
     <div class="dialog" id="dialogCfgFunction" title="Gewerk editieren">
-        <br>
+        <br><input type="hidden" id="cfgFunctionNew"/>
         <table>
             <tr>
                 <td>Name</td>
