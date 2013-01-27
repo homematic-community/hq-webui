@@ -4,7 +4,8 @@ Changelog
 ---------
 * Hinzufügen/Umbenennen/Entfernen von Gewerken und Räumen
 * Anzahl Kanäle wird in Gewerke-Tabelle angezeigt
-* Favoriten: alle Datenpunkte sollten nun mit Ihrer Übersetzung aus der stringtables_de.txt angezeigt werden. Muss noch getestet werden!
+* Favoriten: alle Datenpunkte sollten nun mit Ihrer Übersetzung aus der stringtables_de.txt angezeigt werden.
+    Muss noch getestet werden!
 * Einstellungs-Dialog: Verhalten von checkNames() im konfigurierbar (Nachfragen bei Namensgleichheit)
 * checkNames() für Räume und Gewerke erweitert (Funktion zum Prüfen der Namen beim Umbenennen)
 * Einstellungs-Dialog: Löschen der zwischengespeicherten Daten bewirkt einen kompletten Reload des HQ WebUI

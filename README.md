@@ -99,8 +99,7 @@ Roadmap/Todo/Ideen
 2.3
 ---
 * Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
-* Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
-
+* Umbennen von "Dateien" im Scripteditor
 
 2.4
 ---
@@ -110,11 +109,9 @@ Roadmap/Todo/Ideen
 * Kontextmenü (rechts-klick) in allen Tabellenansichten
 * Anzeige der Auslöser eines Programms in der Programm-Tabelle
 * Programme anzeigen, anlegen, editieren, löschen
-* Umbennen von "Dateien" im Scripteditor
 * Benchmark-Funktion für Homematic-Scripte
 * Automatisches aktualisieren des System-Protokolls und Graphen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
-
 
 2.5
 ---
@@ -125,8 +122,6 @@ Roadmap/Todo/Ideen
 * Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * Sortieren von Favoriten
 
-
-
 3.0
 ---
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE (auto-vervollständigung?!)
@@ -134,9 +129,9 @@ Roadmap/Todo/Ideen
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 
-
 bald/irgendwann/vielleicht
 --------------------------
+* WebMatic Flags (r) (d) (nv) (g/...) beim Editieren von Variablen anbieten
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * Programme-Drucken funktion implementieren (Anli?)
 * Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
