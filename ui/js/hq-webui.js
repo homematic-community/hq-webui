@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-alpha2";
+    var version =               "2.3-alpha3";
 
     $(".hq-version").html(version);
 
@@ -703,17 +703,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return formatVarType(val);
             }
         },
-        {name:'visible', index:'visible', width: 40, edittype: 'checkbox', hidden: true,
+        {name:'visible', index:'visible', width: 40, hidden: true,
             xmlmap: function (obj) {
                 return $(obj).attr('visible');
             },
-            formatter: 'checkbox'
+            formatter: formatBool
         },
-        {name:'logged', index:'logged', width: 30, edittype: 'checkbox', fixed: true,
+        {name:'logged', index:'logged', width: 30, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
             },
-            formatter: 'checkbox'
+            formatter: formatBool
         },
         {name:'channel', index:'channel', width: 30, fixed: true,
             xmlmap: function (obj) {
@@ -725,7 +725,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
 
             },
-            formatter: 'checkbox'
+            formatter: formatBool
         },
         {name:'timestamp', index:'timestamp', width: 125, fixed: true,
             xmlmap: function (obj) {
@@ -774,7 +774,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             xmlmap: function (obj) {
                 return $(obj).attr('active');
             },
-            formatter: 'checkbox',
+            formatter: formatBool,
             classes:'uPRG uActive'
         },
         {name:'timestamp', index:'timestamp', width: 125, fixed: true,
@@ -903,9 +903,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:'logged', index:'logged', width: 27, edittype: 'checkbox', fixed: true,
             xmlmap: function (obj) {
-                return $(obj).attr('logged');
+                var id = $(obj).attr('ise_id');
+                return statesXMLObj.find("device[ise_id='"+id+"'] channel[logged='true']").length > 0;
             },
-            formatter: 'checkbox'
+            formatter: formatBool
         },
         {name:'tools', index:'tools', width: 81, fixed: true,
             xmlmap: function (obj) {
@@ -1023,7 +1024,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             xmlmap: function (obj) {
                 return $(obj).attr('logged');
             },
-            formatter: 'checkbox'
+            formatter: formatBool
         },
         {name:'tools', index:'tools', width: 81, fixed: true,
             xmlmap: function (obj) {
@@ -1892,7 +1893,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer"
         });
 
-    function hmCfgChannel(row_id) {
+/*    function hmCfgChannel(row_id) {
+        if (hqConf.debug) { console.log("hmCfgChannel("+row_id+")"); }
         var sObj = statesXMLObj.find("channel[ise_id='"+row_id+"']");
         var dObj = devicesXMLObj.find("channel[ise_id='"+row_id+"']");
 
@@ -1901,17 +1903,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
             $("#cfgChannelName").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
             $("#cfgChannelId").val(row_id);
+            $("#selectRooms option").removeAttr("selected");
+            roomsXMLObj.find("channel[ise_id='"+row_id+"']").each(function () {
+                console.log(this);
+                $("#selectRooms option[value='"+$(this).parent().attr("ise_id")+"']").attr("selected", true);
+            });
 
             dialogCfgChannel.dialog('open');
         }
-    }
+    }*/
     function hmCfgDevice(row_id) {
-        if ($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html() != null) {
-            $("#cfgChannelName").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
-            $("#cfgChannelId").val(row_id);
+          $("#cfgDeviceName").val(devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name"));
+            $("#cfgDeviceId").val(row_id);
 
             dialogCfgDevice.dialog('open');
-        }
+
     }
     $("#gridPagerStates_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshStates'/>");
     $("#gridPagerChannelChooser_left").append("<span class='timeRefresh' id='timeRefreshStates2'/>");
@@ -2245,6 +2251,22 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $("#cfgChannelName").val($("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html());
                 $("#cfgChannelId").val(row_id);
                 $("#renameType").val("CHANNEL");
+                $("#selectRooms option").removeAttr("selected");
+                roomsXMLObj.find("channel[ise_id='"+row_id+"']").each(function () {
+                    $("#selectRooms option[value='"+$(this).parent().attr("ise_id")+"']").attr("selected", true);
+                });
+                $("#selectRooms").multiselect("refresh");
+                $("#selectFunctions option").removeAttr("selected");
+                functionsXMLObj.find("channel[ise_id='"+row_id+"']").each(function () {
+                    $("#selectFunctions option[value='"+$(this).parent().attr("ise_id")+"']").attr("selected", true);
+                });
+                $("#selectFunctions").multiselect("refresh");
+                var logged = statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("logged");
+                if (logged === "true") {
+                    $("#cfgChannelLogged").attr("checked", true);
+                } else {
+                    $("#cfgChannelLogged").removeAttr("checked");
+                }
                 dialogCfgChannel.dialog('open');
             }
         }
@@ -2356,7 +2378,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Grid Formatter
     function formatBool(val) {
-        if (val == "true") {
+        if (val === "true" || val === true) {
             return "<span class='ui-icon ui-icon-check'></span>"
         } else {
             return "";
@@ -3648,6 +3670,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         modal: true,
         buttons: {
             'Ja': function () {
+                reallyRename(reallyRenameId, reallyRenameName);
                 $("#dialogReallyRename").dialog("close");
             },
             'Nein': function () {
@@ -3961,6 +3984,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
+    var reallyRename;
+    var reallyRenameId;
+    var reallyRenameName;
 
     function checkName(id, name, type, successfunction, errorfunction) {
         //console.log("checkName("+id+", "+name+", "+type+")");
@@ -3989,6 +4015,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 if (devObj.attr("id")) {
                     otherNames.push("ein Programm");
                 }
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("id")) {
+                    otherNames.push("ein Raum");
+                }
+                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
+                if (functionObj.attr("id")) {
+                    otherNames.push("ein Gewerk");
+                }
                 break;
             case "DEVICE":
                 var devObj = statesXMLObj.find("device[name='"+name+"']");
@@ -4008,6 +4042,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var devObj = programsXMLObj.find("program[name='"+name+"']");
                 if (devObj.attr("id")) {
                     otherNames.push("ein Programm");
+                }
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("id")) {
+                    otherNames.push("ein Raum");
+                }
+                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
+                if (functionObj.attr("id")) {
+                    otherNames.push("ein Gewerk");
                 }
 
                 break;
@@ -4030,6 +4072,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 if (devObj.attr("id")) {
                     otherNames.push("ein Programm");
                 }
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("id")) {
+                    otherNames.push("ein Raum");
+                }
+                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
+                if (functionObj.attr("id")) {
+                    otherNames.push("ein Gewerk");
+                }
                 break;
             case "PROGRAM":
                 var devObj = programsXMLObj.find("program[name='"+name+"']");
@@ -4050,6 +4100,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 if (devObj.attr("ise_id")) {
                     otherNames.push("einen Kanal");
                 }
+                var roomObj = roomsXMLObj.find("room[name='"+name+"']");
+                if (roomObj.attr("id")) {
+                    otherNames.push("ein Raum");
+                }
+                var functionObj = functionsXMLObj.find("function[name='"+name+"']");
+                if (functionObj.attr("id")) {
+                    otherNames.push("ein Gewerk");
+                }
                 break;
         }
         var others = otherNames.length;
@@ -4069,33 +4127,100 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 otherList += " und " + othersName[others - 1];
             }
             $("#dialogReallyRenameType").html(otherList);
+            reallyRename = successfunction;
+            reallyRenameId = id;
+            reallyRenameName = name;
             $("#dialogReallyRename").dialog("open");
             return false;
         }
 
-        successfunction();
+        successfunction(id, name);
         return true;
     }
 
     dialogCfgDevice.dialog({
+        width: 330,
+        height: 150,
         autoOpen: false,
         modal: true,
         buttons: {
-            'Ok': function () {
-                checkName($("#cfgDeviceId").val(), $("#cfgDeviceName").val(), "DEVICE", function() {
+            'Speichern': function () {
+                var id = $("#cfgDeviceId").val();
+                var name = $("#cfgDeviceName").val();
+                checkName(id, name, "DEVICE", function(id, name) {
+                    $("tr[id='" + id + "'] td[aria-describedby='gridStates_name']").html(name);
                     dialogCfgDevice.dialog('close');
+                    var request = {
+                        "method": 'Device.setName',
+                        "params": {
+                            "id": id,
+                            "name": name,
+                            "_session_id_": hmSession
+                        }
+                    };
+                    if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
+                    jsonPost(request, function () {
+                        var row_id = $("#cfgDeviceId").val();
+                        devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", name);
+                        statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", name);
+                        devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
+                        statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
+                        storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
+                        storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
+                   });
                 });
+
+            },
+            'Abbrechen': function () {
+                $(this).dialog('close');
             }
         }
     });
 
     dialogCfgChannel.dialog({
+        width: 365,
+        height: 224,
         autoOpen: false,
         modal: true,
         buttons: {
             'Ok': function () {
                 checkName($("#cfgChannelId").val(), $("#cfgChannelName").val(), "CHANNEL", function() {
+
+                    var logged;
+                    var name = $("#cfgChannelName").val();
+                    if ($("#cfgChannelLogged").is(":checked")) {
+                        logged = "true";
+                    } else {
+                        logged = "false";
+                    }
+                    var row_id = $("#cfgChannelId").val();
+                    $("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html(name);
+                    $("tr[id='" + row_id + "'] td[aria-describedby$='t_logged']").html(formatBool(logged) || "");
+
+
                     dialogCfgChannel.dialog('close');
+                    var script = "object o = dom.GetObject("+row_id+");" +
+                                "o.Name('"+name+"');\n" +
+                                "o.ChnArchive("+logged+");\n";
+                    $.ajax({
+                        url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
+                        type: "POST",
+                        data: script,
+                        success: function () {
+                        },
+                        errror: function () {
+
+                        }
+                    });
+
+                            // TODO Protkolliert-Flag des übergeordneten Gerätes aktualiseren
+                    devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
+                    statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
+                    devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
+                    statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
+                    storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
+                    storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
+
              /*
                     var request = {
 
@@ -4337,8 +4462,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
     dialogAbout.dialog({
+        width: 446,
+        height: 530,
         autoOpen: false,
         modal: true,
+        resizable: false,
         buttons: {
             'Schließen': function () {
                 $(this).dialog('close');
@@ -4799,6 +4927,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     alert("xmlrpc error");
                 },
                 success: function () {
+
                     timerRefresh = setTimeout(hmRefresh, 3000);
 
                 }

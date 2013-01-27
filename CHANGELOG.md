@@ -1,8 +1,16 @@
 Changelog
 =========
+2.3-alpha3
+----------
+* About-Dialog überarbeitet
+* In allen Tabellen werden nun Icons statt Checkboxen angezeigt
+* Dialog Geräte bearbeiten vervollständigt - es können nun wieder Geräte umbenannt werden
+* Kanäle: Protokollierung aktivieren/deaktivieren funktioniert jetzt - Zuordnung Räume/Gewerke fehlt noch
+
+
 2.3-alpha2
 ----------
-* Icons für WebMatic und CUxD im Link-Dialog hinzugefügt (Danke kaju)
+* Icons für WebMatic und CUxD im Link-Dialog hinzugefügt, HQ WebUI Icon im About-Dialog hinzugefügt (Danke kaju)
 * kleine Änderungen am Protokoll-Graphen
 * Icons in der Gerätetabelle angepasst
 * Diverse Style-Anpassungen

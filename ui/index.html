@@ -241,7 +241,7 @@
     <div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
         Wollen Sie das Systemprotokoll wirklich löschen?
     </div>
-    <div class="dialog" id="dialogSettings" title="HQ WebUI Einstellungen">
+    <div class="dialog" id="dialogSettings" title="Einstellungen">
         <h3>Gespeicherte Anmeldedaten</h3>
         <button id="buttonDelCred">Löschen</button>
         <h3>Zwischengespeicherte CCU Daten</h3>
@@ -292,7 +292,8 @@
             </tr>
         </table>
         <h3>Debugmodus</h3>
-        <input type="checkbox" id="debugMode"/> Ausgabe von Informationen zur Fehlerbehebung in der Browserconsole
+        <input type="checkbox" id="debugMode"/> Ausgabe von Informationen zur Fehlerbehebung in der Browserconsole<br>
+      <!--  <span style="font-size: 0.8em"><a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers">Wie öffne ich die Browserconsole?</a></span> -->
     </div>
     <div class="dialog" id="dialogDebugScript" title="Ausführung">
         <br>
@@ -320,15 +321,27 @@
         </ul>
 
     </div>
-    <div class="dialog" id="dialogAbout" title="HQ WebUI">
-        <h3>HQ-WebUI Version <span id="hqWebUiVersion"></span></h3>
-        <p>Die Nutzung dieser Software geschieht auf eigenes Risiko!</p>
+    <div class="dialog" id="dialogAbout" title="Hilfe">
+        <h2>HQ WebUI Version <span id="hqWebUiVersion"></span></h2>
+        <h3>schnelles alternatives WebUI für die HomeMatic CCU</h3>
+        <table><tr><td style="width:105px;"><img src="img/hq-webui.png"/></td><td>
+            <ul style="font-size: 1.1em; line-height: 2em;">
+                <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/README.md" target="_blank">Dokumentation</a></li>
+                <li><a href="http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559&start=99999" target="_blank">Unterstützung</a></li>
+                <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md" target="_blank">Änderungs-Historie</a></li>
+            </ul>
+        </td></table>
+        <p>Die Nutzung dieser Software erfolgt auf eigenes Risiko. Der Author dieser Software kann für eventuell auftretende Folgeschäden nicht haftbar gemacht werden!</p>
         </p>
-        <ul>
-            <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/README.md" target="_blank">Readme</a></li>
-            <li><a href="http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559&start=99999" target="_blank">Support</a></li>
-            <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md" target="_blank">Changelog</a></li>
-        </ul>
+        <p>&copy; 2012, 2013 hobbyquaker <a href="https://github.com/hobbyquaker" target="_blank">https://github.com/hobbyquaker</a></p>
+        <p style="font-size: 0.8em;">
+            Diese Software ist freie Software. Sie können sie unter den <a target="_blank" href="http://www.gnu.de/documents/gpl.de.html">Bedingungen der GNU General Public License</a>, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, gemäß Version 3 der Lizenz.
+            Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.
+        </p>
+        <p style="font-size: 0.8em;">
+            HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der <a target="_blank" href="http://www.eq-3.de">eQ-3 AG</a>
+        </p>
+
     </div>
     <div class="dialog" id="dialogLinks" title="Links">
         <table style="text-align: center; vertical-align: middle"><tr><td style="width: 120px;">
@@ -378,16 +391,19 @@
                 <td>Gewerke</td><td><select id="selectFunctions" multiple="multiple"></select></td>
             </tr>
             <tr>
-                <td>Protokolliert</td><td><input type="checkbox" id="cfgChannelProtocol"/> </td>
+                <td>Protokolliert</td><td><input type="checkbox" id="cfgChannelLogged"/> </td>
             </tr>
 
         </table>
         <input type="hidden" id="cfgChannelId"/>
     </div>
     <div class="dialog" id="dialogCfgDevice" title="Gerät bearbeiten">
-        <br>
-        <input id="cfgDeviceName" type="text" size="40"/><input type="hidden" id="cfgDeviceId"/><br>
-        <br>
+        <table>
+            <tr>
+                <td>Name</td><td><input id="cfgDeviceName" type="text" size="40"/></td>
+            </tr>
+       </table>
+        <input type="hidden" id="cfgDeviceId"/>
     </div>
     <div class="dialog" id="dialogDelVariable" title="Variable löschen">
         <br>

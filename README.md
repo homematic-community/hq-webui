@@ -1,26 +1,24 @@
 HQ WebUI 2.2
 ============
-Schnelles Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
+Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 
 
 Features
 ========
-* schnelle Ladezeit
-* geringere Belastung der CCU
-* Durch Login geschützt, sowohl im Frontend als auch im Backend
-* Editor mit Syntax-Highlighting und Auto-Vervollständigung
-* Editor unterstützt Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
+* wesentlich schnellere Ladezeiten und geringere Belastung der CCU
+* Editor mit Syntax-Highlighting und Auto-Vervollständigung, unterstütztung für Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
-* Übersichtliche Favoritenansicht
-* Themes, jQuery UI basiert
+* Übersichtliche, konfigurierbare Favoritenansicht
+* Angenehmes Look&Feel, Themes, jQuery UI basiert
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen und der "RSSI-List" in übersichtlichen Tabellen
 * Schreibender Zugriff auf Datenpunkte
 * Ändern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
 * Anlegen und Löschen von Variablen, ändern des Variablentyps
 * Zuordnung von Variablen zu Kanälen
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
-* Umbenennen, Geräten und Kanälen
+* Umbenennen von Geräten und Kanälen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
+* Durch Login geschützt, sowohl im Frontend als auch im Backend
 * ...geplante Features siehe "Todo"
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
@@ -32,13 +30,6 @@ Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werde
 Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind jederzeit willkommen!
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
-
-Zielsetzung
-===========
-Das HQ WebUI soll langfristig das originale WebUI bis auf folgende wenige Ausnahmen ersetzen können:
-* Firmwareupdate durchführen
-* Backup zurückspielen
-* Sicherheitsschlüssel setzen
 
 
 
@@ -109,78 +100,68 @@ Roadmap/Todo/Ideen
 ---
 * Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
 * Hinzufügen/Ändern/Entfernen von Gewerken und Räumen
-* Kanäle: Protokollierung aktivieren/deaktivieren
-* Anzeige Protokolliert-Checkbox bei Geräten von Kanälen kummulieren
+* Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
+
 
 2.4
 ---
+* devicesXML komplett entfernen und in statesXML integrieren. AL-Datenpunkten ebenfalls in statesXML aufnehmen und cachen
+* hq-webui.js aufräumen
+* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* Kontextmenü (rechts-klick) in allen Tabellenansichten
+* Anzeige der Auslöser eines Programms in der Programm-Tabelle
+* Programme ohne Einschränkungen anzeigen, anlegen, editieren, löschen
 * Umbennen von "Dateien" im Scripteditor
-* Programme mit Script im "Dann-Teil" direkt aus dem Scripteditor heraus erzeugen
-* Programme anzeigen, anlegen, editieren, löschen.
 * Benchmark-Funktion für Homematic-Scripte
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
+* Automatisches aktualisieren des System-Protokolls und Graphen
+* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 
 
 2.5
 ---
-* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
-* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
-* Sortieren von Favoriten per Drag & Drop
-
-2.6
----
-* Geräte anlernen, Geräte konfigurieren, Geräte ablernen/löschen
-
-2.7
----
-* Direktverknüpfungen anlegen/editieren/löschen
-
-
-irgendwann
-----------
-* Automatisches aktualisieren des Systemprotokolls
-* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
-* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
-* Webmatic Flags in Variablen-Editieren Fenster mittels Checkboxen setzen
-* Tabellenheader anpassen (Sortierung, Filter - Selects)
-* (r) in einer Variablenbeschreibung in Favoritendarstellung auswerten (nur-lesen, "Webmatic Style")
-* TCL und Shellscripte aus Editor auf CCU Speichern
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen
-* Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
-* Kontextmenü (rechts-klick) in Grid-Ansichten
-* Exportfunktionen (.csv)
-* Programme exportieren/importieren? Aufwendig - beim Import müssten Variablen/Kanäle komfortabel neu zugeordnet werden...
-* Programme-Drucken funktion implementieren (Anli?)
-* Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE
-* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
+* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
+* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
+* Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
+* Sortieren von Favoriten
+
+
+
+3.0
+---
+* Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE (auto-vervollständigung?!)
 * neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
-* Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
-* Selbst-Update / Auto-Update des HQ WebUI
-* Snippets für Editor
-* Machbarkeit prüfen: Anlegen/Editieren/Löschen von Cronjobs?
+
+
+bald/irgendwann/vielleicht
+--------------------------
+* Tabellenheader anpassen (Sortierung, Filter - Selects)
+* Programme-Drucken funktion implementieren (Anli?)
+* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
+* Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
+* Programme exportieren/importieren? Aufwendig - beim Import müssten Variablen/Kanäle komfortabel neu zugeordnet werden...
+* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
+* Anlegen/Editieren/Löschen von Cronjobs
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
+* Selbst-Update / Auto-Update des HQ WebUI
 * Zusatzsoftware installieren - optional ohne Zwangsreboot - und deinstallieren
 * Style-Korrektur für nicht-quadratische Geräte-Icons
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
-* rssilist: Einfärben der RX/TX Werte?
-* Variablen vom Typ Zahl: beim Editieren gleich auf [0-9.]* und min/max prüfen.?
-* Backup erstellen
-* Reboot und Safe-Mode Reboot
-* Firewallkonfiguration
-* Ausbau des Tabs Funk
+* Ausbau des Tabs Funk, Einfärben der RX/TX Werte?
 
 
 tendenziell eher nicht
 ----------------------
+* Backup zurückspielen
+* Firmwareupdate
 * Geräte anlernen, löschen
 * Direktverknüpfungen anlegen/editieren/löschen
 * CUxD Administration
-* Backup zurückspielen
-* Firmwareupdate
-
+* LAN-Adapter Konfiguration
+* Firewall-, Logging-, NTP-, Netzwerk-, ... Konfiguration
 
 
 
