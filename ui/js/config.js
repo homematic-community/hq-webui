@@ -36,7 +36,7 @@ var hqConf = {
     // CCU schonen und längere Pausen zwischen den Refreshs lassen mit höheren Werten,
     // niedrige Werte bedeuten mehr "Stress" für die CCU und kürzere Refresh-Intervalle
     refreshFactor:          7,
-    refreshMaxPause:        30000,
+    refreshMaxPause:        180000,
 
     // Script Debugging
     // Fehlermeldungen via xmlapi scripterror.cgi aus /var/log/messages lesen

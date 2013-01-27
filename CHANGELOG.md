@@ -1,11 +1,17 @@
 Changelog
 =========
+2.3-alpha4
+----------
+* Graphen: Linientyp von Variablen angepasst
+* Graphen: Deutsche Übersetzung der Wochentage und Monate
+* Tabs Graph und System: Anpassung der Höhe korrigiert
+
 2.3-alpha3
 ----------
 * About-Dialog überarbeitet
 * In allen Tabellen werden nun Icons statt Checkboxen angezeigt
 * Dialog Geräte bearbeiten vervollständigt - es können nun wieder Geräte umbenannt werden
-* Kanäle: Protokollierung aktivieren/deaktivieren funktioniert jetzt - Zuordnung Räume/Gewerke fehlt noch
+* Kanäle: Umbenennen und Protokollierung aktivieren/deaktivieren funktioniert jetzt - Zuordnung Räume/Gewerke fehlt noch
 
 
 2.3-alpha2

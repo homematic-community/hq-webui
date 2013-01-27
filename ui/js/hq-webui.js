@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-alpha3";
+    var version =               "2.3-alpha4";
 
     $(".hq-version").html(version);
 
@@ -300,7 +300,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#chartProtocol").css("width", gridWidth - 46);
         $("#chartProtocol").css("height", $("#tabCcuProtocol").height());
         $("#tabSystemContainer").css("width", gridWidth - 46);
-        $("#tabSystemContainer").css("height", $("#tabCcuProtocol").height());
+        $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
+        $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
         resizeFavHeight();
         chartProtocol.setSize($(window).width()-92,$(window).height()-140);
 
@@ -1736,7 +1737,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             });*/
         },
         onSelectRow: function (rowid, status, e) {
-            if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
+            //if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
             $("#btnRunPrg").removeClass("ui-state-disabled");
             $("#btnCfgPrg").removeClass("ui-state-disabled");
 
@@ -2843,7 +2844,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             case "VARDP":
                             case "ALARMDP":
                                 name = variablesXMLObj.find("systemVariable[ise_id='" + $(this).attr("did") + "']").attr("name");
-                                break;
+                                charttype = "line";
+                                step = "left";
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+                            break;
                             default:
                                 dpname = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").attr("name");
                                 name = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").parent().attr("name");
@@ -5513,7 +5524,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 });
             }
         }, function (data) {
-            if (hqConf.debug) { console.log("JSON RPC: Session.login Failed"); }
             var msg;
             switch(data.error.code) {
             case 501:
@@ -5525,6 +5535,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             default:
                 msg = data.error.message;
             }
+            if (hqConf.debug) { console.log("JSON RPC: Session.login Failed - "+msg); }
             $("#session").hide();
             $("#loginError").show().html(msg);
             setTimeout(function () {
@@ -5599,7 +5610,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 }
             }, function (data) {
-                if (hqConf.debug) { console.log("JSON RPC error"); }
+                if (hqConf.debug) { console.log("JSON RPC: error"); }
                 hmSession = undefined;
                 var username = storage.get("hqWebUiUsername");
                 var password = storage.get("hqWebUiPassword");
@@ -6493,6 +6504,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     // Highcharts
+    Highcharts.setOptions({
+        lang: {
+            months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+            shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+            weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+        }
+    });
     chartProtocol = new Highcharts.Chart({
         chart: {
             renderTo: 'chartProtocol',
@@ -6525,7 +6545,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 text: ''
             },
             min: 0
-        }/*,
+        }
+        /*,
         tooltip: {
             formatter: function() {
                 return '<b>'+ this.series.name +'</b><br/>'+
