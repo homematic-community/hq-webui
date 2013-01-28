@@ -23,14 +23,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-alpha5";
+    var version =               "2.3-beta1",
 
-    $(".hq-version").html(version);
+        chartDPs = [],
+        chartProtocolSeries = [],
 
-    var chartProtocol, chartDPs = [],
-        chartProtocolSeries = [];
-
-    var statesXML,
+        statesXML,
         rssiXML,
         variablesXML,
         programsXML,
@@ -38,6 +36,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         roomsXML,
         devicesXML,
         favoritesXML,
+
         statesXMLObj,
         rssiXMLObj,
         variablesXMLObj,
@@ -46,12 +45,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
         roomsXMLObj,
         devicesXMLObj,
         favoritesXMLObj,
+
         alarmsData,
-        tabActive;
+        tabActive,
+        protocolXML,
+        protocolXMLObj,
+        protocolRecords,
 
-    var protocolXML, protocolXMLObj, protocolRecords;
-
-    var statesReady =           false,
+        statesReady =           false,
         alarmsReady =           false,
         variablesReady =        false,
         programsReady =         false,
@@ -61,9 +62,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         rssiReady =             false,
         devicesReady =          false,
         favoritesReady =        false,
-        firstLoad =             false;
 
-    var statesTime,
+
+        firstLoad =             false,
+
+        statesTime,
         variablesTime,
         programsTime,
         protocolTime,
@@ -72,83 +75,106 @@ jQuery.extend(jQuery.expr[ ":" ], {
         rssiTime,
         devicesTime,
         favoritesTime,
+
         activeAlarms,
-        activeMessages;
+        activeMessages,
 
-    var xmlapiVersion;
+        tabs =                  $("#tabs"),
+        subTabCcu =             $("#subTabCcu"),
+        tabFavorites =          $("#tabFavorites"),
 
-    var tabs =                  $("#tabs");
+        gridVariables =         $("#gridVariables"),
+        gridPrograms =          $("#gridPrograms"),
+        gridStates =            $("#gridStates"),
+        gridProtocol =          $("#gridProtocol"),
+        gridRssi =              $("#gridRssi"),
+        gridFunctions =         $("#gridFunctions"),
+        gridRooms =             $("#gridRooms"),
+        gridScriptVariables =   $("#gridScriptVariables"),
+        gridInfo =              $("#gridInfo"),
+        gridChannelChooser =    $("#gridChannelChooser"),
 
-    var gridVariables =         $("#gridVariables");
-    var gridPrograms =          $("#gridPrograms");
-    var gridStates =            $("#gridStates");
-    var gridProtocol =          $("#gridProtocol");
-    var gridRssi =              $("#gridRssi");
-    var gridFunctions =         $("#gridFunctions");
-    var gridRooms =             $("#gridRooms");
-    var gridScriptVariables =   $("#gridScriptVariables");
-    var gridInfo =              $("#gridInfo");
-    var gridChannelChooser =    $("#gridChannelChooser");
+        variableInput =         $("#variableInput"),
+        variableName =          $("#variableName"),
+        variableId =            $("#variableId"),
+        datapointInput =        $("#datapointInput"),
+        programId =             $("#programId"),
+        programName =           $("#programName"),
 
-    var variableInput =         $("#variableInput");
-    var variableName =          $("#variableName");
-    var variableId =            $("#variableId");
-    var datapointInput =        $("#datapointInput");
-    var programId =             $("#programId");
-    var programName =           $("#programName");
+        dialogRunProgram =      $("#dialogRunProgram"),
+        dialogClearProtocol =   $("#dialogClearProtocol"),
+        dialogAjaxError =       $("#dialogAjaxError"),
+        dialogJsonError =       $("#dialogJsonError"),
+        dialogEditVariable =    $("#dialogEditVariable"),
+        dialogEditDatapoint =   $("#dialogEditDatapoint"),
+        dialogSettings =        $("#dialogSettings"),
 
-    var dialogRunProgram =      $("#dialogRunProgram");
-    var dialogClearProtocol =   $("#dialogClearProtocol");
-    var dialogAjaxError =       $("#dialogAjaxError");
-    var dialogJsonError =       $("#dialogJsonError");
-    var dialogEditVariable =    $("#dialogEditVariable");
-    var dialogEditDatapoint =   $("#dialogEditDatapoint");
-    var dialogSettings =        $("#dialogSettings");
-    var dialogCfgVariable =     $("#dialogCfgVariable");
-    var dialogCfgChannel =      $("#dialogCfgChannel");
-    var dialogCfgDevice =       $("#dialogCfgDevice");
-    var dialogDelVariable =     $("#dialogDelVariable");
-    var dialogDelRoom =         $("#dialogDelRoom");
-    var dialogDelFunction =     $("#dialogDelFunction");
-    var dialogDocu =            $("#dialogDocu");
-    var dialogAbout =           $("#dialogAbout");
-    var dialogDebugScript =     $("#dialogDebugScript");
-    var dialogDelScript =       $("#dialogDelScript");
-    var dialogChannelChooser =  $("#dialogChannelChooser");
+        dialogCfgVariable =     $("#dialogCfgVariable"),
+        dialogCfgChannel =      $("#dialogCfgChannel"),
+        dialogCfgDevice =       $("#dialogCfgDevice"),
+        dialogCfgProgram =      $("#dialogCfgProgram"),
+        dialogCfgRoom =         $("#dialogCfgRoom"),
+        dialogCfgFunction =     $("#dialogCfgFunction"),
 
-    var buttonRefreshFavs =     $("#buttonRefreshFavs");
+        dialogDelVariable =     $("#dialogDelVariable"),
+        dialogDelRoom =         $("#dialogDelRoom"),
+        dialogDelFunction =     $("#dialogDelFunction"),
+        dialogDelScript =       $("#dialogDelScript"),
 
-    var debugMode =             $("#debugMode");
-    var sliderRefresh =         $("#sliderRefresh");
-    var refreshEstimation =     $("#refreshEstimation");
+        dialogReallyRename =    $("#dialogReallyRename"),
+        dialogCantRename =      $("#dialogCantRename"),
+        dialogErrorRename =     $("#dialogErrorRename"),
 
-    var divStderr =             $("#divStderr");
-    var divStdout =             $("#divStdout");
-    var divScriptVariables =    $("#divScriptVariables");
+        dialogDocu =            $("#dialogDocu"),
+        dialogAbout =           $("#dialogAbout"),
+        dialogDebugScript =     $("#dialogDebugScript"),
+        dialogChannelChooser =  $("#dialogChannelChooser"),
 
-    var accordionFavorites =    $("div#accordionFavorites");
-    var serviceIndicator =      $("#service");
-    var alarmIndicator =        $("#alarm");
-    var ajaxIndicator;
-
-    var spanAlarmCount =        $("#alarmcount");
-    var spanMsgCount =          $("#msgcount");
-
-    var timerRefresh;
-    var timerMessages;
-    var timerSession =          setTimeout(hmSessionRenew, 150000);
-
-    var hmSession;
-
-    var xmlmenu;
-
-    var lang = {};
+        cfgVarId =              $("#cfgVarId"),
+        cfgVarName =            $("#cfgVarName"),
+        cfgVarDesc =            $("#cfgVarDesc"),
 
 
+        chartProtocol =         $("#chartProtocol"),
+        
+        namingConfirm =         $("#namingConfirm"),
+
+        buttonRefreshFavs =     $("#buttonRefreshFavs"),
+
+        debugMode =             $("#debugMode"),
+        sliderRefresh =         $("#sliderRefresh"),
+        refreshEstimation =     $("#refreshEstimation"),
+
+        divStderr =             $("#divStderr"),
+        divStdout =             $("#divStdout"),
+        divScriptVariables =    $("#divScriptVariables"),
+
+        accordionFavorites =    $("div#accordionFavorites"),
+        serviceIndicator =      $("#service"),
+        alarmIndicator =        $("#alarm"),
+        ajaxIndicator,
+
+        spanAlarmCount =        $("#alarmcount"),
+        spanMsgCount =          $("#msgcount"),
+
+        timerRefresh,
+        timerMessages,
+        timerSession =          setTimeout(hmSessionRenew, 150000),
+
+        hmSession,
+
+        xmlmenu,
+
+        frame_hmScript,
+
+        lang = {};
+
+
+
+    $(".hq-version").html(version);
 
     // Elemente verstecken
     $("#login").hide();
-
 
     $("#logout").hide();
     $("#session").show();
@@ -189,7 +215,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         } else {
             hqConfLocal = {}
         }
-        if (hqConf.debug) { console.log("getConfig()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " getConfig()"); }
     }
 
     function initConfigDialog() {
@@ -199,16 +225,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
             debugMode.removeAttr("checked");
         }
         if (hqConf.namingConfirm) {
-            $("#namingConfirm").attr("checked", true);
+            namingConfirm.attr("checked", true);
         } else {
-            $("#namingConfirm").removeAttr("checked");
+            namingConfirm.removeAttr("checked");
         }
         debugMode.change(function () {
             var mode = debugMode.is(":checked");
             setConfigItem("debug", mode);
         });
-        $("#namingConfirm").change(function () {
-            var mode = $("#namingConfirm").is(":checked");
+        namingConfirm.change(function () {
+            var mode = namingConfirm.is(":checked");
             setConfigItem("namingConfirm", mode);
         });
         refreshEstimation.html(Math.ceil(0.5 + (hqConf.refreshFactor * 0.5)));
@@ -229,13 +255,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function setConfigItem(item, value) {
         var debugged;
         if (hqConf.debug) {
-            console.log("setConfigItem('"+item+"', "+value+")");
+            console.log((new Date()).getTime() + " setConfigItem('"+item+"', "+value+")");
             debugged = true;
         }
         hqConf[item] = value;
         hqConfLocal[item] = value;
         if (!debugged && hqConf.debug) {
-            console.log("setConfigItem('"+item+"', "+value+")");
+            console.log((new Date()).getTime() + " setConfigItem('"+item+"', "+value+")");
         }
         storage.set("hqWebUiConfig", hqConfLocal);
     }
@@ -268,12 +294,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
     });
 
     $(window).bind( 'hashchange', function(e) {
-        //console.log("change");
+        //console.log((new Date()).getTime() + " change");
         tabChange = true;
         tabActive = window.location.hash;
         tabs.tabs('select', tabActive);
     });
-    $("#subTabCcu").tabs({
+    subTabCcu.tabs({
         activate: function( event, ui ) {
             if (ui.newTab[0].children[0].hash == "#tabCcuChart" || ui.newTab[0].children[0].hash == "#tabCcuProtocol") {
                 if (!protocolReady) {
@@ -281,7 +307,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             }
             if (ui.newTab[0].children[0].hash == "#tabCcuChart") {
-                console.log("chart redraw");
+                console.log((new Date()).getTime() + " chart redraw");
                 chartProtocol.setSize($(window).width()-92,$(window).height()-140);
 
             }
@@ -296,8 +322,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function resizeAll() {
         var x = $(window).width();
         var y = $(window).height();
-        //console.log("x=" + x + " y=" + y);
-        // $("#subTabCcu").css('height', y - 84);
+        //console.log((new Date()).getTime() + " x=" + x + " y=" + y);
+        // subTabCcu.css('height', y - 84);
         var gridWidth = x - 56;
         if (gridWidth < hqConf.gridWidth) {
             gridWidth = hqConf.gridWidth;
@@ -312,15 +338,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
         divStdout.css('width', x - 775);
         gridScriptVariables.setGridWidth(x - 775);
-        $("#tabFavorites").css("height", $("#tabVariables").height());
+        tabFavorites.css("height", $("#tabVariables").height());
         //$("#tabCcu").css("height", $("#tabVariables").height());
-        $("#chartProtocol").css("width", gridWidth - 46);
-        $("#chartProtocol").css("height", $("#tabCcuProtocol").height());
+        chartProtocol.css("width", gridWidth - 46);
+        chartProtocol.css("height", $("#tabCcuProtocol").height());
         $("#tabSystemContainer").css("width", gridWidth - 46);
         $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
         $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
         resizeFavHeight();
-        chartProtocol.setSize($(window).width()-92,$(window).height()-140);
+        highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
 
     }
 
@@ -453,7 +479,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:"direction",   index:"direction",   width:88, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var direction = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
+                var direction = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
                 if (direction != undefined) {
                     return direction;
                 } else {
@@ -464,7 +490,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:"hsstype",   index:"hsstype",   width:110, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var hsstype = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
+                var hsstype = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
                 if (hsstype != undefined) {
                     return hsstype;
                 } else {
@@ -643,7 +669,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         break;
                     case '2':
                     case '6':
-                        //console.log("debug " +val);
+                        //console.log((new Date()).getTime() + " debug " +val);
                         if (val == "true") {
                             val = $(obj).attr('text_true');
                         } else {
@@ -826,7 +852,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
 
-                var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
+                var iface = statesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
                 if (iface && hqConf.deviceImgEnable) {
                     if (hqConf.deviceImg[iface]) {
                         return '<span style="background-color: #fff; width: 24px; height: 22px; text-align: center; padding-top: 1px;"><img style="" src="' + hqConf.ccuUrl + hqConf.deviceImgPath + hqConf.deviceImg[iface] + '" height="21"/></span>' + '<span style="float:right; padding-top:5px;">';
@@ -860,7 +886,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         return "BidCos-Wir";
                         break;
                     default:
-                        return devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("address");
+                        return statesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("address");
                 }
 
             }
@@ -868,7 +894,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'iface', index:'iface', width: 88, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("interface");
+                var iface = statesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("interface");
                 switch(iface) {
                     case undefined:
                         return "";
@@ -881,7 +907,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'devicetype', index:'devicetype', width: 130, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var iface = devicesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
+                var iface = statesXMLObj.find("device[ise_id='" + $(obj).attr("ise_id") + "']").attr("device_type");
                 if (iface) {
                         return iface;
                 } else {
@@ -1000,7 +1026,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:"direction",   index:"direction",   width:88, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var direction = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
+                var direction = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('direction');
                 if (direction != undefined) {
                     return direction;
                 } else {
@@ -1011,7 +1037,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:"hsstype",   index:"hsstype",   width:130, fixed: true,
             xmlmap: function (obj) {
                 var ise_id = $(obj).attr('ise_id');
-                var hsstype = devicesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
+                var hsstype = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('hss_type');
                 if (hsstype != undefined) {
                     return hsstype;
                 } else {
@@ -1280,7 +1306,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'ise_id', index:'ise_id', width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var ise_id = devicesXMLObj.find("device[address='" + device + "']").attr("ise_id");
+                var ise_id = statesXMLObj.find("device[address='" + device + "']").attr("ise_id");
                 return ise_id;
             },
             classes: 'ise_id'
@@ -1288,7 +1314,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var name = devicesXMLObj.find("device[address='" + device + "']").attr("name");
+                var name = statesXMLObj.find("device[address='" + device + "']").attr("name");
                 return name;
             }
         },
@@ -1300,7 +1326,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'device_type', index:'device_type', width: 80,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var ise_id = devicesXMLObj.find("device[address='" + device + "']").attr("device_type");
+                var ise_id = statesXMLObj.find("device[address='" + device + "']").attr("device_type");
                 return ise_id;
             }
         },
@@ -1335,7 +1361,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'aes', index:'aes', width: 60,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var aes = devicesXMLObj.find("device[address='" + device + "'] channel:first").attr("aes_available");
+                var aes = statesXMLObj.find("device[address='" + device + "'] channel:first").attr("aes_available");
 
                 return aes;
             },
@@ -1344,7 +1370,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'mode', index:'mode', width: 60,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var mode = devicesXMLObj.find("device[address='" + device + "'] channel:first").attr("transmission_mode");
+                var mode = statesXMLObj.find("device[address='" + device + "'] channel:first").attr("transmission_mode");
                 if (mode == "AES") {
                     mode = '<span style="display:inline-block; align:bottom" class="ui-icon ui-icon-key"></span> <span style="position:relative; top: -3px;">' + mode + '</span>';
                 }
@@ -1587,9 +1613,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function addVariable() {
         // TODO Bezeichner aus stringtable benutzen!
-        $("#cfgVarId").val('-1');
-        $("#cfgVarName").val("");
-        $("#cfgVarDesc").val("");
+        cfgVarId.val('-1');
+        cfgVarName.val("");
+        cfgVarDesc.val("");
         $("#cfgVarUnit").val("");
         $("#cfgVarLogged").removeAttr("checked");
         $("#cfgVarTextBoolFalse").val("ist falsch");
@@ -1616,11 +1642,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function editVariable(id) {
         $("tr[class^='cfgVarOpt']").hide();
-        $("#cfgVarId").val(id);
+        cfgVarId.val(id);
         var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
         
-        $("#cfgVarName").val(varObj.attr("name"));
-        $("#cfgVarDesc").val(varObj.attr("desc"));
+        cfgVarName.val(varObj.attr("name"));
+        cfgVarDesc.val(varObj.attr("desc"));
         $("#cfgVarUnit").val(varObj.attr("unit"));
         $("#cfgVarChannelId").val(varObj.attr("channel"));
         if (varObj.attr("channel") == "65535") {
@@ -1818,7 +1844,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 } else {
                     $("#cfgPrgActive").removeAttr("checked")
                 }
-                $("#dialogCfgProgram").dialog("open");
+                dialogCfgProgram.dialog("open");
             },
             position: "first",
             title:"Programm bearbeiten",
@@ -1912,7 +1938,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
 
 /*    function hmCfgChannel(row_id) {
-        if (hqConf.debug) { console.log("hmCfgChannel("+row_id+")"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmCfgChannel("+row_id+")"); }
         var sObj = statesXMLObj.find("channel[ise_id='"+row_id+"']");
         var dObj = devicesXMLObj.find("channel[ise_id='"+row_id+"']");
 
@@ -1931,7 +1957,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     }*/
     function hmCfgDevice(row_id) {
-          $("#cfgDeviceName").val(devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name"));
+          $("#cfgDeviceName").val(statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name"));
             $("#cfgDeviceId").val(row_id);
 
             dialogCfgDevice.dialog('open');
@@ -1979,7 +2005,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $("#cfgRoomNew").val("1");
                 $("#cfgRoomName").val("");
                 $("#cfgRoomDesc").val("");
-                $("#dialogCfgRoom").dialog("open");
+                dialogCfgRoom.dialog("open");
             },
             position: "first",
             id: "btnAddRoom",
@@ -2013,7 +2039,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $("#cfgRoomNew").val("");
                 $("#cfgRoomName").val(obj.attr("name"));
                 $("#cfgRoomDesc").val(obj.attr("description"));
-                $("#dialogCfgRoom").dialog("open");
+                dialogCfgRoom.dialog("open");
             },
             position: "first",
             id: "btnCfgRoom",
@@ -2062,7 +2088,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $("#cfgFunctionNew").val("1");
                 $("#cfgFunctionName").val("");
                 $("#cfgFunctionDesc").val("");
-                $("#dialogCfgFunction").dialog("open");
+                dialogCfgFunction.dialog("open");
             },
             position: "first",
             id: "btnAddFunction",
@@ -2094,7 +2120,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 $("#cfgFunctionId").val(id);
                 $("#cfgFunctionName").val(obj.attr("name"));
                 $("#cfgFunctionDesc").val(obj.attr("description"));
-                $("#dialogCfgFunction").dialog("open");
+                dialogCfgFunction.dialog("open");
             },
             position: "first",
             id: "btnCfgFunction",
@@ -2355,7 +2381,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmEditDatapoint(id, subgrid_table_id) {
-        //console.log("dblclick Datapoint id=" + id);
+        //console.log((new Date()).getTime() + " dblclick Datapoint id=" + id);
 
         var value = $("#" + subgrid_table_id).getCell(id, "value").replace(/(\r\n|\n|\r)/gm,"");
         var valuetype = $("#" + subgrid_table_id).getCell(id, "valuetype");
@@ -2516,13 +2542,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmGetVariables() {
-        if (hqConf.debug) { console.log("hmGetVariables()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetVariables()"); }
         $("#loaderVariables").show();
         variablesReady = false;
 
         var cache = storage.get("hqWebUiVariables");
         if (cache !== null) {
-            if (hqConf.debug) { console.log("Cache Hit: Variables"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Variables"); }
             variablesXML = $.parseXML(cache);
             variablesXMLObj = $(variablesXML);
             /*variablesXMLObj.find("systemVariable").each(function () {
@@ -2547,7 +2573,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching Variables"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Variables"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -2619,14 +2645,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmGetPrograms() {
-        if (hqConf.debug) { console.log("hmGetPrograms()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetPrograms()"); }
         $("#loaderPrograms").show();
         programsReady = false;
 
 
         var cache = storage.get("hqWebUiPrograms");
         if (cache !== null) {
-            if (hqConf.debug) { console.log("Cache Hit: Programs"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Programs"); }
             programsXML = $.parseXML(cache);
             programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
@@ -2646,7 +2672,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching Programs"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Programs"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -2703,14 +2729,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
     }
 
-    function refreshStates() {
-        if (hqConf.debug) { console.log("refreshStates()"); }
+    function hmGetDevices() {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetDevices()"); }
         statesReady = false;
         $("#loaderStates").show();
 
         var cache = storage.get("hqWebUiStates");
         if (cache !== null) {
-            if (hqConf.debug) { console.log("Cache Hit: States"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Devices/Channels/Datapoints"); }
             statesXML = $.parseXML(cache);
             statesXMLObj = $(statesXML);
             statesTime = storage.get("hqWebUiStatesTime");
@@ -2735,7 +2761,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             statesReady = true;
             $("#loaderStates").hide();
             if (hqConf.refreshEnable) {
-                if (hqConf.debug) { console.log("starting Refresh"); }
+                if (hqConf.debug) { console.log((new Date()).getTime() + " starting Refresh"); }
                 setTimeout(hmRefresh, 250);
                 setTimeout(hmRefreshAlarms, 1000);
             }
@@ -2745,7 +2771,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching States"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Devices/Channels/Datapoints"); }
 
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
@@ -2790,7 +2816,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#serivce").hide();
                 }
                 if (hqConf.refreshEnable) {
-                    if (hqConf.debug) { console.log("starting Refresh"); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " starting Refresh"); }
                     setTimeout(hmRefresh, 250);
                     setTimeout(hmRefreshAlarms, 1000);
                 }
@@ -2838,8 +2864,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function refreshProtocol() {
         $("#btnRefreshProtocol").addClass("ui-state-disabled");
-        while(chartProtocol.series.length > 0) {
-            chartProtocol.series[0].remove(false);
+        while(highchartProtocol.series.length > 0) {
+            highchartProtocol.series[0].remove(false);
         }
         //chartProtocol.redraw();
         protocolXML = "<systemProtocol/>";
@@ -2857,7 +2883,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         var script = "var iStart = "+start+";\n" +
             "var iCount = "+count+";\n" + scriptProtocol;
-        if (hqConf.debug) { console.log("hmGetProtocol("+start+", "+count+")"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetProtocol("+start+", "+count+")"); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
@@ -3015,7 +3041,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         gridProtocol.trigger("reloadGrid").setGridParam({sortname: 'datetime', sortorder: 'desc', loadonce:true});
                         for (var key in chartProtocolSeries) {
                             if (key === 'length' || !chartProtocolSeries.hasOwnProperty(key)) continue;
-                            chartProtocol.addSeries({
+                            highchartProtocol.addSeries({
                                 name: chartDPs[key].name,
                                 type: chartDPs[key].chartType,
                                 step: chartDPs[key].step,
@@ -3039,7 +3065,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
     }
    function hmGetRssi() {
-        if (hqConf.debug) { console.log("hmGetRssi()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRssi()"); }
 
 
         $("#loaderRssi").show();
@@ -3049,7 +3075,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         if (cache !== null) {
 
 
-            if (hqConf.debug) { console.log("Cache Hit: Rssi"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Rssi"); }
             rssiXML = $.parseXML(cache);
             rssiXMLObj = $(rssiXML);
             rssiTime = storage.get("hqWebUiRssiTime");
@@ -3067,7 +3093,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }*/
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching RSSI"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: RSSI"); }
 
 
         $.ajax({
@@ -3127,7 +3153,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         accordionFavorites.html("");
         //console.log(favoritesXML);
         var favoriteUserid = "_USER" + favoritesXMLObj.find("user").attr("id");
-        //console.log("Favorites: " + favoriteUserid);
+        //console.log((new Date()).getTime() + " Favorites: " + favoriteUserid);
         favoritesXMLObj.find("favorite[name='" + favoriteUserid + "'] channel").each(function () {
             var fav_id = $(this).attr("ise_id");
             var name = favoritesXMLObj.find("favorite[ise_id='" + fav_id + "']").attr("name");
@@ -3234,7 +3260,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     $("#favInputSelect" + fav_id + "_" + var_id).change(function () {
                                         //console.log($("#favInputSelect" + fav_id + " " + var_id).html());
                                         var select_val = $("#favInputSelect" + fav_id + "_" + var_id + " option:selected").val();
-                                       // console.log("fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
+                                       // console.log((new Date()).getTime() + " fav_id=" + fav_id + " ise_id=" + var_id + " select_val=" + select_val);
                                         hmSetState(var_id, select_val);
                                     }).multiselect({
                                             multiple: false,
@@ -3245,7 +3271,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                             //noneSelectedText: "Select an Option",
                                             selectedList: 1
                                         });
-                                    //console.log("multiselect #favInputSelect" + fav_id + "_" + var_id);
+                                    //console.log((new Date()).getTime() + " multiselect #favInputSelect" + fav_id + "_" + var_id);
                                     break;
                                 case '0':
                                     value = parseFloat(value);
@@ -3302,8 +3328,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         var devname;
                         favCell.append("<div class='favInput'></div>");
 
-                        //console.log("FAV CHANNEL " + $(this).attr("name"));
-                        //console.log("CTYPE " + ctype);
+                        //console.log((new Date()).getTime() + " FAV CHANNEL " + $(this).attr("name"));
+                        //console.log((new Date()).getTime() + " CTYPE " + ctype);
                         $(this).find("datapoint").each(function () {
                             var name = $(this).attr("name").split(".");
                             var type = name[2];
@@ -3313,16 +3339,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             } else {
                                 devname = "";
                             }
-//console.log("label=" + label + " type="+type+" devname="+devname);
+//console.log((new Date()).getTime() + " label=" + label + " type="+type+" devname="+devname);
 
                             var id = $(this).attr("ise_id");
                             html = "";
 
                             switch (type) {
                                 case 'STATE':
-                                    //console.log("FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
+                                    //console.log((new Date()).getTime() + " FAV STATE " + $(this).attr("name") + " " + $(this).attr("valuetype"));
                                     var dpValue = $(this).attr("value");
-                                    //console.log("FAV DP VALUE " + dpValue);
+                                    //console.log((new Date()).getTime() + " FAV DP VALUE " + dpValue);
                                     switch(ctype) {
                                         case '37':
                                             html += "<span id='favDoor" + fav_id + "_" + id + "'><span class='favIconText'>";
@@ -3395,7 +3421,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                                     break;
                                 case 'LEVEL':
-                                    //console.log("lvl devname=" + devname + " type=" + type + "label=" + label);
+                                    //console.log((new Date()).getTime() + " lvl devname=" + devname + " type=" + type + "label=" + label);
                                     if (devname != "BidCoS-RF") {
                                         var value = $(this).attr("value");
                                         var checkedOn = "";
@@ -3539,7 +3565,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                                 value = parseFloat(value);
                                                 value = value.toFixed(parseInt(hqConf.dpDetails[type].decimals, 10));
                                              }
-                                             //console.log("label="+label+" name[2]="+name[2]+" value="+value)
+                                             //console.log((new Date()).getTime() + " label="+label+" name[2]="+name[2]+" value="+value)
                                              if (value == "false" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["FALSE"]) {
                                                  value = lang[label][name[2]]["FALSE"].text;
                                              }
@@ -3631,7 +3657,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             favSavedOrder = favSavedOrder.split(",");
             //var sortedHtml = "";
             for (var i in favSavedOrder) {
-                //console.log("FAVORDER " + favSavedOrder[i]);
+                //console.log((new Date()).getTime() + " FAVORDER " + favSavedOrder[i]);
                 $("#" + favSavedOrder[i]).appendTo(accordionFavorites);
                 //sortedHtml += "<div id='" + favSavedOrder[i] + "'>" + $("#" + favSavedOrder[i]).html() + "</div>";
             }
@@ -3663,7 +3689,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         function favButtonset() {
             //$(".favInputRadio").buttonset();
-            $("#tabFavorites").find('input:text')
+            tabFavorites.find('input:text')
                 .button()
                 .css({
                     'font' : 'inherit',
@@ -3672,7 +3698,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     'cursor' : 'text',
                     'padding' : '.4em .2em .4em .4em'
                 });
-           /*  $("#tabFavorites").find("select").multiselect({
+           /*  tabFavorites.find("select").multiselect({
                 multiple: false,
                 header: false,
                 minWidth: '100px',
@@ -3713,34 +3739,34 @@ jQuery.extend(jQuery.expr[ ":" ], {
     });
 
 
-    $("#dialogReallyRename").dialog({
+    dialogReallyRename.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
             'Ja': function () {
                 reallyRename(reallyRenameId, reallyRenameName);
-                $("#dialogReallyRename").dialog("close");
+                dialogReallyRename.dialog("close");
             },
             'Nein': function () {
-                $("#dialogReallyRename").dialog("close");
+                dialogReallyRename.dialog("close");
             }
         }
     });
-    $("#dialogCantRename").dialog({
+    dialogCantRename.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
             'Schließen': function () {
-                $("#dialogCantRename").dialog("close");
+                dialogCantRename.dialog("close");
             }
         }
     });
-    $("#dialogErrorRename").dialog({
+    dialogErrorRename.dialog({
         autoOpen: false,
         modal: true,
         buttons: {
             'Schließen': function () {
-                $("#dialogErrorRename").dialog("close");
+                dialogErrorRename.dialog("close");
             }
         }
     });
@@ -3752,10 +3778,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         height: 410,
         buttons: {
             'Speichern': function () {
-                checkName($("#cfgVarId").val(), $("#cfgVarName").val(), "VARDP", function() {
+                checkName(cfgVarId.val(), cfgVarName.val(), "VARDP", function() {
                     var script;
-                    var name = $("#cfgVarName").val();
-                    var desc = $("#cfgVarDesc").val();
+                    var name = cfgVarName.val();
+                    var desc = cfgVarDesc.val();
                     var subtype = $("#cfgVarType option:selected").val();
                     var type;
                     switch (subtype) {
@@ -3793,7 +3819,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     switch ($("#cfgVarNew").val()) {
                         case "0":
                             // Variable Editieren
-                            var id = $("#cfgVarId").val();
+                            var id = cfgVarId.val();
                             var varObj = variablesXMLObj.find("systemVariable[ise_id='"+id+"']");
                             //console.log(varObj);
 
@@ -3807,13 +3833,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                             // Änderung des Variablen-Namens
                             if (name != varObj.attr("name")) {
-                                //console.log("change variable name old="+varObj.attr("name") + " new=" + name);
+                                //console.log((new Date()).getTime() + " change variable name old="+varObj.attr("name") + " new=" + name);
                                 script = script + "o.Name('"+name+"');\n";
                             }
 
                             // Änderung des Variablen-Typs
                             if (subtype != varObj.attr("subtype")) {
-                                //console.log("change variable subtype old="+varObj.attr("subtype") + " new=" + subtype);
+                                //console.log((new Date()).getTime() + " change variable subtype old="+varObj.attr("subtype") + " new=" + subtype);
                                 script = script + "o.ValueType("+type+");\n" +
                                     "o.ValueSubType("+subtype+");\n";
                                 switch (subtype) {
@@ -3978,7 +4004,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     });
 
 
-    $("#dialogCfgProgram").dialog({
+    dialogCfgProgram.dialog({
         autoOpen: false,
         modal: true,
         width: 600,
@@ -3987,7 +4013,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             'Änderungen übernehmen': function () {
                 checkName($("#cfgPrgId").val(), $("#cfgPrgName").val(), "PROGRAM", function () {
                     saveProgram();
-                    $("#dialogCfgProgram").dialog('close');
+                    dialogCfgProgram.dialog('close');
                 });
 
             },
@@ -3996,7 +4022,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     });
-    $("#dialogCfgRoom").dialog({
+    dialogCfgRoom.dialog({
         autoOpen: false,
         modal: true,
         width: 470,
@@ -4005,7 +4031,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             'Änderungen übernehmen': function () {
                 checkName($("#cfgRoomId").val(), $("#cfgRoomName").val(), "ROOM", function () {
                     saveRoom();
-                    $("#dialogCfgRoom").dialog('close');
+                    dialogCfgRoom.dialog('close');
                 });
 
             },
@@ -4122,7 +4148,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         });
     }
-    $("#dialogCfgFunction").dialog({
+    dialogCfgFunction.dialog({
         autoOpen: false,
         modal: true,
         width: 470,
@@ -4131,7 +4157,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             'Änderungen übernehmen': function () {
                 checkName($("#cfgFunctionId").val(), $("#cfgFunctionName").val(), "FUNCTION", function () {
                     saveFunction();
-                    $("#dialogCfgFunction").dialog('close');
+                    dialogCfgFunction.dialog('close');
                 });
 
             },
@@ -4203,10 +4229,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var reallyRenameName;
 
     function checkName(id, name, type, successfunction, errorfunction) {
-        //console.log("checkName("+id+", "+name+", "+type+")");
+        //console.log((new Date()).getTime() + " checkName("+id+", "+name+", "+type+")");
         if (name == "" || name === undefined || name === null || !name.match(/^[a-zA-ZäöüÄÖÜ]/)) {
             // Prüfen ob Name gültig ist
-            $("#dialogErrorRename").dialog("open");
+            dialogErrorRename.dialog("open");
             return false;
         }
         var otherNames = [];
@@ -4216,7 +4242,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
                 if (varObj.attr("ise_id") != undefined && varObj.attr("ise_id") != id) {
                     $("#dialogCantRenameType").html("eine Variable");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                break;
@@ -4224,7 +4250,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var devObj = statesXMLObj.find("device[name='"+name+"']");
                 if (devObj.attr("ise_id") != undefined && devObj.attr("ise_id") != id) {
                     $("#dialogCantRenameType").html("ein Gerät");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                 break;
@@ -4232,7 +4258,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var devObj = statesXMLObj.find("channel[name='"+name+"']");
                 if (devObj.attr("ise_id") != undefined && devObj.attr("ise_id") != id) {
                     $("#dialogCantRenameType").html("einen Kanal");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                 break;
@@ -4240,7 +4266,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var devObj = programsXMLObj.find("program[name='"+name+"']");
                 if (devObj.attr("id") && devObj.attr("id") != id) {
                     $("#dialogCantRenameType").html("ein Programm");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                 break;
@@ -4248,7 +4274,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var roomObj = roomsXMLObj.find("room[name='"+name+"']");
                 if (roomObj.attr("ise_id") && roomObj.attr("ise_id") != id) {
                     $("#dialogCantRenameType").html("einen Raum");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                 break;
@@ -4256,7 +4282,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var functionObj = functionsXMLObj.find("function[name='"+name+"']");
                 if (functionObj.attr("ise_id") && functionObj.attr("ise_id") != id) {
                     $("#dialogCantRenameType").html("ein Gewerk");
-                    $("#dialogCantRename").dialog("open");
+                    dialogCantRename.dialog("open");
                     return false;
                 }
                 break;
@@ -4320,7 +4346,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 reallyRename = successfunction;
                 reallyRenameId = id;
                 reallyRenameName = name;
-                $("#dialogReallyRename").dialog("open");
+                dialogReallyRename.dialog("open");
                 return false;
             }
 
@@ -4350,14 +4376,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             "_session_id_": hmSession
                         }
                     };
-                    if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
                     jsonPost(request, function () {
                         var row_id = $("#cfgDeviceId").val();
-                        devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", name);
+                        //devicesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", name);
                         statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name", name);
-                        devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
+                        //devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
                         statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-                        storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
+                        //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
                         storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
                    });
                 });
@@ -4389,9 +4415,66 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html(name);
                     $("tr[id='" + row_id + "'] td[aria-describedby$='t_logged']").html(formatBool(logged) || "");
 
+                    var roomIdArray = [];
+                    $("#selectRooms").multiselect("getChecked").each(function () {
+                        roomIdArray.push($(this).val());
+                    });
+                    var functionIdArray = [];
+                    $("#selectFunctions").multiselect("getChecked").each(function () {
+                        functionIdArray.push($(this).val());
+                    });
+
+                    var script = "";
+                    var roomList = "", functionList = "", firstRoom = true, firstFunction = true;
+                    roomsXMLObj.find("room").each(function () {
+                        var roomId = $(this).attr("ise_id");
+                        var roomName = $(this).attr("name");
+                        if (roomIdArray.indexOf(roomId) != -1) {
+                            if (!firstRoom) {
+                                roomList += ", ";
+                            } else {
+                                firstRoom = false;
+                            }
+                            roomList += roomName;
+                            if ($(this).find("channel[ise_id='"+row_id+"']").length == 0) {
+                                script = script + "object room = dom.GetObject("+roomId+");\n" +
+                                    "room.Add("+row_id+");\n";
+                            }
+                        } else {
+                            if ($(this).find("channel[ise_id='"+row_id+"']").length > 0) {
+                                script = script + "object room = dom.GetObject("+roomId+");\n" +
+                                    "room.Remove("+row_id+");\n";
+                            }
+                        }
+                    });
+
+                    functionsXMLObj.find("function").each(function () {
+                        var functionId = $(this).attr("ise_id");
+                        var funcName = $(this).attr("name");
+                        if (functionIdArray.indexOf(functionId) != -1) {
+                            if (!firstFunction) {
+                                functionList += ", ";
+                            } else {
+                                firstFunction = false;
+                            }
+                            functionList += funcName;
+                            if ($(this).find("channel[ise_id='"+row_id+"']").length == 0) {
+                                script = script + "object func = dom.GetObject("+functionId+");\n" +
+                                    "func.Add("+row_id+");\n";
+                            }
+                        } else {
+                            if ($(this).find("channel[ise_id='"+row_id+"']").length > 0) {
+                                script = script + "object func = dom.GetObject("+functionId+");\n" +
+                                    "func.Remove("+row_id+");\n";
+                            }
+                        }
+                    });
+
+                    $("tr[id='"+row_id+"'] td[aria-describedby$='_t_rooms']").html(roomList);
+                    $("tr[id='"+row_id+"'] td[aria-describedby$='_t_functions']").html(functionList);
 
                     dialogCfgChannel.dialog('close');
-                    var script = "object o = dom.GetObject("+row_id+");" +
+                    var script = script + "object o = dom.GetObject("+row_id+");\n" +
                                 "o.Name('"+name+"');\n" +
                                 "o.ChnArchive("+logged+");\n";
                     $.ajax({
@@ -4406,11 +4489,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     });
 
                             // TODO Protkolliert-Flag des übergeordneten Gerätes aktualiseren
-                    devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
+                   // devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
                     statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
-                    devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
+                   // devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
                     statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-                    storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
+                   // storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
                     storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
 
              /*
@@ -4424,7 +4507,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         }
                     };
                     request.method = "Channel.setName";
-                    if (hqConf.debug) { console.log("JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
                     jsonPost(request, function () {
                         var row_id = $("#cfgChannelId").val();
                               $("tr[id='" + $("#cfgChannelId").val() + "'] td[aria-describedby$='t_name']").html($("#cfgChannelName").val());
@@ -4938,7 +5021,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             )
             break;
         case "xml":
-          //  console.log("xmlrpc");
+          //  console.log((new Date()).getTime() + " xmlrpc");
             xmlmenu = $("#hmRunScriptMenu").show().position({
                 my: "left top",
                 at: "left bottom",
@@ -5134,7 +5217,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 default:
                     paramtype = "string";
             }
-            //console.log("name=" + name + " valuetype=" + valuetype + " value=" + new_value + " paramtype=" + paramtype);
+            //console.log((new Date()).getTime() + " name=" + name + " valuetype=" + valuetype + " value=" + new_value + " paramtype=" + paramtype);
             var xmlrpc = "<?xml version=\"1.0\"?><methodCall><methodName>setValue</methodName><params><param><value><string>" + name + "</string></value></param><param><value><string>" + valuetype + "</string></value></param><param><value><" + paramtype + ">" + new_value + "</" + paramtype + "></value></param></params></methodCall>";
             if (hqConf.debug) { console.log(xmlrpc); }
             $.ajax({
@@ -5194,26 +5277,26 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
 
-
+/*
     function hmGetDevices() {
-        if (hqConf.debug) { console.log("hmGetDevices()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetDevices()"); }
         $("#loaderStates").show();
 
 
         var cache = storage.get("hqWebUiDevices");
         if (cache !== null) {
 
-            if (hqConf.debug) { console.log("Cache Hit Devices"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit Devices"); }
             devicesReady = true;
             devicesXML = $.parseXML(cache);
             devicesXMLObj = $(devicesXML);
 
-            refreshStates();
+            hmGetDevices();
             return false;
         }
 
 
-        if (hqConf.debug) { console.log("Fetching Devices"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Devices"); }
 
 
         $.ajax({
@@ -5229,21 +5312,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 storage.set("hqWebUiStates", null);
                 storage.set("hqWebUiStatesTime", null);
                 statesReady = false;
-                refreshStates();
+                hmGetDevices();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
-
+*/
     function hmGetFunctions() {
-        if (hqConf.debug) { console.log("hmGetFunctions()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFunctions()"); }
 
 
         $("#loaderStates").show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
 
-            if (hqConf.debug) { console.log("Cache Hit Functions"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit Functions"); }
             functionsReady = true;
             functionsXML = $.parseXML(cache);
             functionsXMLObj = $(functionsXML);
@@ -5256,7 +5339,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             hmGetAlarms();
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching Functions"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Functions"); }
 
 
         $.ajax({
@@ -5282,14 +5365,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmGetAlarms() {
-        if (hqConf.debug) { console.log("hmGetAlarms()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetAlarms()"); }
 
 
         var cache = storage.get("hqWebUiAlarms");
         if (cache !== null && cache !== undefined) {
 
 
-            if (hqConf.debug) { console.log("Cache Hit Alarms") }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit Alarms") }
             alarmsReady = true;
             alarmsData = cache;
             hmGetRooms();
@@ -5315,7 +5398,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 "Write(\"]\");";
 
 
-        if (hqConf.debug) { console.log("Fetching Alarm-Datapoints"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Alarm-Datapoints"); }
 
 
         $("#loaderStates").show();
@@ -5348,7 +5431,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             timerMessages = setTimeout(hmRefreshAlarms, hqConf.refreshRetry);
             return false;
         }
-        if (hqConf.debug) { console.log("hmRefreshAlarms()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmRefreshAlarms()"); }
         var updateScript = "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
             "Write(\"[\");\n" +
             "var first = true;\n" +
@@ -5468,9 +5551,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
     }
     function insertAlarms(data) {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " insertAlarms()"); }
 
-
-        //console.log("\n\n\n--- BEFORE ---");
+        //console.log((new Date()).getTime() + " \n\n\n--- BEFORE ---");
         //console.log(statesXMLObj);
         for (var i = 0; i < alarmsData.length; i++) {
 
@@ -5480,7 +5563,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
 
         statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-       //console.log("\n\n\n--- AFTER ---");
+       //console.log((new Date()).getTime() + " \n\n\n--- AFTER ---");
        //console.log(statesXMLObj);
        //console.log(statesXML);
     }
@@ -5521,12 +5604,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
     };
 
     function hmGetRooms() {
-        if (hqConf.debug) { console.log("hmGetRooms()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRooms()"); }
 
 
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
-            if (hqConf.debug) { console.log("Cache Hit Rooms"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit Rooms"); }
 
 
             roomsReady = true;
@@ -5539,9 +5622,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }).trigger("reloadGrid").setGridParam({loadonce:true});
             initSelectRooms();
             hmGetDevices();
+            //hmGetDevices();
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching Rooms"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Rooms"); }
 
 
         $.ajax({
@@ -5560,13 +5644,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 initSelectRooms();
                 hmGetDevices();
+                //hmGetDevices();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
         });
     }
 
     function hmGetFavorites() {
-        if (hqConf.debug) { console.log("hmGetFavorites()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFavorites()"); }
 
 
         $("#loaderFavorites").show();
@@ -5575,7 +5660,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         if (cache !== null) {
 
 
-            if (hqConf.debug) { console.log("Cache Hit: Favorites"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Favorites"); }
             favoritesXML = $.parseXML(cache);
             favoritesXMLObj = $(favoritesXML);
             favoritesTime = storage.get("hqWebUiFavoritesTime");
@@ -5588,7 +5673,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
             return false;
         }
-        if (hqConf.debug) { console.log("Fetching Favorites"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Favorites"); }
 
 
         $.ajax({
@@ -5625,7 +5710,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function getVersion() {
-        if (hqConf.debug) { console.log("getVersion()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " getVersion()"); }
         gridInfo.jqGrid('addRowData', "HQ WebUI Version", {'key': "HQ WebUI Version", 'value': version});
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/version.txt",
@@ -5659,16 +5744,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
    // jsonLogin();
 
     function sessionStart() {
-        if (hqConf.debug) { console.log("sessionStart()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " sessionStart()"); }
 
 
         var username = storage.get("hqWebUiUsername");
         var password = storage.get("hqWebUiPassword");
         if (username !== null && password != null) {
-            if (hqConf.debug) { console.log("Cache Hit: Username and Password"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Username and Password"); }
         }
         if (hqConf.sessionPersistent) {
-            if (hqConf.debug) { console.log("sessionPersistant=true"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " sessionPersistant=true"); }
             var tmp = storage.get("hqWebUiSession");
             if (tmp != null) {
 
@@ -5676,7 +5761,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     $("#buttonDelCred").attr("disabled", true);
                 }
                 hmSession = tmp;
-                //console.log("Trying to renew Session " + hmSession);
+                //console.log((new Date()).getTime() + " Trying to renew Session " + hmSession);
                 hmSessionRenew(true);
                 return true;
             }
@@ -5700,7 +5785,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     };
 
     function jsonLogin(username, password) {
-        if (hqConf.debug) { console.log("JSON RPC: Session.login username=" + username); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.login username=" + username); }
 
 
         jsonPost({
@@ -5710,7 +5795,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 "password" : password
             }
         }, function (data) {
-            if (hqConf.debug) { console.log("JSON RPC: Session.login Successfull"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.login Successfull"); }
 
 
             hmSession = data.result;
@@ -5744,7 +5829,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             default:
                 msg = data.error.message;
             }
-            if (hqConf.debug) { console.log("JSON RPC: Session.login Failed - "+msg); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.login Failed - "+msg); }
             $("#session").hide();
             $("#loginError").show().html(msg);
             setTimeout(function () {
@@ -5762,7 +5847,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         clearTimeout(timerMessages);
         clearTimeout(timerSession);
         if (hmSession) {
-            if (hqConf.debug) { console.log("JSON RPC: Session.logout"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.logout"); }
             $("#logout").show("fade", hqConf.sessionLogoutFade);
             jsonPost({
                 "method":   "Session.logout",
@@ -5783,12 +5868,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmSessionRenew(firstLoad) {
-        if (hqConf.debug) { console.log("hmSessionRenew("+firstLoad+")"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmSessionRenew("+firstLoad+")"); }
 
 
         clearTimeout(timerSession);
         if (hmSession) {
-            if (hqConf.debug) { console.log("JSON RPC: Session.renew _session_id_=" + hmSession); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.renew _session_id_=" + hmSession); }
 
 
             jsonPost({
@@ -5799,7 +5884,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }, function (data) {
 
                 if (data.result) {
-                    if (hqConf.debug) { console.log("JSON RPC: Session.renew Successful"); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.renew Successful"); }
                     $("#login").hide();
                     $("#session").hide();
                     if (firstLoad) {
@@ -5807,7 +5892,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         timerSession = setTimeout(hmSessionRenew, 240000);
                     }
                 } else {
-                    if (hqConf.debug) { console.log("JSON RPC: Session.renew Failed"); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.renew Failed"); }
                     hmSession = undefined;
 
 
@@ -5819,20 +5904,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 }
             }, function (data) {
-                if (hqConf.debug) { console.log("JSON RPC: error"); }
+                if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: error"); }
                 hmSession = undefined;
                 var username = storage.get("hqWebUiUsername");
                 var password = storage.get("hqWebUiPassword");
-                //console.log("user=" + username + " pass=" + password);
+                //console.log((new Date()).getTime() + " user=" + username + " pass=" + password);
 
                 if (username != null) {
-                    if (hqConf.debug) { console.log("Trying to re-login with cached credentials"); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " Trying to re-login with cached credentials"); }
 
 
                     jsonLogin(username, password);
                 } else {
 
-                    //console.log("no saved credentials -> show login");
+                    //console.log((new Date()).getTime() + " no saved credentials -> show login");
                     $("#buttonDelCred").attr("disabled", true);
                     $("#session").hide();
                     $("#login").show();
@@ -5983,7 +6068,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 storage.set("hqWebUiPrograms", (new XMLSerializer()).serializeToString(programsXML));
 
 
-                //console.log("saveProgram(" + id + ")");
+                //console.log((new Date()).getTime() + " saveProgram(" + id + ")");
             }
         });
     }
@@ -5992,18 +6077,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus hmGetFavorites heraus angestoßen
-        if (hqConf.debug) { console.log("webuiStart()"); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + " webuiStart()"); }
         var cache = storage.get("hqWebUiStringtable");
 
         if (cache !== null) {
-            if (hqConf.debug) { console.log("Cache Hit: Stringtable"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit: Stringtable"); }
             lang = cache;
             hmGetFavorites();
             getVersion();
 
         } else {
             // Sprach-Datei laden und in Objekt "verpacken"
-            if (hqConf.debug) { console.log("Fetching Stringtable"); }
+            if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Stringtable"); }
             $.ajax({
                 url: hqConf.ccuUrl + "/config/stringtable_de.txt",
                 type: "GET",
@@ -6373,8 +6458,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                             //var value = $("<div/>").html(data[i].vl).text();
                             var value = data[i].vl;
-                            //console.log("DECODE  " + value);
-                            //console.log("DECODED " + unescape(value));
+                            //console.log((new Date()).getTime() + " DECODE  " + value);
+                            //console.log((new Date()).getTime() + " DECODED " + unescape(value));
                             value = unescape(value);
 
 
@@ -6392,17 +6477,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                 $("label[for^='favRadioOff'][for$='_" + data[i].id + "']").removeClass("ui-state-active");
 
                                 if (value == 0 || value == "false") {
-                                    //console.log("0");
+                                    //console.log((new Date()).getTime() + " 0");
                                     $("label[for^='favRadioOff'][for$='_" + data[i].id + "']").addClass("ui-state-active");
                                     $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").attr("checked", true);
                                     $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").removeAttr("checked");
                                 } else if (value == 1 || value == "true") {
-                                    //console.log("1");
+                                    //console.log((new Date()).getTime() + " 1");
                                     $("label[for^='favRadioOn'][for$='_" + data[i].id + "']").addClass("ui-state-active");
                                     $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").attr("checked", true);
                                     $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").removeAttr("checked");
                                 } else {
-                                    //console.log("0.01-0.99");
+                                    //console.log((new Date()).getTime() + " 0.01-0.99");
                                     $("input[id^='favRadioOn'][id$='_" + data[i].id + "']").removeAttr("checked");
                                     $("input[id^='favRadioOff'][id$='_" + data[i].id + "']").removeAttr("checked");
                                 }
@@ -6421,8 +6506,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                          value_text = obj.attr("value_list").split(";")[value];
                                      }
                                      var chnid = statesXMLObj.find("datapoint[ise_id='" + data[i].id + "']").parent().attr("ise_id");
-                                     var label = devicesXMLObj.find("channel[ise_id='" + chnid + "']").attr("hss_type");
-                                     //console.log("format dp name="+name+" type="+type+" label="+label+" value_type="+value_type);
+                                     var label = statesXMLObj.find("channel[ise_id='" + chnid + "']").attr("hss_type");
+                                     //console.log((new Date()).getTime() + " format dp name="+name+" type="+type+" label="+label+" value_type="+value_type);
                                      if (hqConf.dpDetails[type]) {
                                         if (hqConf.dpDetails[type].formatfunction) {
                                             value =  hqConf.dpDetails[type].formatfunction(value);
@@ -6431,7 +6516,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                             value = parseFloat(value);
                                             value = value.toFixed(parseInt(hqConf.dpDetails[type].decimals, 10));
                                         }
-                                        //console.log("label="+label+" name[2]="+name[2]+" value="+value)
+                                        //console.log((new Date()).getTime() + " label="+label+" name[2]="+name[2]+" value="+value)
                                         if (value == "false" && lang[label] && lang[label][name[2]] && lang[label][name[2]]["FALSE"]) {
                                             value = lang[label][name[2]]["FALSE"].text;
                                         }
@@ -6456,8 +6541,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                             dpDesc = "";
                                         }
                                     }
-
-
                                 }
                                 var fvalue = parseFloat(value);
                                 fvalue = fvalue.toFixed(1);
@@ -6502,7 +6585,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             var unit = obj.attr("unit");
                             if (unit == undefined) { unit = ""; }
                             if (obj.attr("name") !== undefined) {
-                                //console.log("refresh variable " + obj.attr("name") + " " + value);
+                                //console.log((new Date()).getTime() + " refresh variable " + obj.attr("name") + " " + value);
                                 var val = value;
                                 switch (obj.attr('subtype')) {
                                     case '0':
@@ -6512,9 +6595,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                         break;
                                     case '2':
                                     case '6':
-                                        //console.log("debug " +val);
+                                        //console.log((new Date()).getTime() + " debug " +val);
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option").removeAttr("selected");
-                                        //console.log("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']");
+                                        //console.log((new Date()).getTime() + " select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']");
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']").attr("selected", true);
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"']").multiselect("refresh");
 
@@ -6528,7 +6611,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                         var value_list = obj.attr('value_list').split(";");
                                         if (val == "false") { val = 0; } else if (val == "true") { val = 1; }
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option").removeAttr("selected");
-                                        //console.log("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']");
+                                        //console.log((new Date()).getTime() + " select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']");
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"'] option[value='"+val+"']").attr("selected", true);
                                         $("select[id^='favInputSelect'][id$='_"+data[i].id+"']").multiselect("refresh");
                                         val = value_list[val];
@@ -6564,7 +6647,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                     }
                                 } else if (value_type == 16) {
                                     var value_text = obj.attr("value_list").split(";");
-                                    console.log("list " + value_text + " " + value)
+                                    console.log((new Date()).getTime() + " list " + value_text + " " + value)
                                     if (value_text != "") {
                                         value = value_text[value];
                                     }
@@ -6622,7 +6705,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     } else {
                         var nextRefresh = hqConf.refreshPause;
                     }
-                    if (hqConf.debug) { console.log("hmRefresh() datapointCount=" + data.length + " responseTime=" + totalTime + "ms pause=" + nextRefresh + "ms"); }
+                    if (hqConf.debug) { console.log((new Date()).getTime() + " hmRefresh() datapointCount=" + data.length + " responseTime=" + totalTime + "ms pause=" + nextRefresh + "ms"); }
                     timerRefresh = setTimeout(hmRefresh, nextRefresh);
                     $("th[id$='_active']").removeClass("ui-state-active");
                     $("th[id$='_timestamp']").removeClass("ui-state-active");
@@ -6722,7 +6805,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
         }
     });
-    chartProtocol = new Highcharts.Chart({
+    var highchartProtocol = new Highcharts.Chart({
         chart: {
             renderTo: 'chartProtocol',
             zoomType: 'xy'
@@ -6797,7 +6880,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     editAreaLoader.init(editAreaInit);
 
+
 })})(jQuery);
+
 
 // Funktionen für den Script-Editor(editArea steckt in iFrame und arbeitet im globalen Namensraum)
 function scriptFileClose(file) {
@@ -6826,7 +6911,9 @@ function scriptChange() {
 }
 
 function scriptEditorReady() {
-    $("#frame_hmScript").contents().find("#toolbar_1 a").button();
+    //frame_hmScript =        $("#frame_hmScript");
+    //editorReady = true;
+    $("frame_hmScript").contents().find("#toolbar_1 a").button();
 
     scriptEditorStyle();
 
@@ -6843,35 +6930,30 @@ function scriptEditorReady() {
 
 
 function scriptEditorStyle() {
-    // Umstylen anhand jQuery UI Theme... Pfusch...
-    $("#frame_hmScript").contents().find("#toolbar_1").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
-    $("#frame_hmScript").contents().find("#toolbar_1").css("background", $(".ui-jqgrid-titlebar").css("background"));
-    $("#frame_hmScript").contents().find("#toolbar_1").css("color", $(".ui-jqgrid-titlebar").css("color"));
+        // Umstylen... Pfusch...!
+        $("frame_hmScript").contents().find("#toolbar_1").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+        $("frame_hmScript").contents().find("#toolbar_1").css("background", $(".ui-jqgrid-titlebar").css("background"));
+        $("frame_hmScript").contents().find("#toolbar_1").css("color", $(".ui-jqgrid-titlebar").css("color"));
+        $("frame_hmScript").contents().find("#toolbar_1 a").button("destroy");
+        $("frame_hmScript").contents().find("#toolbar_1 a").button();
+        $("frame_hmScript").contents().find("#toolbar_1 a span").css({
+            'padding': '1px',
+            'padding-left': '6px',
+            'padding-right': '6px',
+            'margin': '0px'
+        });
+        /*$("frame_hmScript").contents().find("#toolbar_1 a span").
+                css("color", $("#hmRunScript").css("color")).
+                css("background-color", $("#hmRunScript").css("background-color")).
+                css("border", $("#hmRunScript").css("border"));
+        */
+        $("frame_hmScript").contents().find("#toolbar_1 a img").css('border', '');
+        $("frame_hmScript").contents().find("#toolbar_2").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
+        $("frame_hmScript").contents().find("#toolbar_2").css("background", $(".ui-jqgrid-titlebar").css("background"));
+        $("frame_hmScript").contents().find("#toolbar_2").css("color", $(".ui-jqgrid-titlebar").css("color"));
+        $("frame_hmScript").contents().find("#tab_browsing_area").css("background-color", $("#gridScriptVariables_variable").css("background-color"));
+        $("frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
+        $("frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
-    // Todo abfangen falls noch keine Buttons initialisiert sind!
-    $("#frame_hmScript").contents().find("#toolbar_1 a").button("destroy");
-    $("#frame_hmScript").contents().find("#toolbar_1 a").button();
-    $("#frame_hmScript").contents().find("#toolbar_1 a span").css({
-        'padding': '1px',
-        'padding-left': '6px',
-        'padding-right': '6px',
-        'margin': '0px'
-
-
-    });
-
-    /*$("#frame_hmScript").contents().find("#toolbar_1 a span").
-            css("color", $("#hmRunScript").css("color")).
-            css("background-color", $("#hmRunScript").css("background-color")).
-            css("border", $("#hmRunScript").css("border"));
-    */
-    $("#frame_hmScript").contents().find("#toolbar_1 a img").css('border', '');
-    $("#frame_hmScript").contents().find("#toolbar_2").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
-    $("#frame_hmScript").contents().find("#toolbar_2").css("background", $(".ui-jqgrid-titlebar").css("background"));
-    $("#frame_hmScript").contents().find("#toolbar_2").css("color", $(".ui-jqgrid-titlebar").css("color"));
-    $("#frame_hmScript").contents().find("#tab_browsing_area").css("background-color", $("#gridScriptVariables_variable").css("background-color"));
-    $("#frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
-    $("#frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
-
-}//
+}
 

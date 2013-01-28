@@ -2,24 +2,58 @@ var scriptStates = "string sDevId;\n" +
     "string sChnId;\n" +
     "string sDPId;\n" +
     "var show_internal = 0;\n" +
+    "integer DIR_SENDER      = 1;\n" +
+    "integer DIR_RECEIVER    = 2;\n" +
+    "!    string  TYPE_VIRTUAL    = \"29\";\n" +
+    "string  PARTNER_INVALID = \"65535\";\n" +
     "Write(\"<stateList>\");\n" +
     "foreach (sDevId, root.Devices().EnumUsedIDs()) {\n" +
     "    object oDevice   = dom.GetObject(sDevId);\n" +
-    "    if( oDevice.ReadyConfig() && (oDevice.Name() != \"Zentrale\") && (oDevice.Name() != \"HMW-RCV-50 BidCoS-Wir\") )\n" +
+    "    boolean bDevReady = oDevice.ReadyConfig();\n" +
+    "        string sDevInterfaceId = oDevice.Interface();\n" +
+    "        string sDevInterface   = dom.GetObject(sDevInterfaceId).Name();\n" +
+    "    if( bDevReady && (oDevice.Name() != \"Zentrale\") && (oDevice.Name() != \"HMW-RCV-50 BidCoS-Wir\") )\n" +
     "    {\n" +
     "        Write(\"<device\");\n" +
     "        Write(\" name='\" # oDevice.Name() # \"'\");\n" +
     "        Write(\" ise_id='\" # sDevId # \"'\");\n" +
+    "        Write(\" address='\");WriteXML( oDevice.Address() );Write(\"'\");\n" +
+    "        Write(\" interface='\" # sDevInterface # \"'\");\n" +
+    "        Write(\" device_type='\");WriteXML(oDevice.HssType());Write(\"'\");\n" +
+    "        Write(\" ready_config='\" # bDevReady # \"'\");\n" +
+
     "        Write(\" >\");  ! device tag schliessen\n" +
     "        foreach(sChnId, oDevice.Channels())\n" +
     "        {\n" +
     "            object oChannel = dom.GetObject(sChnId);\n" +
     "            if ( (! oChannel.Internal()) ||  oChannel.Internal()  )\n" +
     "            {\n" +
+    "                integer iChnDir     = oChannel.ChnDirection();\n" +
+    "                string  sChnDir     = \"UNKNOWN\";\n" +
+    "                if (DIR_SENDER   == iChnDir) { sChnDir = \"SENDER\";   }\n" +
+    "                if (DIR_RECEIVER == iChnDir) { sChnDir = \"RECEIVER\"; }\n" +
+    "                string  sChnPartnerId = oChannel.ChnGroupPartnerId();\n" +
+    "                if (PARTNER_INVALID == sChnPartnerId) { sChnPartnerId = \"\"; }\n" +
+    "                boolean bChnAESAvailable = false;\n" +
+    "                if (0 != oChannel.ChnAESOperation()) { bChnAESAvailable = true; }\n" +
+    "                string sChnMode = \"DEFAULT\";\n" +
+    "                if (true == oChannel.ChnAESActive()) { sChnMode = \"AES\"; }\n" +
     "                Write(\"<channel name='\");\n" +
     "                WriteXML( oChannel.Name() );\n" +
-    "                Write(\"' logged='\" # oChannel.ChnArchive() );\n" +
-    "                Write(\"' ise_id='\" # sChnId # \"'>\");\n" +
+    "                Write(\"' logged='\" # oChannel.ChnArchive() # \"'\" );\n" +
+    "        Write(\" type='\");WriteXML( oChannel.ChannelType() );Write(\"'\");\n" +
+    "        Write(\" address='\");WriteXML( oChannel.Address() );Write(\"'\");\n" +
+    "        Write(\" direction='\" # sChnDir # \"'\");\n" +
+    "        Write(\" label='\" # oChannel.ChnLabel() # \"'\");\n" +
+    "        Write(\" parent_device='\" # oChannel.Device() # \"'\");\n" +
+    "        Write(\" index='\" # oChannel.ChnNumber() # \"'\");\n" +
+    "        Write(\" group_partner='\" # sChnPartnerId # \"'\");\n" +
+    "        Write(\" aes_available='\" # bChnAESAvailable # \"'\");\n" +
+    "        Write(\" transmission_mode='\" # sChnMode # \"'\");\n" +
+    "        Write(\" hss_type='\" # oChannel.HssType() # \"'\");\n" +
+    "        Write(\" visible='\" # oChannel.Visible() # \"'\");\n" +
+    "        Write(\" ready_config='\" # oChannel.ReadyConfig() # \"'\");\n" +
+    "                Write(\" ise_id='\" # sChnId # \"'>\");\n" +
     "                foreach(sDPId, oChannel.DPs().EnumUsedIDs())\n" +
     "                {\n" +
     "                    object oDP = dom.GetObject(sDPId);\n" +

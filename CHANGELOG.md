@@ -1,5 +1,12 @@
 Changelog
 =========
+2.3-beta1
+---------
+* Kanäle können nun Räumen und Gewerken hinzugefügt bzw von diesen entfernt werden
+* Perfomance-Verbesserungen: devicesXML komplett entfernt und in statesXML integriert, AL-Datenpunkte in statesXML aufgenommen
+* Zeitstempel vor Debug-Meldungen in Browserconsole
+* Code ein bisschen aufgeräumt (mehrfache var entfernt, jQuery-Selektoren, Refactoring) - gibt aber noch viel zu tun...
+
 2.3-alpha5
 ---------
 * Hinzufügen/Umbenennen/Entfernen von Gewerken und Räumen

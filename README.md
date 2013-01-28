@@ -96,15 +96,9 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 Roadmap/Todo/Ideen
 ==================
 
-2.3
----
-* Hinzufügen/Entfernen von Kanälen zu/von Gewerken und Räumen
-* Umbennen von "Dateien" im Scripteditor
-
 2.4
 ---
-* devicesXML komplett entfernen und in statesXML integrieren. AL-Datenpunkten ebenfalls in statesXML aufnehmen und cachen - dürfte Ladezeit halbieren...
-* hq-webui.js aufräumen
+* Umbennen von "Dateien" im Scripteditor
 * generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
 * Kontextmenü (rechts-klick) in allen Tabellenansichten
 * Anzeige der Auslöser eines Programms in der Programm-Tabelle
