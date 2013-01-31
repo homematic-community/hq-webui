@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-beta1",
+    var version =               "2.3-beta2",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -165,6 +165,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         xmlmenu,
 
+        highchartProtocol,
+
         frame_hmScript,
 
         lang = {};
@@ -299,17 +301,28 @@ jQuery.extend(jQuery.expr[ ":" ], {
         tabActive = window.location.hash;
         tabs.tabs('select', tabActive);
     });
+    var protocolLoading = false, chartProtocolLoading = false;
     subTabCcu.tabs({
         activate: function( event, ui ) {
-            if (ui.newTab[0].children[0].hash == "#tabCcuChart" || ui.newTab[0].children[0].hash == "#tabCcuProtocol") {
-                if (!protocolReady) {
+            resizeAll();
+            if (ui.newTab[0].children[0].hash == "#tabCcuProtocol") {
+                if (!protocolReady && !protocolLoading) {
+                    protocolLoading = true;
                     refreshProtocol();
                 }
             }
             if (ui.newTab[0].children[0].hash == "#tabCcuChart") {
-                console.log((new Date()).getTime() + " chart redraw");
-                chartProtocol.setSize($(window).width()-92,$(window).height()-140);
+                //console.log((new Date()).getTime() + " chart redraw");
+                if (!chartProtocolLoaded) {
+                    chartProtocolLoading = true;
+                    initChartProtocol();
 
+                }
+                if (chartProtocolReady) {
+                    //chartProtocol.setSize($(window).width()-92,$(window).height()-140);
+                    //setTimeout(chartProtocol.setSize($(window).width()-92,$(window).height()-140), 20);
+
+                }
             }
         }
     });
@@ -346,7 +359,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
         $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
         resizeFavHeight();
-        highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
+        if (chartProtocolLoaded) {
+            highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
+
+        }
 
     }
 
@@ -999,7 +1015,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:"name",   index:"name",   width:240, fixed: true,
             xmlmap: function (obj) {
-                return $(obj).attr('name');
+                var ise_id = $(obj).attr('ise_id');
+                var name = statesXMLObj.find("channel[ise_id='" + ise_id + "']").attr('name');
+                return name;
             }
         },
         {name:"address",   index:"address",   width:90, fixed: true,
@@ -1896,6 +1914,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         sortable: true,
         subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            subGridChannel(grid_id, row_id);
+        },
         gridComplete: function() {
             $("button.btnDevRename").button({
                 icons: { primary: 'ui-icon-wrench' }
@@ -1905,12 +1926,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         },
-        subGridRowExpanded: function(grid_id, row_id) {
-            subGridChannel(grid_id, row_id);
-        },
         ondblClickRow: function(row_id) {
-
-        }
+            gridStates.jqGrid('toggleSubGridRow', row_id);
+        },
+        beforeSelectRow: function() { return false; },
+        onSelectRow: function() { gridStates.jqGrid('resetSelection'); }
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
         "#gridPagerStates", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
@@ -1991,7 +2011,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             //if (hqConf.debug) { console.log(rowid + " " + status + " " + e); }
             $("#btnCfgRoom").removeClass("ui-state-disabled");
             $("#btnDelRoom").removeClass("ui-state-disabled");
+        },
+        subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            subGridChannel(grid_id, row_id);
         }
+
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
@@ -2031,6 +2056,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'navButtonAdd',
         "#gridPagerRooms", {
             caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () {
+                //storage.set("hqWebUiVariables", null);
+                //storage.set("hqWebUiVariablesTime", null);
+                //hmGetVariables();
+            },
+            position: "last",
+            title:"Neu laden",
+            id:"btnRefreshVar",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerRooms", {
+            caption:"",
             buttonicon:"ui-icon-wrench",
             onClickButton: function () {
                 var id = gridRooms.jqGrid("getGridParam", "selrow");
@@ -2048,6 +2087,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
     $("#btnCfgRoom").addClass("ui-state-disabled");
     $("#btnDelRoom").addClass("ui-state-disabled");
+    $("#gridPagerRooms_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshRooms'/>");
 
     gridFunctions.jqGrid({
         colNames:colNamesFunctions,
@@ -2074,7 +2114,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
             $("#btnCfgFunction").removeClass("ui-state-disabled");
             $("#btnDelFunction").removeClass("ui-state-disabled");
         },
-        sortable: true
+        sortable: true,
+        subGrid: true,
+        subGridRowExpanded: function(grid_id, row_id) {
+            subGridChannel(grid_id, row_id);
+        }
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
         'navGrid',
@@ -2113,6 +2157,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'navButtonAdd',
         "#gridPagerFunctions", {
             caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () {
+                //storage.set("hqWebUiVariables", null);
+                //storage.set("hqWebUiVariablesTime", null);
+                //hmGetVariables();
+            },
+            position: "last",
+            title:"Neu laden",
+            id:"btnRefreshVar",
+            cursor: "pointer"
+        }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerFunctions", {
+            caption:"",
             buttonicon:"ui-icon-wrench",
             onClickButton: function () {
                 var id = gridFunctions.jqGrid("getGridParam", "selrow");
@@ -2129,6 +2187,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
     $("#btnCfgFunction").addClass("ui-state-disabled");
     $("#btnDelFunction").addClass("ui-state-disabled");
+    $("#gridPagerFunctions_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshFunctions'/>");
+
+
 
     gridRssi.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -2272,38 +2333,75 @@ jQuery.extend(jQuery.expr[ ":" ], {
     // Subgrid von gridDevices
     function subGridChannel(grid_id, row_id) {
         var subgrid_table_id = grid_id + "_t";
+
         $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
+        console.log(grid_id);
+        if (grid_id.match(/gridRooms/)) {
+            $("#" + subgrid_table_id).jqGrid( {
+                colNames: colNamesChannel,
+                datatype:'xmlstring',
+                datastr: roomsXML,
+                colModel: colModelChannel,
+                xmlReader: {
+                    root:"roomList>room[ise_id='" + row_id + "']",
+                    row:"channel",
+                    id:"[ise_id]",
+                    repeatitems: false
+                },
+                gridview:true,
+                height: "100%",
+                rowNum:1000,
+                subGrid: true,
+                gridComplete: function() {
+                    $("button.btnChRename").button({
+                        icons: { primary: 'ui-icon-wrench' }
+                    }).click(function () {
+                            hmCfgChannel($(this).parent().parent().attr("id"));
+                        });
 
-        $("#" + subgrid_table_id).jqGrid( {
-            colNames: colNamesChannel,
-            datatype:'xmlstring',
-            datastr: statesXML,
-            colModel: colModelChannel,
-            xmlReader: {
-                root:"stateList>device[ise_id='" + row_id + "']",
-                row:"channel",
-                id:"[ise_id]",
-                repeatitems: false
-            },
-            gridview:true,
-            height: "100%",
-            rowNum:1000,
-            subGrid: true,
-            gridComplete: function() {
-                $("button.btnChRename").button({
-                    icons: { primary: 'ui-icon-wrench' }
-                }).click(function () {
-                        hmCfgChannel($(this).parent().parent().attr("id"));
-                    });
+
+                },
+                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
+                ondblClickRow: function(row_id, iRow, iCol, e) {
+
+                },
+                beforeSelectRow: function() { return false; }
+            });
+
+        } else {
+            $("#" + subgrid_table_id).jqGrid( {
+                colNames: colNamesChannel,
+                datatype:'xmlstring',
+                datastr: statesXML,
+                colModel: colModelChannel,
+                xmlReader: {
+                    root:"stateList>device[ise_id='" + row_id + "']",
+                    row:"channel",
+                    id:"[ise_id]",
+                    repeatitems: false
+                },
+                gridview:true,
+                height: "100%",
+                rowNum:1000,
+                subGrid: true,
+                gridComplete: function() {
+                    $("button.btnChRename").button({
+                        icons: { primary: 'ui-icon-wrench' }
+                    }).click(function () {
+                            hmCfgChannel($(this).parent().parent().attr("id"));
+                        });
 
 
-            },
-            subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
-            ondblClickRow: function(row_id, iRow, iCol, e) {
+                },
+                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
+                ondblClickRow: function(row_id, iRow, iCol, e) {
 
-            }
-        });
-    }
+                },
+                beforeSelectRow: function() { return false; }
+            });
+
+        }
+     }
 
     function hmCfgChannel(row_id) {
         if (!$("tr[id='" + row_id + "'] td:first").attr('aria-describedby').match(/_t_[0-9]+_t_/)) {
@@ -2376,7 +2474,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             ondblClickRow: function (id) {
 
                 hmEditDatapoint(id, subgrid_table_id);
-            }
+            },
+            beforeSelectRow: function() { return false; }
         });
     }
 
@@ -2417,10 +2516,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         value = ui.value;
                         $("input#datapointValue").val(ui.value);
                     }
-                });$("#radioDatapointOff").click(function () {
-                $("#datapointValue").val("0.00");
-                $("#sliderDatapoint").slider('value', 0.00);
-            });
+                });
+                $("#radioDatapointOff").click(function () {
+                    $("#datapointValue").val("0.00");
+                    $("#sliderDatapoint").slider('value', 0.00);
+                });
                 $("#radioDatapointOn").click(function () {
                     $("#datapointValue").val("1.00");
                     $("#sliderDatapoint").slider('value', 1.00);
@@ -2860,12 +2960,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
     }
-
+var chartProtocolReady;
 
     function refreshProtocol() {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " refreshProtocol()"); }
         $("#btnRefreshProtocol").addClass("ui-state-disabled");
-        while(highchartProtocol.series.length > 0) {
-            highchartProtocol.series[0].remove(false);
+        if (chartProtocolReady) {
+            chartProtocolReady = false;
+           // highchartProtocol.destroy();
+            while(highchartProtocol.series.length > 0) {
+                highchartProtocol.series[0].remove(false);
+            }
+
         }
         //chartProtocol.redraw();
         protocolXML = "<systemProtocol/>";
@@ -2874,10 +2980,159 @@ jQuery.extend(jQuery.expr[ ":" ], {
         protocolReady = false;
         chartProtocolSeries = [];
         $("#loaderProtocol").show();
-        $("#loaderProtocol2").show();
+        //$("#loaderProtocol2").show();
         hmGetProtocol(protocolRecords, 1000);
     }
 
+    function chartProtocolBuild() {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " chartProtocolBuild()"); }
+        protocolXMLObj.find("row").each(function () {
+            if (!$.isArray(chartProtocolSeries[$(this).attr("did")])) {
+                chartProtocolSeries[$(this).attr("did")] = [];
+            }
+            if (chartDPs[$(this).attr("did")] === undefined) {
+                var marker, dpname, dptype, name, type, charttype, unit = "", step = false, factor = 1;
+                type = $(this).attr("type");
+                switch (type) {
+                    case "VARDP":
+                    case "ALARMDP":
+                        name = variablesXMLObj.find("systemVariable[ise_id='" + $(this).attr("did") + "']").attr("name");
+                        charttype = "line";
+                        step = "left";
+                        marker = {
+                            enabled: false,
+                            states: {
+                                hover: {
+                                    enabled: true
+                                }
+                            }
+                        };
+                        break;
+                    default:
+                        dpname = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").attr("name");
+                        name = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").parent().attr("name");
+                        dptype = dpname.split(".");
+
+                        dptype = dptype[dptype.length - 1];
+                        name = name + " ("+dptype+")";
+                        switch (dptype) {
+                            case "TEMPERATURE":
+                                charttype = "spline";
+                                unit = "°C";
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+                                break;
+                            case "HUMIDITY":
+                                charttype = "spline";
+                                unit = "%";
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+                                break;
+                            case "MEAN5MINUTES":
+                                charttype = "spline";
+                                unit = "";
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+                                break;
+                            case "LEVEL":
+                                charttype = "line";
+                                step = "left";
+                                unit = "%";
+                                factor = 100;
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+                                break;
+
+                            case "PRESS_SHORT":
+                            case "PRESS_LONG":
+                            case "PRESS_OPEN":
+                                marker = {
+                                    enabled: true
+                                };
+                                charttype = "scatter";
+                                break;
+                            case "SETPOINT":
+                            case "MOTION":
+                                charttype = "line";
+                                step = "left";
+                                marker = {
+                                    enabled: true
+                                };
+                                break;
+                            default:
+                                charttype = "line";
+                                step = "left";
+                                marker = {
+                                    enabled: false,
+                                    states: {
+                                        hover: {
+                                            enabled: true
+                                        }
+                                    }
+                                };
+
+                        }
+                }
+
+                chartDPs[$(this).attr("did")] = {
+                    type: type,
+                    name: name,
+                    chartType: charttype,
+                    step: step,
+                    factor: factor,
+                    unit: unit,
+                    visible: false,
+                    marker: marker
+                }
+
+            }
+
+            chartProtocolSeries[$(this).attr("did")].push([Date.parse($(this).attr("datetime")) + 3600000, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
+
+            if (protocolReady) {
+                // TODO: Liveupdate (Zeilen in geladenes Grid einfügen)
+            }
+        });
+        for (var key in chartProtocolSeries) {
+            if (key === 'length' || !chartProtocolSeries.hasOwnProperty(key)) continue;
+            highchartProtocol.addSeries({
+                name: chartDPs[key].name,
+                type: chartDPs[key].chartType,
+                step: chartDPs[key].step,
+                data: chartProtocolSeries[key],
+                visible: chartDPs[key].visible,
+                marker: chartDPs[key].marker
+
+            });
+        }
+        chartProtocolReady = true;
+        $("#loaderProtocol2").hide();
+
+    }
 
     function hmGetProtocol(start, count) {
 
@@ -2891,144 +3146,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
             success: function (data) {
                 var rcount = parseInt($(data).find("records").attr("count"), 10);
                 protocolRecords += rcount;
-
                 $(data).find("row").each(function () {
-                    protocolXMLObj.prepend(this);
-                    if (!$.isArray(chartProtocolSeries[$(this).attr("did")])) {
-                        chartProtocolSeries[$(this).attr("did")] = [];
-                    }
-                    if (chartDPs[$(this).attr("did")] === undefined) {
-                        var marker, dpname, dptype, name, type, charttype, unit = "", step = false, factor = 1;
-                        type = $(this).attr("type");
-                        switch (type) {
-                            case "VARDP":
-                            case "ALARMDP":
-                                name = variablesXMLObj.find("systemVariable[ise_id='" + $(this).attr("did") + "']").attr("name");
-                                charttype = "line";
-                                step = "left";
-                                marker = {
-                                    enabled: false,
-                                    states: {
-                                        hover: {
-                                            enabled: true
-                                        }
-                                    }
-                                };
-                            break;
-                            default:
-                                dpname = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").attr("name");
-                                name = statesXMLObj.find("datapoint[ise_id='" + $(this).attr("did") + "']").parent().attr("name");
-                                dptype = dpname.split(".");
-
-                                dptype = dptype[dptype.length - 1];
-                                name = name + " ("+dptype+")";
-                                switch (dptype) {
-                                    case "TEMPERATURE":
-                                        charttype = "spline";
-                                        unit = "°C";
-                                        marker = {
-                                            enabled: false,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        };
-                                        break;
-                                    case "HUMIDITY":
-                                        charttype = "spline";
-                                        unit = "%";
-                                        marker = {
-                                            enabled: false,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        };
-                                        break;
-                                    case "MEAN5MINUTES":
-                                        charttype = "spline";
-                                        unit = "";
-                                        marker = {
-                                            enabled: false,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        };
-                                        break;
-                                    case "LEVEL":
-                                        charttype = "line";
-                                        step = "left";
-                                        unit = "%";
-                                        factor = 100;
-                                        marker = {
-                                            enabled: false,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        };
-                                        break;
-
-                                    case "PRESS_SHORT":
-                                    case "PRESS_LONG":
-                                    case "PRESS_OPEN":
-                                        marker = {
-                                            enabled: true
-                                        };
-                                        charttype = "scatter";
-                                        break;
-                                    case "SETPOINT":
-                                    case "MOTION":
-                                        charttype = "line";
-                                        step = "left";
-                                        marker = {
-                                            enabled: true
-                                        };
-                                        break;
-                                    default:
-                                        charttype = "line";
-                                        step = "left";
-                                        marker = {
-                                            enabled: false,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
-                                        };
-
-                                }
-                        }
-
-                        chartDPs[$(this).attr("did")] = {
-                            type: type,
-                            name: name,
-                            chartType: charttype,
-                            step: step,
-                            factor: factor,
-                            unit: unit,
-                            visible: false,
-                            marker: marker
-                        }
-
-                    }
-
-                    chartProtocolSeries[$(this).attr("did")].push([Date.parse($(this).attr("datetime")) + 3600000, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
-
-                    if (protocolReady) {
-                        // TODO: Liveupdate (Zeilen in geladenes Grid einfügen)
-                    }
+                    protocolXMLObj.append($(this));
                 });
-
 
                 if (rcount >= count) {
                     hmGetProtocol(protocolRecords, count);
                 } else {
+                    // Protokoll vollständig geladen.s
                     protocolXML = $.parseXML((new XMLSerializer()).serializeToString(protocolXMLObj[0]));
                     gridProtocol.setGridParam({
                         loadonce: false,
@@ -3039,23 +3164,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     });
                     if (!protocolReady) {
                         gridProtocol.trigger("reloadGrid").setGridParam({sortname: 'datetime', sortorder: 'desc', loadonce:true});
-                        for (var key in chartProtocolSeries) {
-                            if (key === 'length' || !chartProtocolSeries.hasOwnProperty(key)) continue;
-                            highchartProtocol.addSeries({
-                                name: chartDPs[key].name,
-                                type: chartDPs[key].chartType,
-                                step: chartDPs[key].step,
-                                data: chartProtocolSeries[key],
-                                visible: chartDPs[key].visible,
-                                marker: chartDPs[key].marker
 
-                            });
-                        }
                         protocolReady = true;
+                        protocolLoading = false;
                         $("#btnRefreshProtocol").removeClass("ui-state-disabled");
                         $("#loaderProtocol").hide();
-                        $("#loaderProtocol2").hide();
+                        //$("#loaderProtocol2").hide();
 
+                    }
+                    if (!chartProtocolReady && chartProtocolLoaded) {
+                        chartProtocolBuild();
                     }
 
                 }
@@ -4289,7 +4407,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
         if (hqConf.namingConfirm) {
             // Prüfen ob gleicher Name anderswo verwendet wird
-            if (type != "VARIABLE") {
+            if (type != "VARDP") {
                 var varObj = variablesXMLObj.find("systemVariable[name='"+name+"']");
                 if (varObj.attr("ise_id")) {
                     otherNames.push("eine Variable");
@@ -4766,7 +4884,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     });
     dialogAbout.dialog({
         width: 446,
-        height: 530,
+        height: 555,
         autoOpen: false,
         modal: true,
         resizable: false,
@@ -5605,7 +5723,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetRooms() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRooms()"); }
-
+	$("#loaderStates").show();
 
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
@@ -6805,47 +6923,78 @@ jQuery.extend(jQuery.expr[ ":" ], {
             weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
         }
     });
-    var highchartProtocol = new Highcharts.Chart({
-        chart: {
-            renderTo: 'chartProtocol',
-            zoomType: 'xy'
-        },
-        title: {
-            text: null
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'top'
-        },
-        subtitle: {
-            text: null
-        },
-        credits: {
-            enabled: false
-        },
-
-        xAxis: {
-            type: 'datetime',
-            dateTimeLabelFormats: {
-                month: '%e. %b',
-                year: '%Y'
-            }
-        },
-        yAxis: {
-            title: {
-                text: ''
-            },
-            min: 0
+    var chartProtocolLoaded = false;
+    function initChartProtocol() {
+        //if (hqConf.debug) { console.log((new Date()).getTime() + " initChartProtocol()"); }
+        if (protocolReady && chartProtocolLoaded) {
+            chartProtocolBuild();
+            return true;
         }
-        /*,
-        tooltip: {
-            formatter: function() {
-                return '<b>'+ this.series.name +'</b><br/>'+
-                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +': <b>'+ this.y + chartDPs[key].unit + '</b>';
-            }
-        }*/
-    });
+        if (!protocolReady && !protocolLoading) {
+            protocolLoading = true;
+            refreshProtocol();
+            $("#loaderProtocol2").show();
+            setTimeout(initChartProtocol, 1000);
+            return false;
+        }
+        if (!protocolReady && protocolLoading) {
+            $("#loaderProtocol2").show();
+            setTimeout(initChartProtocol, 1000);
+            return false;
+        }
+
+        if (protocolReady && !chartProtocolLoaded) {
+            if (hqConf.debug) { console.log((new Date()).getTime() + " initChartProtocol()"); }
+            highchartProtocol = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'chartProtocol',
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: null
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'left',
+                    verticalAlign: 'top'
+                },
+                subtitle: {
+                    text: null
+                },
+                credits: {
+                    enabled: false
+                },
+    
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        month: '%e. %b',
+                        year: '%Y'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    },
+                    min: 0
+                }
+                /*,
+                 tooltip: {
+                 formatter: function() {
+                 return '<b>'+ this.series.name +'</b><br/>'+
+                 Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +': <b>'+ this.y + chartDPs[key].unit + '</b>';
+                 }
+                 }*/
+                
+            });
+            chartProtocolLoaded = true;
+            setTimeout(initChartProtocol, 100);
+            return false;
+
+        }
+
+
+    }
 
 
     // Script-Editor

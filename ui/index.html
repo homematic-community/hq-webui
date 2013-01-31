@@ -30,6 +30,8 @@
             <ul id="mainNav" class="tabsPanel">
                 <!--<li><a href="#tabDashboard">Dashboard</a></li>-->
                 <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabRooms">Räume<span class="loader"><img id="loaderRooms" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabFunctions">Gewerke<span class="loader"><img id="loadFunctions" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span id="alarmcount" class="tabCount"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span id="msgcount" class="tabCount"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
@@ -62,18 +64,18 @@
                     <div id="gridPagerPrograms"></div>
                 </div>
             </div>
-        <!--    <div class="tabs" id="tabRooms">
+           <div class="tabs" id="tabRooms">
                 <div class="tabContainer">
-                    <table id="gridRooms"></table>
+                    <table class="gridFull" id="gridRooms"></table>
                     <div id="gridPagerRooms"></div>
                 </div>
-            </div>-->
-        <!--    <div class="tabs" id="tabFunctions">
+            </div>
+            <div class="tabs" id="tabFunctions">
                 <div class="tabContainer">
-                    <table id="gridFunctions"></table>
+                    <table class="gridFull" id="gridFunctions"></table>
                     <div id="gridPagerFunctions"></div>
                 </div>
-            </div>-->
+            </div>
             <div class="tabs" id="tabStates">
                 <div class="tabContainer">
                     <table class="gridFull"  id="gridStates"></table>
@@ -147,7 +149,7 @@
                     <ul class="tabsPanel">
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuSystem" src="img/loader-bright.gif"></span></a></li>
-                        <li><a href="#tabCcuRooms">Gewerke und Räume<span class="loader"><img id="loaderCcuRooms" src="img/loader-bright.gif"></span></a></li><!--
+                        <!--<li><a href="#tabCcuRooms">Gewerke und Räume<span class="loader"><img id="loaderCcuRooms" src="img/loader-bright.gif"></span></a></li><!--
                         <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
@@ -174,7 +176,7 @@
                     <div class="tabs" id="tabCcuChart">
                         <div id="chartProtocol"></div>
                     </div>
-                    <div class="tabs" id="tabCcuRooms">
+                    <!--<div class="tabs" id="tabCcuRooms">
                         <table>
                             <tr>
                                 <td>
@@ -187,7 +189,7 @@
                                 </td>
                             </tr>
                         </table>
-                    </div>
+                    </div>-->
 
                     <div class="tabs" id="tabCcuInfo">
                         <div class="tabContainer">

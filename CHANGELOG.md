@@ -1,5 +1,16 @@
 Changelog
 =========
+2.3-beta2
+---------
+* Chart wird erst initialisiert wenn man ihn das erste mal den Tab öffnet
+* Neuer Tab Räume (noch unfertig)
+* Neuer Tab Gewerke (noch unfertig)
+* Style-Anpassung Hilfe-Dialog
+* checkNames Fehler bei Variablen behoben
+* Style-Anpassung Reiter
+
+
+
 2.3-beta1
 ---------
 * Kanäle können nun Räumen und Gewerken hinzugefügt bzw von diesen entfernt werden

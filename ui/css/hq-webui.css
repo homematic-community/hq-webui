@@ -49,7 +49,7 @@ div.favPane {
 
 }
 div#container {
-    min-width: 1090px;
+    min-width: 1178px;
     width: 100%;
 
 }
@@ -139,6 +139,7 @@ div.favStartProgram button, div.favInput button {
 }
 ul.tabsPanel li a span {
     width:21px;
+    margin-bottom: -1px;
     height: 14px;
     display: inline-block;
     vertical-align: text-bottom;
@@ -148,7 +149,7 @@ ul.tabsPanel li a span.tabAlert {
     width: 16px;
     height:  16px;
     padding-bottom: -2px;
-    margin-bottom: -1px;
+    margin-bottom: -2px;
     position: relative;
     display: inline-block;
     top: -1px;
