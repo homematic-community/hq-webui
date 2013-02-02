@@ -31,12 +31,11 @@
                 <!--<li><a href="#tabDashboard">Dashboard</a></li>-->
                 <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabRooms">Räume<span class="loader"><img id="loaderRooms" src="img/loader-bright.gif"></span></a></li>
-                <li><a href="#tabFunctions">Gewerke<span class="loader"><img id="loadFunctions" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabFunctions">Gewerke<span class="loader"><img id="loaderFunctions" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span id="alarmcount" class="tabCount"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span id="msgcount" class="tabCount"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
                 <!--<li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>-->
-                <li style="margin-left: 1px;"><a href="#tabRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
             </ul>
@@ -89,12 +88,6 @@
                     <div id="gridPagerLinks"></div>
                 </div>
             </div>-->
-            <div class="tabs" id="tabRssi">
-                <div class="tabContainer">
-                    <table class="gridFull" id="gridRssi"></table>
-                    <div id="gridPagerRssi"></div>
-                </div>
-            </div>
             <div class="tabs" id="tabDev">
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
@@ -115,6 +108,7 @@
                                 <li><a id="editorNewJson" href="#">JSON RPC</a></li>
                                 <li><a id="editorNewXml" href="#">XML RPC</a></li>
                             </ul>
+                            <button style="float:left;" id="editorRenameFile">Umbenennen</button>
                             <button style="float:right" id="editorHelp">Doku</button>
                             <button id="hmSaveScript"></button>
                         </div>
@@ -155,6 +149,8 @@
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
                     -->    <li><a href="#tabCcuProtocol">Protokoll-Tabelle<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuChart">Protokoll-Graph<span class="loader"><img id="loaderProtocol2" src="img/loader-bright.gif"></span></a></li>
+                        <li style="margin-left: 1px;"><a href="#tabCcuRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
+
                     </ul>
                     <div class="tabs" id="tabCcuSystem">
                         <div id="tabSystemContainer">
@@ -206,6 +202,13 @@
                     <div class="tabs" id="tabCcuServices">
                         Todo
                     </div>-->
+                    <div class="tabs" id="tabCcuRssi">
+                        <div class="tabContainer">
+                            <table class="gridSub" id="gridRssi"></table>
+                            <div id="gridPagerRssi"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -406,8 +409,16 @@
             <tr>
                 <td>Name</td><td><input id="cfgDeviceName" type="text" size="40"/></td>
             </tr>
-       </table>
+        </table>
         <input type="hidden" id="cfgDeviceId"/>
+    </div>
+    <div class="dialog" id="dialogRenameFile" title="Datei umbenennen">
+        <table>
+            <tr>
+                <td>Name</td><td><input id="cfgFileName" type="text" size="40"/><input id="cfgFileNameExt" type="text" size="5" disabled="disabled"/> </td>
+            </tr>
+        </table>
+        <input type="hidden" id="cfgFileNameOld"/>
     </div>
     <div class="dialog" id="dialogDelVariable" title="Variable löschen">
         <br>
@@ -620,5 +631,13 @@
             </div>
         </td><td style="width: 50%">
         </td></tr></table>
+    </div>
+    <div class="contextmenu">
+        <ul id="contextMenuRooms" style="width:240px;">
+            <li><a id="menuRoomAddChannel" href="#">Kanal hinzufügen</a></li>
+            <li><a id="menuRoomEdit" href="#">editieren</a></li>
+            <li><a id="menuRoomDel" href="#">löschen</a></li>
+        </ul>
+
     </div>
 </body>

@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-beta2",
+    var version =               "2.3-beta3",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -148,6 +148,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         divStderr =             $("#divStderr"),
         divStdout =             $("#divStdout"),
         divScriptVariables =    $("#divScriptVariables"),
+        divSession =            $("#session"),
+        divLogin =              $("#login"),
+
 
         accordionFavorites =    $("div#accordionFavorites"),
         serviceIndicator =      $("#service"),
@@ -163,6 +166,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         hmSession,
 
+        editorReady =           false,
+
         xmlmenu,
 
         highchartProtocol,
@@ -176,12 +181,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $(".hq-version").html(version);
 
     // Elemente verstecken
-    $("#login").hide();
+    divLogin.hide();
 
     $("#logout").hide();
-    $("#session").show();
+    divSession.show();
     $("#hmNewScriptMenu").menu().hide();
     $("#hmRunScriptMenu").menu().hide();
+    $("#contextMenuRooms").menu().hide();
     //$("#hmCcuMenu").menu().hide();
     $("#hmCcuMenu").hide();
     $("#buttonsFavorites").hide();
@@ -273,7 +279,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     var tabChange = false;
     tabActive = window.location.hash;
     if (tabActive == "") { tabActive = "#tabFavorites"; }
-        tabs.tabs({
+    tabs.tabs({
         select: function(event, ui) {
             clearTimeout(timerRefresh);
             timerRefresh = setTimeout(hmRefresh, 50);
@@ -289,7 +295,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
             if (ui.index == 0) {
                 setTimeout(resizeFavHeight, 40);
             }
-        }
+        },
+            activate: function(e, ui) {
+                if (ui.newTab[0].children[0].hash == "#tabDev") {
+                        if (!editorReady) {
+                            editorReady = true;
+                            initEditArea();
+                        }
+
+                }
+            }
     });
     $("a[href='#tabDashboard']").css("border","1px solid red").unbind("click").click(function () {
         this.href="dashboard.html";
@@ -300,6 +315,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         tabChange = true;
         tabActive = window.location.hash;
         tabs.tabs('select', tabActive);
+
     });
     var protocolLoading = false, chartProtocolLoading = false;
     subTabCcu.tabs({
@@ -936,11 +952,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var rooms = "";
                 $(obj).find("channel").each(function () {
                     var ise_id = $(this).attr("ise_id");
-                    var room = roomsXMLObj.find("channel[ise_id='" + ise_id + "']").parent().attr("name");
-                    if (room != undefined && rooms.indexOf(room) == -1) {
-                        if (rooms != "") { rooms += ", "; }
-                        rooms += room;
-                    }
+                    var room;
+                    roomsXMLObj.find("channel[ise_id='" + ise_id + "']").each(function() {
+                        room = $(this).parent().attr("name");
+                        if (room != undefined && rooms.indexOf(room) == -1) {
+                            if (rooms != "") { rooms += ", "; }
+                            rooms += room;
+                        }
+                    });
+
 
                 });
                 return rooms;
@@ -951,12 +971,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 var functions = "";
                 $(obj).find("channel").each(function () {
                     var ise_id = $(this).attr("ise_id");
-                    var func = functionsXMLObj.find("channel[ise_id='" + ise_id + "']").parent().attr("name");
-                    if (func != undefined && functions.indexOf(func) == -1) {
-                        if (functions != "") { functions += ", "; }
-                        functions += func;
-                    }
-
+                    var func;
+                    functionsXMLObj.find("channel[ise_id='" + ise_id + "']").each(function() {
+                        func = $(this).parent().attr("name");
+                        if (func != undefined && functions.indexOf(func) == -1) {
+                            if (functions != "") { functions += ", "; }
+                            functions += func;
+                        }
+                    });
                 });
                 return functions;
             }
@@ -1079,8 +1101,15 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:"functions", index:"functions",   width:130, fixed: true,
             xmlmap: function (obj) {
-                return $(functionsXML).find("channel[ise_id='" + $(obj).attr('ise_id') + "']").parent().attr("name");
-            }
+                var output = "";
+                functionsXMLObj.find("channel[ise_id='" + $(obj).attr('ise_id') + "']").each(function () {
+                    if (output == "") {
+                        output = $(this).parent().attr("name");
+                    } else {
+                        output += ", " + $(this).parent().attr("name");
+                    }
+                });
+                return output;}
         },
         {name:'logged', index:'logged', width: 27, edittype: 'checkbox', fixed: true,
             xmlmap: function (obj) {
@@ -1253,12 +1282,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
     ];
 
     var colModelRooms = [
-        {name: 'id', index:'id', width: 38,
+        {name: 'id', index:'id', width: 80, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr("ise_id");
             }
         },
-        {name:'name', index:'name', width: 120,
+        {name:'name', index:'name', width: 240, fixed: true,
             xmlmap: function (obj) {
                 return $(obj).attr("name");
             }
@@ -1379,7 +1408,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'aes', index:'aes', width: 60,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var aes = statesXMLObj.find("device[address='" + device + "'] channel:first").attr("aes_available");
+                var aes = statesXMLObj.find("channel[address='" + device + ":0']").attr("aes_available");
 
                 return aes;
             },
@@ -1387,8 +1416,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         {name:'mode', index:'mode', width: 60,
             xmlmap: function (obj) {
+
                 var device = $(obj).attr("device");
-                var mode = statesXMLObj.find("device[address='" + device + "'] channel:first").attr("transmission_mode");
+
+                var mode = statesXMLObj.find("channel[address='" + device + ":0']").attr("transmission_mode");
                 if (mode == "AES") {
                     mode = '<span style="display:inline-block; align:bottom" class="ui-icon ui-icon-key"></span> <span style="position:relative; top: -3px;">' + mode + '</span>';
                 }
@@ -2015,7 +2046,19 @@ jQuery.extend(jQuery.expr[ ":" ], {
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
             subGridChannel(grid_id, row_id);
-        }
+        } /*,
+        onRightClickRow: function(row_id, irow, icol, event) {
+           $("#contextMenuRooms").show().position({
+                my: "left top",
+                at: "left bottom",
+                of: event
+            });
+            $(document).one("click", function() {
+                $("#contextMenuRooms").hide();
+            });
+            event.preventDefault();
+            return false;
+        }*/
 
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
@@ -2058,9 +2101,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-refresh",
             onClickButton: function () {
-                //storage.set("hqWebUiVariables", null);
-                //storage.set("hqWebUiVariablesTime", null);
-                //hmGetVariables();
+                storage.set("hqWebUiRooms", null);
+                roomsReady = false;
+                hmGetRooms();
             },
             position: "last",
             title:"Neu laden",
@@ -2159,9 +2202,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
             caption:"",
             buttonicon:"ui-icon-refresh",
             onClickButton: function () {
-                //storage.set("hqWebUiVariables", null);
-                //storage.set("hqWebUiVariablesTime", null);
-                //hmGetVariables();
+                storage.set("hqWebUiFunctions", null);
+                functionsReady = false;
+                hmGetFunctions();
             },
             position: "last",
             title:"Neu laden",
@@ -2335,41 +2378,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         var subgrid_table_id = grid_id + "_t";
 
         $("#" + grid_id).html("<table id='" + subgrid_table_id + "''></table>");
-        console.log(grid_id);
-        if (grid_id.match(/gridRooms/)) {
-            $("#" + subgrid_table_id).jqGrid( {
-                colNames: colNamesChannel,
-                datatype:'xmlstring',
-                datastr: roomsXML,
-                colModel: colModelChannel,
-                xmlReader: {
-                    root:"roomList>room[ise_id='" + row_id + "']",
-                    row:"channel",
-                    id:"[ise_id]",
-                    repeatitems: false
-                },
-                gridview:true,
-                height: "100%",
-                rowNum:1000,
-                subGrid: true,
-                gridComplete: function() {
-                    $("button.btnChRename").button({
-                        icons: { primary: 'ui-icon-wrench' }
-                    }).click(function () {
-                            hmCfgChannel($(this).parent().parent().attr("id"));
-                        });
-
-
-                },
-                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
-                ondblClickRow: function(row_id, iRow, iCol, e) {
-
-                },
-                beforeSelectRow: function() { return false; }
-            });
-
-        } else {
-            $("#" + subgrid_table_id).jqGrid( {
+        //console.log(grid_id);
+        var gridConf = {
                 colNames: colNamesChannel,
                 datatype:'xmlstring',
                 datastr: statesXML,
@@ -2398,9 +2408,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 },
                 beforeSelectRow: function() { return false; }
-            });
 
+        };
+        if (grid_id.match(/gridRooms/)) {
+            gridConf.datastr = roomsXML;
+            gridConf.xmlReader.root = "roomList>room[ise_id='" + row_id + "']";
+        } else if (grid_id.match(/gridFunctions/)) {
+            gridConf.datastr = functionsXML;
+            gridConf.xmlReader.root = "functionList>function[ise_id='" + row_id + "']";
         }
+        $("#" + subgrid_table_id).jqGrid(gridConf);
+
+
      }
 
     function hmCfgChannel(row_id) {
@@ -2862,8 +2881,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             $("#loaderStates").hide();
             if (hqConf.refreshEnable) {
                 if (hqConf.debug) { console.log((new Date()).getTime() + " starting Refresh"); }
-                setTimeout(hmRefresh, 250);
-                setTimeout(hmRefreshAlarms, 1000);
+                hmRefresh();
+                hmRefreshAlarms();
             }
 
             if (!rssiReady) {
@@ -4530,6 +4549,7 @@ var chartProtocolReady;
                         logged = "false";
                     }
                     var row_id = $("#cfgChannelId").val();
+                    var dev_id = statesXMLObj.find("channel[ise_id='"+row_id+"']").parent().attr("ise_id");
                     $("tr[id='" + row_id + "'] td[aria-describedby$='t_name']").html(name);
                     $("tr[id='" + row_id + "'] td[aria-describedby$='t_logged']").html(formatBool(logged) || "");
 
@@ -4557,11 +4577,14 @@ var chartProtocolReady;
                             if ($(this).find("channel[ise_id='"+row_id+"']").length == 0) {
                                 script = script + "object room = dom.GetObject("+roomId+");\n" +
                                     "room.Add("+row_id+");\n";
+                                $(this).append($("<channel ise_id=\""+row_id+"\"/>"));
                             }
                         } else {
                             if ($(this).find("channel[ise_id='"+row_id+"']").length > 0) {
+
                                 script = script + "object room = dom.GetObject("+roomId+");\n" +
                                     "room.Remove("+row_id+");\n";
+                                $(this).find("channel[ise_id='"+row_id+"']").remove();
                             }
                         }
                     });
@@ -4579,11 +4602,14 @@ var chartProtocolReady;
                             if ($(this).find("channel[ise_id='"+row_id+"']").length == 0) {
                                 script = script + "object func = dom.GetObject("+functionId+");\n" +
                                     "func.Add("+row_id+");\n";
+                                $(this).append($("<channel ise_id=\""+row_id+"\"/>"));
+
                             }
                         } else {
                             if ($(this).find("channel[ise_id='"+row_id+"']").length > 0) {
                                 script = script + "object func = dom.GetObject("+functionId+");\n" +
                                     "func.Remove("+row_id+");\n";
+                                $(this).find("channel[ise_id='"+row_id+"']").remove();
                             }
                         }
                     });
@@ -4591,10 +4617,42 @@ var chartProtocolReady;
                     $("tr[id='"+row_id+"'] td[aria-describedby$='_t_rooms']").html(roomList);
                     $("tr[id='"+row_id+"'] td[aria-describedby$='_t_functions']").html(functionList);
 
+
+                    var rooms = "";
+                    var functions = "";
+
+                    statesXMLObj.find("device[ise_id='"+dev_id+"'] channel").each(function () {
+                        var ise_id = $(this).attr("ise_id");
+                        var room;
+                        roomsXMLObj.find("channel[ise_id='" + ise_id + "']").each(function() {
+                            room = $(this).parent().attr("name");
+                            if (room != undefined && rooms.indexOf(room) == -1) {
+                                if (rooms != "") { rooms += ", "; }
+                                rooms += room;
+                            }
+                        });
+
+                        var func;
+                        functionsXMLObj.find("channel[ise_id='" + ise_id + "']").each(function() {
+                            func = $(this).parent().attr("name");
+                            if (func != undefined && functions.indexOf(func) == -1) {
+                                if (functions != "") { functions += ", "; }
+                                functions += func;
+                            }
+                        });
+
+                    });
+
+
+                    //console.log("dev_id="+dev_id+" rooms="+rooms);
+                    $("tr[id='"+dev_id+"'] td[aria-describedby='gridStates_rooms']").html(rooms);
+                    $("tr[id='"+dev_id+"'] td[aria-describedby='gridStates_functions']").html(functions);
+
                     dialogCfgChannel.dialog('close');
                     var script = script + "object o = dom.GetObject("+row_id+");\n" +
                                 "o.Name('"+name+"');\n" +
                                 "o.ChnArchive("+logged+");\n";
+                    if (hqConf.debug) { console.log(script); }
                     $.ajax({
                         url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
                         type: "POST",
@@ -4605,41 +4663,50 @@ var chartProtocolReady;
 
                         }
                     });
-
                             // TODO Protkolliert-Flag des übergeordneten Gerätes aktualiseren
-                   // devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
                     statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
-                   // devicesXML = $.parseXML((new XMLSerializer()).serializeToString(devicesXMLObj[0]));
                     statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-                   // storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXML));
                     storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
+                    roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
+                    storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
+                    functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
+                    storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
+                    gridRooms.setGridParam({
+                        loadonce: false,
+                        datatype: "xmlstring",
+                        datastr: roomsXML
+                    }).trigger("reloadGrid").setGridParam({loadonce:true});
+                    gridFunctions.setGridParam({
+                        loadonce: false,
+                        datatype: "xmlstring",
+                        datastr: functionsXML
+                    }).trigger("reloadGrid").setGridParam({loadonce:true});
+                    /*
+                           var request = {
 
-             /*
-                    var request = {
-
-                        "method": '',
-                        "params": {
-                            "id": $("#cfgChannelId").val(),
-                            "name": $("#cfgChannelName").val(),
-                            "_session_id_": hmSession
-                        }
-                    };
-                    request.method = "Channel.setName";
-                    if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
-                    jsonPost(request, function () {
-                        var row_id = $("#cfgChannelId").val();
-                              $("tr[id='" + $("#cfgChannelId").val() + "'] td[aria-describedby$='t_name']").html($("#cfgChannelName").val());
-                                devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
-                                //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
-                                //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
+                               "method": '',
+                               "params": {
+                                   "id": $("#cfgChannelId").val(),
+                                   "name": $("#cfgChannelName").val(),
+                                   "_session_id_": hmSession
+                               }
+                           };
+                           request.method = "Channel.setName";
+                           if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
+                           jsonPost(request, function () {
+                               var row_id = $("#cfgChannelId").val();
+                                     $("tr[id='" + $("#cfgChannelId").val() + "'] td[aria-describedby$='t_name']").html($("#cfgChannelName").val());
+                                       devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
+                                       statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
+                                       favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
+                                       //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
+                                       //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
+                                       //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
 
 
 
-                    });
-              */       });
+                           });
+                     */       });
 
 
             },
@@ -5195,6 +5262,42 @@ var chartProtocolReady;
     $("button#editorHelp").button({
         icons: { primary: "ui-icon-help" }
     });
+
+    $("button#editorRenameFile").button({
+        icons: { primary: "ui-icon-pencil" }
+    }).click(function () {
+        var filename = editAreaLoader.getCurrentFile("hmScript").id;
+        var filenameparts = filename.split(".");
+        var ext = "." + filenameparts.pop();
+        var file = filenameparts.join(".")
+        $("#cfgFileName").val(file);
+        $("#cfgFileNameExt").val(ext);
+        $("#cfgFileNameOld").val(filename);
+
+        $("#dialogRenameFile").dialog("open");
+    });
+
+    $("#dialogRenameFile").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 377,
+        height: 155,
+        buttons: {
+            "Abbrechen": function () {
+                $(this).dialog("close");
+            },
+            "Übernehmen": function () {
+                var file = editAreaLoader.getCurrentFile("hmScript");
+                editAreaLoader.closeFile("hmScript", file.id);
+                file.id = checkFileName($("#cfgFileName").val() + $("#cfgFileNameExt").val());
+                file.title = file.id;
+                editAreaLoader.openFile("hmScript", file);
+                $(this).dialog("close");
+            }
+
+        }
+    });
+
     $("button#editorNewFile").button({
         icons: { primary: "ui-icon-document", secondary: "ui-icon-triangle-1-s" }
     }).click(function() {
@@ -5209,31 +5312,70 @@ var chartProtocolReady;
             });
             return false;
         });
-    $("#editorNewHmScript").click(function (e) {
-        var new_file= {id: formatTimestamp() + ".hm", text: "\n\n\n\n\n", syntax: 'hmscript'};
+
+    function checkFileName(name) {
+        var files = editAreaLoader.getAllFiles("hmScript");
+        if (files[name] !== undefined) {
+            var parts = name.split(".");
+            var ext = parts.pop();
+            name = parts.join(".") + "_." + ext;
+            return checkFileName(name);
+        }
+         return name;
+    }
+    function newScript(type) {
+        var filename, syntax = type, text = "\n\n\n\n\n";
+        switch (type) {
+            case "hmscript":
+                filename = checkFileName("script.fn");
+                break;
+            case "tcl":
+                filename = checkFileName("script.tcl");
+                break;
+            case "json":
+                text = '{   "method":"",\n    "params":{}\n}\n\n\n';
+                filename = checkFileName("rpc.json");
+                break;
+            case "xml":
+                text = '<methodCall>\n  <methodName></methodName>\n  <params>\n    <param><value><string></string></value></param>\n    <param><value><string></string></value></param>\n  </params>\n</methodCall>';
+                filename = checkFileName("rpc.xml");
+                break;
+            case "sh":
+                text = "#!/bin/sh\n\n\n\n\n\nexit\n"
+                filename = checkFileName("script.sh");
+                break;
+        }
+        var new_file= {id: filename, text: text, syntax: syntax};
         editAreaLoader.openFile('hmScript', new_file);
+
+    }
+    function renameScript() {
+
+    }
+    $("#editorNewHmScript").click(function (e) {
+        //var new_file= {id: formatTimestamp() + ".fn", text: "\n\n\n\n\n", syntax: 'hmscript'};
+        //editAreaLoader.openFile('hmScript', new_file);
+        newScript("hmscript");
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
         return false;
     });
     $("#editorNewTclScript").click(function (e) {
-        var new_file= {id: formatTimestamp() + ".tcl", text: "\n\n\n\n\n", syntax: 'tcl'};
-        editAreaLoader.openFile('hmScript', new_file);
+        newScript("tcl");
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
         return false;
     });
     $("#editorNewShScript").click(function (e) {
-        var new_file= {id: formatTimestamp() + ".sh", text: "#!/bin/sh\n\n\n\nexit\n", syntax: 'tcl'};
-        editAreaLoader.openFile('hmScript', new_file);
+        newScript("sh");
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
         return false;
     });
 
     $("#editorNewJson").click(function (e) {
-        var new_file= {id: formatTimestamp() + ".json", text: "\n\n\n\n\n", syntax: 'json'};
-        editAreaLoader.openFile('hmScript', new_file);
+
+        newScript("json");
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
         return false;
@@ -5241,8 +5383,7 @@ var chartProtocolReady;
 
 
     $("#editorNewXml").click(function (e) {
-        var new_file= {id: formatTimestamp() + ".xml", text: "\n\n\n\n\n", syntax: 'xml'};
-        editAreaLoader.openFile('hmScript', new_file);
+        newScript("xml");
         e.preventDefault();
         $("#hmNewScriptMenu").hide();
         return false;
@@ -5279,7 +5420,7 @@ var chartProtocolReady;
     // Homematic Funktionen
     function hmClearProtocol() {
         var script = "dom.ClearHistoryData();";
-        if (hqConf.debug) { console.log(script); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + script); }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: "POST",
@@ -5293,7 +5434,7 @@ var chartProtocolReady;
 
     function hmRunProgram(program_id) {
         var scriptRunProgram = "dom.GetObject(" + program_id + ").ProgramExecute();";
-        if (hqConf.debug) { console.log(scriptRunProgram); }
+        if (hqConf.debug) { console.log((new Date()).getTime() + scriptRunProgram); }
         $.ajax({
             url: hqConf["ccuUrl"] + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
             type: 'POST',
@@ -5440,7 +5581,7 @@ var chartProtocolReady;
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFunctions()"); }
 
 
-        $("#loaderStates").show();
+        $("#loaderFunctions").show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
 
@@ -5454,6 +5595,7 @@ var chartProtocolReady;
                 datastr: functionsXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
             initSelectFunctions();
+            $("#loaderFunctions").hide();
             hmGetAlarms();
             return false;
         }
@@ -5476,6 +5618,8 @@ var chartProtocolReady;
                     datastr: functionsXML
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 initSelectFunctions();
+                $("#loaderFunctions").hide();
+
                 hmGetAlarms();
             },
             error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
@@ -5723,7 +5867,7 @@ var chartProtocolReady;
 
     function hmGetRooms() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRooms()"); }
-	$("#loaderStates").show();
+	$("#loaderRooms").show();
 
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
@@ -5738,6 +5882,7 @@ var chartProtocolReady;
                 datatype: "xmlstring",
                 datastr: roomsXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
+            $("#loaderRooms").hide();
             initSelectRooms();
             hmGetDevices();
             //hmGetDevices();
@@ -5761,6 +5906,7 @@ var chartProtocolReady;
                     datastr: roomsXML
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 initSelectRooms();
+                $("#loaderRooms").hide();
                 hmGetDevices();
                 //hmGetDevices();
             },
@@ -5828,7 +5974,7 @@ var chartProtocolReady;
     }
 
     function getVersion() {
-        if (hqConf.debug) { console.log((new Date()).getTime() + " getVersion()"); }
+    /*    if (hqConf.debug) { console.log((new Date()).getTime() + " getVersion()"); }
         gridInfo.jqGrid('addRowData', "HQ WebUI Version", {'key': "HQ WebUI Version", 'value': version});
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/version.txt",
@@ -5890,8 +6036,8 @@ var chartProtocolReady;
             jsonLogin(username, password);
         } else {
             $("#buttonDelCred").attr("disabled", true);
-            $("#session").hide();
-            $("#login").show();
+            divSession.hide();
+            divLogin.show();
             $("#password").focus();
         }
     }
@@ -5917,7 +6063,7 @@ var chartProtocolReady;
 
 
             hmSession = data.result;
-            $("#session").hide();
+            divSession.hide();
             webuiStart();
 
             if (hqConf.sessionPersistent) {
@@ -5948,12 +6094,12 @@ var chartProtocolReady;
                 msg = data.error.message;
             }
             if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.login Failed - "+msg); }
-            $("#session").hide();
+            divSession.hide();
             $("#loginError").show().html(msg);
             setTimeout(function () {
                 $("#loginError").hide();
             }, 4000);
-            $("#login").show();
+            divLogin.show();
             $("#widgetLogin").effect("shake", { times:3, distance: 12 }, 470);
             $("#password").val("").focus();
 
@@ -6003,8 +6149,8 @@ var chartProtocolReady;
 
                 if (data.result) {
                     if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.renew Successful"); }
-                    $("#login").hide();
-                    $("#session").hide();
+                    divLogin.hide();
+                    divSession.hide();
                     if (firstLoad) {
                         webuiStart();
                         timerSession = setTimeout(hmSessionRenew, 240000);
@@ -6037,8 +6183,8 @@ var chartProtocolReady;
 
                     //console.log((new Date()).getTime() + " no saved credentials -> show login");
                     $("#buttonDelCred").attr("disabled", true);
-                    $("#session").hide();
-                    $("#login").show();
+                    divSession.hide();
+                    divLogin.show();
                     $("#password").focus();
                 }
             });
@@ -7027,7 +7173,15 @@ var chartProtocolReady;
         editAreaInit['autocompletion'] = true;
     }
 
-    editAreaLoader.init(editAreaInit);
+    function initEditArea() {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " editArea init"); }
+        editAreaLoader.init(editAreaInit);
+    }
+
+    if (tabActive == "#tabDev") {
+        editorReady = true;
+        initEditArea();
+    }
 
 
 })})(jQuery);
@@ -7040,14 +7194,23 @@ function scriptFileClose(file) {
  //   dialogDebugScript.dialog("open");
  //   return false;
  // Bis dahin: Workaround via confirm()
-    if (confirm("Wirklich das Script " + file["id"] + " löschen?")) {
+    if (!$("#dialogRenameFile").is(":visible")) {
+        if (confirm("Wirklich das Script " + file["id"] + " löschen?")) {
+            setTimeout(function () {
+                $("button#hmSaveScript").trigger("click");
+            }, 200);
+            return true;
+        } else {
+            return false;
+        }
+    } else {
         setTimeout(function () {
             $("button#hmSaveScript").trigger("click");
         }, 200);
         return true;
-    } else {
-        return false;
     }
+
+
 }
 
 // Automatisches Speichern
@@ -7065,13 +7228,29 @@ function scriptEditorReady() {
     $("frame_hmScript").contents().find("#toolbar_1 a").button();
 
     scriptEditorStyle();
-
+    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea init done"); }
     // Gespeicherte Scripte laden
     var scripts = JSON.parse(storage.get('hqWebUiScripts'));
+    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea loading files"); }
     for (var key in scripts) {
-        var new_file= {id: key, text: scripts[key], syntax: 'hmscript'};
+        var filenameparts = key.split(".");
+        var ext = filenameparts.pop();
+        switch (ext) {
+            case "fn":
+            case "hm":
+
+
+                var new_file= {id: key, text: scripts[key], syntax: "hmscript"};
+                break;
+            default:
+                var new_file= {id: key, text: scripts[key], syntax: "", do_highlight: ""};
+
+
+        }
+
         editAreaLoader.openFile('hmScript', new_file);
     }
+    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea loading files done"); }
 
 }
 

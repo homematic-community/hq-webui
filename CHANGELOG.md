@@ -1,8 +1,15 @@
 Changelog
 =========
+2.3-beta3
+---------
+* Umbenennen von Dateien im Script-Editor
+* diverse Fehler bei der Anzeige von Räumen/Gewerken behoben
+* Ladezeiten weiter optimiert
+
+
 2.3-beta2
 ---------
-* Chart wird erst initialisiert wenn man ihn das erste mal den Tab öffnet
+* Chart wird erst initialisiert wenn man das erste mal den Tab öffnet
 * Neuer Tab Räume (noch unfertig)
 * Neuer Tab Gewerke (noch unfertig)
 * Style-Anpassung Hilfe-Dialog
