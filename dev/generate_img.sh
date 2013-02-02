@@ -9,14 +9,18 @@ mkdir -p tmp/hq/api
 #cat js/lostorage.min.js >> tmp/script-bundle.js
 #java -jar dev/yuicompressor-2.4.7.jar --charset ISO-8859-1 js/i18n/grid.locale-de.js >> tmp/script-bundle.js
 #cat js/jquery.jqGrid.min.js >> tmp/script-bundle.js
-#java -jar dev/yuicompressor-2.4.7.jar --charset ISO-8859-1 js/hq-webui.js >> tmp/script-bundle.js
+
+#java -jar dev/yuicompressor-2.4.7.jar --charset ISO-8859-1 ui/js/hq-webui.js >> ui/js/hq-webui.min.js
 
 cp -a ui/edit_area/ tmp/hq/ui/edit_area/
 cp -a ui/js/* tmp/hq/ui/js/
+#rm tmp/hq/ui/js/hq-webui.js
 cp -a ui/css/* tmp/hq/ui/css/
 cp -a ui/img/* tmp/hq/ui/img/
 cp -a api/* tmp/hq/api/
-cp ui/index.html tmp/hq/ui/
+cp index.html tmp/hq/index.html
+#cp ui/index.min.html tmp/hq/ui/index.html
+cp ui/index.html tmp/hq/ui/index.html
 cp dev/update_script tmp/
 cp dev/hobbyquaker-webui tmp/
 cd tmp

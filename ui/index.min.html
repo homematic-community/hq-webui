@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>HQ WebUI</title>
+    <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/redmond/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
+    <link type="text/css" href="css/jquery.multiselect.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery.jsonview.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
+    <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lostorage.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
+    <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="js/jquery.multiselect.min.js"></script>
+    <script type="text/javascript" src="js/jquery.jsonview.js"></script>
+    <script type="text/javascript" src="js/highcharts.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/hmscripts.js"></script>
+    <script type="text/javascript" src="js/tclscripts.js"></script>
+    <script type="text/javascript" src="js/hq-webui.min.js"></script>
+</head>
+<body>
+<div id="container">
+    <div id="tabs">
+        <ul id="mainNav" class="tabsPanel">
+            <!--<li><a href="#tabDashboard">Dashboard</a></li>-->
+            <li><a href="#tabFavorites">Favoriten<span class="loader"><img id="loaderFavorites" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabRooms">Räume<span class="loader"><img id="loaderRooms" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabFunctions">Gewerke<span class="loader"><img id="loaderFunctions" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabVariables">Variablen<span id="alarm" class="tabAlert ui-icon ui-icon-alert"></span><span id="alarmcount" class="tabCount"></span><span class="loader"><img id="loaderVariables" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span id="msgcount" class="tabCount"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
+            <!--<li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>-->
+            <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
+            <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
+        </ul>
+        <!--<div class="tabs" id="tabDashboard"></div>-->
+        <div class="tabs" id="tabFavorites">
+            <div id="accordionFavorites"></div>
+            <div id="buttonsFavorites" style=" ">
+                <button id="buttonRefreshFavs" >Neu laden</button>
+                    <span class="timeDisplay" style="line-height: 1em;">
+                        <span class="timeUpdate" style="font-size: 0.8em;"></span> -
+                        <span id="timeRefreshFavs" style="font-size: 0.8em;"/>
+
+                    </span>
+            </div>
+        </div>
+        <div class="tabs" id="tabVariables">
+            <div class="tabContainer">
+                <table class="gridFull" id="gridVariables"></table>
+                <div id="gridPagerVariables"></div>
+            </div>
+        </div>
+        <div class="tabs" id="tabPrograms">
+            <div class="tabContainer">
+                <table class="gridFull" id="gridPrograms"></table>
+                <div id="gridPagerPrograms"></div>
+            </div>
+        </div>
+        <div class="tabs" id="tabRooms">
+            <div class="tabContainer">
+                <table class="gridFull" id="gridRooms"></table>
+                <div id="gridPagerRooms"></div>
+            </div>
+        </div>
+        <div class="tabs" id="tabFunctions">
+            <div class="tabContainer">
+                <table class="gridFull" id="gridFunctions"></table>
+                <div id="gridPagerFunctions"></div>
+            </div>
+        </div>
+        <div class="tabs" id="tabStates">
+            <div class="tabContainer">
+                <table class="gridFull"  id="gridStates"></table>
+                <div id="gridPagerStates"></div>
+            </div>
+        </div>
+        <!--<div class="tabs" id="tabLinks">
+            Todo
+            <div class="tabContainer">
+                <table id="gridLinks"></table>
+                <div id="gridPagerLinks"></div>
+            </div>
+        </div>-->
+        <div class="tabs" id="tabDev">
+            <div class="tabContainer">
+                <table><tr><td id="hmScriptContainer">
+                    <textarea id="hmScript" cols="92" rows="40"></textarea>
+                </td><td style="vertical-align: top; padding-left: 20px;" id="hmScriptTools">
+                    <div id="editorButtons">
+                        <button style="float:left;" id="hmRunScript">Ausführen</button>
+                        <ul id="hmRunScriptMenu">
+                            <li><a id="editorRunXml0" href="#">BidCos-Wired (2000)</a></li>
+                            <li><a id="editorRunXml1" href="#">BidCos-RF (2001)</a></li>
+                            <li><a id="editorRunXml2" href="#">intern (2002)</a></li>
+                        </ul>
+                        <button style="float:left;" id="editorNewFile">Neue Datei</button>
+                        <ul id="hmNewScriptMenu">
+                            <li><a id="editorNewHmScript" href="#">Homematic Script</a></li>
+                            <li><a id="editorNewTclScript" href="#">TCL Script</a></li>
+                            <li><a id="editorNewShScript" href="#">Shell Script</a></li>
+                            <li><a id="editorNewJson" href="#">JSON RPC</a></li>
+                            <li><a id="editorNewXml" href="#">XML RPC</a></li>
+                        </ul>
+                        <button style="float:left;" id="editorRenameFile">Umbenennen</button>
+                        <button style="float:right" id="editorHelp">Doku</button>
+                        <button id="hmSaveScript"></button>
+                    </div>
+                    <br><br><br>
+                    <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; max-width: 600px; height: 300px; overflow:hidden;">
+                        <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
+                            <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
+                        </div>
+                        <div id="hmScriptStdout" class="ui-corner-bottom" style="overflow: scroll; height:271px; width: 100%; background-color: #fff; color: #000; ">
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; height: 222px; overflow:hidden;">
+                        <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
+                            <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
+                        </div>
+                        <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:192px; width: 100%; background-color: #fff; color: #000; ">
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="divScriptVariables">
+                        <table id="gridScriptVariables"></table>
+                    </div>
+                </td></tr></table>
+            </div>
+        </div>
+
+        <div class="tabs" id="tabCcu">
+            <div id="subTabCcu">
+                <ul class="tabsPanel">
+                    <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
+                    <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuSystem" src="img/loader-bright.gif"></span></a></li>
+                    <!--<li><a href="#tabCcuRooms">Gewerke und Räume<span class="loader"><img id="loaderCcuRooms" src="img/loader-bright.gif"></span></a></li><!--
+                    <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
+                    <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
+                    <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
+                -->    <li><a href="#tabCcuProtocol">Protokoll-Tabelle<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
+                    <li><a href="#tabCcuChart">Protokoll-Graph<span class="loader"><img id="loaderProtocol2" src="img/loader-bright.gif"></span></a></li>
+                    <li style="margin-left: 1px;"><a href="#tabCcuRssi">Funk<span class="loader"><img id="loaderRssi" src="img/loader-bright.gif"></span></a></li>
+
+                </ul>
+                <div class="tabs" id="tabCcuSystem">
+                    <div id="tabSystemContainer">
+                        <button id="createBackup">Sicherung erstellen</button><br/>
+                        <!--<button id="saveRegadom">homematic.regadom speichern</button><br/>
+                        <button id="ccuReboot">Zentrale neu starten</button><br/>
+                        <button id="ccuSafeReboot">Zentrale im abgesicherten Modus neustarten</button>-->
+                    </div>
+
+
+                </div>
+
+                <div class="tabs" id="tabCcuProtocol">
+                    <div class="tabContainer">
+                        <table class="gridSub" id="gridProtocol"></table>
+                        <div id="gridPagerProtocol"></div>
+                    </div>
+                </div>
+                <div class="tabs" id="tabCcuChart">
+                    <div id="chartProtocol"></div>
+                </div>
+                <!--<div class="tabs" id="tabCcuRooms">
+                    <table>
+                        <tr>
+                            <td>
+                                <table id="gridRooms" class="gridSubHalf"></table>
+                                <div id="gridPagerRooms"></div>
+                            </td>
+                            <td>
+                                <table id="gridFunctions" class="gridSubHalf"></table>
+                                <div id="gridPagerFunctions"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>-->
+
+                <div class="tabs" id="tabCcuInfo">
+                    <div class="tabContainer">
+                        <table class="gridSub" id="gridInfo"></table>
+                        <div id="gridPagerInfo"></div>
+                    </div>
+                </div><!--
+                    <div class="tabs" id="tabCcuFiles">
+                        Todo
+                    </div>
+                    <div class="tabs" id="tabCcuSoftware">
+                        Todo
+                    </div>
+                    <div class="tabs" id="tabCcuServices">
+                        Todo
+                    </div>-->
+                <div class="tabs" id="tabCcuRssi">
+                    <div class="tabContainer">
+                        <table class="gridSub" id="gridRssi"></table>
+                        <div id="gridPagerRssi"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="dialog chooser" id="dialogChannelChooser" title="Kanal auswählen">
+    <table class="gridDialog" id="gridChannelChooser"></table>
+    <div id="gridPagerChannelChooser"></div>
+</div>
+<div class="dialog chooser" id="dialogVariableChooser" title="Variable auswählen">
+    <table class="gridDialog" id="gridVariableChooser"></table>
+    <div id="gridPagerVariableChooser"></div>
+</div>
+<div class="dialog" id="dialogRunProgram" title="Programm ausführen">
+    Wollen Sie wirklich das Programm "<span id="programName"></span>" ausführen?
+    <input type="hidden" id="programId">
+</div>
+<div class="dialog" id="dialogAjaxError" title="Kommunikations-Fehler">
+    <span id="ajaxOptions"></span><br>
+    <span id="thrownError"></span>
+</div>
+<div class="dialog" id="dialogJsonError" title="JSON API Kommunikations-Fehler">
+    <span id="jsonOptions"></span><br>
+    <span id="jsonError"></span>
+</div>
+<div class="dialog" id="dialogEditVariable" title="Variable editieren">
+    <span id="variableName"></span>:<br><br><span id="variableInput"></span><span id="variableUnit"></span><br>
+    <input type="hidden" id="variableId">
+</div>
+<div class="dialog" id="dialogEditDatapoint" title="Datenpunkt editieren">
+    <span id="datapointName"></span>:<br><br><span id="datapointInput"></span> <br>
+    <input type="hidden" id="datapointId">
+    <input type="hidden" id="datapointGridId">
+</div>
+<div class="dialog" id="dialogClearProtocol" title="Systemprotokoll löschen">
+    Wollen Sie das Systemprotokoll wirklich löschen?
+</div>
+<div class="dialog" id="dialogSettings" title="Einstellungen">
+    <h3>Gespeicherte Anmeldedaten</h3>
+    <button id="buttonDelCred">Löschen</button>
+    <h3>Zwischengespeicherte CCU Daten</h3>
+    <button id="buttonDelCache">Löschen und neu laden</button> <button id="buttonShowCache">Anzeigen</button>
+    <h3>Theme auswählen</h3>
+    <select id="selectUiTheme">
+        <option value="base">base</option>
+        <option value="black-tie">black-tie</option>
+        <option value="blitzer">blitzer</option>
+        <option value="cupertino">cupertino</option>
+        <option value="dark-hive">dark-hive</option>
+        <option value="dot-luv">dot-luv</option>
+        <option value="eggplant">eggplant</option>
+        <option value="excite-bike">excite-bike</option>
+        <option value="flick">flick</option>
+        <option value="hot-sneaks">hot-sneaks</option>
+        <option value="humanity">humanity</option>
+        <option value="le-frog">le-frog</option>
+        <option value="mint-choc">mint-choc</option>
+        <option value="overcast">overcast</option>
+        <option value="pepper-grinder">pepper-grinder</option>
+        <option value="redmond">redmond</option>
+        <option value="smoothness">smoothness</option>
+        <option value="south-street">south-street</option>
+        <option value="start">start</option>
+        <option value="sunny">sunny</option>
+        <option value="swanky-purse">swanky-purse</option>
+        <option value="trontastic">trontastic</option>
+        <option value="ui-darkness">ui-darkness</option>
+        <option value="ui-lightness">ui-lightness</option>
+        <option value="vader">vader</option>
+    </select>
+    <h3>Nachfragen</h3>
+    <input type="checkbox" id="namingConfirm"/> Nachfragen falls versucht wird den gleichen Namen mehrfach zu verwenden
+    <h3>Refresh-Intervall</h3>
+    <h5>Aktualisierung ungefähr alle <span id="refreshEstimation"></span> Sekunden</h5>
+    <table style="width:520px;">
+        <tr>
+            <td colspan="2" style="padding-left: 10px; padding-right: 10px;">
+                <div id="sliderRefresh"></div>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left;  font-size: 0.8em;">
+                Langsames Aktualisieren,<br>niedrige Belastung der CCU
+            </td>
+            <td style="text-align: right; font-size: 0.8em;">
+                Häufiges Aktualisieren,<br>hohe Belastung der CCU
+            </td>
+        </tr>
+    </table>
+    <h3>Debugmodus</h3>
+    <input type="checkbox" id="debugMode"/> Ausgabe von Informationen zur Fehlerbehebung in der Browserconsole<br>
+    <!--  <span style="font-size: 0.8em"><a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers">Wie öffne ich die Browserconsole?</a></span> -->
+</div>
+<div class="dialog" id="dialogDebugScript" title="Ausführung">
+    <br>
+    <span id="debugScript"></span>
+</div>
+<div class="dialog" id="dialogDocu" title="Dokumentation">
+    <h3>eQ3 - HomeMatic Script Dokumentation</h3>
+    <ul>
+        <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_1_Sprachbeschreibung_V1.2.pdf" target="_blank">Teil 1: Sprachbeschreibung</a></li>
+        <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_2_Objektmodell_V1.2.pdf" target="_blank">Teil 2: Objektmodell</a></li>
+        <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_3_Beispiele_V1.1.pdf" target="_blank">Teil 3: Beispiele</a></li>
+        <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_Script_Teil_4_Datenpunkte_1_503.pdf" target="_blank">Teil 4: Datenpunkte</a></li>
+    </ul>
+    <h3>eQ3 - HomeMatic RPC</h3>
+    <ul>
+        <li><a href="http://www.eq-3.de/Downloads/PDFs/Dokumentation_und_Tutorials/HM_XmlRpc_V1_502__2_.pdf" target="_blank">HomeMatic XML RPC Schnittstelle</a></li>
+        <li><a href="/api/homematic.cgi" target="_blank">HomeMatic JSON API</a></li>
+    </ul>
+    <h3>Community</h3>
+    <ul>
+        <li><a href="http://homematic.shoutwiki.com" target="blank">inoffizielle Script-Dokumentation</a></li>
+        <li><a href="http://www.homematic-forum.de" target="_blank">Homematic Forum</a></li>
+        <li><a href="http://www.homematic-inside.de" target="_blank">Homematic Inside</a></li>
+        <li><a href="http://www.homematic-wiki.info" target="_blank">Homematic Wiki</a></li>
+    </ul>
+
+</div>
+<div class="dialog" id="dialogAbout" title="Hilfe">
+    <h2>HQ WebUI Version <span id="hqWebUiVersion"></span></h2>
+    <h3>schnelles alternatives WebUI für die HomeMatic CCU</h3>
+    <table><tr><td style="width:105px;"><img src="img/hq-webui.png"/></td><td>
+        <ul style="font-size: 1.1em; line-height: 2em;">
+            <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/README.md" target="_blank">Dokumentation</a></li>
+            <li><a href="http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559&start=99999" target="_blank">Unterstützung</a></li>
+            <li><a href="https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md" target="_blank">Änderungs-Historie</a></li>
+        </ul>
+    </td></table>
+    <p>Die Nutzung dieser Software erfolgt auf eigenes Risiko. Der Author dieser Software kann für eventuell auftretende Folgeschäden nicht haftbar gemacht werden!</p>
+    </p>
+    <p>&copy; 2012, 2013 hobbyquaker <a href="https://github.com/hobbyquaker" target="_blank">https://github.com/hobbyquaker</a></p>
+    <p style="font-size: 0.8em;">
+        Diese Software ist freie Software. Sie können sie unter den <a target="_blank" href="http://www.gnu.de/documents/gpl.de.html">Bedingungen der GNU General Public License</a>, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, gemäß Version 3 der Lizenz.
+        Die Veröffentlichung dieser Software erfolgt in der Hoffnung, daß sie Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.
+    </p>
+    <p style="font-size: 0.8em;">
+        HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der <a target="_blank" href="http://www.eq-3.de">eQ-3 AG</a>
+    </p>
+
+</div>
+<div class="dialog" id="dialogLinks" title="Links">
+    <table style="text-align: center; vertical-align: middle"><tr><td style="width: 120px;">
+        <a href="/addons/webmatic" target="_blank"><img src="img/webmatic.png"/></a>
+    </td><td style="width: 120px;">
+        <a href="/" target="_blank"><img src="img/homematic.png"/></a>
+    </td><td style="width: 120px;">
+        <a href="/addons/cuxd" target="_blank"><img src="img/cuxd.png"/></a>
+    </td></tr><tr><td style="width: 120px;">
+        <h3><a href="/addons/webmatic"target="_blank">WebMatic</a></h3>
+    </td><td style="width: 120px;">
+        <h3><a href="/" target="_blank">originales WebUI</a></h3>
+    </td><td style="width: 120px;">
+        <h3><a href="/addons/cuxd" target="_blank">CUxD</a></h3>
+    </td></tr></table>
+</div>
+<div class="dialog" id="dialogDelScript" title="Script löschen">
+    <br>
+    Hiermit löschen Sie das Script<br>
+    <span style="font-weight: bold; padding-left: 20px;" id="scriptDeleteReally"></span><br>
+    unwiederruflich.<br><br>
+    Sind Sie sich sicher?
+</div>
+<div class="dialog" id="dialogReallyRename" title="Rückfrage">
+    <br>
+    Dieser Name ist bereits für <span id="dialogReallyRenameType"></span> vergeben.<br><br>
+    Möchten Sie ihn dennoch verwenden?
+</div>
+<div class="dialog" id="dialogCantRename" title="Fehler">
+    <br>
+    Dieser Name ist bereits für <span id="dialogCantRenameType"></span> vergeben.<br><br>
+    Sie müssen einen anderen Namen verwenden.
+</div>
+<div class="dialog" id="dialogErrorRename" title="Fehler">
+    <br><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
+    Der eingegebene Name ist ungültig!
+</div>
+<div class="dialog" id="dialogCfgChannel" title="Kanal bearbeiten">
+    <table>
+        <tr>
+            <td>Name</td><td><input id="cfgChannelName" type="text" size="40"/></td>
+        </tr>
+        <tr>
+            <td>Räume</td><td><select id="selectRooms" multiple="multiple"></select></td>
+        </tr>
+        <tr>
+            <td>Gewerke</td><td><select id="selectFunctions" multiple="multiple"></select></td>
+        </tr>
+        <tr>
+            <td>Protokolliert</td><td><input type="checkbox" id="cfgChannelLogged"/> </td>
+        </tr>
+
+    </table>
+    <input type="hidden" id="cfgChannelId"/>
+</div>
+<div class="dialog" id="dialogCfgDevice" title="Gerät bearbeiten">
+    <table>
+        <tr>
+            <td>Name</td><td><input id="cfgDeviceName" type="text" size="40"/></td>
+        </tr>
+    </table>
+    <input type="hidden" id="cfgDeviceId"/>
+</div>
+<div class="dialog" id="dialogRenameFile" title="Datei umbenennen">
+    <table>
+        <tr>
+            <td>Name</td><td><input id="cfgFileName" type="text" size="40"/><input id="cfgFileNameExt" type="text" size="5" disabled="disabled"/> </td>
+        </tr>
+    </table>
+    <input type="hidden" id="cfgFileNameOld"/>
+</div>
+<div class="dialog" id="dialogDelVariable" title="Variable löschen">
+    <br>
+    Hiermit löschen Sie die Variable<br>
+    <span style="font-weight: bold; padding-left: 20px;" id="variableDeleteReally"></span><br>
+    unwiederruflich.<br><br>
+    Sind Sie sich sicher?
+    <input type="hidden" id="delVarId"/>
+</div>
+<div class="dialog" id="dialogDelRoom" title="Raum löschen">
+    <br>
+    Hiermit löschen Sie den Raum<br>
+    <span style="font-weight: bold; padding-left: 20px;" id="roomReallyDelete"></span><br>
+    unwiederruflich.<br><br>
+    Sind Sie sich sicher?
+    <input type="hidden" id="delRoomId"/>
+</div>
+<div class="dialog" id="dialogDelFunction" title="Gewerk löschen">
+    <br>
+    Hiermit löschen Sie das Gewerk<br>
+    <span style="font-weight: bold; padding-left: 20px;" id="functionReallyDelete"></span><br>
+    unwiederruflich.<br><br>
+    Sind Sie sich sicher?
+    <input type="hidden" id="delFunctionId"/>
+</div>
+<div class="dialog" id="dialogCfgVariable" title="Variable editieren">
+    <br><input type="hidden" id="cfgVarNew"/>
+    <table>
+        <tr>
+            <td style="width: 180px;">Name</td>
+            <td><input id="cfgVarName" type="text" size="60"/></td>
+        </tr>
+        <tr>
+            <td>Beschreibung</td>
+            <td><input id="cfgVarDesc" type="text" size="60"/></td>
+        </tr>
+
+        <tr>
+            <td>Typ</td>
+            <td>
+                <select id="cfgVarType">
+                    <option value="2">Logikwert</option>
+                    <option value="29">Werteliste</option>
+                    <option value="0">Zahl</option>
+                    <option value="6">Alarm</option>
+                    <option value="11">Zeichenkette</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="cfgVarOptBool">
+            <td>Text falsch</td>
+            <td><input id="cfgVarTextBoolFalse" type="text"/></td>
+        </tr>
+        <tr class="cfgVarOptBool">
+            <td>Text wahr</td>
+            <td><input id="cfgVarTextBoolTrue" type="text"/></td>
+        </tr>
+        <tr class="cfgVarOptAlarm">
+            <td>Text nicht ausgelöst</td>
+            <td><input class="cfgVarOptAlarm" id="cfgVarTextAlarmFalse" type="text" size="60"/></td>
+        </tr>
+        <tr class="cfgVarOptAlarm">
+            <td>Text ausgelöst</td>
+            <td><input class="cfgVarOptAlarm" id="cfgVarTextAlarmTrue" type="text" size="60"/></td>
+        </tr>
+        <tr class="cfgVarOptReal">
+            <td>Minimum</td>
+            <td><input class="cfgVarOptReal" id="cfgVarTextRealMin" type="text"/></td>
+        </tr>
+        <tr class="cfgVarOptReal">
+            <td>Maximum</td>
+            <td><input class="cfgVarOptReal" id="cfgVarTextRealMax" type="text"/></td>
+        </tr>
+        <tr class="cfgVarOptEnum">
+            <td>Werteliste</td>
+            <td><input class="cfgVarOptEnum" id="cfgVarTextEnum" type="text" size="60"/></td>
+        </tr>
+        <tr class="cfgVarOptEnum">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>Einheit</td>
+            <td><input id="cfgVarUnit" type="text"/></td>
+        </tr>
+
+        <tr>
+            <td>Protokolliert</td>
+            <td><input id="cfgVarLogged" type="checkbox"/></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>Kanalzuordnung</td>
+            <td>
+                <input class="channel-id" id="cfgVarChannelId" type="hidden"/>
+                <input class="channel-name" id="cfgVarChannel" type="text" size="60" disabled="disabled"/>
+                <button id="cfgVarSetChannel">setzen</button>
+                <button id="cfgVarDelChannel">löschen</button>
+            </td>
+        </tr>
+
+    </table>
+    <input type="hidden" id="cfgVarId"/>
+</div>
+<div class="dialog" id="dialogCfgProgram" title="Programm editieren">
+    <br>
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input id="cfgPrgName" type="text" size="60"/></td>
+        </tr>
+        <tr>
+            <td>Beschreibung</td>
+            <td><input id="cfgPrgDesc" type="text" size="60"/></td>
+        </tr>
+
+        <tr>
+            <td>Aktiv</td>
+            <td><input id="cfgPrgActive" type="checkbox"/></td>
+        </tr>
+
+    </table>
+    <input type="hidden" id="cfgPrgId"/>
+</div>
+<div class="dialog" id="dialogCfgRoom" title="Raum editieren">
+    <br><input type="hidden" id="cfgRoomNew"/>
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input id="cfgRoomName" type="text" size="60"/></td>
+        </tr>
+        <tr>
+            <td>Beschreibung</td>
+            <td><input id="cfgRoomDesc" type="text" size="60"/></td>
+        </tr>
+    </table>
+    <input type="hidden" id="cfgRoomId"/>
+</div>
+<div class="dialog" id="dialogCfgFunction" title="Gewerk editieren">
+    <br><input type="hidden" id="cfgFunctionNew"/>
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input id="cfgFunctionName" type="text" size="60"/></td>
+        </tr>
+        <tr>
+            <td>Beschreibung</td>
+            <td><input id="cfgFunctionDesc" type="text" size="60"/></td>
+        </tr>
+    </table>
+    <input type="hidden" id="cfgFunctionId"/>
+</div>
+<div class="" id="login">
+    <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
+        <div id="widgetLogin" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+            <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI - Anmeldung</span>
+            </div>
+            <div style="padding-left: 45px; padding-top: 10px;">
+                <form id="formLogin" name="login">
+                    <table>
+                        <tr style="font-size: 0.9em;">
+                            <td colspan="2"><span id="loginError" style="color:#f33; font-weight:bold;"></span>&nbsp;</td>
+                        </tr>
+                        <tr style="font-size: 1.3em;">
+                            <td>Benutzername</td><td><input tabindex="1" id="username" value="Admin"></td>
+                        </tr>
+                        <tr style="font-size: 1.3em;">
+                            <td>Passwort</td><td><input tabindex="2" type="password" id="password"> <input tabindex="4" type="submit" style="font-size: 0.73em;" id="buttonLogin" value="Anmelden"/></td>
+                        </tr>
+                    </table><br>
+                    <input tabindex="3" id="keepcred" type="checkbox"> Anmeldedaten speichern und in Zukunft automatisch anmelden
+                </form>
+            </div>
+        </div>
+    </td><td style="width: 50%">
+    </td></tr></table>
+    <div id="xmlDummy0"><form action=""></form></div>
+</div>
+<div class="" id="logout">
+    <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
+        <div id="widgetLogout" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+            <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">HQ WebUI - Sitzung beendet</span>
+            </div>
+            <div style="padding-left: 45px; padding-top: 10px;">
+                <h3 style="padding-top:20px;">Bitte die Seite schließen oder neu laden.</h3>
+            </div>
+        </div>
+    </td><td style="width: 50%">
+    </td></tr></table>
+</div>
+<div class="" id="session">
+    <table><tr><td colspan="3" style="height:50px"></td></tr><tr><td style="width: 50%"></td><td>
+        <div id="widgetSession" class="ui-widget ui-widget-content ui-corner-all" style="width: 500px; height: 185px;">
+            <div class="ui-widget ui-widget-header ui-corner-top" style="width:500px; height: 29px; position:relative; left: -1px; top:-1px;">
+                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Starte HQ WebUI <span class="hq-version"></span></span>
+            </div>
+            <div style="padding-left: 45px; padding-top: 5px;">
+                <h3 style="padding-top:20px;">Bitte warten...</h3>
+            </div>
+            <span id="loadMessage"></span>
+        </div>
+    </td><td style="width: 50%">
+    </td></tr></table>
+</div>
+<div class="contextmenu">
+    <ul id="contextMenuRooms" style="width:240px;">
+        <li><a id="menuRoomAddChannel" href="#">Kanal hinzufügen</a></li>
+        <li><a id="menuRoomEdit" href="#">editieren</a></li>
+        <li><a id="menuRoomDel" href="#">löschen</a></li>
+    </ul>
+
+</div>
+</body>
