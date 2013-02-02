@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-beta3",
+    var version =               "2.3-beta4",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -819,6 +819,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'id',
         'Name',
         'Beschreibung',
+        'Bedingung',
+        'Aktivität',
         'Aktiv',
         'Zeitstempel'
     ];
@@ -843,6 +845,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'description', index:'description', width: 200, editable: true,
             xmlmap: function (obj) {
                 return $(obj).attr('description');
+            }
+        },
+        {name:'condition', index:'condition', width: 200, editable: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('condition');
+            }
+        },
+        {name:'destination', index:'destination', width: 200, editable: true,
+            xmlmap: function (obj) {
+                return $(obj).attr('destination');
             }
         },
         {name:'active', index:'active', width: 40, editable: true, edittype: 'checkbox',
@@ -1408,7 +1420,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         {name:'aes', index:'aes', width: 60,
             xmlmap: function (obj) {
                 var device = $(obj).attr("device");
-                var aes = statesXMLObj.find("channel[address='" + device + ":0']").attr("aes_available");
+                var aes = statesXMLObj.find("device[address='" + device + "'] channel:nth-child(2)").attr("aes_available");
 
                 return aes;
             },
@@ -1419,7 +1431,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                 var device = $(obj).attr("device");
 
-                var mode = statesXMLObj.find("channel[address='" + device + ":0']").attr("transmission_mode");
+                var mode = statesXMLObj.find("device[address='" + device + "'] channel:nth-child(2)").attr("transmission_mode");
                 if (mode == "AES") {
                     mode = '<span style="display:inline-block; align:bottom" class="ui-icon ui-icon-key"></span> <span style="position:relative; top: -3px;">' + mode + '</span>';
                 }
@@ -2046,19 +2058,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
             subGridChannel(grid_id, row_id);
-        } /*,
-        onRightClickRow: function(row_id, irow, icol, event) {
-           $("#contextMenuRooms").show().position({
-                my: "left top",
-                at: "left bottom",
-                of: event
-            });
-            $(document).one("click", function() {
-                $("#contextMenuRooms").hide();
-            });
-            event.preventDefault();
-            return false;
-        }*/
+        },
+        ondblClickRow: function(row_id, iRow, iCol, e) {
+            gridRooms.jqGrid('toggleSubGridRow', row_id);
+        }
+
 
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
@@ -2161,6 +2165,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         subGrid: true,
         subGridRowExpanded: function(grid_id, row_id) {
             subGridChannel(grid_id, row_id);
+        },
+        ondblClickRow: function(row_id, iRow, iCol, e) {
+            gridFunctions.jqGrid('toggleSubGridRow', row_id);
         }
 
     }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
@@ -2405,7 +2412,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 },
                 subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
                 ondblClickRow: function(row_id, iRow, iCol, e) {
-
+                    $("#" + subgrid_table_id).jqGrid('toggleSubGridRow', row_id);
                 },
                 beforeSelectRow: function() { return false; }
 
@@ -2776,12 +2783,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
             programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
             addInfo("Anzahl Programme", programsXMLObj.find("program").length);
-
+console.log(cache);
             $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
             gridPrograms.setGridParam({
                 loadonce: false,
                 datatype: "xmlstring",
-                datastr: programsXML
+                datastr: cache
             }).trigger("reloadGrid").setGridParam({loadonce:true});
 
             programsReady = true;
@@ -2795,11 +2802,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
             type: 'POST',
-            datatype: 'text',
+            dataType: 'text',
             data: scriptPrograms,
             success: function (data) {
+
+                data = data.replace(/<script>.*<\/script>/g, "");
                 programsReady = true;
-                programsXML = data;
+                programsXML = $.parseXML(data);
                 programsXMLObj = $(data);
 
 
@@ -2807,11 +2816,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 programsTime = Math.floor(dateObj.getTime() / 1000);
                 $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
                 storage.set("hqWebUiProgramsTime", programsTime);
-                var serialized = (new XMLSerializer()).serializeToString(data);
-                storage.set("hqWebUiPrograms", serialized);
+                storage.set("hqWebUiPrograms", data);
 
 
-
+console.log(data);
 
                 $("#loaderPrograms").hide();
                 addInfo("Anzahl Programme", programsXMLObj.find("program").length);
@@ -4995,6 +5003,9 @@ var chartProtocolReady;
             storage.set("hqWebUiStates", null);
             storage.set("hqWebUiPrograms", null);
             storage.set("hqWebUiVariables", null);
+            storage.set("hqWebUiFavorites", null);
+            storage.set("hqWebUiFavoritesTime", null);
+
             location.reload();
             // $("#buttonDelCache").attr("disabled", true);
         });
@@ -5069,6 +5080,8 @@ var chartProtocolReady;
 
         switch (fileType) {
         case "hm":
+        case "fn":
+
             gridScriptVariables.jqGrid('clearGridData');
             $("div#hmScriptStdout").html("");
             var debugScript = "";
@@ -6711,10 +6724,10 @@ var chartProtocolReady;
                         }
                         if (data[i].ac !== undefined) {
                             if (data[i].ac === "true") {
-                                $("tr[id='" + data[i].id + "'] td.uActive input").attr("checked", true);
+                                $("tr[id='" + data[i].id + "'] td.uActive").html(formatBool(true));
 
                             } else {
-                                $("tr[id='" + data[i].id + "'] td.uActive input").removeAttr("checked");
+                                $("tr[id='" + data[i].id + "'] td.uActive").html(formatBool(""));
                             }
 
                         }

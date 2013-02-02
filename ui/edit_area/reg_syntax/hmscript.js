@@ -13,18 +13,29 @@ editAreaLoader.load_syntax["hmscript"] = {
                     ]
                     ,'functions' : [
 
-                        'VarType', 'ToFloat', 'ToInteger', 'ToString', 'ToTime', 'Year', 'Month', 'Day', 'Hour', 'Minute', 'Second',
-                        'Week', 'Weekday', 'Yesterday', 'IsLocaltime', 'IsDST', 'Format', 'Length', 'Substr', 'Find', 'Split',
-                        'StrValueByIndex', 'ID', 'GetObject', 'CreateObject', 'Date', 'IsVar', 'GetVar', 'Name', 'Type', 'TypeName',
-                        'IsTypeOf', 'State', 'Channels', 'Interface', 'Address', 'HssType', 'Device', 'DPs', 'Interface', 'Address',
-                        'ChnGroupPartnerId', 'ChnDirection', 'ChnAESActive', 'ChnArchive', 'ChnRoom', 'ChnFunction', 'DPByHssDP',
-                        'ValueType', 'Channel', 'Value', 'LastValue', 'Operations', 'Timestamp', 'Variable','Count', 'EnumUsedIDs',
-                        'EnumUsedNames', 'Get', 'GetAt', 'Active', 'Add', 'ChnArchive', 'ChnLabel', 'DestSingleCount',
-                        'DestSingleDestination', 'DestinationDP', 'DestinationChannel', 'DestinationParam', 'DestinationValue',
-                        'DestinationValueType', 'DestinationValueParam', 'DestinationValueParamType', 'DPArchive', 'DPInfo',
-                        'PrgInfo', 'Rule', 'RuleDestination', 'RuleConditions', 'Write', 'WriteLine', 'WriteXML', 'WriteJSON', 'WriteHTML', 'Call'
-
-
+            'Active',  'Add',  'AlDestMapDP',  'AlSetBinaryCondition',  'AlState',  'AlTriggerDP',  'AlType',  'BackImage',  'Beep',  'Begin',  'BreakOnRestart',  'CacheInfo',
+            'CacheMode',  'CalDuration',  'Call',  'CalRepeatTime',  'CalRepetitionCount',  'Channel',  'ChannelType',  'CheckName',  'ChnAESActive',  'ChnArchive',
+            'ChnDirection',  'ChnDPUsageCount',  'ChnEnumDPUsagePrograms',  'ChnFunction',  'ChnGroupPartnerId',  'ChnLabel',  'ChnLinkCount',  'ChnNumber',  'ChnRoom',
+            'ChnStartComTest',  'ClearCache',  'ClearHistoryData',  'CndAddSingle',  'CndOperatorType',  'CndSingleCondition',  'CndSingleCount',  'ConditionChannel',
+            'ConditionType',  'ConditionType2',  'Count',  'CreateObject',  'Date',  'Day',  'Debug',  'DefaultDPWrite',  'DefaultLoginUser',  'DeleteObject',
+            'DestAddSingle',  'DestDelSingle',  'DestinationChannel',  'DestinationDP',  'DestinationParam',  'DestinationValue',  'DestinationValueParam',
+            'DestinationValueParamType',  'DestinationValueType',  'DestSingleCount',  'DestSingleDestination',  'DevStartComTest',  'DPArchive',  'DPByControl',  'DPByHssDP',
+            'DPInfo',  'DstParent',  'Dump',  'ElseIfFlag',  'EnCopyID',  'End',  'EndSeconds',  'EnumChannelGroups',  'EnumEnabledIDs',  'EnumEnabledVisibleIDs',  'EnumIDs',
+            'EnumInfo',  'EnumSpecialIDs',  'EnumType',  'EnumUsedIDs',  'EnumUsedNames',  'Error',  'Exec',  'ExistComTestDP',  'ExistServiceMsg',  'FavColumnAlign',
+            'Find',  'Format',  'GenerateEnum',  'Get',  'GetAt',  'GetObject',  'GetSessionVar',  'GetVar',  'Hour',  'HSSID',  'HssType',  'ID',  'Internal',  'IsDST',
+            'IsLocalTime',  'IsSessionVar',  'IsTypeOf',  'IsVar',  'LastDPActionTime',  'LastDPActionTimeSeconds',  'LastValue',  'LeftVal',  'LeftValType',  'Length',
+            'Load',  'LogLevel',  'Longitude',  'ManufImage',  'ManufURL',  'MemoryInfo',  'MetaData',  'Month',  'Name',  'Operations',  'OperatorType',  'Platform',
+            'PrgInfo',  'ProgramCopyID',  'ProgramCopyTo',  'ProgramExecute',  'ProgramLastExecuteTime',  'ProgramLastExecuteTimeSeconds',  'ProgramUpdate',
+            'ReadyConfig',  'ReadyConfigChns',  'Remove',  'RemoveAll',  'Reset',  'RightVal1',  'RightVal1ValType',  'RightVal2',  'RightVal2ValType',  'Rule',
+            'RuleCondition',  'RuleConditions',  'RuleCreateSubRule',  'RuleDelCondition',  'RuleDelSubRule',  'RuleDestination',  'RuleParentId',  'RuleSubRule',
+            'Save',  'Second',  'ServerURL',  'SetDate',  'SortByName',  'Split',  'State',  'StrValueByName',  'Style',  'Substr',  'SunOffsetType',  'SunriseTime',
+            'SunsetTime',  'SyntaxCheck',  'Test',  'TestCompletedTime',  'TestReadyIDs',  'TestRunningIDs',  'Time',  'TimerType',  'TimeSeconds',  'Timestamp',
+            'TimestampSeconds',  'TimeZoneOffset',  'Title',  'ToFloat',  'ToInteger',  'ToString',  'ToTime',  'Type',  'TypeName',  'Unerasable',
+            'UpdatePollingCycle',  'UserAccessRights',  'UserBlankPwd',  'UserClient',  'UserEasyLinkMode',  'UserFavorite',  'UserFirstName',  'UserLastName',
+            'UserLevel',  'UserMailAddress',  'UserPhoneNumber',  'UsersAdd',  'UsersDefaultLogin',  'UserSharedObjects',  'UserShowLogin',  'UserTempViewIDs',
+            'UserTempViewIDs2',  'Value',  'ValueList',  'ValueMax',  'ValueMin',  'ValueName0',  'ValueName1',  'ValueSubType',  'ValueType',  'ValueUnit',
+            'Variable',  'VarType',  'VPInternalConfig',  'VPInternalConfigDst',  'WebGetValueFromList',  'WebGetValueListCount',  'Week',  'Weekday',
+            'Weekdays',  'Write',  'WriteHTML',  'WriteLine',  'WriteURL',  'WriteXML',  'Year',  'Yearday'
                     ]
                 }
                 ,'OPERATORS' :[
@@ -66,38 +77,13 @@ editAreaLoader.load_syntax["hmscript"] = {
                                 ['while', 'while ({@})', ''],
                                 ['if', 'if ({@})', ''],
                                 ['else'],
-                                ['Write', 'Write({@})', ''],
-                                ['WriteLine', 'WriteLine({@})', ''],
-                                ['WriteXML', 'WriteXML({@})', ''],
-                                ['WriteJSON', 'WriteJSON({@})', ''],
-                                ['WriteHTML', 'WriteHTML({@})', ''],
                                 ['system'],
                                 ['integer'],
                                 ['string'],
                                 ['boolean'],
                                 ['$this$'],
                                 ['$src$'],
-                                ['VarType()'], ['ToFloat()'], ['ToInteger()'], ['ToString()'], ['ToTime()'], ['Year()'], ['Month()'], ['Day()'], ['Hour()'], ['Minute()'], ['Second()'], ['Week()'], ['Weekday()'],
-                                ['Yesterday()'], ['IsLocaltime()'], ['IsDST()'], ['Format()'], ['Length()'], ['Substr()'], ['Find()'], ['Split()'], ['StrValueByIndex()'], ['ID()'], ['GetObject', 'GetObject({@})', ''],
-                                ['Date()'], ['IsVar()'], ['GetVar()'], ['Name()'], ['Type()'], ['TypeName()'], ['IsTypeOf()'], ['State()'],
-                                ['Channels()'], ['Interface()'], ['Address()'], ['HssType()'],
-                                ['Device()'], ['DPs()'], ['Interface()'], ['Address()'], ['ChnGroupPartnerId()'], ['ChnDirection()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnRoom()'], ['ChnFunction()'], ['DPByHssDP'],
-                                ['ValueType()'], ['Channel()'], ['Value()'], ['LastValue()'], ['Operations()'], ['Timestamp()'], ['Variable()'],
-                                ['Count()'], ['EnumUsedIDs()'], ['EnumUsedNames()'], ['Get()'], ['GetAt()'],
-                                ['Add()'], ['ChnArchive()'], ['ChnLabel()'], ['DestSingleCount()'],
-                                ['DestSingleDestination()'], ['DestinationDP()'], ['DestinationChannel()'], ['DestinationParam()'], ['DestinationValue()'],
-                                ['DestinationValueType()'], ['DestinationValueParam()'], ['DestinationValueParamType()'], ['DPArchive()'], ['DPInfo()'],
-                                ['PrgInfo()'], ['Rule()'], ['RuleDestination()'], ['RuleConditions()'], ['Call()']
-                            ],
-                            'system' : [
-                                ['Date()', 'Date(string format)']
-                                ,['GetVar()', 'GetVar(string name)']
-                                ,['IsVar()', 'IsVar(string name)']
-                            ],
-                            'dom' : [
-                                ['GetObject()'],
-                                ['CreateObject()']
-
+                                ['Active()'], ['Add()'], ['AlDestMapDP()'], ['AlSetBinaryCondition()'], ['AlState()'], ['AlTriggerDP()'], ['AlType()'], ['BackImage()'], ['Beep()'], ['Begin()'], ['BreakOnRestart()'], ['CacheInfo()'], ['CacheMode()'], ['CalDuration()'], ['Call()'], ['CalRepeatTime()'], ['CalRepetitionCount()'], ['Channel()'], ['ChannelType()'], ['CheckName()'], ['ChnAESActive()'], ['ChnArchive()'], ['ChnDirection()'], ['ChnDPUsageCount()'], ['ChnEnumDPUsagePrograms()'], ['ChnFunction()'], ['ChnGroupPartnerId()'], ['ChnLabel()'], ['ChnLinkCount()'], ['ChnNumber()'], ['ChnRoom()'], ['ChnStartComTest()'], ['ClearCache()'], ['ClearHistoryData()'], ['CndAddSingle()'], ['CndOperatorType()'], ['CndSingleCondition()'], ['CndSingleCount()'], ['ConditionChannel()'], ['ConditionType()'], ['ConditionType2()'], ['Count()'], ['CreateObject()'], ['Date()'], ['Day()'], ['Debug()'], ['DefaultDPWrite()'], ['DefaultLoginUser()'], ['DeleteObject()'], ['DestAddSingle()'], ['DestDelSingle()'], ['DestinationChannel()'], ['DestinationDP()'], ['DestinationParam()'], ['DestinationValue()'], ['DestinationValueParam()'], ['DestinationValueParamType()'], ['DestinationValueType()'], ['DestSingleCount()'], ['DestSingleDestination()'], ['DevStartComTest()'], ['DPArchive()'], ['DPByControl()'], ['DPByHssDP()'], ['DPInfo()'], ['DstParent()'], ['Dump()'], ['ElseIfFlag()'], ['EnCopyID()'], ['End()'], ['EndSeconds()'], ['EnumChannelGroups()'], ['EnumEnabledIDs()'], ['EnumEnabledVisibleIDs()'], ['EnumIDs()'], ['EnumInfo()'], ['EnumSpecialIDs()'], ['EnumType()'], ['EnumUsedIDs()'], ['EnumUsedNames()'], ['Error()'], ['Exec()'], ['ExistComTestDP()'], ['ExistServiceMsg()'], ['FavColumnAlign()'], ['Find()'], ['Format()'], ['GenerateEnum()'], ['Get()'], ['GetAt()'], ['GetObject()'], ['GetSessionVar()'], ['GetVar()'], ['Hour()'], ['HSSID()'], ['HssType()'], ['ID()'], ['Internal()'], ['IsDST()'], ['IsLocalTime()'], ['IsSessionVar()'], ['IsTypeOf()'], ['IsVar()'], ['LastDPActionTime()'], ['LastDPActionTimeSeconds()'], ['LastValue()'], ['LeftVal()'], ['LeftValType()'], ['Length()'], ['Load()'], ['LogLevel()'], ['Longitude()'], ['ManufImage()'], ['ManufURL()'], ['MemoryInfo()'], ['MetaData()'], ['Month()'], ['Name()'], ['Operations()'], ['OperatorType()'], ['Platform()'], ['PrgInfo()'], ['ProgramCopyID()'], ['ProgramCopyTo()'], ['ProgramExecute()'], ['ProgramLastExecuteTime()'], ['ProgramLastExecuteTimeSeconds()'], ['ProgramUpdate()'], ['ReadyConfig()'], ['ReadyConfigChns()'], ['Remove()'], ['RemoveAll()'], ['Reset()'], ['RightVal1()'], ['RightVal1ValType()'], ['RightVal2()'], ['RightVal2ValType()'], ['Rule()'], ['RuleCondition()'], ['RuleConditions()'], ['RuleCreateSubRule()'], ['RuleDelCondition()'], ['RuleDelSubRule()'], ['RuleDestination()'], ['RuleParentId()'], ['RuleSubRule()'], ['Save()'], ['Second()'], ['ServerURL()'], ['SetDate()'], ['SortByName()'], ['Split()'], ['State()'], ['StrValueByName()'], ['Style()'], ['Substr()'], ['SunOffsetType()'], ['SunriseTime()'], ['SunsetTime()'], ['SyntaxCheck()'], ['Test()'], ['TestCompletedTime()'], ['TestReadyIDs()'], ['TestRunningIDs()'], ['Time()'], ['TimerType()'], ['TimeSeconds()'], ['Timestamp()'], ['TimestampSeconds()'], ['TimeZoneOffset()'], ['Title()'], ['ToFloat()'], ['ToInteger()'], ['ToString()'], ['ToTime()'], ['Type()'], ['TypeName()'], ['Unerasable()'], ['UpdatePollingCycle()'], ['UserAccessRights()'], ['UserBlankPwd()'], ['UserClient()'], ['UserEasyLinkMode()'], ['UserFavorite()'], ['UserFirstName()'], ['UserLastName()'], ['UserLevel()'], ['UserMailAddress()'], ['UserPhoneNumber()'], ['UsersAdd()'], ['UsersDefaultLogin()'], ['UserSharedObjects()'], ['UserShowLogin()'], ['UserTempViewIDs()'], ['UserTempViewIDs2()'], ['Value()'], ['ValueList()'], ['ValueMax()'], ['ValueMin()'], ['ValueName0()'], ['ValueName1()'], ['ValueSubType()'], ['ValueType()'], ['ValueUnit()'], ['Variable()'], ['VarType()'], ['VPInternalConfig()'], ['VPInternalConfigDst()'], ['WebGetValueFromList()'], ['WebGetValueListCount()'], ['Week()'], ['Weekday()'], ['Weekdays()'], ['Write()'], ['WriteHTML()'], ['WriteLine()'], ['WriteURL()'], ['WriteXML()'], ['Year()'], ['Yearday()']
                             ]
                         }
                     }

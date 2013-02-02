@@ -1,7 +1,7 @@
 #!/bin/tclsh
 
 #
-#   tclscript.cgi Version 1.0
+#   tclscript.cgi Version 1.2
 #   Ausführen eines TCL Scripts
 #   11'2012 https://github.com/hobbyquaker
 #
@@ -79,8 +79,8 @@ if {$res != ""} {
     # Keine gültige Session
     switch $content {
         json {
-            puts "{error:{source:\"session\",message:\"session invalid\"}}"
-        }
+            puts "{\"error\":{\"source\":\"session\",\"message\":\"session invalid\"}}"
+               }
         xml {
             puts {<?xml version="1.0"?><response><error source="session" message="session invalid"/></response>}
         }

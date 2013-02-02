@@ -1,7 +1,7 @@
 #!/bin/tclsh
 
 #
-#   hmscript.cgi Version 1.1
+#   hmscript.cgi Version 1.2
 #   Ausführen eines Homematic Scripts
 #   11'2012 https://github.com/hobbyquaker
 #
@@ -153,7 +153,7 @@ if {$res != ""} {
     # keine gültige Session
     switch $content {
         json {
-            puts "{error:{source:\"session\",message:\"session invalid\"}}"
+            puts "{\"error\":{\"source\":\"session\",\"message\":\"session invalid\"}}"
         }
         xml {
             puts {<?xml version="1.0"?><response><error source="session" message="session invalid"/></response>}

@@ -1,5 +1,15 @@
 Changelog
 =========
+2.3-beta4
+---------
+* Funk: Fehler bei Anzeige Übertragungsmodus behoben
+* Entwicklung: Fehler bei Ausführung von Homematic-Scripten behoben
+* Variablen/Programme/Datenpunkte - es werden keine Werte und Zeitstempel mehr zwischengespeichert
+* Auto-Vervollständigung und Syntax-Highlighting für Homematic Script vervollständigt.
+* Anzeige von Working-Datenpunkten
+* Unter-Tabellen können nun alle via Doppelklick auf und zu-geklappt werden
+* Programme: Neue Spalten Bedingung und Aktivität
+
 2.3-beta3
 ---------
 * Umbenennen von Dateien im Script-Editor

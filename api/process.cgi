@@ -1,7 +1,7 @@
 #!/bin/tclsh
 
 #
-#   process.cgi Version 1.0
+#   process.cgi Version 1.2
 #   Ausführen eines Prozesses
 #   11'2012 https://github.com/hobbyquaker
 #
@@ -121,8 +121,8 @@ if {$res != ""} {
     # Keine gültige Session
     switch $content {
         json {
-            puts -nonewline "{error:{source:\"session\",message:\"session invalid\"}}"
-        }
+            puts "{\"error\":{\"source\":\"session\",\"message\":\"session invalid\"}}"
+               }
         xml {
             puts -nonewline {<?xml version="1.0"?><response><error source="session" message="session invalid"/></response>}
         }

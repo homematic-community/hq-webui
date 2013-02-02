@@ -54,14 +54,21 @@ var scriptStates = "string sDevId;\n" +
     "        Write(\" visible='\" # oChannel.Visible() # \"'\");\n" +
     "        Write(\" ready_config='\" # oChannel.ReadyConfig() # \"'\");\n" +
     "                Write(\" ise_id='\" # sChnId # \"'>\");\n" +
+    "if (iChnDir == DIR_RECEIVER) {\nobject oWork = oChannel.DPByHssDP(\"WORKING\");\n" +
+    "  if (oWork) {\n" +
+    "    string oWId = oWork.ID();\n    string oWName = oWork.Name();\n" +
+    "                            Write(\"<datapoint\");\n" +
+    "                            Write(\" name='\"); WriteXML(oWork.Name());\n" +
+    "                            Write(\"' type='WORKING' dptype='HSSDP' oper='5' ise_id='\" # oWId );\n" +
+    "                            Write(\"' />\");\n" +
+    "  }\n" +
+    "}" +
     "                foreach(sDPId, oChannel.DPs().EnumUsedIDs())\n" +
     "                {\n" +
     "                    object oDP = dom.GetObject(sDPId);\n" +
     "                    if(oDP)\n" +
     "                    {\n" +
     "                        string dp = oDP.Name().StrValueByIndex(\".\", 2);\n" +
-    "                       ! if( (dp != \"ON_TIME\") && (dp != \"INHIBIT\") )\n" +
-    "                        !{\n" +
     "                            Write(\"<datapoint\");\n" +
     "                            Write(\" name='\"); WriteXML(oDP.Name());\n" +
     "                            Write(\"' type='\"); WriteXML(oDP.Name().StrValueByIndex(\".\", 2));\n" +
@@ -69,16 +76,15 @@ var scriptStates = "string sDevId;\n" +
     "                            Write(\"' oper='\"); WriteXML(oDP.Operations());\n" +
     "                            Write(\"' ise_id='\" # sDPId );\n" +
     "                            ! state fragt den aktuellen status des sensors/aktors ab, dauert lange\n" +
-    "                            if (show_internal == 1) {\n" +
-    "                                Write(\"' state='\"); WriteXML(oDP.State());\n" +
-    "                            }\n" +
+    "                            !if (show_internal == 1) {\n" +
+    "                            !    Write(\"' state='\"); WriteXML(oDP.State());\n" +
+    "                            !}\n" +
     "                            ! value nimmt den von der ccu gecachten wert, moeglicherweise nicht korrekt. Ggf. bei einigen geraeten immer abfragen\n" +
-    "                            Write(\"' value='\"); WriteXML(oDP.Value());\n" +
+    "                            !Write(\"' value='\"); WriteXML(oDP.Value());\n" +
     "                            Write(\"' valuetype='\" # oDP.ValueType());\n" +
     "                            Write(\"' unit='\" # oDP.ValueUnit());\n" +
-    "                            Write(\"' timestamp='\" # oDP.Timestamp());\n" +
+    "                            !Write(\"' timestamp='\" # oDP.Timestamp());\n" +
     "                            Write(\"' />\");\n" +
-    "                        !}\n" +
     "                    }\n" +
     "                }\n" +
     "                Write(\"</channel>\");\n" +
@@ -90,19 +96,27 @@ var scriptStates = "string sDevId;\n" +
     "Write(\"</stateList>\");\n" +
     "\n";
 
-var scriptPrograms = "string sProgramId;\n" +
+var scriptPrograms = "string oPrgID;\n" +
+    "string sRet;\n" +
     "object oProgram;\n" +
     "Write(\"<programList>\");\n" +
-    "foreach (sProgramId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {\n" +
-    "    oProgram = dom.GetObject(sProgramId);\n" +
-    "    if(oProgram != null)\n" +
-    "    {\n" +
-    "        Write(\"<program id='\" # sProgramId #\"' active='\" # oProgram.Active() # \"'\")\n" +
-    "        Write(\" timestamp='\" # oProgram.ProgramLastExecuteTime() #\"' name='\");\n" +
+    "foreach (oPrgID, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {\n" +
+    "    oProgram = dom.GetObject(oPrgID);\n" +
+    "    if(oProgram != null) {\n" +
+    "        sTrigger = oProgram.Rule().RuleConditions().EnumUsedIDs();\n" +
+    "        Write('<program id=\"' # oPrgID # '\" name=\"');\n" +
     "        WriteXML( oProgram.Name() );\n" +
-    "        Write(\"' description='\");\n" +
+    "        Write('\" description=\"');\n" +
     "        WriteXML(oProgram.PrgInfo());\n" +
-    "        Write(\"'/>\");\n" +
+    "        Write('\" condition=\"');\n" +
+    "        sRet = \"\";\n" +
+    "        Call( \"/esp/programs.fn::WriteConditionText()\" );                                                                                                                 \n" +
+    "        WriteXML(sRet);\n" +
+    "        sRet = \"\";\n" +
+    "        Write('\" destination=\"');\n" +
+    "        Call( \"/esp/programs.fn::WriteDestinationText()\" );                                                                                                                 \n" +
+    "        WriteXML(sRet);\n" +
+    "        WriteLine('\"/>');\n" +
     "    }\n" +
     "}\n" +
     "Write(\"</programList>\");\n";
@@ -117,7 +131,7 @@ var scriptVariables = "object oSysVar;\n" +
     "    Write(\" name='\"); WriteXML( oSysVar.Name() );\n" +
     "    Write(\"' desc='\"); WriteXML( oSysVar.DPInfo() );\n" +
     "    Write(\"' variable='\"); WriteXML( oSysVar.Variable());\n" +
-    "    Write(\"' value='\"); WriteXML( oSysVar.Value());\n" +
+    "    !Write(\"' value='\"); WriteXML( oSysVar.Value());\n" +
     "    if (oSysVar.ValueType() == 2) {\n" +
     "     Write(\"' text_false='\"); WriteXML( oSysVar.ValueName0());\n" +
     "     Write(\"' text_true='\"); WriteXML( oSysVar.ValueName1());\n" +
@@ -133,7 +147,7 @@ var scriptVariables = "object oSysVar;\n" +
     "    Write(\"' type='\" # oSysVar.ValueType() # \"' subtype='\" # oSysVar.ValueSubType());\n" +
     "    Write(\"' logged='\"); WriteXML( oSysVar.DPArchive());\n" +
     "    Write(\"' visible='\"); WriteXML( oSysVar.Visible());\n" +
-    "    Write(\"' timestamp='\" # oSysVar.Timestamp());\n" +
+    "    !Write(\"' timestamp='\" # oSysVar.Timestamp());\n" +
     "    Write(\"' channel='\" # oSysVar.Channel());\n" +
     "    Write(\"'/>\");\n" +
     "}\n" +
