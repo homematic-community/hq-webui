@@ -2783,7 +2783,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
             addInfo("Anzahl Programme", programsXMLObj.find("program").length);
-console.log(cache);
+//console.log(cache);
             $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
             gridPrograms.setGridParam({
                 loadonce: false,
@@ -2819,7 +2819,7 @@ console.log(cache);
                 storage.set("hqWebUiPrograms", data);
 
 
-console.log(data);
+//console.log(data);
 
                 $("#loaderPrograms").hide();
                 addInfo("Anzahl Programme", programsXMLObj.find("program").length);
