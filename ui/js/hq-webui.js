@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3-beta4",
+    var version =               "2.3.0",
 
         chartDPs = [],
         chartProtocolSeries = [],

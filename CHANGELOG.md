@@ -1,5 +1,8 @@
 Changelog
 =========
+2.3.0
+-----
+
 2.3-beta4
 ---------
 * Funk: Fehler bei Anzeige Übertragungsmodus behoben
