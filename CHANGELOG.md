@@ -1,5 +1,11 @@
 Changelog
 =========
+2.3.1
+-----
+* Fehler im generate_image Script behoben - backup.html und cache.html wurden nicht ins Paket kopiert
+* Protokoll-Graph: Fehler behoben der die Darstellung von Graphen in Firefox und Safari verhinderte (Date.parse auf Chrome großzügiger...)
+* Info-Tabelle: Anzeige CCU Batteriestatus vorerst entfernt, kommt in einer der nächsten Versionen wieder
+
 2.3.0
 -----
 

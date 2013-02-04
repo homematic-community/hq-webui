@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.0",
+    var version =               "2.3.1",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -2883,7 +2883,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
             addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
             var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
-            addInfo("CCU Batteriestatus", ccuBat + "%");
+            //addInfo("CCU Batteriestatus", ccuBat + "%");
 
             statesReady = true;
             $("#loaderStates").hide();
@@ -3137,8 +3137,8 @@ var chartProtocolReady;
                 }
 
             }
-
-            chartProtocolSeries[$(this).attr("did")].push([Date.parse($(this).attr("datetime")) + 3600000, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
+            var ts = parseInt(Date.parse($(this).attr("datetime").replace(/ /, "T")), 10) + 3600000;
+            chartProtocolSeries[$(this).attr("did")].push([ts, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
 
             if (protocolReady) {
                 // TODO: Liveupdate (Zeilen in geladenes Grid einfügen)
@@ -3146,7 +3146,7 @@ var chartProtocolReady;
         });
         for (var key in chartProtocolSeries) {
             if (key === 'length' || !chartProtocolSeries.hasOwnProperty(key)) continue;
-            highchartProtocol.addSeries({
+            var seriesObj = {
                 name: chartDPs[key].name,
                 type: chartDPs[key].chartType,
                 step: chartDPs[key].step,
@@ -3154,7 +3154,8 @@ var chartProtocolReady;
                 visible: chartDPs[key].visible,
                 marker: chartDPs[key].marker
 
-            });
+            };
+            highchartProtocol.addSeries(seriesObj);
         }
         chartProtocolReady = true;
         $("#loaderProtocol2").hide();

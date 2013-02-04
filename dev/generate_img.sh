@@ -21,6 +21,8 @@ cp -a api/* tmp/hq/api/
 cp index.html tmp/hq/index.html
 #cp ui/index.min.html tmp/hq/ui/index.html
 cp ui/index.html tmp/hq/ui/index.html
+cp ui/cache.html tmp/hq/ui/cache.html
+cp ui/backup.html tmp/hq/ui/backup.html
 cp dev/update_script tmp/
 cp dev/hobbyquaker-webui tmp/
 cd tmp
