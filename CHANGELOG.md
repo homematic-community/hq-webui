@@ -1,5 +1,11 @@
 Changelog
 =========
+2.3.2
+-----
+* Fehler behoben beim Laden der Programme aus dem Cache
+* Systembackup: Rückfrage hinzugefügt
+* Protokoll-Graph: Darstellungsfehler nach dem Refresh der Protokoll-Tabelle behoben
+
 2.3.1
 -----
 * Fehler im generate_image Script behoben - backup.html und cache.html wurden nicht ins Paket kopiert

@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.1",
+    var version =               "2.3.2",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -121,6 +121,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         dialogDelFunction =     $("#dialogDelFunction"),
         dialogDelScript =       $("#dialogDelScript"),
 
+        dialogReallyBackup =    $("#dialogReallyBackup"),
         dialogReallyRename =    $("#dialogReallyRename"),
         dialogCantRename =      $("#dialogCantRename"),
         dialogErrorRename =     $("#dialogErrorRename"),
@@ -134,6 +135,17 @@ jQuery.extend(jQuery.expr[ ":" ], {
         cfgVarName =            $("#cfgVarName"),
         cfgVarDesc =            $("#cfgVarDesc"),
 
+        loaderProtocol =        $("#loaderProtocol"),
+        loaderProtocol2 =       $("#loaderProtocol2"),
+        loaderVariables =       $("#loaderVariables"),
+        loaderPrograms =        $("#loaderPrograms"),
+        loaderRooms =           $("#loaderRooms"),
+        loaderFunctions =       $("#loaderFunctions"),
+        loaderStates =          $("#loaderStates"),
+        loaderRssi =            $("#loaderRssi"),
+        loaderScript =          $("#loaderScript"),
+        loaderCcu =             $("#loaderCcu"),
+        loaderFavorites =       $("#loaderFavorites"),
 
         chartProtocol =         $("#chartProtocol"),
         
@@ -162,6 +174,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         timerRefresh,
         timerMessages,
+        timerChart,
         timerSession =          setTimeout(hmSessionRenew, 150000),
 
         hmSession,
@@ -339,6 +352,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     //setTimeout(chartProtocol.setSize($(window).width()-92,$(window).height()-140), 20);
 
                 }
+            } else {
+                clearTimeout(timerChart);
+                loaderProtocol2.hide();
             }
         }
     });
@@ -1814,7 +1830,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         ignoreCase: true,
         sortable: true,
         xmlReader : {
-            root: "programList",
+            root: "programlist",
             row: "program",
             id: "[id]",
             repeatitems: false
@@ -2669,7 +2685,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetVariables() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetVariables()"); }
-        $("#loaderVariables").show();
+        loaderVariables.show();
         variablesReady = false;
 
         var cache = storage.get("hqWebUiVariables");
@@ -2693,7 +2709,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
 
             variablesReady = true;
-            $("#loaderVariables").hide();
+            loaderVariables.hide();
             if (!programsReady) {
                 hmGetPrograms();
             }
@@ -2724,7 +2740,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
 
-                $("#loaderVariables").hide();
+                loaderVariables.hide();
                     gridVariables.setGridParam({
                         loadonce: false,
                         datatype: "xmlstring",
@@ -2753,7 +2769,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     variablesReady = true;
                     variablesXML = data;
                     variablesXMLObj = $(data);
-                    $("#loaderVariables").hide();
+                    loaderVariables.hide();
                     addInfo("Anzahl Variablen", variablesXMLObj.find("systemVariable").length);
                     if (variablesXMLObj.find("systemVariable[subtype='6'][value='true']").length > 0) {
                        alarmIndicator.show();
@@ -2772,7 +2788,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     function hmGetPrograms() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetPrograms()"); }
-        $("#loaderPrograms").show();
+        loaderPrograms.show();
         programsReady = false;
 
 
@@ -2783,7 +2799,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             programsXMLObj = $(programsXML);
             programsTime = storage.get("hqWebUiProgramsTime");
             addInfo("Anzahl Programme", programsXMLObj.find("program").length);
-//console.log(cache);
+
             $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
             gridPrograms.setGridParam({
                 loadonce: false,
@@ -2792,7 +2808,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }).trigger("reloadGrid").setGridParam({loadonce:true});
 
             programsReady = true;
-            $("#loaderPrograms").hide();
+            loaderPrograms.hide();
             if (!functionsReady) {
                 hmGetFunctions();
             }
@@ -2816,13 +2832,14 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 programsTime = Math.floor(dateObj.getTime() / 1000);
                 $("#timeRefreshPrograms").html(formatTimestamp(programsTime));
                 storage.set("hqWebUiProgramsTime", programsTime);
-                storage.set("hqWebUiPrograms", data);
+                storage.set("hqWebUiPrograms", (new XMLSerializer()).serializeToString(programsXML));
 
 
 //console.log(data);
 
-                $("#loaderPrograms").hide();
+                loaderPrograms.hide();
                 addInfo("Anzahl Programme", programsXMLObj.find("program").length);
+
                 gridPrograms.setGridParam({
                     loadonce: false,
                     datatype: "xmlstring",
@@ -2846,7 +2863,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     programsReady = true;
                     programsXML = data;
                     programsXMLObj = $(data);
-                    $("#loaderPrograms").hide();
+                    loaderPrograms.hide();
                     addInfo("Anzahl Programme", programsXMLObj.find("program").length);
                 }
                 if (!functionsReady) {
@@ -2859,7 +2876,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function hmGetDevices() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetDevices()"); }
         statesReady = false;
-        $("#loaderStates").show();
+        loaderStates.show();
 
         var cache = storage.get("hqWebUiStates");
         if (cache !== null) {
@@ -2886,7 +2903,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             //addInfo("CCU Batteriestatus", ccuBat + "%");
 
             statesReady = true;
-            $("#loaderStates").hide();
+            loaderStates.hide();
             if (hqConf.refreshEnable) {
                 if (hqConf.debug) { console.log((new Date()).getTime() + " starting Refresh"); }
                 hmRefresh();
@@ -2930,7 +2947,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     datatype: "xmlstring",
                     datastr: data
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
-                $("#loaderStates").hide();
+                loaderStates.hide();
                 var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
                 ccuBat = ccuBat.toFixed(2);
                 addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
@@ -2968,7 +2985,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     statesReady = true;
                     statesXML = data;
                     statesXMLObj = $(data);
-                    $("#loaderStates").hide();
+                    loaderStates.hide();
                     var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
                     ccuBat = ccuBat.toFixed(2);
                     addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
@@ -2992,21 +3009,28 @@ var chartProtocolReady;
     function refreshProtocol() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " refreshProtocol()"); }
         $("#btnRefreshProtocol").addClass("ui-state-disabled");
+        clearTimeout(timerChart);
         if (chartProtocolReady) {
             chartProtocolReady = false;
-           // highchartProtocol.destroy();
-            while(highchartProtocol.series.length > 0) {
-                highchartProtocol.series[0].remove(false);
-            }
+            //while(highchartProtocol.series.length > 0) {
+            //    highchartProtocol.series[0].remove(false);
+            //}
 
         }
+        if (chartProtocolLoaded) {
+            chartProtocolLoaded = false;
+            highchartProtocol.destroy();
+
+        }
+
         //chartProtocol.redraw();
         protocolXML = "<systemProtocol/>";
         protocolXMLObj = $(protocolXML);
         protocolRecords = 0;
         protocolReady = false;
         chartProtocolSeries = [];
-        $("#loaderProtocol").show();
+        chartDPs = [];
+        loaderProtocol.show();
         //$("#loaderProtocol2").show();
         hmGetProtocol(protocolRecords, 1000);
     }
@@ -3196,7 +3220,7 @@ var chartProtocolReady;
                         protocolReady = true;
                         protocolLoading = false;
                         $("#btnRefreshProtocol").removeClass("ui-state-disabled");
-                        $("#loaderProtocol").hide();
+                        loaderProtocol.hide();
                         //$("#loaderProtocol2").hide();
 
                     }
@@ -3214,7 +3238,7 @@ var chartProtocolReady;
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRssi()"); }
 
 
-        $("#loaderRssi").show();
+        loaderRssi.show();
         rssiReady = false;
 
         var cache = storage.get("hqWebUiRssi");
@@ -3233,7 +3257,7 @@ var chartProtocolReady;
             }).trigger("reloadGrid").setGridParam({loadonce:true});
 
             rssiReady = true;
-            $("#loaderRssi").hide();
+            loaderRssi.hide();
             /*if (!protocolReady) {
                 refreshProtocol();
             }*/
@@ -3265,7 +3289,7 @@ var chartProtocolReady;
                     datatype: "xmlstring",
                     datastr: data
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
-                $("#loaderRssi").hide();
+                loaderRssi.hide();
                 rssiReady = true;
                 /*if (!protocolReady) {
                     // TODO ...!
@@ -3280,7 +3304,7 @@ var chartProtocolReady;
                   datatype: 'xml',
                   mtype: 'GET',
                   loadComplete: function () {
-                      $("#loaderRssi").hide();
+                      loaderRssi.hide();
                       rssiReady = true;
                       if (!protocolReady) {
                           refreshProtocol();
@@ -3864,8 +3888,7 @@ var chartProtocolReady;
 
 
     $("#createBackup").button().click(function () {
-        newwindow=window.open("backup.html",'Backup','toolbar=no,location=no,directories=no,status =no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,height=120,width=360');
-        if (window.focus) {newwindow.focus()}
+        dialogReallyBackup.dialog("open");
         return false;
     });
 
@@ -3895,6 +3918,20 @@ var chartProtocolReady;
             },
             'Nein': function () {
                 dialogReallyRename.dialog("close");
+            }
+        }
+    });
+    dialogReallyBackup.dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            'Ja': function () {
+                newwindow=window.open("backup.html",'Backup','toolbar=no,location=no,directories=no,status =no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,height=120,width=360');
+                if (window.focus) {newwindow.focus()}
+                dialogReallyBackup.dialog("close");
+            },
+            'Nein': function () {
+                dialogReallyBackup.dialog("close");
             }
         }
     });
@@ -5176,7 +5213,7 @@ var chartProtocolReady;
 
 
 
-                $("#loaderScript").hide();
+                loaderScript.hide();
             });
             break;
         case "tcl":
@@ -5553,7 +5590,7 @@ var chartProtocolReady;
 /*
     function hmGetDevices() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetDevices()"); }
-        $("#loaderStates").show();
+        loaderStates.show();
 
 
         var cache = storage.get("hqWebUiDevices");
@@ -5595,7 +5632,7 @@ var chartProtocolReady;
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFunctions()"); }
 
 
-        $("#loaderFunctions").show();
+        loaderFunctions.show();
         var cache = storage.get("hqWebUiFunctions");
         if (cache !== null) {
 
@@ -5609,7 +5646,7 @@ var chartProtocolReady;
                 datastr: functionsXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
             initSelectFunctions();
-            $("#loaderFunctions").hide();
+            loaderFunctions.hide();
             hmGetAlarms();
             return false;
         }
@@ -5632,7 +5669,7 @@ var chartProtocolReady;
                     datastr: functionsXML
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 initSelectFunctions();
-                $("#loaderFunctions").hide();
+                loaderFunctions.hide();
 
                 hmGetAlarms();
             },
@@ -5677,14 +5714,14 @@ var chartProtocolReady;
         if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Alarm-Datapoints"); }
 
 
-        $("#loaderStates").show();
+        loaderStates.show();
          $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=json&session=" + hmSession,
             type: 'POST',
             data: scriptAlarms,
             dataType: 'json',
             success: function (data) {
-                $("#loaderStates").hide();
+                loaderStates.hide();
                 alarmsReady = true;
                 alarmsData = data;
                 storage.set("hqWebUiAlarms", data);
@@ -5693,7 +5730,7 @@ var chartProtocolReady;
 
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $("#loaderStates").hide();
+                loaderStates.hide();
 
                 ajaxError(xhr, ajaxOptions, thrownError);
                 hmGetRooms();
@@ -5881,7 +5918,7 @@ var chartProtocolReady;
 
     function hmGetRooms() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRooms()"); }
-	$("#loaderRooms").show();
+	loaderRooms.show();
 
         var cache = storage.get("hqWebUiRooms");
         if (cache !== null) {
@@ -5896,7 +5933,7 @@ var chartProtocolReady;
                 datatype: "xmlstring",
                 datastr: roomsXML
             }).trigger("reloadGrid").setGridParam({loadonce:true});
-            $("#loaderRooms").hide();
+            loaderRooms.hide();
             initSelectRooms();
             hmGetDevices();
             //hmGetDevices();
@@ -5920,7 +5957,7 @@ var chartProtocolReady;
                     datastr: roomsXML
                 }).trigger("reloadGrid").setGridParam({loadonce:true});
                 initSelectRooms();
-                $("#loaderRooms").hide();
+                loaderRooms.hide();
                 hmGetDevices();
                 //hmGetDevices();
             },
@@ -5932,7 +5969,7 @@ var chartProtocolReady;
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFavorites()"); }
 
 
-        $("#loaderFavorites").show();
+        loaderFavorites.show();
 
         var cache = storage.get("hqWebUiFavorites");
         if (cache !== null) {
@@ -5945,7 +5982,7 @@ var chartProtocolReady;
             $("#timeRefreshFavs").html(formatTimestamp(favoritesTime));
             buildFavorites();
             favoritesReady = true;
-            $("#loaderFavorites").hide();
+            loaderFavorites.hide();
             if (!variablesReady) {
                 hmGetVariables();
             }
@@ -5970,7 +6007,7 @@ var chartProtocolReady;
                 var serialized = (new XMLSerializer()).serializeToString(data);
                 storage.set("hqWebUiFavorites", serialized);
                 buildFavorites();
-                $("#loaderFavorites").hide();
+                loaderFavorites.hide();
                 favoritesReady = true;
 
                 if (!variablesReady) {
@@ -5980,7 +6017,7 @@ var chartProtocolReady;
 
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $("#loaderFavorites").hide();
+                loaderFavorites.hide();
                 ajaxError(xhr, ajaxOptions, thrownError);
             }
         });
@@ -6238,7 +6275,7 @@ var chartProtocolReady;
     }
 
     function hmRunScript (script, successFunction) {
-        $("#loaderScript").show();
+        loaderScript.show();
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?session=" + hmSession + "&debug=true&content=json",
             type: 'POST',
@@ -6246,7 +6283,7 @@ var chartProtocolReady;
             dataType: 'json',
             contentType: 'application/x-www-form-urlencoded; charset=ISO-8859-1',
             success: function (data) {
-                $("#loaderScript").hide();
+                loaderScript.hide();
                 successFunction(data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -6258,14 +6295,14 @@ var chartProtocolReady;
 
 
     function tclRunScript (script, successFunction) {
-        $("#loaderScript").show();
+        loaderScript.show();
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?session=" + hmSession,
             type: 'POST',
             data: script,
             dataType: 'text',
             success: function (data) {
-                $("#loaderScript").hide();
+                loaderScript.hide();
                 successFunction(data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -6277,14 +6314,14 @@ var chartProtocolReady;
     }
 
     function shRunScript (script, successFunction) {
-        $("#loaderScript").show();
+        loaderScript.show();
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/process.cgi?content=json&debug=true&session=" + hmSession,
             type: 'POST',
             data: script,
             dataType: 'json',
             success: function (data) {
-                $("#loaderScript").hide();
+                loaderScript.hide();
                 successFunction(data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -7094,12 +7131,12 @@ var chartProtocolReady;
             protocolLoading = true;
             refreshProtocol();
             $("#loaderProtocol2").show();
-            setTimeout(initChartProtocol, 1000);
+            timerChart = setTimeout(initChartProtocol, 1000);
             return false;
         }
         if (!protocolReady && protocolLoading) {
             $("#loaderProtocol2").show();
-            setTimeout(initChartProtocol, 1000);
+            timerChart = setTimeout(initChartProtocol, 1000);
             return false;
         }
 

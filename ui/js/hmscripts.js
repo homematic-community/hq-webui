@@ -99,7 +99,7 @@ var scriptStates = "string sDevId;\n" +
 var scriptPrograms = "string oPrgID;\n" +
     "string sRet;\n" +
     "object oProgram;\n" +
-    "Write(\"<programList>\");\n" +
+    "Write(\"<programlist>\");\n" +
     "foreach (oPrgID, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {\n" +
     "    oProgram = dom.GetObject(oPrgID);\n" +
     "    if(oProgram != null) {\n" +
@@ -119,7 +119,7 @@ var scriptPrograms = "string oPrgID;\n" +
     "        WriteLine('\"/>');\n" +
     "    }\n" +
     "}\n" +
-    "Write(\"</programList>\");\n";
+    "Write(\"</programlist>\");\n";
 
 var scriptVariables = "object oSysVar;\n" +
     "string sSysVarId;\n" +
