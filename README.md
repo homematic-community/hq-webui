@@ -1,4 +1,4 @@
-HQ WebUI 2.2
+HQ WebUI 2.3
 ============
 Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 
@@ -6,24 +6,27 @@ Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur 
 Features
 ========
 * wesentlich schnellere Ladezeiten und geringere Belastung der CCU
+* Übersichtliche Favoritenansicht
+* Angenehmes Look&Feel, Themes, jQuery UI basiert
+* Grafische Darstellung des Systemprotokolls
 * Editor mit Syntax-Highlighting und Auto-Vervollständigung, unterstütztung für Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
 * Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
-* Übersichtliche, konfigurierbare Favoritenansicht
-* Angenehmes Look&Feel, Themes, jQuery UI basiert
 * Anzeige von Geräten/Kanälen/Datenpunkten, Variablen, Programmen und der "RSSI-List" in übersichtlichen Tabellen
-* Schreibender Zugriff auf Datenpunkte
+* Zugriff auf alle Datenpunkte
 * Ändern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
 * Anlegen und Löschen von Variablen, ändern des Variablentyps
 * Zuordnung von Variablen zu Kanälen
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
 * Umbenennen von Geräten und Kanälen
+* Anlegen, editieren und Löschen von Gewerken und Räumen
+* Zuordnung von Kanälen zu Gewerken und Räumen
 * Anzeige von diversen Informationen und dem Systemprotokoll, löschen des Systemprotokolls
 * Durch Login geschützt, sowohl im Frontend als auch im Backend
 * ...geplante Features siehe "Todo"
 
 Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
 
-Getestet wird das HQ WebUI primär mit Google Chrome. Firefox und Safari Kompatibilität wird angestrebt. Opera und der Internet Explorer werden nicht von mir getestet. Vielleicht funktioniert es, vielleicht aber auch nicht...
+Moderner Browser vorausgesetzt (Chrome, Safari, Firefox)
 
 Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werden, allerdings ohne jegliche Garantien, die Benutzung erfolgt auf eigenes Risiko. Bei einer Weiterverbreitung bitte dieses Readme beibehalten!
 
@@ -44,11 +47,18 @@ Installation
 
 Die Datei hq-webui-(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ui/ erreichbar.
 
+**Achtung Safari Benutzer:** Safari packt in Standardeinstellung .tar.gz Dateien direkt nach dem Download aus - das ist schlecht - Zusatzsoftware muss immer als .tar.gz Datei auf die CCU geladen werden.
+
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
 
 
 Bedienung
 =========
+
+Anmeldung
+---------
+Zur Anmeldung werden die gleichen Benutzernamen und Passwörter wie zur Anmeldung am originalen WebUI verwendet. Bitte darauf achten das auch Benuzternamen Groß-/Kleinschreibung relevant ist und der Standard-Benutzer auf der Homematic CCU sich "Admin" mit großem A schreibt.
+
 
 Allgemein
 ---------
@@ -98,22 +108,18 @@ Roadmap/Todo/Ideen
 
 2.4
 ---
-* Umbennen von "Dateien" im Scripteditor
-* generate_img.sh Skript erweitern - automatisches minifizieren und mergen der .js und .css Dateien, automatisches ändern der js includes in index.html, automatisches "reinigen" der conf Datei?
+* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
+* Session Fehler abfangen
 * Kontextmenü (rechts-klick) in allen Tabellenansichten
-* Anzeige der Auslöser eines Programms in der Programm-Tabelle
 * Programme anzeigen, anlegen, editieren, löschen
 * Benchmark-Funktion für Homematic-Scripte
-* Automatisches aktualisieren des System-Protokolls und Graphen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 
 2.5
 ---
-* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
-* Session Fehler abfangen
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
-* Favoriten-Separatoren per config.js abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
+* Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * Sortieren von Favoriten
 
 3.0
