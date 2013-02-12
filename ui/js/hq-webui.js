@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.2",
+    var version =               "2.3.3",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -835,8 +835,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'id',
         'Name',
         'Beschreibung',
-        'Bedingung',
-        'Aktivität',
+      //  'Bedingung',
+      //  'Aktivität',
         'Aktiv',
         'Zeitstempel'
     ];
@@ -858,11 +858,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 return $(obj).attr('name');
             }
         },
-        {name:'description', index:'description', width: 200, editable: true,
+        {name:'description', index:'description', width: 200,
             xmlmap: function (obj) {
                 return $(obj).attr('description');
             }
-        },
+        },/*
         {name:'condition', index:'condition', width: 200, editable: true,
             xmlmap: function (obj) {
                 return $(obj).attr('condition');
@@ -872,8 +872,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             xmlmap: function (obj) {
                 return $(obj).attr('destination');
             }
-        },
-        {name:'active', index:'active', width: 40, editable: true, edittype: 'checkbox',
+        },*/
+        {name:'active', index:'active', width: 40,
 
             xmlmap: function (obj) {
                 return $(obj).attr('active');
@@ -2953,7 +2953,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
                 addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
                 addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
-                addInfo("CCU Batteriestatus", ccuBat + "%");
+               // addInfo("CCU Batteriestatus", ccuBat + "%");
                 if (statesXMLObj.find("channel[name$=':0'] datapoint[valuetype='2'][value='true']").length > 0) {
                     serviceIndicator.show();
                 } else {
@@ -7335,4 +7335,15 @@ function scriptEditorStyle() {
         $("frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
 
 }
+/*
+(function() {
+    var s = document.createElement('script');
+    var t = document.getElementsByTagName('script')[0];
 
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = '//api.flattr.com/js/0.6/load.js?mode=auto';
+
+    t.parentNode.insertBefore(s, t);
+ })();
+*/

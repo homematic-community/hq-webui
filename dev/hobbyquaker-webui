@@ -11,7 +11,7 @@ case "$1" in
         echo "Info: <br>Aufruf: <a href="/addons/hq/ui" target="_blank">http://CCU/addons/hq/ui</a>"
         echo "Info: <br>Readme: <a href="https://raw.github.com/hobbyquaker/hq-webui/master/README.md" target="_blank">Lies mich!</a>"
         echo "Name: HQ WebUI"
-        echo "Version: 2.3.2"
+        echo "Version: 2.3.3"
         echo "Operations: uninstall"
         ;;
 	uninstall)

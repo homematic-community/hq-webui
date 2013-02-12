@@ -1,5 +1,10 @@
 Changelog
 =========
+2.3.3
+-----
+* Info-Tabelle: Anzeige Batteriestatus vollständig entfernt. Kommt in einer der nächsten Versionen wieder
+* Programme-Tabelle: Anzeige Aktivität und Bedingung wieder entfernt - kommt mit Version 2.4 wieder
+
 2.3.2
 -----
 * Fehler behoben beim Laden der Programme aus dem Cache

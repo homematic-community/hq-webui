@@ -112,6 +112,7 @@ Roadmap/Todo/Ideen
 * Session Fehler abfangen
 * Kontextmenü (rechts-klick) in allen Tabellenansichten
 * Programme anzeigen, anlegen, editieren, löschen
+* In Programme-Tabelle Auslöser und Aktionen anzeigen
 * Benchmark-Funktion für Homematic-Scripte
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 

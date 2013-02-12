@@ -97,7 +97,7 @@ var scriptStates = "string sDevId;\n" +
     "\n";
 
 var scriptPrograms = "string oPrgID;\n" +
-    "string sRet;\n" +
+//    "string sRet;\n" +
     "object oProgram;\n" +
     "Write(\"<programlist>\");\n" +
     "foreach (oPrgID, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {\n" +
@@ -109,13 +109,13 @@ var scriptPrograms = "string oPrgID;\n" +
     "        Write('\" description=\"');\n" +
     "        WriteXML(oProgram.PrgInfo());\n" +
     "        Write('\" condition=\"');\n" +
-    "        sRet = \"\";\n" +
-    "        Call( \"/esp/programs.fn::WriteConditionText()\" );                                                                                                                 \n" +
-    "        WriteXML(sRet);\n" +
-    "        sRet = \"\";\n" +
-    "        Write('\" destination=\"');\n" +
-    "        Call( \"/esp/programs.fn::WriteDestinationText()\" );                                                                                                                 \n" +
-    "        WriteXML(sRet);\n" +
+//    "        sRet = \"\";\n" +
+//    "        Call( \"/esp/programs.fn::WriteConditionText()\" );                                                                                                                 \n" +
+//    "        WriteXML(sRet);\n" +
+//    "        sRet = \"\";\n" +
+      "        Write('\" destination=\"');\n" +
+//    "        Call( \"/esp/programs.fn::WriteDestinationText()\" );                                                                                                                 \n" +
+//    "        WriteXML(sRet);\n" +
     "        WriteLine('\"/>');\n" +
     "    }\n" +
     "}\n" +
