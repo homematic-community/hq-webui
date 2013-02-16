@@ -2,7 +2,7 @@
 
 Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 
-### Features
+## Features
 * wesentlich schnellere Ladezeiten und geringere Belastung der CCU
 * Übersichtliche Favoritenansicht
 * Angenehmes Look&Feel, Themes, jQuery UI basiert
@@ -33,12 +33,12 @@ Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=
 
 
 
-### Download
+## Download
 
 http://www.homematic-inside.de/software/download/item/hq-webui-addon
 
 
-### Installation
+## Installation
 
 **Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
@@ -49,14 +49,14 @@ Die Datei hq-webui_(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 *Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
 
 
-### Bedienung
+## Bedienung
 
-#### Anmeldung
+### Anmeldung
 
 Zur Anmeldung werden die gleichen Benutzernamen und Passwörter wie zur Anmeldung am originalen WebUI verwendet. Bitte darauf achten das auch Benuzternamen Groß-/Kleinschreibung relevant ist und der Standard-Benutzer auf der Homematic CCU sich "Admin" mit großem A schreibt.
 
 
-#### Allgemein
+### Allgemein
 
 Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die gecachten Daten neu zu laden. Alle Sichtbaren Datenpunkten werden ständig automatisch aktualisiert, die Reload-Buttons müssen nur dann verwendet werden wenn Änderungen ausserhalb des HQ WebUI vorgenommen wurden (z.B. neues Gerät angelernt oder Programm im originalen WebUI angelegt)
 Im Einstellungsmenü (Zahnrad-Button oben rechts) kann man alle zwischengespeicherten Daten löschen.
@@ -64,42 +64,42 @@ Rechts oben befindet sich der Logout-Button, der Einstellungen-Button (in den Ei
 Eigene Themes können quasi ohne HTML/CSS-Kenntnisse hier zusammengecklickt werden: http://jqueryui.com/themeroller/
 Diverse Konfigurationsoptionen können in der Datei ui/js/config.js editiert werden.
 
-#### Favoriten
+### Favoriten
 
 Die Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir automatisch im LocalStorage gespeichert.
 
-#### Variablen & Programme
+### Variablen & Programme
 
 Variablen und Programme können über einfach-Klick markiert werden, dann werden unten Links 2 Buttons aktiv, einer zum Ändern des Variablen-Werts (bzw zum starten eines Programms), einer zum editieren des Namens und der Beschreibung.
 
-#### Räume & Gewerke
+### Räume & Gewerke
 
 Räume und Gewerke können über die Buttons unten Links bearbeitet werden.
 
-#### Geräte
+### Geräte
 
 In der Geräteliste befindet sich ganz links in den Tabellen-Zeilen bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
 Datenpunkte lassen sich über einen Button rechts in der jeweiligen Zeile editieren, hier können auch Servicemeldungen bestätigt werden. Geräte und Kanäle können ebenfalls über den Button rechts umbenannt werden.
 
-#### Geräte/Servicemeldungen
+### Geräte/Servicemeldungen
 
 Wenn Servicemeldungen vorhanden sind werden diese im Reiter Geräte mit Anzahl angezeigt. Klappt man Geräte und Kanäle mit aktiven Servicemeldungen auf kann man über den "Checkmark" Button die Servicemeldung bestätigen.
 
 
-#### Entwicklung
+### Entwicklung
 
 Beim Ausführen von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergänzt.
 Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
-#### Zentrale/Systemprotokoll
+### Zentrale/Systemprotokoll
 
 Bitte beachten dass die Ladezeiten des Systemprotokolls sehr lange sind und die CCU stark belasten. Das Systemprotokoll wird deshalb erst dann geladen wenn der entsprechende Reiter das erste mal ausgewählt wird.
 
-### Changelog
+## Changelog
 
 Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
-### Roadmap/Todo/Ideen
+## Roadmap/Todo/Ideen
 
 2.4
 ---
@@ -148,7 +148,7 @@ bald/irgendwann/vielleicht
 
 
 
-### in HQ WebUI verwendete Software
+## in HQ WebUI verwendete Software
 
 * jQuery http://jquery.com/
 * jQuery UI http://jqueryui.com/
@@ -160,7 +160,7 @@ bald/irgendwann/vielleicht
 * Highcharts http://www.highcharts.com
 
 
-### Copyright, Lizenz, Bedingungen
+## Copyright, Lizenz, Bedingungen
 
 HQ WebUI - fast Webfrontend for the Homematic CCU
 
