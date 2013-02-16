@@ -101,8 +101,8 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ## Roadmap/Todo/Ideen
 
-2.4
----
+### 2.4
+
 * Nutzung der "WebAPI", Verzeichnisse umstrukturieren, api fliegt raus.
 * Code aufräumen, ordnen, kommentieren
 * hq-webui.js minifiziert ausliefern
@@ -114,22 +114,22 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * Benchmark-Funktion für Homematic-Scripte
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 
-2.5
----
+### 2.5
+
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * Sortieren von Favoriten
 
-3.0
----
+### 3.0
+
 * Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE (auto-vervollständigung?!)
 * neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
 * Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
 * Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 
-bald/irgendwann/vielleicht
---------------------------
+### bald/irgendwann/vielleicht
+
 * WebMatic Flags (r) (d) (nv) (g/...) beim Editieren von Variablen anbieten
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * Programme-Drucken funktion implementieren (Anli?)
