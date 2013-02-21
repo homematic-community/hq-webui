@@ -4,6 +4,7 @@ Changelog
 -----
 * Script-Editor: Fehler behoben der Auftrat wenn die Zeichenkette "??" in der Ausgabe eines Homematic-Scripts enthalten war (http://bugs.jquery.com/ticket/8417)
 * Script-Editor: Meldung "Scriptausführung erfolgreich" erscheint jetzt nicht mehr als Dialog sondern in der Titelzeile der Scriptausgabe.
+
 2.3.3
 -----
 * Info-Tabelle: Anzeige Batteriestatus vollständig entfernt. Kommt in einer der nächsten Versionen wieder
