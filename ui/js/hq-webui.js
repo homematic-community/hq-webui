@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.3",
+    var version =               "2.3.4",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -5144,12 +5144,19 @@ var chartProtocolReady;
 
             debugScript = debugScript + "\n" + "var hqDebugDummyFinal=1;";
 
+            if (hqConf.debug) {
+                console.log(debugScript);
+            }
+
             hmRunScript(debugScript, function (data) {
                 var scriptFailed = false;
                 var dummyFound = false;
                 var lineNumber = 0;
                 var tmp;
+
+
                 $.each(data, function(key, value) {
+
                     divScriptVariables.show();
                     divStderr.hide();
                     switch (key) {
@@ -6276,11 +6283,15 @@ var chartProtocolReady;
 
     function hmRunScript (script, successFunction) {
         loaderScript.show();
+        if (hqConf.debug) {
+            console.log(script);
+        }
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?session=" + hmSession + "&debug=true&content=json",
             type: 'POST',
             data: script,
-            dataType: 'json',
+            // http://bugs.jquery.com/ticket/8417
+            // dataType: 'json',
             contentType: 'application/x-www-form-urlencoded; charset=ISO-8859-1',
             success: function (data) {
                 loaderScript.hide();
