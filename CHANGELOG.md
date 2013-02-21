@@ -1,5 +1,10 @@
 Changelog
 =========
+2.3.5
+-----
+* Rechtschreibfehler behoben (Danke MaxWrestler:-)
+* Protokoll-Graph zeigt nun auch negative Werte
+
 2.3.4
 -----
 * Script-Editor: Fehler behoben der Auftrat wenn die Zeichenkette "??" in der Ausgabe eines Homematic-Scripts enthalten war (http://bugs.jquery.com/ticket/8417)

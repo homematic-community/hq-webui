@@ -23,7 +23,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.4",
+    var version =               "2.3.5",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -7185,8 +7185,7 @@ var chartProtocolReady;
                 yAxis: {
                     title: {
                         text: ''
-                    },
-                    min: 0
+                    }
                 }
                 /*,
                  tooltip: {
