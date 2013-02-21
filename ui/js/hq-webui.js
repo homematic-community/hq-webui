@@ -5113,6 +5113,7 @@ var chartProtocolReady;
         var fileContent = editAreaLoader.getValue("hmScript");
 
         gridScriptVariables.jqGrid('clearGridData');
+        $("#scriptSuccess").html("");
         $("div#hmScriptStdout").html("");
 
 
@@ -5186,8 +5187,9 @@ var chartProtocolReady;
 
                 if (hqConf.scriptDebugMethod == "log") {
                     if (!scriptFailed && dummyFound) {
-                        $("#debugScript").html("Scriptausführung erfolgreich.");
-                        dialogDebugScript.dialog('open');
+                        //$("#debugScript").html("Scriptausführung erfolgreich.");
+                        //dialogDebugScript.dialog('open');
+                        $("#scriptSuccess").html("Scriptausführung erfolgreich.");
                     } else {
                         $.ajax({
                             url: hqConf.ccuUrl + hqConf.hqapiPath + "/tclscript.cgi?content=xml&session=" + hmSession,
