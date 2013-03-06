@@ -10,8 +10,10 @@
     <link rel="stylesheet" href="css/jquery.jsonview.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
     <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/codemirror.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="js/lostorage.min.js"></script>
+    <script type="text/javascript" src="js/colResizable-1.3.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
@@ -22,6 +24,8 @@
     <script type="text/javascript" src="js/hmscripts.js"></script>
     <script type="text/javascript" src="js/tclscripts.js"></script>
     <!--<script type="text/javascript" src="js/hq-base.js"></script>-->
+    <script type="text/javascript" src="js/codemirror.js"></script>
+    <script type="text/javascript" src="js/mode/javascript/javascript.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
 </head>
 <body>
@@ -36,7 +40,8 @@
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span id="msgcount" class="tabCount"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
                 <!--<li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>-->
-                <li><a href="#tabDev">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabEditor">Entwicklung<span class="loader"><img id="loaderEditor" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabDev">fliegt raus!<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
             </ul>
             <!--<div class="tabs" id="tabDashboard"></div>-->
@@ -81,13 +86,30 @@
                     <div id="gridPagerStates"></div>
                 </div>
             </div>
-            <!--<div class="tabs" id="tabLinks">
-                Todo
-                <div class="tabContainer">
-                    <table id="gridLinks"></table>
-                    <div id="gridPagerLinks"></div>
+            <div class="tabs" id="tabEditor">
+                <div id="editorContainer" class="ui-widget ui-widget-content ui-corner-all">
+                    <div id="tblEditorHead" class="ui-widget ui-widget-header ui-corner-top">
+                        <span style="display:inline-block; width: 12px;">&nbsp;</span>
+                        <span style="display:inline-block" id="editorMenuFile" data-hqmenu="file" class="editorMenu ui-state-default">
+                        Datei</span><span data-hqmenu="edit" class="editorMenu ui-state-default">
+                        Bearbeiten</span><span data-hqmenu="run" class="editorMenu ui-state-default">
+                        Ausführen</span><span data-hqmenu="view" class="editorMenu ui-state-default">
+                        Ansicht</span><span data-hqmenu="help" class="editorMenu ui-state-default">
+                        Hilfe</span>
+
+
+
+
+                    </div>
+                    <table id="tblEditor">
+                        <tr>
+                            <td id="editorFileCell">file list</td>
+                            <td id="editorEditorCell"><textarea id="codemirror" name="codemirror"></textarea></td>
+                            <td id="editorOutputCell">output area</td>
+                        </tr>
+                    </table>
                 </div>
-            </div>-->
+            </div>
             <div class="tabs" id="tabDev">
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
@@ -647,4 +669,47 @@
         </ul>
 
     </div>
+    <ul style="position:relative; z-index:2000; width:180px" id="menuFile" class="menu">
+        <li><a id="" href="#">Neue Datei</a>
+            <ul style="width:120px;">
+                <li><a id="" href="#">Homematic Script</a></li>
+                <li><a id="" href="#">TCL Script</a></li>
+                <li><a id="" href="#">Shell Script</a></li>
+                <li><a id="" href="#">JSON RPC</a></li>
+                <li><a id="" href="#">XML RPC</a></li>
+            </ul>
+        </li>
+        <li><a id="" href="#">Datei von CCU laden</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-disk"></span>Datei auf CCU speichern</a></li>
+        <li><a id="" href="#">Datei schließen</a></li>
+    </ul>
+    <ul style="position:relative; z-index:2000; width:150px" id="menuEdit" class="menu">
+        <li><a id="" href="#">Rückgängig</a></li>
+        <li><hr></li>
+        <li><a id="" href="#">Ausschneiden</a></li>
+        <li><a id="" href="#">Kopieren</a></li>
+        <li><a id="" href="#">Einfügen</a></li>
+        <li><hr></li>
+        <li><a id="" href="#">Suchen</a></li>
+        <li><a id="" href="#">Ersetzen</a></li>
+    </ul>
+    <ul style="position:relative; z-index:2000; width:150px" id="menuRun" class="menu">
+        <li><a id="" href="#">Script ausführen</a></li>
+        <li><a id="" href="#">Script debuggen</a></li>
+        <li><a id="" href="#">Script benchmarken</a></li>
+        <li><a id="" href="#">XML RPC ausführen</a>
+            <ul>
+                <li><a id="" href="#">2000</a></li>
+                <li><a id="" href="#">2001</a></li>
+                <li><a id="" href="#">2002</a></li>
+            </ul>
+        </li>
+        <li><a id="" href="#">JSON RPC ausführen</a></li>
+    </ul>
+    <ul style="position:relative; z-index:2000; width:150px" id="menuView" class="menu">
+
+    </ul>
+    <ul style="position:relative; z-index:2000; width:150px" id="menuHelp" class="menu">
+
+    </ul>
 </body>

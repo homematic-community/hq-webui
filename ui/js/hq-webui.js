@@ -14,6 +14,10 @@
  *
  */
 
+
+
+
+
 jQuery.extend(jQuery.expr[ ":" ], {
     reallyvisible : function (a) {
         return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length);
@@ -21,9 +25,78 @@ jQuery.extend(jQuery.expr[ ":" ], {
 });
 
 
+
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.3.5",
+    var codemirrorReady = false;
+
+    function initCodemirror() {
+        if (!codemirrorReady) {
+            $("#editorFileCell").css("width", "15%");
+            $("#editorEditorCell").css("width", "55%");
+            $("#editorOutputCell").css("width", "30%");
+            codemirrorReady = true;
+            if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
+            var codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
+                lineNumbers: true,
+                mode:  "javascript"
+            });
+            resizeAll();
+
+        }
+    }
+
+    var editorResizeReady = false;
+    function initEditorResize() {
+        if (!editorResizeReady) {
+            $("#tblEditor").colResizable({
+                hoverCursor: "col-resize",
+                dragCursor: "col-resize"
+            });
+            editorResizeReady = true;
+        }
+    }
+
+    $(".editorMenu").hover(function() {
+        $(this).addClass("ui-state-hover");
+    },function() {
+        $(this).removeClass("ui-state-hover");
+    });
+
+    var menus = {
+        "file": $("#menuFile"),
+        "edit": $("#menuEdit"),
+        "run":  $("#menuRun"),
+        "view": $("#menuView"),
+        "help": $("#menuHelp")
+    };
+
+
+    $(".editorMenu").click(function (e) {
+        var btn = $(this);
+        console.log("+");
+        $( document ).one( "click", function() {
+            console.log("-");
+            menus[btn.attr("data-hqmenu")].hide();
+            btn.removeClass("ui-state-active");
+        });
+        $(".editorMenu").removeClass("ui-state-active");
+        $(".menu").hide();
+        btn.addClass("ui-state-active");
+        menus[btn.attr("data-hqmenu")] = menus[btn.attr("data-hqmenu")].show().position({
+            my: "left top",
+            at: "left bottom",
+            of: btn
+        });
+        e.preventDefault();
+        return false;
+    });
+
+
+
+
+
+    var version =               "2.4-alpha1",
 
         chartDPs = [],
         chartProtocolSeries = [],
@@ -199,6 +272,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#logout").hide();
     divSession.show();
     $("#hmNewScriptMenu").menu().hide();
+    $(".menu").menu().hide().removeClass("ui-corner-all").addClass("ui-corner-bottom");
     $("#hmRunScriptMenu").menu().hide();
     $("#contextMenuRooms").menu().hide();
     //$("#hmCcuMenu").menu().hide();
@@ -297,8 +371,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             clearTimeout(timerRefresh);
             timerRefresh = setTimeout(hmRefresh, 50);
             if (!tabChange) {
-                var hash = $("a[id='ui-id-" + (parseInt(ui.index,10) + 1) + "']").attr("href");
-                //if (hqConf.debug) { console.log(hash); }
+                var hash = $("#mainNav li:nth-child("+(parseInt(ui.index,10)+1)+") a").attr("href");
+                //if (hqConf.debug) { console.log(ui.index + " " + hash); }
                 history.pushState({}, "", hash);
                 tabActive = hash;
             } else {
@@ -315,6 +389,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             editorReady = true;
                             initEditArea();
                         }
+
+                }
+                if (ui.newTab[0].children[0].hash == "#tabEditor") {
+                    if (!editorReady) {
+                        editorReady = true;
+                        initCodemirror();
+                    }
 
                 }
             }
@@ -363,7 +444,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $(window).resize(function() {
         resizeAll();
     });
-    setTimeout(resizeAll, 200);
+    setTimeout(resizeAll, 250);
     function resizeAll() {
         var x = $(window).width();
         var y = $(window).height();
@@ -378,6 +459,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
          gridHeight = hqConf.gridHeight;
          } */
         gridStates.setGridHeight(gridHeight);
+        $("#editorContainer").css("height", y-80).css("width",gridWidth);
+        $(".CodeMirror").css("height", y-105);
+        $("#tblEditor").css("width", "100%");
         $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
@@ -390,6 +474,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#tabSystemContainer").css("width", gridWidth - 46);
         $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
         $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
+        initEditorResize();
         resizeFavHeight();
         if (chartProtocolLoaded) {
             highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
@@ -5790,7 +5875,7 @@ var chartProtocolReady;
                             break;
                         default:
                             serviceIndicator.show();
-                            spanMsgCount.html(activeMessages.toString(10));
+                            spanMsgCount.html(activeMessages);
                     }
 
                     statesXMLObj.find("datapoint").each(function() {
@@ -7244,6 +7329,10 @@ var chartProtocolReady;
     if (tabActive == "#tabDev") {
         editorReady = true;
         initEditArea();
+    }
+
+    if (tabActive == "#tabEditor") {
+        initCodemirror();
     }
 
 

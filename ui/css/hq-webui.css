@@ -335,3 +335,44 @@ span.loader {
 ul#mainNav li {
     min-width: 100px;
 }
+#editorContainer {
+}
+
+#tblEditorHead {
+    width: 100%;
+    height: 23px;
+    border: 0;
+}
+
+#tblEditor {
+    width: 80%;
+    padding:0;
+    margin:0;
+    border-collapse: collapse;
+}
+
+#editorFileCell {
+    width: 12%;
+}
+
+#editorEditorCell {
+    border-right: 1px solid lightgray;
+}
+
+#editorOutputCell {
+    width: 30%
+}
+
+.editorMenu {
+    display: inline-block;
+    vertical-align:top;
+    height: 18px;
+    padding-left:8px;
+    padding-right:8px;
+    padding-top: 4px;
+    border-bottom: 0 !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 1px solid #d3d3d3 !important;
+
+}
