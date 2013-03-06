@@ -2,9 +2,10 @@ Changelog
 =========
 2.4-alpha1
 ----------
-* Entscheidung: "Editarea" fliegt raus und wird durch "Codemirror" ersetzt
-* Codemirror integriert, grundlegendes Layout festgelegt
-* Menüzeile für Editor gebaut
+* Roadmap aktualisiert
+* Tab Entwicklung: "Editarea" fliegt raus und wird durch "Codemirror" ersetzt
+* Tab Entwicklung: Codemirror integriert, grundlegendes Layout festgelegt
+* Tab Entwicklung: Menüzeile für Editor gebaut
 
 2.3.5
 -----

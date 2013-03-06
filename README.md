@@ -102,31 +102,34 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 ## Roadmap/Todo/Ideen
 
 ### 2.4
-
-* Nutzung der "WebAPI", Verzeichnisse umstrukturieren, api fliegt raus.
-* Code aufräumen, ordnen, kommentieren
-* hq-webui.js minifiziert ausliefern
-* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
-* Session Fehler abfangen
-* Kontextmenü (rechts-klick) in allen Tabellenansichten
-* Programme anzeigen, anlegen, editieren, löschen
-* In Programme-Tabelle Auslöser und Aktionen anzeigen
+* Reiter Entwicklung komplett neu aufbauen mit "Codemirror" anstatt "editArea" (wesentlich besser)
 * Benchmark-Funktion für Homematic-Scripte
-* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
+* Scripte auf CCU speichern und von CCU laden
+* Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
+
 
 ### 2.5
-
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 * Sortieren von Favoriten
 
-### 3.0
+### 2.6
+* Programme anzeigen, anlegen, editieren, löschen
+* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
+* Kontextmenü (rechts-klick) in allen Tabellenansichten
 
-* Scriptkonsole: Anderen (besseren) Editor einbauen - vermutlich ACE (auto-vervollständigung?!)
-* neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
-* Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
+
+### 3.0
+* Nutzung der "WebAPI", Verzeichnisse umstrukturieren, Verzeichnis "api" fliegt komplett raus.
+* Code aufräumen, ordnen, kommentieren
+* hq-webui.js minifiziert ausliefern, eventuell javascript-files zusammenfassen
+* http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
+* Session Fehler abfangen
+
+
+
+
 
 ### bald/irgendwann/vielleicht
 
@@ -135,13 +138,15 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * Programme-Drucken funktion implementieren (Anli?)
 * Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
+* neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
+* Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
+* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
 * Programme exportieren/importieren? Aufwendig - beim Import müssten Variablen/Kanäle komfortabel neu zugeordnet werden...
 * CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
 * Anlegen/Editieren/Löschen von Cronjobs
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * Selbst-Update / Auto-Update des HQ WebUI
 * Zusatzsoftware installieren - optional ohne Zwangsreboot - und deinstallieren
-* Style-Korrektur für nicht-quadratische Geräte-Icons
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Ausbau des Tabs Funk, Einfärben der RX/TX Werte?
 * Thermostatmodus setzen
