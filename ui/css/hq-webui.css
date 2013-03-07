@@ -353,14 +353,24 @@ ul#mainNav li {
 
 #editorFileCell {
     width: 12%;
+    vertical-align: top;
+    padding-top: 3px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #editorEditorCell {
     border-right: 1px solid lightgray;
+    color: #000000;
+    vertical-align: top;
 }
 
 #editorOutputCell {
-    width: 30%
+    width: 30%;
+    padding: 5px !important;
+    vertical-align: top;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .editorMenu {
@@ -374,5 +384,33 @@ ul#mainNav li {
     border-top: 0 !important;
     border-left: 0 !important;
     border-right: 1px solid #d3d3d3 !important;
+    font-size: 11px;
+    font-weight: bold;
 
 }
+
+#fileList {
+    width: 100%;
+    border: 0;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+}
+
+#fileList tr, #fileList tr td {
+    border: 0;
+}
+
+.fileListLeft {
+    width: 0px;
+}
+
+.fileListRight {
+    width: 0px;
+}
+
+.CodeMirror-activeline-background {background: #e8f2ff !important;}
+.CodeMirror-focused .cm-matchhighlight {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQI12NgYGBgkKzc8x9CMDAwAAAmhwSbidEoSQAAAABJRU5ErkJggg==);
+    background-position: bottom;
+    background-repeat: repeat-x;

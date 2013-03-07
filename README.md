@@ -21,7 +21,7 @@ Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur 
 * Durch Login geschützt, sowohl im Frontend als auch im Backend
 * ...geplante Features siehe "Todo"
 
-Das HQ WebUI lädt die benötigten jQuery Bibliotheken vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Bibliotheken auf der CCU belegen würden eingespart werden. Allerdings ist deshalb zur Benutzung ein funktionierender Web-Zugang erforderlich.
+Das HQ WebUI lädt alle Themes ausser dem Standard-Theme "Redmond" vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Themes auf der CCU belegen würden eingespart werden. Daher ist zur Benutzung von anderen Themes ein funktionierender Web-Zugang erforderlich.
 
 Chrome, Safari oder Firefox erforderlich, Chrome empfohlen.
 
@@ -158,12 +158,11 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * jQuery http://jquery.com/
 * jQuery UI http://jqueryui.com/
 * jqGrid http://www.trirand.com/blog/
-* jQuery JSON View https://github.com/quickredfox/jquery-jsonview
-* editarea http://www.cdolivet.com/editarea/
+* Codemirror http://http://codemirror.net/ mit diversen Addons
+* Highcharts http://www.highcharts.com
 * lostorage.js https://github.com/js-coder/loStorage.js
 * jQuery UI Multiselect Widget https://github.com/ehynds/jquery-ui-multiselect-widget
-* Highcharts http://www.highcharts.com
-
+* colResizable http://http://quocity.com/colresizable/
 
 ## Copyright, Lizenz, Bedingungen
 

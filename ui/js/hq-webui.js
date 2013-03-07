@@ -28,76 +28,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var codemirrorReady = false;
-
-    function initCodemirror() {
-        if (!codemirrorReady) {
-            $("#editorFileCell").css("width", "15%");
-            $("#editorEditorCell").css("width", "55%");
-            $("#editorOutputCell").css("width", "30%");
-            codemirrorReady = true;
-            if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
-            var codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
-                lineNumbers: true,
-                mode:  "javascript"
-            });
-            resizeAll();
-
-        }
-    }
-
-    var editorResizeReady = false;
-    function initEditorResize() {
-        if (!editorResizeReady) {
-            $("#tblEditor").colResizable({
-                hoverCursor: "col-resize",
-                dragCursor: "col-resize"
-            });
-            editorResizeReady = true;
-        }
-    }
-
-    $(".editorMenu").hover(function() {
-        $(this).addClass("ui-state-hover");
-    },function() {
-        $(this).removeClass("ui-state-hover");
-    });
-
-    var menus = {
-        "file": $("#menuFile"),
-        "edit": $("#menuEdit"),
-        "run":  $("#menuRun"),
-        "view": $("#menuView"),
-        "help": $("#menuHelp")
-    };
-
-
-    $(".editorMenu").click(function (e) {
-        var btn = $(this);
-        console.log("+");
-        $( document ).one( "click", function() {
-            console.log("-");
-            menus[btn.attr("data-hqmenu")].hide();
-            btn.removeClass("ui-state-active");
-        });
-        $(".editorMenu").removeClass("ui-state-active");
-        $(".menu").hide();
-        btn.addClass("ui-state-active");
-        menus[btn.attr("data-hqmenu")] = menus[btn.attr("data-hqmenu")].show().position({
-            my: "left top",
-            at: "left bottom",
-            of: btn
-        });
-        e.preventDefault();
-        return false;
-    });
 
 
 
 
 
-    var version =               "2.4-alpha1",
 
+    var version =               "2.4-alpha2",
+
+        codemirror,
+        codemirrorReady = false,
+        editorResizeReady = false,
+        editorActiveFile = "",
+        editorFiles = {},
+        editorMode,
         chartDPs = [],
         chartProtocolSeries = [],
 
@@ -286,13 +230,182 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     // Theme laden
-
-
     getTheme();
 
     // Konfiguration
     getConfig();
     initConfigDialog();
+
+    // Editor
+    function fileNew() {
+
+    }
+
+
+    function fileClose() {
+
+    }
+
+    function fileLoad(name, content) {
+        editorActiveFile = name;
+        storage.set("HqWebUiActiveFile", name);
+        var filenameparts = name.split(".");
+        var ext = filenameparts.pop();
+        var mode;
+        switch (ext) {
+            case "hm":
+            case "fn":
+                mode = "homematic";
+                divStdout.show();
+                divScriptVariables.show();
+                divStderr.hide();
+                break;
+            case "tcl":
+                mode = "tcl";
+                divStdout.show();
+                divScriptVariables.hide();
+                divStderr.hide();
+
+                break;
+            case "xml":
+                mode = "xml";
+                divStdout.show();
+                divScriptVariables.hide();
+                divStderr.hide();
+
+                break;
+            case "json":
+                mode = {name:"javascript",json:true};
+                divStdout.show();
+                divScriptVariables.hide();
+                divStderr.hide();
+
+                break;
+            case "sh":
+                mode = "shell";
+                divStdout.show();
+                divScriptVariables.hide();
+                divStderr.show();
+
+                break;
+        }
+        editorMode = mode;
+
+
+
+        codemirror.setOption("lineNumbers", true);
+        codemirror.setOption("readOnly", false);
+        codemirror.setOption("value", content);
+        codemirror.setOption("mode", mode);
+        codemirror.setOption("autoCloseTags", true);
+        codemirror.setOption("autoCloseBrackets", true);
+        codemirror.setOption("matchBrackets", true);
+        codemirror.setOption("styleActiveLine", true);
+        codemirror.setOption("highlightSelectionMatches", true);
+
+        //CodeMirror.modeURL = "js/mode/%N/%N.js";
+        //CodeMirror.autoLoadMode(codemirror, mode);
+        initEditorFileList();
+    }
+
+    function initCodemirror() {
+        if (!codemirrorReady) {
+            $("#editorFileCell").css("width", "15%");
+            $("#editorEditorCell").css("width", "55%");
+            $("#editorOutputCell").css("width", "30%");
+            codemirrorReady = true;
+            if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
+            codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
+                mode: "xml",
+                readonly: "nocursor"
+            });
+            resizeAll();
+
+            editorFiles = JSON.parse(storage.get('hqWebUiScripts'));
+
+
+            var active = storage.get("HqWebUiActiveFile");
+            if (active !== null) {
+                editorActiveFile = active;
+                fileLoad(editorActiveFile, editorFiles[editorActiveFile]);
+            } else {
+                initEditorFileList();
+            }
+        }
+    }
+
+    function initEditorFileList() {
+        if (hqConf.debug) { console.log((new Date()).getTime() + " filelist init"); }
+        var active;
+        var line;
+        $("#fileList").html("");
+        for (var file in editorFiles) {
+            line = "<tr class='ui-widget-content'>"; //<td class='fileListLeft'></td>";
+            if (file === editorActiveFile) {
+                line += "<td class='fileListFile ui-state-active'>"+file+"</td>";
+            } else {
+                line += "<td class='fileListFile'>"+file+"</td>";
+            }
+            line += "</tr>"; //"<td class='fileListRight'></td></tr>"
+            $("#fileList").append(line);
+        }
+        $("#fileList tr").hover(function () {
+            $(this).addClass("ui-state-hover");
+        }, function () {
+            $(this).removeClass("ui-state-hover");
+        }).click(function () {
+                fileLoad($(this).find("td.fileListFile").html(), editorFiles[$(this).find("td.fileListFile").html()]);
+            });
+
+    }
+
+
+
+    function initEditorResize() {
+        if (!editorResizeReady) {
+            $("#tblEditor").colResizable({
+                hoverCursor: "col-resize",
+                dragCursor: "col-resize"
+            });
+            editorResizeReady = true;
+        }
+    }
+
+    $(".editorMenu").hover(function() {
+        $(this).addClass("ui-state-hover");
+    },function() {
+        $(this).removeClass("ui-state-hover");
+    });
+
+    var menus = {
+        "file": $("#menuFile"),
+        "edit": $("#menuEdit"),
+        "run":  $("#menuRun"),
+        "view": $("#menuView"),
+        "help": $("#menuHelp")
+    };
+
+
+    $(".editorMenu").click(function (e) {
+        var btn = $(this);
+        console.log("+");
+        $( document ).one( "click", function() {
+            console.log("-");
+            menus[btn.attr("data-hqmenu")].hide();
+            btn.removeClass("ui-state-active");
+        });
+        $(".editorMenu").removeClass("ui-state-active");
+        $(".menu").hide();
+        btn.addClass("ui-state-active");
+        menus[btn.attr("data-hqmenu")] = menus[btn.attr("data-hqmenu")].show().position({
+            my: "left top",
+            at: "left bottom",
+            of: btn
+        });
+        e.preventDefault();
+        return false;
+    });
+
 
 
     function getConfig() {
@@ -465,8 +578,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
-        divStdout.css('width', x - 775);
-        gridScriptVariables.setGridWidth(x - 775);
+        //divStdout.css('width', x - 775);
+        gridScriptVariables.setGridWidth(divStdout.css("width"));
         tabFavorites.css("height", $("#tabVariables").height());
         //$("#tabCcu").css("height", $("#tabVariables").height());
         chartProtocol.css("width", gridWidth - 46);
@@ -474,7 +587,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $("#tabSystemContainer").css("width", gridWidth - 46);
         $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
         $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
-        initEditorResize();
+        if (codemirrorReady) {
+            initEditorResize();
+        }
         resizeFavHeight();
         if (chartProtocolLoaded) {
             highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
@@ -535,16 +650,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
 
-    divStdout.resizable().on("resize", function(event, ui) {
+   /* divStdout.resizable().on("resize", function(event, ui) {
         $("#hmScriptStdout").height(divStdout.height()-29);
         divStderr.width(divStdout.width());
-    });
+    });*/
 
-
+/*
 
     divStderr.resizable().on("resize", function(event, ui) {
         $("#hmScriptStderr").height(divStderr.height()-29);
-    });
+    });*/
 
 
 
@@ -2456,8 +2571,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     gridScriptVariables.jqGrid({
-        width: 343,
-        height: 130,
         colNames:['Variable', 'Wert'],
         colModel:[
             {name:'variable', index:'variable', width: 80},
@@ -4671,6 +4784,7 @@ var chartProtocolReady;
         buttons: {
             'Ok': function () {
                 checkName($("#cfgChannelId").val(), $("#cfgChannelName").val(), "CHANNEL", function() {
+                    if (hqConf.debug) { console.log("cfgChannel"); }
 
                     var logged;
                     var name = $("#cfgChannelName").val();
@@ -4780,6 +4894,7 @@ var chartProtocolReady;
                     $("tr[id='"+dev_id+"'] td[aria-describedby='gridStates_functions']").html(functions);
 
                     dialogCfgChannel.dialog('close');
+
                     var script = script + "object o = dom.GetObject("+row_id+");\n" +
                                 "o.Name('"+name+"');\n" +
                                 "o.ChnArchive("+logged+");\n";
@@ -4787,59 +4902,41 @@ var chartProtocolReady;
                     $.ajax({
                         url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=plain&session=" + hmSession,
                         type: "POST",
-                        data: script,
-                        success: function () {
-                        },
-                        errror: function () {
-
-                        }
+                        data: script
                     });
-                            // TODO Protkolliert-Flag des übergeordneten Gerätes aktualiseren
+
                     statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", name).attr("logged", logged);
-                    statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
-                    storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
-                    roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
-                    storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
-                    functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
-                    storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
-                    gridRooms.setGridParam({
-                        loadonce: false,
-                        datatype: "xmlstring",
-                        datastr: roomsXML
-                    }).trigger("reloadGrid").setGridParam({loadonce:true});
-                    gridFunctions.setGridParam({
-                        loadonce: false,
-                        datatype: "xmlstring",
-                        datastr: functionsXML
-                    }).trigger("reloadGrid").setGridParam({loadonce:true});
-                    /*
-                           var request = {
+                    setTimeout(function () {
+                        // Todo Pfusch. Kann Chrome crashes verursachen, dringend anders lösen!
+                        statesXML = $.parseXML((new XMLSerializer()).serializeToString(statesXMLObj[0]));
+                        storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXML));
+                        roomsXML = $.parseXML((new XMLSerializer()).serializeToString(roomsXMLObj[0]));
+                        storage.set('hqWebUiRooms', (new XMLSerializer()).serializeToString(roomsXML));
+                        functionsXML = $.parseXML((new XMLSerializer()).serializeToString(functionsXMLObj[0]));
+                        storage.set('hqWebUiFunctions', (new XMLSerializer()).serializeToString(functionsXML));
+                           if (hqConf.debug) {
+                               console.log("updated cache");
+                           }
 
-                               "method": '',
-                               "params": {
-                                   "id": $("#cfgChannelId").val(),
-                                   "name": $("#cfgChannelName").val(),
-                                   "_session_id_": hmSession
-                               }
-                           };
-                           request.method = "Channel.setName";
-                           if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: " + request.method + " id=" + request.params.id + " name=" + request.params.name); }
-                           jsonPost(request, function () {
-                               var row_id = $("#cfgChannelId").val();
-                                     $("tr[id='" + $("#cfgChannelId").val() + "'] td[aria-describedby$='t_name']").html($("#cfgChannelName").val());
-                                       devicesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                       statesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                       favoritesXMLObj.find("channel[ise_id='"+row_id+"']").attr("name", $("#cfgChannelName").val());
-                                       //storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(devicesXMLObj));
-                                       //storage.set('hqWebUiStates', (new XMLSerializer()).serializeToString(statesXMLObj));
-                                       //storage.set('hqWebUiFavorites', (new XMLSerializer()).serializeToString(favoritesXMLObj));
+                    }, 250);
+                    setTimeout(function () {
+                        gridRooms.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: roomsXML
+                        }).trigger("reloadGrid").setGridParam({loadonce:true});
+                        if (hqConf.debug) { console.log("reloaded rooms"); }
 
-
-
-                           });
-                     */       });
-
-
+                        gridFunctions.setGridParam({
+                            loadonce: false,
+                            datatype: "xmlstring",
+                            datastr: functionsXML
+                        }).trigger("reloadGrid").setGridParam({loadonce:true});
+                        if (hqConf.debug) { console.log("reloaded functions"); }
+                    }, 300);
+                });
+                if (hqConf.debug) { console.log("done"); }
+                return 0;
             },
             'Abbrechen': function () {
                 $(this).dialog('close');
@@ -5169,6 +5266,8 @@ var chartProtocolReady;
             }
         }
     });
+
+
 
     $("button#hmSaveScript").click(function () {
         var files = editAreaLoader.getAllFiles("hmScript");
@@ -7201,10 +7300,17 @@ var chartProtocolReady;
 
     function getTheme() {
         var theme = storage.get("hqWebUiTheme");
-        if (theme === null) { theme = hqConf.themeDefault; }
-        $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
+        if (theme === null) {
+            theme = hqConf.themeDefault;
+        } else {
+            if (theme != hqConf.themeDefault) {
+                $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
+            }
+
+        }
+
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-        setTimeout(scriptEditorStyle,2000);
+        //setTimeout(scriptEditorStyle,2000);
     }
 
 

@@ -1,5 +1,13 @@
 Changelog
 =========
+2.4-alpha2
+----------
+* jQuery und jQuery UI sowie das Default-Theme "Redmond" sind nun enthalten und werden nicht mehr vom Google CDN geladen. Das CDN wird nur noch bemüht falls ein anderes Theme als Redmond ausgewählt wird.
+* Diverse Addons in Codemirror integriert
+* Anzeige der Liste der geöffneten Dateien, Click-Event
+* Diverse Style-Anpassungen
+* Alten Entwicklungs-Tab entfernt, editarea.js entfernt.
+
 2.4-alpha1
 ----------
 * Roadmap aktualisiert

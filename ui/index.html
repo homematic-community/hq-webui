@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="ISO-8859-1">
     <title>HQ WebUI</title>
     <link id="theme" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/redmond/jquery-ui.css" rel="stylesheet">
     <link type="text/css" href="css/ui.jqgrid.css" rel="stylesheet">
     <link type="text/css" href="css/jquery.multiselect.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/jquery.jsonview.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
+    <!--<link rel="stylesheet" href="css/jquery.jsonview.css" type="text/css" media="screen" title="no title" charset="utf-8">-->
     <link type="text/css" href="css/hq-webui.css" rel="stylesheet">
     <link rel="stylesheet" href="css/codemirror.css">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/lostorage.min.js"></script>
     <script type="text/javascript" src="js/colResizable-1.3.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/i18n/grid.locale-de.js"></script>
     <script type="text/javascript" src="js/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/jquery.multiselect.min.js"></script>
-    <script type="text/javascript" src="js/jquery.jsonview.js"></script>
     <script type="text/javascript" src="js/highcharts.js"></script>
     <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/hmscripts.js"></script>
     <script type="text/javascript" src="js/tclscripts.js"></script>
-    <!--<script type="text/javascript" src="js/hq-base.js"></script>-->
     <script type="text/javascript" src="js/codemirror.js"></script>
-    <script type="text/javascript" src="js/mode/javascript/javascript.js"></script>
+    <script type="text/javascript" src="js/cm/addons/closebrackets.js"></script>
+    <script type="text/javascript" src="js/cm/addons/closetag.js"></script>
+    <script type="text/javascript" src="js/cm/addons/matchbrackets.js"></script>
+    <script type="text/javascript" src="js/cm/addons/active-line.js"></script>
+    <script type="text/javascript" src="js/cm/addons/match-highlighter.js"></script>
+    <script type="text/javascript" src="js/cm/mode/javascript/javascript.js"></script>
+    <script type="text/javascript" src="js/cm/mode/homematic/homematic.js"></script>
+    <script type="text/javascript" src="js/cm/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="js/cm/mode/shell/shell.js"></script>
+    <script type="text/javascript" src="js/cm/mode/tcl/tcl.js"></script>
     <script type="text/javascript" src="js/hq-webui.js"></script>
 </head>
 <body>
@@ -40,8 +45,7 @@
                 <li><a href="#tabPrograms">Programme<span class="loader"><img id="loaderPrograms" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabStates">Geräte<span id="service" class="tabAlert ui-icon ui-icon-comment"></span><span id="msgcount" class="tabCount"></span><span class="loader"><img id="loaderStates" src="img/loader-bright.gif"></span></a></li>
                 <!--<li><a href="#tabLinks">Verküpfungen<span class="loader"><img id="loaderLinks" src="img/loader-bright.gif"></span></a></li>-->
-                <li><a href="#tabEditor">Entwicklung<span class="loader"><img id="loaderEditor" src="img/loader-bright.gif"></span></a></li>
-                <li><a href="#tabDev">fliegt raus!<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
+                <li><a href="#tabEditor">Entwicklung<span class="loader"><img id="loaderScript" src="img/loader-bright.gif"></span></a></li>
                 <li><a href="#tabCcu">Zentrale<span class="loader"><img id="loaderCcu" src="img/loader-bright.gif"></span></a></li>
             </ul>
             <!--<div class="tabs" id="tabDashboard"></div>-->
@@ -89,7 +93,7 @@
             <div class="tabs" id="tabEditor">
                 <div id="editorContainer" class="ui-widget ui-widget-content ui-corner-all">
                     <div id="tblEditorHead" class="ui-widget ui-widget-header ui-corner-top">
-                        <span style="display:inline-block; width: 12px;">&nbsp;</span>
+                        <span style="display:inline-block; width: 4px;">&nbsp;</span>
                         <span style="display:inline-block" id="editorMenuFile" data-hqmenu="file" class="editorMenu ui-state-default">
                         Datei</span><span data-hqmenu="edit" class="editorMenu ui-state-default">
                         Bearbeiten</span><span data-hqmenu="run" class="editorMenu ui-state-default">
@@ -103,13 +107,41 @@
                     </div>
                     <table id="tblEditor">
                         <tr>
-                            <td id="editorFileCell">file list</td>
+                            <td id="editorFileCell">
+                                <table id="fileList">
+
+                                </table>
+                            </td>
                             <td id="editorEditorCell"><textarea id="codemirror" name="codemirror"></textarea></td>
-                            <td id="editorOutputCell">output area</td>
+                            <td id="editorOutputCell">
+                                <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; overflow:hidden;">
+                                    <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 21px;">
+                                        <span style="font-size: 11px; position: relative; top: 3px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
+                                        <span id="scriptSuccess" style="font-size: 11px; position: relative; top: 6px; left: 16px;" class="ui-jqgrid-title"></span>
+                                    </div>
+                                    <div id="hmScriptStdout" class="ui-corner-bottom" style="overflow: scroll; width: 100%; background-color: #fff; color: #000; ">
+
+                                    </div>
+                                </div>
+                                <br>
+                                <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; overflow:hidden;">
+                                    <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 21px;">
+                                        <span style="font-size: 11px; position: relative; top: 3px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
+                                    </div>
+                                    <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:192px; width: 100%; background-color: #fff; color: #000; ">
+
+                                    </div>
+                                </div>
+                                <br>
+                                <div id="divScriptVariables">
+                                    <table id="gridScriptVariables"></table>
+                                </div>
+                            </td>
                         </tr>
                     </table>
                 </div>
             </div>
+            <!--
             <div class="tabs" id="tabDev">
                 <div class="tabContainer">
                     <table><tr><td id="hmScriptContainer">
@@ -135,32 +167,11 @@
                             <button id="hmSaveScript"></button>
                         </div>
                         <br><br><br>
-                        <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; max-width: 600px; height: 300px; overflow:hidden;">
-                            <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
-                                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
-                                <span id="scriptSuccess" style="font-size: 11px; position: relative; top: 6px; left: 16px;" class="ui-jqgrid-title"></span>
-                            </div>
-                            <div id="hmScriptStdout" class="ui-corner-bottom" style="overflow: scroll; height:271px; width: 100%; background-color: #fff; color: #000; ">
 
-                            </div>
-                        </div>
-                        <br>
-                        <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; min-width: 378px; height: 222px; overflow:hidden;">
-                            <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 29px;">
-                                <span style="font-size: 11px; position: relative; top: 6px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
-                            </div>
-                            <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:192px; width: 100%; background-color: #fff; color: #000; ">
-
-                            </div>
-                        </div>
-                        <br>
-                        <div id="divScriptVariables">
-                            <table id="gridScriptVariables"></table>
-                        </div>
                     </td></tr></table>
                </div>
             </div>
-
+--->
             <div class="tabs" id="tabCcu">
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
@@ -670,8 +681,8 @@
 
     </div>
     <ul style="position:relative; z-index:2000; width:180px" id="menuFile" class="menu">
-        <li><a id="" href="#">Neue Datei</a>
-            <ul style="width:120px;">
+        <li><a id="" href="#"><span class="ui-icon ui-icon-document"></span>Neue Datei</a>
+            <ul style="width:150px;">
                 <li><a id="" href="#">Homematic Script</a></li>
                 <li><a id="" href="#">TCL Script</a></li>
                 <li><a id="" href="#">Shell Script</a></li>
@@ -679,32 +690,32 @@
                 <li><a id="" href="#">XML RPC</a></li>
             </ul>
         </li>
-        <li><a id="" href="#">Datei von CCU laden</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-folder-open"></span>Datei von CCU laden</a></li>
         <li><a id="" href="#"><span class="ui-icon ui-icon-disk"></span>Datei auf CCU speichern</a></li>
-        <li><a id="" href="#">Datei schließen</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-close"></span>Datei schließen</a></li>
     </ul>
     <ul style="position:relative; z-index:2000; width:150px" id="menuEdit" class="menu">
-        <li><a id="" href="#">Rückgängig</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-arrowreturn-1-w"></span>Rückgängig</a></li>
         <li><hr></li>
-        <li><a id="" href="#">Ausschneiden</a></li>
-        <li><a id="" href="#">Kopieren</a></li>
-        <li><a id="" href="#">Einfügen</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-scissors"></span>Ausschneiden</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-copy"></span>Kopieren</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-clipboard"></span>Einfügen</a></li>
         <li><hr></li>
-        <li><a id="" href="#">Suchen</a></li>
-        <li><a id="" href="#">Ersetzen</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-search"></span>Suchen</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-shuffle"></span>Ersetzen</a></li>
     </ul>
     <ul style="position:relative; z-index:2000; width:150px" id="menuRun" class="menu">
-        <li><a id="" href="#">Script ausführen</a></li>
-        <li><a id="" href="#">Script debuggen</a></li>
-        <li><a id="" href="#">Script benchmarken</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-play"></span>Script ausführen</a></li>
+        <!--<li><a id="" href="#">Script debuggen</a></li>
+        <li><a id="" href="#">Script benchmarken</a></li>-->
         <li><a id="" href="#">XML RPC ausführen</a>
             <ul>
-                <li><a id="" href="#">2000</a></li>
-                <li><a id="" href="#">2001</a></li>
-                <li><a id="" href="#">2002</a></li>
+                <li><span class="ui-icon ui-icon-play"></span><a id="" href="#">BidCos Wired (:2000)</a></li>
+                <li><span class="ui-icon ui-icon-play"></span><a id="" href="#">BidCos RF (:2001)</a></li>
+                <li><span class="ui-icon ui-icon-play"></span><a id="" href="#">intern (:2002)</a></li>
             </ul>
         </li>
-        <li><a id="" href="#">JSON RPC ausführen</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-play"></span>JSON RPC ausführen</a></li>
     </ul>
     <ul style="position:relative; z-index:2000; width:150px" id="menuView" class="menu">
 
