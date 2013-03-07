@@ -388,9 +388,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     $(".editorMenu").click(function (e) {
         var btn = $(this);
-        console.log("+");
         $( document ).one( "click", function() {
-            console.log("-");
             menus[btn.attr("data-hqmenu")].hide();
             btn.removeClass("ui-state-active");
         });
