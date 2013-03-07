@@ -103,21 +103,20 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ### 2.4
 * Reiter Entwicklung komplett neu aufbauen mit "Codemirror" anstatt "editArea" (wesentlich besser)
-* Benchmark-Funktion für Homematic-Scripte
 * Scripte auf CCU speichern und von CCU laden
-* Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
-
 
 ### 2.5
-* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
-* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
-* Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
-* Sortieren von Favoriten
+* Benchmark-Funktion für Homematic-Scripte
+* Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
 
 ### 2.6
+* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
+* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
+* Sortieren von Favoriten
+
+### 2.7
 * Programme anzeigen, anlegen, editieren, löschen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
-* Kontextmenü (rechts-klick) in allen Tabellenansichten
 
 
 ### 3.0
@@ -126,6 +125,7 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * hq-webui.js minifiziert ausliefern, eventuell javascript-files zusammenfassen
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen
+* Kontextmenü (rechts-klick) in allen Tabellenansichten und in der File-Liste des Editors
 
 
 
@@ -150,6 +150,7 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
 * Ausbau des Tabs Funk, Einfärben der RX/TX Werte?
 * Thermostatmodus setzen
+* Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
 
 
 
