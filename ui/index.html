@@ -95,15 +95,13 @@
                     <div id="tblEditorHead" class="ui-widget ui-widget-header ui-corner-top">
                         <span style="display:inline-block; width: 4px;">&nbsp;</span>
                         <span style="display:inline-block" id="editorMenuFile" data-hqmenu="file" class="editorMenu ui-state-default">
-                        Datei</span><span data-hqmenu="edit" class="editorMenu ui-state-default">
-                        Bearbeiten</span><span id="hmRunScript" class="editorButton ui-state-default">
-                        <span  style="margin-left: -5px; margin-top: -1px; display: inline-block" class="ui-icon ui-icon-play"></span>Ausführen</span><span class="editorButton ui-state-default">
-                        <span id="" style="margin-left: -5px; margin-top: -2px; display: inline-block" class="ui-icon ui-icon-gear"></span>Einstellungen</span><span id="editorHelp" class="editorButton ui-state-default">
+                        Datei</span><!--<span data-hqmenu="edit" class="editorMenu ui-state-default">
+                        Bearbeiten</span>--><span id="hmRunScript" class="editorButton ui-state-default">
+                        <span  style="margin-left: -5px; margin-top: -1px; display: inline-block" class="ui-icon ui-icon-play"></span>Ausführen</span><!--
+                        <span class="editorButton ui-state-default">
+                        <span id="" style="margin-left: -5px; margin-top: -2px; display: inline-block" class="ui-icon ui-icon-gear"></span>Einstellungen</span>
+                        --><span id="editorHelp" class="editorButton ui-state-default">
                         <span style="margin-left: -5px; margin-top: -2px; display: inline-block" class="ui-icon ui-icon-help"></span>Hilfe</span>
-
-
-
-
                     </div>
                     <table id="tblEditor">
                         <tr>
@@ -114,25 +112,23 @@
                             </td>
                             <td id="editorEditorCell"><textarea id="codemirror" name="codemirror"></textarea></td>
                             <td id="editorOutputCell">
-                                <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; overflow:hidden;">
+                                <div id="divStdout"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff;">
                                     <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 21px;">
                                         <span style="font-size: 11px; position: relative; top: 3px; left: 3px;" class="ui-jqgrid-title">Ausgabe</span>
-                                        <span id="scriptSuccess" style="font-size: 11px; position: relative; top: 6px; left: 16px;" class="ui-jqgrid-title"></span>
+                                        <span id="scriptSuccess" style="font-size: 11px; position: relative; top: 3px; left: 16px;" class="ui-jqgrid-title"></span>
                                     </div>
-                                    <div id="hmScriptStdout" class="ui-corner-bottom" style="overflow: scroll; width: 100%; background-color: #fff; color: #000; ">
+                                    <div id="hmScriptStdout" class="ui-corner-bottom" style="width: 100%; background-color: #fff; color: #000; overflow:scroll">
 
                                     </div>
                                 </div>
-                                <br>
-                                <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; overflow:hidden;">
+                                <div id="divStderr"  class="ui-widget ui-widget-content ui-corner-all" style=" background-color: #fff; ">
                                     <div class="ui-widget ui-widget-header ui-corner-top" style="border:0; width: 100%; height: 21px;">
                                         <span style="font-size: 11px; position: relative; top: 3px; left: 3px;" class="ui-jqgrid-title">Fehler</span>
                                     </div>
-                                    <div id="hmScriptStderr" class="ui-corner-bottom" style="overflow: scroll; height:192px; width: 100%; background-color: #fff; color: #000; ">
+                                    <div id="hmScriptStderr" class="ui-corner-bottom" style="height:192px; width: 100%; background-color: #fff; color: #000; overflow:scroll">
 
                                     </div>
                                 </div>
-                                <br>
                                 <div id="divScriptVariables">
                                     <table id="gridScriptVariables"></table>
                                 </div>
@@ -141,39 +137,12 @@
                     </table>
                 </div>
             </div>
-            <!--
-            <div class="tabs" id="tabDev">
-                <div class="tabContainer">
-                    <table><tr><td id="hmScriptContainer">
-                        <textarea id="hmScript" cols="92" rows="40"></textarea>
-                    </td><td style="vertical-align: top; padding-left: 20px;" id="hmScriptTools">
-                        <div id="editorButtons">
-                            <button style="float:left;" id="hmRunScript">Ausführen</button>
-                             <button style="float:left;" id="editorNewFile">Neue Datei</button>
-                            <ul id="hmNewScriptMenu">
-                                <li><a id="editorNewHmScript" href="#">Homematic Script</a></li>
-                                <li><a id="editorNewTclScript" href="#">TCL Script</a></li>
-                                <li><a id="editorNewShScript" href="#">Shell Script</a></li>
-                                <li><a id="editorNewJson" href="#">JSON RPC</a></li>
-                                <li><a id="editorNewXml" href="#">XML RPC</a></li>
-                            </ul>
-                            <button style="float:left;" id="editorRenameFile">Umbenennen</button>
-                            <button style="float:right" id="editorHelp">Doku</button>
-                            <button id="hmSaveScript"></button>
-                        </div>
-                        <br><br><br>
-
-                    </td></tr></table>
-               </div>
-            </div>
---->
             <div class="tabs" id="tabCcu">
                 <div id="subTabCcu">
                     <ul class="tabsPanel">
                         <li><a href="#tabCcuInfo">Infos<span class="loader"><img id="loaderCcuInfo" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSystem">System<span class="loader"><img id="loaderCcuSystem" src="img/loader-bright.gif"></span></a></li>
-                        <!--<li><a href="#tabCcuRooms">Gewerke und Räume<span class="loader"><img id="loaderCcuRooms" src="img/loader-bright.gif"></span></a></li><!--
-                        <li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
+                        <!--<li><a href="#tabCcuServices">Dienste<span class="loader"><img id="loaderCcuServices" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuFiles">Dateien<span class="loader"><img id="loaderCcuFiles" src="img/loader-bright.gif"></span></a></li>
                         <li><a href="#tabCcuSoftware">Software<span class="loader"><img id="loaderCcuSoftware" src="img/loader-bright.gif"></span></a></li>
                     -->    <li><a href="#tabCcuProtocol">Protokoll-Tabelle<span class="loader"><img id="loaderProtocol" src="img/loader-bright.gif"></span></a></li>
@@ -686,8 +655,8 @@
             </ul>
         </li>
         <li><a id="editorRenameFile" href="#"><span class="ui-icon ui-icon-pencil"></span>Datei umbenennen</a></li>
-        <li><a id="" href="#"><span class="ui-icon ui-icon-folder-open"></span>Datei von CCU laden</a></li>
-        <li><a id="" href="#"><span class="ui-icon ui-icon-disk"></span>Datei auf CCU speichern</a></li>
+     <!--   <li><a id="" href="#"><span class="ui-icon ui-icon-folder-open"></span>Datei von CCU laden</a></li>
+        <li><a id="" href="#"><span class="ui-icon ui-icon-disk"></span>Datei auf CCU speichern</a></li> -->
         <li><a id="editorDelFile" href="#"><span class="ui-icon ui-icon-close"></span>Datei schließen</a></li>
     </ul>
     <ul style="position:relative; z-index:2000; width:150px" id="menuEdit" class="menu">

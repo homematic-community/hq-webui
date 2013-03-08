@@ -1,16 +1,23 @@
 Changelog
 =========
+2.4.0
+-----
+* Tab Entwicklung: Größenanpassung für Script-Output Fenster
+* Tab Entwicklung: Noch nicht implementierte Buttons ausgeblendet
+* Code weiter aufgeräumt (immernoch Chaos)
+* Funktion checkName() Bezeichner dürfen jetzt auch mit Ziffern beginnen
+
 2.4-beta1
 ----------
-* Script-Editor: Diverse Menüs implementiert (Datei neu, Datei umbenennen, Datei schließen, Ausführen, Hilfe)
-* alten EditArea Code entfernt
+* Tab Entwicklung: Diverse Menüs implementiert (Datei neu, Datei umbenennen, Datei schließen, Ausführen, Hilfe)
+* Tab Entwicklung: alten EditArea Code entfernt
 * Code aufgeräumt (immernoch Chaos)
 
 2.4-alpha2
 ----------
 * jQuery und jQuery UI sowie das Default-Theme "Redmond" sind nun enthalten und werden nicht mehr vom Google CDN geladen. Das CDN wird nur noch bemüht falls ein anderes Theme als Redmond ausgewählt wird.
-* Diverse Addons in Codemirror integriert
-* Anzeige der Liste der geöffneten Dateien, Click-Event
+* Tab Entwicklung: Diverse Addons in Codemirror integriert
+* Tab Entwicklung: Anzeige der Liste der geöffneten Dateien, Click-Event
 * Diverse Style-Anpassungen
 * Alten Entwicklungs-Tab entfernt, editarea.js entfernt.
 

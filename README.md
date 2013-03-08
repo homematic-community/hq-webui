@@ -101,11 +101,10 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ## Roadmap/Todo/Ideen
 
-### 2.4
-* Reiter Entwicklung komplett neu aufbauen mit "Codemirror" anstatt "editArea" (wesentlich besser)
-* Scripte auf CCU speichern und von CCU laden
-
 ### 2.5
+* Script-Editor: Scripte auf CCU speichern und von CCU laden
+* Script-Editor: Menü "Bearbeiten"
+* Script-Editor: Einstellungs-Dialog
 * Benchmark-Funktion für Homematic-Scripte
 * Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
 
@@ -121,7 +120,7 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ### 3.0
 * Nutzung der "WebAPI", Verzeichnisse umstrukturieren, Verzeichnis "api" fliegt komplett raus.
-* Code aufräumen, ordnen, kommentieren
+* Code aufräumen, ordnen, kommentieren, refaktorieren
 * hq-webui.js minifiziert ausliefern, eventuell javascript-files zusammenfassen
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen

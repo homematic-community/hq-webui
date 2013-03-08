@@ -165,7 +165,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         divScriptVariables =    $("#divScriptVariables"),
         divSession =            $("#session"),
         divLogin =              $("#login"),
-
+        divDebugScript =        $("#debugScript"),
 
         accordionFavorites =    $("div#accordionFavorites"),
         serviceIndicator =      $("#service"),
@@ -179,18 +179,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         timerMessages,
         timerChart,
         timerSession =          setTimeout(hmSessionRenew, 150000),
+        timerAutoSave,
 
         hmSession,
-
         editorReady =           false,
-
         xmlmenu,
-
         highchartProtocol,
-
         lang = {};
-
-
 
     $(".hq-version").html(version);
 
@@ -200,10 +195,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
     divSession.show();
     $("#hmNewScriptMenu").menu().hide();
     $(".menu").menu().hide().removeClass("ui-corner-all").addClass("ui-corner-bottom");
-    $("#hmRunScriptMenu").menu().hide();
+    $("#hmRunScriptMenu").menu().hide().removeClass("ui-corner-all").addClass("ui-corner-bottom");
     $("#contextMenuRooms").menu().hide();
-    //$("#hmCcuMenu").menu().hide();
-    $("#hmCcuMenu").hide();
     $("#buttonsFavorites").hide();
     $("ul.tabsPanel li a img").hide();
     serviceIndicator.hide();
@@ -212,208 +205,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
     divScriptVariables.hide();
 
 
-    // Theme laden
     getTheme();
 
-    // Konfiguration
     getConfig();
     initConfigDialog();
-
-    // Editor
-    function fileNew() {
-
-    }
-
-
-    function fileClose() {
-
-    }
-
-    function fileSave() {
-        if (editorActiveFile) {
-         if (hqConf.debug) { console.log("saving file " + editorActiveFile); }
-            editorFiles[editorActiveFile] = codemirror.getValue();
-            storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
-        }
-    }
-
-    var fileSaveTimer;
-
-    function fileLoad(name, content) {
-        if (editorActiveFile) {
-            fileSave();
-        } else {
-
-        }
-
-        storage.set("hqWebUiActiveFile", name);
-        var filenameparts = name.split(".");
-        var ext = filenameparts.pop();
-        var mode;
-        switch (ext) {
-            case "hm":
-            case "fn":
-                mode = "homematic";
-                divStdout.show();
-                divScriptVariables.show();
-                divStderr.hide();
-                break;
-            case "tcl":
-                mode = "tcl";
-                divStdout.show();
-                divScriptVariables.hide();
-                divStderr.hide();
-                break;
-            case "xml":
-                mode = "xml";
-                divStdout.show();
-                divScriptVariables.hide();
-                divStderr.hide();
-                break;
-            case "json":
-                mode = {name:"javascript",json:true};
-                divStdout.show();
-                divScriptVariables.hide();
-                divStderr.hide();
-                break;
-            case "sh":
-                mode = "shell";
-                divStdout.show();
-                divScriptVariables.hide();
-                divStderr.show();
-                break;
-        }
-
-
-        codemirror.setOption("lineNumbers", true);
-        codemirror.setOption("readOnly", false);
-        codemirror.setOption("autoCloseTags", true);
-        codemirror.setOption("autoCloseBrackets", true);
-        codemirror.setOption("matchBrackets", true);
-        codemirror.setOption("styleActiveLine", true);
-        codemirror.setOption("highlightSelectionMatches", true);
-
-
-        codemirror.setOption("value", content);
-        codemirror.setOption("mode", mode);
-        editorActiveFile = name;
-        editorMode = mode;
-
-        initEditorFileList();
-
-    }
-
-    function initCodemirror() {
-        if (!codemirrorReady) {
-            $("#editorFileCell").css("width", "10%");
-            $("#editorEditorCell").css("width", "50%");
-            $("#editorOutputCell").css("width", "40%");
-            codemirrorReady = true;
-            if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
-            codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
-                readonly: "nocursor"
-            });
-            resizeAll();
-
-            editorFiles = JSON.parse(storage.get('hqWebUiScripts'));
-
-            var active = storage.get("hqWebUiActiveFile");
-            if (active !== null && editorFiles[active]) {
-                fileLoad(active, editorFiles[active]);
-            } else {
-                initEditorFileList();
-            }
-            codemirror.on("change", function () {
-                clearTimeout(fileSaveTimer);
-                fileSaveTimer = setTimeout(fileSave,2000);
-            });
-        }
-    }
-
-    function initEditorFileList() {
-        var active;
-        var line;
-        $("#fileList").html("");
-        for (var file in editorFiles) {
-            line = "<tr class='ui-widget-content'>"; //<td class='fileListLeft'></td>";
-            if (file === editorActiveFile) {
-                line += "<td class='fileListFile ui-state-active'>"+file+"</td>";
-            } else {
-                line += "<td class='fileListFile'>"+file+"</td>";
-            }
-            line += "</tr>"; //"<td class='fileListRight'></td></tr>"
-            $("#fileList").append(line);
-        }
-        $("#fileList tr").hover(function () {
-            $(this).addClass("ui-state-hover");
-        }, function () {
-            $(this).removeClass("ui-state-hover");
-        }).click(function () {
-            fileLoad($(this).find("td.fileListFile").html(), editorFiles[$(this).find("td.fileListFile").html()]);
-        });
-    }
-
-    $("#editorNew").click(function(e) { e.preventDefault(); })
-
-    $(".editorNew").click(function(e) {
-        fileSave();
-        var name = checkFileName($(this).attr("data-hqdefname"));
-        fileLoad(name, "");
-        fileSave();
-        initEditorFileList();
-        e.preventDefault();
-   });
-
-
-
-    function initEditorResize() {
-        if (!editorResizeReady) {
-            $("#tblEditor").colResizable({
-                hoverCursor: "col-resize",
-                dragCursor: "col-resize"
-            });
-            editorResizeReady = true;
-        }
-    }
-
-    $(".editorMenu, .editorButton").hover(function() {
-        $(this).addClass("ui-state-hover");
-    },function() {
-        $(this).removeClass("ui-state-hover");
-    });
-
-    $(".editorButton").mousedown(function() {
-        $(this).addClass("ui-state-active");
-    }).mouseup(function() {
-        $(this).removeClass("ui-state-active");
-    }).mouseleave(function() {
-        $(this).removeClass("ui-state-active");
-    });
-
-    var menus = {
-        "file": $("#menuFile"),
-        "edit": $("#menuEdit")
-    };
-
-
-    $(".editorMenu").click(function (e) {
-        var btn = $(this);
-        $( document ).one( "click", function() {
-            menus[btn.attr("data-hqmenu")].hide();
-            btn.removeClass("ui-state-active");
-        });
-        $(".editorMenu").removeClass("ui-state-active");
-        $(".menu").hide();
-        btn.addClass("ui-state-active");
-        menus[btn.attr("data-hqmenu")] = menus[btn.attr("data-hqmenu")].show().position({
-            my: "left top",
-            at: "left bottom",
-            of: btn
-        });
-        e.preventDefault();
-        return false;
-    });
-
 
 
     function getConfig() {
@@ -580,7 +375,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
         $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
         //divStdout.css('width', x - 775);
-        gridScriptVariables.setGridWidth(divStdout.css("width"));
+        //gridScriptVariables.setGridWidth(300);
         tabFavorites.css("height", $("#tabVariables").height());
         //$("#tabCcu").css("height", $("#tabVariables").height());
         chartProtocol.css("width", gridWidth - 46);
@@ -594,9 +389,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
         resizeFavHeight();
         if (chartProtocolLoaded) {
             highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
-
         }
-
+        if (editorActiveFile) {
+            resizeScriptOut();
+        }
     }
 
     function resizeFavHeight() {
@@ -2590,7 +2386,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         },
         sortable: true,
         ignoreCase: true
-    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid('gridResize');
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false});
 
     // Zuklapp-Button verstecken
     $("a.ui-jqgrid-titlebar-close").hide();
@@ -4612,7 +4408,7 @@ var chartProtocolReady;
 
     function checkName(id, name, type, successfunction, errorfunction) {
         //console.log((new Date()).getTime() + " checkName("+id+", "+name+", "+type+")");
-        if (name == "" || name === undefined || name === null || !name.match(/^[a-zA-ZäöüÄÖÜ]/)) {
+        if (name == "" || name === undefined || name === null || !name.match(/^[_\-0-9a-zA-ZäöüÄÖÜ]/)) {
             // Prüfen ob Name gültig ist
             dialogErrorRename.dialog("open");
             return false;
@@ -5246,7 +5042,7 @@ var chartProtocolReady;
             'Schliessen': function () {
 
                 $(this).dialog('close');
-                $("#debugScript").html("");
+                divDebugScript.html("");
 
             }
         }
@@ -5325,7 +5121,7 @@ var chartProtocolReady;
             debugScript = debugScript + "\n" + "var hqDebugDummyFinal=1;";
 
             if (hqConf.debug) {
-                console.log(debugScript);
+                console.log(debugScript.replace(/\n$/, ""));
             }
 
             hmRunScript(debugScript, function (data) {
@@ -5366,7 +5162,7 @@ var chartProtocolReady;
 
                 if (hqConf.scriptDebugMethod == "log") {
                     if (!scriptFailed && dummyFound) {
-                        //$("#debugScript").html("Scriptausführung erfolgreich.");
+                        //divDebugScript.html("Scriptausführung erfolgreich.");
                         //dialogDebugScript.dialog('open');
                         $("#scriptSuccess").html("Scriptausführung erfolgreich.");
                     } else {
@@ -5378,12 +5174,12 @@ var chartProtocolReady;
                                 var error = $(data).find("error:last");
                                 if (error.attr("msg")) {
                                     if (error.attr('row') != "") {
-                                        $("#debugScript").html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
+                                        divDebugScript.html(error.attr("timestamp") + " " + error.attr("msg") + " in Zeile " + error.attr("row"));
                                     } else {
-                                        $("#debugScript").html("ExecError: Execution failed");
+                                        divDebugScript.html("ExecError: Execution failed");
                                     }
                                 } else {
-                                    $("#debugScript").html("Scriptausführung gescheitert.<br>Keine Fehlermeldung in /var/log/messages gefunden.");
+                                    divDebugScript.html("Scriptausführung gescheitert.<br>Keine Fehlermeldung in /var/log/messages gefunden.");
                                 }
                                 dialogDebugScript.dialog('open');
                             }
@@ -5391,10 +5187,10 @@ var chartProtocolReady;
                     }
                 } else if (hqConf.scriptDebugMethod == "dummy") {
                     if (lineNumber != debugLinesTotal) {
-                        $("#debugScript").html("Skriptausführung gescheitert in Zeile " + (lineNumber + 1));
+                        divDebugScript.html("Skriptausführung gescheitert in Zeile " + (lineNumber + 1));
                         dialogDebugScript.dialog('open');
                     } else {
-                        $("#debugScript").html("Scriptausführung erfolgreich.");
+                        divDebugScript.html("Scriptausführung erfolgreich.");
                         dialogDebugScript.dialog('open');
                     }
                 }
@@ -5406,7 +5202,7 @@ var chartProtocolReady;
             break;
         case "tcl":
             tclRunScript(fileContent, function (data) {
-                $("#debugScript").html("TCL Script ausgeführt.");
+                divDebugScript.html("TCL Script ausgeführt.");
                 dialogDebugScript.dialog('open');
                 divScriptVariables.hide();
                 divStderr.hide();
@@ -5415,7 +5211,7 @@ var chartProtocolReady;
             break;
         case "sh":
             shRunScript(fileContent, function (data) {
-                $("#debugScript").html("Shell Script ausgeführt.");
+                divDebugScript.html("Shell Script ausgeführt.");
                 dialogDebugScript.dialog('open');
                 divScriptVariables.hide();
                 divStderr.show();
@@ -5435,7 +5231,7 @@ var chartProtocolReady;
             script.params['_session_id_'] = hmSession;
             jsonPost(script,
                 function (data) {
-                    $("#debugScript").html("JSON RPC erfolgreich.");
+                    divDebugScript.html("JSON RPC erfolgreich.");
                     divScriptVariables.hide();
                     divStderr.hide();
 
@@ -6343,14 +6139,7 @@ var chartProtocolReady;
                     if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.renew Failed"); }
                     hmSession = undefined;
 
-
-
-
-
-
-
-
-                }
+              }
             }, function (data) {
                 if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: error"); }
                 hmSession = undefined;
@@ -6403,9 +6192,7 @@ var chartProtocolReady;
         });
     }
 
-    function jsonGetCcuVersion () {
 
-    }
 
     function hmRunScript (script, successFunction) {
         loaderScript.show();
@@ -6752,10 +6539,6 @@ var chartProtocolReady;
                         'Write("\\",\\"t\\":\\"'+tJson+'\\",\\"ts\\":\\"" # o.Timestamp() # "\\"}");\n';
                 }
             });
-
-
-
-
 
             $("span[id^='favText']").each(function () {
                 updateCount += 1;
@@ -7155,26 +6938,7 @@ var chartProtocolReady;
     }
 
 
-    function updateState() {
 
-    }
-    function updateVariable() {
-
-    }
-    function updateProgram() {
-
-    }
-    function updateGetVisibleStates() {
-
-    }
-    function updateGetVisibleVariables() {
-
-    }
-    function updateGetVisiblePrograms() {
-
-    }
-    // Misc
-    // Eine Zeile zur Info-Tabelle hinzufügen
     function addInfo(key, value) {
         var idArray = gridInfo.jqGrid("getDataIDs");
         if (idArray.indexOf(key) > -1) {
@@ -7208,7 +6972,6 @@ var chartProtocolReady;
         storage.set('hqWebUiTheme', theme);
         $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-        setTimeout(scriptEditorStyle,2000);
     }
 
     function getTheme() {
@@ -7223,7 +6986,6 @@ var chartProtocolReady;
         }
 
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-        //setTimeout(scriptEditorStyle,2000);
     }
 
 
@@ -7308,6 +7070,211 @@ var chartProtocolReady;
 
 
     }
+
+
+    // Editor
+    function fileSave() {
+        if (editorActiveFile) {
+            if (hqConf.debug) { console.log("saving file " + editorActiveFile); }
+            editorFiles[editorActiveFile] = codemirror.getValue();
+            storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
+        }
+    }
+
+    function resizeScriptOut() {
+        var y = $(window).height();
+        var half = (y - 120) / 2;
+        var full = (y - 116);
+         switch (editorMode) {
+            case "homematic":
+                divStdout.show().css("height", half);
+                $("#hmScriptStdout").css("height", half - 23);
+                divScriptVariables.show();
+                gridScriptVariables.setGridWidth(divStdout.width());
+                gridScriptVariables.setGridHeight(half - 70);
+                divStderr.hide();
+                break;
+            case "tcl":
+            case "xml":
+                divStdout.show().css("height", full);
+                $("#hmScriptStdout").css("height", full - 23);
+                divScriptVariables.hide();
+                divStderr.hide();
+                break;
+            case {name:"javascript",json:true}:
+                divStdout.show().css("height", full);
+                $("#hmScriptStdout").css("height", full - 23);
+                divScriptVariables.hide();
+                divStderr.hide();
+                break;
+            case "shell":
+                divStdout.show().css("height", half);
+                $("#hmScriptStdout").css("height", half - 23);
+                divScriptVariables.hide();
+                divStderr.show().css("height", half);
+                $("#hmScriptStderr").css("height", half - 23);
+                break;
+        }
+    }
+
+
+    function fileLoad(name, content) {
+        if (editorActiveFile) {
+            fileSave();
+        }
+        storage.set("hqWebUiActiveFile", name);
+        var filenameparts = name.split(".");
+        var ext = filenameparts.pop();
+        var mode;
+        switch (ext) {
+            case "hm":
+            case "fn":
+                mode = "homematic";
+                break;
+            case "tcl":
+                mode = "tcl";
+                break;
+            case "xml":
+                mode = "xml";
+                break;
+            case "json":
+                mode = {name:"javascript",json:true};
+                break;
+            case "sh":
+                mode = "shell";
+                break;
+        }
+
+        codemirror.setOption("lineNumbers", true);
+        codemirror.setOption("readOnly", false);
+        codemirror.setOption("autoCloseTags", true);
+        codemirror.setOption("autoCloseBrackets", true);
+        codemirror.setOption("matchBrackets", true);
+        codemirror.setOption("styleActiveLine", true);
+        codemirror.setOption("highlightSelectionMatches", true);
+
+
+        codemirror.setOption("value", content);
+        codemirror.setOption("mode", mode);
+        editorActiveFile = name;
+        editorMode = mode;
+
+        initEditorFileList();
+
+        resizeScriptOut();
+
+    }
+
+    function initCodemirror() {
+        if (!codemirrorReady) {
+            $("#editorFileCell").css("width", "10%");
+            $("#editorEditorCell").css("width", "52%");
+            $("#editorOutputCell").css("width", "38%");
+            codemirrorReady = true;
+            if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
+            codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
+                readonly: "nocursor"
+            });
+            resizeAll();
+
+            editorFiles = JSON.parse(storage.get('hqWebUiScripts'));
+
+            var active = storage.get("hqWebUiActiveFile");
+            if (active !== null && editorFiles[active]) {
+                fileLoad(active, editorFiles[active]);
+            } else {
+                initEditorFileList();
+            }
+            codemirror.on("change", function () {
+                clearTimeout(timerAutoSave);
+                timerAutoSave = setTimeout(fileSave,2000);
+            });
+        }
+    }
+
+    function initEditorFileList() {
+        var active;
+        var line;
+        $("#fileList").html("");
+        for (var file in editorFiles) {
+            line = "<tr class='ui-widget-content'>"; //<td class='fileListLeft'></td>";
+            if (file === editorActiveFile) {
+                line += "<td class='fileListFile ui-state-active'>"+file+"</td>";
+            } else {
+                line += "<td class='fileListFile'>"+file+"</td>";
+            }
+            line += "</tr>"; //"<td class='fileListRight'></td></tr>"
+            $("#fileList").append(line);
+        }
+        $("#fileList tr").hover(function () {
+            $(this).addClass("ui-state-hover");
+        }, function () {
+            $(this).removeClass("ui-state-hover");
+        }).click(function () {
+                fileLoad($(this).find("td.fileListFile").html(), editorFiles[$(this).find("td.fileListFile").html()]);
+            });
+    }
+
+    $("#editorNew").click(function(e) { e.preventDefault(); })
+
+    $(".editorNew").click(function(e) {
+        fileSave();
+        var name = checkFileName($(this).attr("data-hqdefname"));
+        fileLoad(name, "");
+        fileSave();
+        initEditorFileList();
+        e.preventDefault();
+    });
+
+    function initEditorResize() {
+        if (!editorResizeReady) {
+            $("#tblEditor").colResizable({
+                hoverCursor: "col-resize",
+                dragCursor: "col-resize",
+                onResize: function () {
+                    resizeScriptOut();
+                }
+            });
+            editorResizeReady = true;
+        }
+    }
+
+    $(".editorMenu, .editorButton").hover(function() {
+        $(this).addClass("ui-state-hover");
+    },function() {
+        $(this).removeClass("ui-state-hover");
+    });
+
+    $(".editorButton").mousedown(function() {
+        $(this).addClass("ui-state-active");
+    }).mouseup(function() {
+            $(this).removeClass("ui-state-active");
+        }).mouseleave(function() {
+            $(this).removeClass("ui-state-active");
+        });
+
+    var menus = {
+        "file": $("#menuFile"),
+        "edit": $("#menuEdit")
+    };
+
+    $(".editorMenu").click(function (e) {
+        var btn = $(this);
+        $( document ).one( "click", function() {
+            menus[btn.attr("data-hqmenu")].hide();
+            btn.removeClass("ui-state-active");
+        });
+        $(".editorMenu").removeClass("ui-state-active");
+        $(".menu").hide();
+        btn.addClass("ui-state-active");
+        menus[btn.attr("data-hqmenu")] = menus[btn.attr("data-hqmenu")].show().position({
+            my: "left top",
+            at: "left bottom",
+            of: btn
+        });
+        e.preventDefault();
+        return false;
+    });
 
     if (tabActive == "#tabEditor") {
         initCodemirror();
