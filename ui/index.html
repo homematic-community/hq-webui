@@ -96,10 +96,10 @@
                         <span style="display:inline-block; width: 4px;">&nbsp;</span>
                         <span style="display:inline-block" id="editorMenuFile" data-hqmenu="file" class="editorMenu ui-state-default">
                         Datei</span><span data-hqmenu="edit" class="editorMenu ui-state-default">
-                        Bearbeiten</span><span data-hqmenu="run" class="editorMenu ui-state-default">
-                        Ausführen</span><span data-hqmenu="view" class="editorMenu ui-state-default">
-                        Ansicht</span><span data-hqmenu="help" class="editorMenu ui-state-default">
-                        Hilfe</span>
+                        Bearbeiten</span><span id="hmRunScript" class="editorButton ui-state-default">
+                        <span  style="margin-left: -5px; margin-top: -1px; display: inline-block" class="ui-icon ui-icon-play"></span>Ausführen</span><span class="editorButton ui-state-default">
+                        <span id="" style="margin-left: -5px; margin-top: -2px; display: inline-block" class="ui-icon ui-icon-gear"></span>Einstellungen</span><span id="editorHelp" class="editorButton ui-state-default">
+                        <span style="margin-left: -5px; margin-top: -2px; display: inline-block" class="ui-icon ui-icon-help"></span>Hilfe</span>
 
 
 
@@ -149,12 +149,7 @@
                     </td><td style="vertical-align: top; padding-left: 20px;" id="hmScriptTools">
                         <div id="editorButtons">
                             <button style="float:left;" id="hmRunScript">Ausführen</button>
-                            <ul id="hmRunScriptMenu">
-                                <li><a id="editorRunXml0" href="#">BidCos-Wired (2000)</a></li>
-                                <li><a id="editorRunXml1" href="#">BidCos-RF (2001)</a></li>
-                                <li><a id="editorRunXml2" href="#">intern (2002)</a></li>
-                            </ul>
-                            <button style="float:left;" id="editorNewFile">Neue Datei</button>
+                             <button style="float:left;" id="editorNewFile">Neue Datei</button>
                             <ul id="hmNewScriptMenu">
                                 <li><a id="editorNewHmScript" href="#">Homematic Script</a></li>
                                 <li><a id="editorNewTclScript" href="#">TCL Script</a></li>
@@ -402,8 +397,8 @@
     </div>
     <div class="dialog" id="dialogDelScript" title="Script löschen">
         <br>
-        Hiermit löschen Sie das Script<br>
-        <span style="font-weight: bold; padding-left: 20px;" id="scriptDeleteReally"></span><br>
+        Hiermit löschen Sie die Datei<br>
+        <span style="padding: 4px; margin: 4px; font-weight: bold; " id="scriptDeleteReally"></span><br>
         unwiderruflich.<br><br>
         Sind Sie sich sicher?
     </div>
@@ -681,18 +676,19 @@
 
     </div>
     <ul style="position:relative; z-index:2000; width:180px" id="menuFile" class="menu">
-        <li><a id="" href="#"><span class="ui-icon ui-icon-document"></span>Neue Datei</a>
+        <li><a id="editorNew" href="#"><span class="ui-icon ui-icon-document"></span>Neue Datei</a>
             <ul style="width:150px;">
-                <li><a id="" href="#">Homematic Script</a></li>
-                <li><a id="" href="#">TCL Script</a></li>
-                <li><a id="" href="#">Shell Script</a></li>
-                <li><a id="" href="#">JSON RPC</a></li>
-                <li><a id="" href="#">XML RPC</a></li>
+                <li><a class="editorNew" data-hqdefname="script.fn" href="#">Homematic Script</a></li>
+                <li><a class="editorNew" data-hqdefname="script.tcl" href="#">TCL Script</a></li>
+                <li><a class="editorNew" data-hqdefname="script.sh" href="#">Shell Script</a></li>
+                <li><a class="editorNew" data-hqdefname="rpc.json" href="#">JSON RPC</a></li>
+                <li><a class="editorNew" data-hqdefname="rpc.xml" href="#">XML RPC</a></li>
             </ul>
         </li>
+        <li><a id="editorRenameFile" href="#"><span class="ui-icon ui-icon-pencil"></span>Datei umbenennen</a></li>
         <li><a id="" href="#"><span class="ui-icon ui-icon-folder-open"></span>Datei von CCU laden</a></li>
         <li><a id="" href="#"><span class="ui-icon ui-icon-disk"></span>Datei auf CCU speichern</a></li>
-        <li><a id="" href="#"><span class="ui-icon ui-icon-close"></span>Datei schließen</a></li>
+        <li><a id="editorDelFile" href="#"><span class="ui-icon ui-icon-close"></span>Datei schließen</a></li>
     </ul>
     <ul style="position:relative; z-index:2000; width:150px" id="menuEdit" class="menu">
         <li><a id="" href="#"><span class="ui-icon ui-icon-arrowreturn-1-w"></span>Rückgängig</a></li>
@@ -723,4 +719,10 @@
     <ul style="position:relative; z-index:2000; width:150px" id="menuHelp" class="menu">
 
     </ul>
+    <ul id="hmRunScriptMenu">
+        <li><a id="editorRunXml0" href="#">BidCos-Wired (2000)</a></li>
+        <li><a id="editorRunXml1" href="#">BidCos-RF (2001)</a></li>
+        <li><a id="editorRunXml2" href="#">intern (2002)</a></li>
+    </ul>
+
 </body>

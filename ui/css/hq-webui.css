@@ -373,7 +373,7 @@ ul#mainNav li {
     overflow-y: auto;
 }
 
-.editorMenu {
+.editorMenu, .editorButton {
     display: inline-block;
     vertical-align:top;
     height: 18px;

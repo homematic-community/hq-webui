@@ -1,5 +1,11 @@
 Changelog
 =========
+2.4-beta1
+----------
+* Script-Editor: Diverse Menüs implementiert (Datei neu, Datei umbenennen, Datei schließen, Ausführen, Hilfe)
+* alten EditArea Code entfernt
+* Code aufgeräumt (immernoch Chaos)
+
 2.4-alpha2
 ----------
 * jQuery und jQuery UI sowie das Default-Theme "Redmond" sind nun enthalten und werden nicht mehr vom Google CDN geladen. Das CDN wird nur noch bemüht falls ein anderes Theme als Redmond ausgewählt wird.

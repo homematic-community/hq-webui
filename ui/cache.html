@@ -15,6 +15,7 @@
             var tmp = storage.get("hqWebUiSession");
             if (tmp != null) {
                 $("#stringtable td textarea").html(JSON.stringify(storage.get("hqWebUiStringtable")));
+                $("#favoritesXML td textarea").html(storage.get("hqWebUiFavorites"));
                 $("#variablesXML td textarea").html(storage.get("hqWebUiVariables"));
                 $("#favoritesXML td textarea").html(storage.get("hqWebUiFavorites"));
                 $("#programsXML td textarea").html(storage.get("hqWebUiPrograms"));
@@ -45,6 +46,11 @@
         <td class="time"></td>
         <td><textarea cols="120" rows="7"></textarea></td>
     </tr>
+    <tr id="favoritesXML">
+        <td>Favoriten<br/><i>XML</i></td>
+        <td class="time"></td>
+        <td><textarea cols="120" rows="7"></textarea></td>
+    </tr>
     <tr id="programsXML">
         <td>Programme<br/><i>XML</i></td>
         <td class="time"></td>
@@ -60,11 +66,6 @@
         <td class="time"></td>
         <td><textarea cols="120" rows="7"></textarea></td>
     </tr>
-   <!-- <tr id="devicesXML">
-        <td>Geräte<br/><i>XML</i></td>
-        <td class="time"></td>
-        <td><textarea cols="120" rows="7"></textarea></td>
-    </tr> -->
     <tr id="statesXML">
         <td>Geräte/Kanäle/Datenpunkte<br/><i>XML</i></td>
         <td class="time"></td>

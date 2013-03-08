@@ -14,27 +14,15 @@
  *
  */
 
-
-
-
-
 jQuery.extend(jQuery.expr[ ":" ], {
     reallyvisible : function (a) {
         return !(jQuery(a).is(':hidden') || jQuery(a).parents(':hidden').length);
     }
 });
 
-
-
 (function ($) { $("document").ready(function () {
 
-
-
-
-
-
-
-    var version =               "2.4-alpha2",
+    var version =               "2.4-beta1",
 
         codemirror,
         codemirrorReady = false,
@@ -60,7 +48,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
         programsXMLObj,
         functionsXMLObj,
         roomsXMLObj,
-        devicesXMLObj,
         favoritesXMLObj,
 
         alarmsData,
@@ -90,7 +77,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
         functionsTime,
         roomsTime,
         rssiTime,
-        devicesTime,
         favoritesTime,
 
         activeAlarms,
@@ -202,8 +188,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         highchartProtocol,
 
-        frame_hmScript,
-
         lang = {};
 
 
@@ -212,7 +196,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     // Elemente verstecken
     divLogin.hide();
-
     $("#logout").hide();
     divSession.show();
     $("#hmNewScriptMenu").menu().hide();
@@ -246,9 +229,24 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     }
 
+    function fileSave() {
+        if (editorActiveFile) {
+         if (hqConf.debug) { console.log("saving file " + editorActiveFile); }
+            editorFiles[editorActiveFile] = codemirror.getValue();
+            storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
+        }
+    }
+
+    var fileSaveTimer;
+
     function fileLoad(name, content) {
-        editorActiveFile = name;
-        storage.set("HqWebUiActiveFile", name);
+        if (editorActiveFile) {
+            fileSave();
+        } else {
+
+        }
+
+        storage.set("hqWebUiActiveFile", name);
         var filenameparts = name.split(".");
         var ext = filenameparts.pop();
         var mode;
@@ -265,77 +263,74 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 divStdout.show();
                 divScriptVariables.hide();
                 divStderr.hide();
-
                 break;
             case "xml":
                 mode = "xml";
                 divStdout.show();
                 divScriptVariables.hide();
                 divStderr.hide();
-
                 break;
             case "json":
                 mode = {name:"javascript",json:true};
                 divStdout.show();
                 divScriptVariables.hide();
                 divStderr.hide();
-
                 break;
             case "sh":
                 mode = "shell";
                 divStdout.show();
                 divScriptVariables.hide();
                 divStderr.show();
-
                 break;
         }
-        editorMode = mode;
-
 
 
         codemirror.setOption("lineNumbers", true);
         codemirror.setOption("readOnly", false);
-        codemirror.setOption("value", content);
-        codemirror.setOption("mode", mode);
         codemirror.setOption("autoCloseTags", true);
         codemirror.setOption("autoCloseBrackets", true);
         codemirror.setOption("matchBrackets", true);
         codemirror.setOption("styleActiveLine", true);
         codemirror.setOption("highlightSelectionMatches", true);
 
-        //CodeMirror.modeURL = "js/mode/%N/%N.js";
-        //CodeMirror.autoLoadMode(codemirror, mode);
+
+        codemirror.setOption("value", content);
+        codemirror.setOption("mode", mode);
+        editorActiveFile = name;
+        editorMode = mode;
+
         initEditorFileList();
+
     }
 
     function initCodemirror() {
         if (!codemirrorReady) {
-            $("#editorFileCell").css("width", "15%");
-            $("#editorEditorCell").css("width", "55%");
-            $("#editorOutputCell").css("width", "30%");
+            $("#editorFileCell").css("width", "10%");
+            $("#editorEditorCell").css("width", "50%");
+            $("#editorOutputCell").css("width", "40%");
             codemirrorReady = true;
             if (hqConf.debug) { console.log((new Date()).getTime() + " codemirror init"); }
             codemirror = CodeMirror.fromTextArea(document.getElementById("codemirror"), {
-                mode: "xml",
                 readonly: "nocursor"
             });
             resizeAll();
 
             editorFiles = JSON.parse(storage.get('hqWebUiScripts'));
 
-
-            var active = storage.get("HqWebUiActiveFile");
-            if (active !== null) {
-                editorActiveFile = active;
-                fileLoad(editorActiveFile, editorFiles[editorActiveFile]);
+            var active = storage.get("hqWebUiActiveFile");
+            if (active !== null && editorFiles[active]) {
+                fileLoad(active, editorFiles[active]);
             } else {
                 initEditorFileList();
             }
+            codemirror.on("change", function () {
+                clearTimeout(fileSaveTimer);
+                fileSaveTimer = setTimeout(fileSave,2000);
+            });
         }
     }
 
     function initEditorFileList() {
-        if (hqConf.debug) { console.log((new Date()).getTime() + " filelist init"); }
         var active;
         var line;
         $("#fileList").html("");
@@ -354,10 +349,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }, function () {
             $(this).removeClass("ui-state-hover");
         }).click(function () {
-                fileLoad($(this).find("td.fileListFile").html(), editorFiles[$(this).find("td.fileListFile").html()]);
-            });
-
+            fileLoad($(this).find("td.fileListFile").html(), editorFiles[$(this).find("td.fileListFile").html()]);
+        });
     }
+
+    $("#editorNew").click(function(e) { e.preventDefault(); })
+
+    $(".editorNew").click(function(e) {
+        fileSave();
+        var name = checkFileName($(this).attr("data-hqdefname"));
+        fileLoad(name, "");
+        fileSave();
+        initEditorFileList();
+        e.preventDefault();
+   });
 
 
 
@@ -371,18 +376,23 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     }
 
-    $(".editorMenu").hover(function() {
+    $(".editorMenu, .editorButton").hover(function() {
         $(this).addClass("ui-state-hover");
     },function() {
         $(this).removeClass("ui-state-hover");
     });
 
+    $(".editorButton").mousedown(function() {
+        $(this).addClass("ui-state-active");
+    }).mouseup(function() {
+        $(this).removeClass("ui-state-active");
+    }).mouseleave(function() {
+        $(this).removeClass("ui-state-active");
+    });
+
     var menus = {
         "file": $("#menuFile"),
-        "edit": $("#menuEdit"),
-        "run":  $("#menuRun"),
-        "view": $("#menuView"),
-        "help": $("#menuHelp")
+        "edit": $("#menuEdit")
     };
 
 
@@ -495,13 +505,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         },
             activate: function(e, ui) {
-                if (ui.newTab[0].children[0].hash == "#tabDev") {
-                        if (!editorReady) {
-                            editorReady = true;
-                            initEditArea();
-                        }
-
-                }
                 if (ui.newTab[0].children[0].hash == "#tabEditor") {
                     if (!editorReady) {
                         editorReady = true;
@@ -5255,8 +5258,14 @@ var chartProtocolReady;
         modal: true,
         buttons: {
             'Löschen': function () {
-                alert($("#scriptDeleteReally").html());
-                editAreaLoader.closeFile("hmScript", $("#scriptDeleteReally").html());
+                delete editorFiles[editorActiveFile];
+                editorActiveFile = undefined;
+                initEditorFileList();
+                codemirror.setOption("lineNumbers", false);
+                codemirror.setOption("readOnly", "nocursor");
+                codemirror.setOption("styleActiveLine", false);
+                codemirror.setValue("");
+                storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
                 $(this).dialog('close');
             },
             'Abbrechen': function () {
@@ -5267,32 +5276,20 @@ var chartProtocolReady;
 
 
 
-    $("button#hmSaveScript").click(function () {
-        var files = editAreaLoader.getAllFiles("hmScript");
-        var store = {};
-        for (var key in files) {
-            var file = files[key];
-            // if (file['edited'] == true) {
-                editAreaLoader.setFileEditedMode("hmScript", key, false);
-                store[key] = file['text'];
-            // }
-        }
-        storage.set("hqWebUiScripts", null);
-        storage.set("hqWebUiScripts", JSON.stringify(store));
-    }).hide();
+
 
     $("#editorHelp").click(function () {
       dialogDocu.dialog('open');
     });
 
 
-    $("button#hmRunScript").click(function () {
+    $("#hmRunScript").click(function () {
 
 
-        var fileName = editAreaLoader.getCurrentFile("hmScript").title;
+        var fileName = editorActiveFile;
         var fileNameSplit = fileName.split(".");
         var fileType = fileNameSplit[fileNameSplit.length-1];
-        var fileContent = editAreaLoader.getValue("hmScript");
+        var fileContent = codemirror.getValue();
 
         gridScriptVariables.jqGrid('clearGridData');
         $("#scriptSuccess").html("");
@@ -5495,28 +5492,25 @@ var chartProtocolReady;
             $("#dialogLinks").dialog("open");
         });
     $(".smallButton span.ui-icon").css("margin-left", "-9px").css("margin-top", "-9px");
-    $("button#hmRunScript").button({
-        icons: { primary: "ui-icon-play" }
-    });
-    $("button#editorCcu").button({
-        icons: { primary: "ui-icon-folder-collapsed" }
-    }).hide();
-    $("button#editorHelp").button({
-        icons: { primary: "ui-icon-help" }
-    });
 
-    $("button#editorRenameFile").button({
-        icons: { primary: "ui-icon-pencil" }
-    }).click(function () {
-        var filename = editAreaLoader.getCurrentFile("hmScript").id;
-        var filenameparts = filename.split(".");
+    $("#editorRenameFile").click(function (e) {
+        var filenameparts = editorActiveFile.split(".");
         var ext = "." + filenameparts.pop();
-        var file = filenameparts.join(".")
+        var file = filenameparts.join(".");
         $("#cfgFileName").val(file);
         $("#cfgFileNameExt").val(ext);
-        $("#cfgFileNameOld").val(filename);
+        $("#cfgFileNameOld").val(editorActiveFile);
 
         $("#dialogRenameFile").dialog("open");
+        e.preventDefault();
+    });
+
+    $("#editorDelFile").click(function (e) {
+
+        $("#scriptDeleteReally").html(editorActiveFile);
+        dialogDelScript.dialog("open");
+        e.preventDefault();
+
     });
 
     $("#dialogRenameFile").dialog({
@@ -5529,11 +5523,14 @@ var chartProtocolReady;
                 $(this).dialog("close");
             },
             "Übernehmen": function () {
-                var file = editAreaLoader.getCurrentFile("hmScript");
-                editAreaLoader.closeFile("hmScript", file.id);
-                file.id = checkFileName($("#cfgFileName").val() + $("#cfgFileNameExt").val());
-                file.title = file.id;
-                editAreaLoader.openFile("hmScript", file);
+                var newname = checkFileName($("#cfgFileName").val() + $("#cfgFileNameExt").val());
+                var content = editorFiles[editorActiveFile];
+                delete editorFiles[editorActiveFile];
+                editorFiles[newname] = content;
+                editorActiveFile = newname;
+                storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
+                storage.set("hqWebUiActiveFile", editorActiveFile);
+                initEditorFileList();
                 $(this).dialog("close");
             }
 
@@ -5556,14 +5553,13 @@ var chartProtocolReady;
         });
 
     function checkFileName(name) {
-        var files = editAreaLoader.getAllFiles("hmScript");
-        if (files[name] !== undefined) {
+        if (editorFiles[name] !== undefined) {
             var parts = name.split(".");
             var ext = parts.pop();
             name = parts.join(".") + "_." + ext;
             return checkFileName(name);
         }
-         return name;
+        return name;
     }
     function newScript(type) {
         var filename, syntax = type, text = "\n\n\n\n\n";
@@ -5760,65 +5756,11 @@ var chartProtocolReady;
 
         }
 
-
-
-       /* $.ajax({
-            url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/statechange.cgi',
-            type: 'GET',
-            scriptCharset: "ISO-8859-1",
-            contentType: 'application/x-www-form-urlencoded; charset=ISO-8859-1',
-            data: {
-                ise_id: ise_id,
-                new_value: new_value
-            },
-            success: function (data) { if (successFunction !== undefined) { successFunction(data); } },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });*/
     }
 
 
 
-/*
-    function hmGetDevices() {
-        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetDevices()"); }
-        loaderStates.show();
 
-
-        var cache = storage.get("hqWebUiDevices");
-        if (cache !== null) {
-
-            if (hqConf.debug) { console.log((new Date()).getTime() + " Cache Hit Devices"); }
-            devicesReady = true;
-            devicesXML = $.parseXML(cache);
-            devicesXMLObj = $(devicesXML);
-
-            hmGetDevices();
-            return false;
-        }
-
-
-        if (hqConf.debug) { console.log((new Date()).getTime() + " Fetching: Devices"); }
-
-
-        $.ajax({
-            url: hqConf.ccuUrl + hqConf.hqapiPath + "/hmscript.cgi?content=xml&session=" + hmSession,
-            type: 'POST',
-            data: scriptDevices,
-            dataType: 'xml',
-            success: function (data) {
-                devicesReady = true;
-                devicesXML = data;
-                devicesXMLObj = $(data);
-                storage.set('hqWebUiDevices', (new XMLSerializer()).serializeToString(data));
-                storage.set("hqWebUiStates", null);
-                storage.set("hqWebUiStatesTime", null);
-                statesReady = false;
-                hmGetDevices();
-            },
-            error: function (xhr, ajaxOptions, thrownError) { ajaxError(xhr, ajaxOptions, thrownError); }
-        });
-    }
-*/
     function hmGetFunctions() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFunctions()"); }
 
@@ -6528,8 +6470,9 @@ var chartProtocolReady;
     }
 
 
+
     function xmlRunScript(port) {
-        var fileContent = editAreaLoader.getValue("hmScript");
+        var fileContent = codemirror.getValue();
 
         $.ajax({
             url: hqConf.ccuUrl + hqConf.hqapiPath + "/xmlrpc.cgi/?port=" + port + "&session=" + hmSession,
@@ -6584,7 +6527,6 @@ var chartProtocolReady;
     }
 
     function webuiStart() {
-
 
         // Favoritenansicht aufbauen. Das Laden des nächsten Tabs wird aus hmGetFavorites heraus angestoßen
         if (hqConf.debug) { console.log((new Date()).getTime() + " webuiStart()"); }
@@ -6653,12 +6595,13 @@ var chartProtocolReady;
 
     // Alle sichtbaren Datenpunkte und Variablen sowie alle Alarm-Variablen abfragen und im UI refreshen
     function hmRefresh() {
-        var datapoints = [];
-        var updateFirst;
-        var updateCount;
-        var updateScript = "";
-        var tJson = "v";
-         clearTimeout(timerRefresh);
+        clearTimeout(timerRefresh);
+        var datapoints = [],
+            updateFirst,
+            updateCount,
+            updateScript = "",
+            tJson = "v";
+
         if (ajaxIndicator.is(":visible")) {
             timerRefresh = setTimeout(hmRefresh, hqConf.refreshRetry);
             return false;
@@ -6671,7 +6614,6 @@ var chartProtocolReady;
             var accObj = $(selector);
 
             //console.log(selector + " -> " + accObj.attr("id"));
-
 
             accObj.find("select[id^='favInputSelect']").each(function () {
                 updateCount += 1;
@@ -6837,8 +6779,6 @@ var chartProtocolReady;
 
         } else {
 
-
-
             $("td.uDP[aria-describedby$='_id']:reallyvisible").each(function() {
                 if ($(this).css("display") != "none") {
                     var id = $(this).attr("title");
@@ -6880,17 +6820,6 @@ var chartProtocolReady;
                 }
             });
 
-
-
-            /*$("div[id^='favItem']:reallyvisible").each(function() {
-                if ($(this).css("display") != "none") {
-                    var id = $(this).attr("id");
-                    //id = parseInt(id, 10);
-                    //updateQueue.push(id);
-                }
-
-            });*/
-
         }
 
         $("td.uVAR[aria-describedby$='_id']").each(function() {
@@ -6913,26 +6842,12 @@ var chartProtocolReady;
             }
         });
 
-        if (updateScript != "") {/*
-
-
-
-            updateScript += "object oTmpArray = dom.GetObject(ID_SERVICES);\n" +
-                "string sTmp;\n" +
-                "foreach (sTmp, oTmpArray.EnumIDs()) {\n" +
-                "    object oTmp = dom.GetObject(sTmp);\n" +
-                "    if (oTmp) {\n" +
-                "        if (oTmp.IsTypeOf(OT_ALARMDP) && oTmp.AlState() == asOncoming) {\n" +
-                "            var trigDP = dom.GetObject(oTmp.AlTriggerDP());\n" +
-                "            WriteLine(\",\");\n" +
-                "            Write('{\"id\":\"' # oTmp.ID() # '\",\"t\":\"a\",\"vl\":\"' # oTmp.AlState() # '\",\"ts\":\"' # oTmp.LastTriggerTime() # '\",\"ta\":\"' # oTmp.AlOccurrenceTime() # '\"}');\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";*/
-
-            $("th[id$='_active']").addClass("ui-state-active");
-            $("th[id$='_timestamp']").addClass("ui-state-active");
-            $("th[id$='_value']").addClass("ui-state-active");
+        if (updateScript != "") {
+            if (tabActive != "#tabEditor" && tabActive != "#tabCcu" && tabActive != "#tabFavorites") {
+                $("th[id$='_active']").addClass("ui-state-active");
+                $("th[id$='_timestamp']").addClass("ui-state-active");
+                $("th[id$='_value']").addClass("ui-state-active");
+            }
             updateScript = 'object o;\nWrite("[");\n' + updateScript + 'Write("]");';
             //console.log({'updateScript':updateScript});
             var ajaxTime = new Date().getTime();
@@ -7394,161 +7309,8 @@ var chartProtocolReady;
 
     }
 
-
-    // Script-Editor
-    var editAreaInit = {
-        id: "hmScript",
-        start_highlight: true,
-        is_multi_files: true,
-        word_wrap: true,
-        font_size: "10",
-        allow_resize: "y",
-        allow_toggle: false,
-        display: "onload",
-        language: "de",
-        syntax: "hmscript",
-        replace_tab_by_spaces: 4,
-        min_height: 585,
-        min_width: 695,
-        toolbar: "search, go_to_line, fullscreen, autocompletion, select_font",
-        EA_load_callback: "scriptEditorReady",
-        load_callback: "scriptEditorLoad",
-        save_callback: "scriptEditorSave",
-        new_document_callback: "scriptEditorNew",
-        EA_file_close_callback: "scriptFileClose",
-        change_callback: "scriptChange"
-    }
-
-    // Autocompletion im Mozilla erstmal deaktiviert. Fehler in autocompletion.js muss erst behoben werden.
-    if (!$.browser.mozilla) {
-        editAreaInit['plugins'] = 'autocompletion';
-        editAreaInit['autocompletion'] = true;
-    }
-
-    function initEditArea() {
-        if (hqConf.debug) { console.log((new Date()).getTime() + " editArea init"); }
-        editAreaLoader.init(editAreaInit);
-    }
-
-    if (tabActive == "#tabDev") {
-        editorReady = true;
-        initEditArea();
-    }
-
     if (tabActive == "#tabEditor") {
         initCodemirror();
     }
 
-
 })})(jQuery);
-
-
-// Funktionen für den Script-Editor(editArea steckt in iFrame und arbeitet im globalen Namensraum)
-function scriptFileClose(file) {
- // Todo - Prüfen warum closeFile() im Dialog dialogDelScript nicht funktioniert
- //   $("#scriptDeleteReally").html(file["id"]);
- //   dialogDebugScript.dialog("open");
- //   return false;
- // Bis dahin: Workaround via confirm()
-    if (!$("#dialogRenameFile").is(":visible")) {
-        if (confirm("Wirklich das Script " + file["id"] + " löschen?")) {
-            setTimeout(function () {
-                $("button#hmSaveScript").trigger("click");
-            }, 200);
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        setTimeout(function () {
-            $("button#hmSaveScript").trigger("click");
-        }, 200);
-        return true;
-    }
-
-
-}
-
-// Automatisches Speichern
-var scriptSaveTimer;
-function scriptChange() {
-    clearTimeout(scriptSaveTimer);
-    scriptSaveTimer = setTimeout(function () {
-        $("button#hmSaveScript").trigger("click");
-    }, 1000);
-}
-
-function scriptEditorReady() {
-    //frame_hmScript =        $("#frame_hmScript");
-    //editorReady = true;
-    $("frame_hmScript").contents().find("#toolbar_1 a").button();
-
-    scriptEditorStyle();
-    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea init done"); }
-    // Gespeicherte Scripte laden
-    var scripts = JSON.parse(storage.get('hqWebUiScripts'));
-    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea loading files"); }
-    for (var key in scripts) {
-        var filenameparts = key.split(".");
-        var ext = filenameparts.pop();
-        switch (ext) {
-            case "fn":
-            case "hm":
-
-
-                var new_file= {id: key, text: scripts[key], syntax: "hmscript"};
-                break;
-            default:
-                var new_file= {id: key, text: scripts[key], syntax: "", do_highlight: ""};
-
-
-        }
-
-        editAreaLoader.openFile('hmScript', new_file);
-    }
-    if (hqConf.debug) { console.log((new Date()).getTime() + " editArea loading files done"); }
-
-}
-
-
-
-
-function scriptEditorStyle() {
-        // Umstylen... Pfusch...!
-        $("frame_hmScript").contents().find("#toolbar_1").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
-        $("frame_hmScript").contents().find("#toolbar_1").css("background", $(".ui-jqgrid-titlebar").css("background"));
-        $("frame_hmScript").contents().find("#toolbar_1").css("color", $(".ui-jqgrid-titlebar").css("color"));
-        $("frame_hmScript").contents().find("#toolbar_1 a").button("destroy");
-        $("frame_hmScript").contents().find("#toolbar_1 a").button();
-        $("frame_hmScript").contents().find("#toolbar_1 a span").css({
-            'padding': '1px',
-            'padding-left': '6px',
-            'padding-right': '6px',
-            'margin': '0px'
-        });
-        /*$("frame_hmScript").contents().find("#toolbar_1 a span").
-                css("color", $("#hmRunScript").css("color")).
-                css("background-color", $("#hmRunScript").css("background-color")).
-                css("border", $("#hmRunScript").css("border"));
-        */
-        $("frame_hmScript").contents().find("#toolbar_1 a img").css('border', '');
-        $("frame_hmScript").contents().find("#toolbar_2").css("background-color", $(".ui-jqgrid-titlebar").css("background-color"));
-        $("frame_hmScript").contents().find("#toolbar_2").css("background", $(".ui-jqgrid-titlebar").css("background"));
-        $("frame_hmScript").contents().find("#toolbar_2").css("color", $(".ui-jqgrid-titlebar").css("color"));
-        $("frame_hmScript").contents().find("#tab_browsing_area").css("background-color", $("#gridScriptVariables_variable").css("background-color"));
-        $("frame_hmScript").contents().find("#tab_browsing_area").css("background", $("#gridScriptVariables_variable").css("background"));
-        $("frame_hmScript").contents().find("#tab_browsing_area").css("color", $("#gridScriptVariables_variable").css("color"));
-
-}
-/*
-(function() {
-    var s = document.createElement('script');
-    var t = document.getElementsByTagName('script')[0];
-
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = '//api.flattr.com/js/0.6/load.js?mode=auto';
-
-    t.parentNode.insertBefore(s, t);
- })();
-*/
