@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.4-beta1",
+    var version =               "2.4.0",
 
         codemirror,
         codemirrorReady = false,
