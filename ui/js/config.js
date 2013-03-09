@@ -175,6 +175,41 @@ var hqConf = {
         'HM-WS550STH-O':     'TH_CS_thumb.png'
     },
 
+    // Zuordnung Geräte -> Batterie-Typen und Anzahl
+    deviceBat: {
+        'HM-RC-4':          { 'type': 'CR2016', count: 1},
+        'HM-RC-4-B':        { 'type': 'CR2016', count: 1},
+        'HM-RC-Sec3':       { 'type': 'CR2016', count: 1},
+        'HM-RC-Sec3-B':     { 'type': 'CR2016', count: 1},
+        'HM-RC-P1':         { 'type': 'CR2016', count: 1},
+        'HM-RC-Key3':       { 'type': 'CR2016', count: 1},
+        'HM-RC-Key3-B':     { 'type': 'CR2016', count: 1},
+        'HM-PB-2-WM':       { 'type': 'CR2032', count: 1},
+        'HM-SwI-3-FM':      { 'type': 'CR2032', count: 1},
+        'HM-PBI-4-FM':      { 'type': 'CR2032', count: 1},
+        'HM-Sec-TiS':       { 'type': 'CR2032', count: 1},
+        'HM-Sec-SC':        { 'type': 'LR44',   count: 2},
+        'HM-Sec-RHS':       { 'type': 'LR44',   count: 2},
+        'HM-Sec-MDIR':      { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-CC-TC':         { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-CC-VD':         { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-WDS100-C6-O':   { 'type': 'AA / Mignon / LR06',    count: 3},
+        'HM-WDS40-TH-I':    { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-WDS10-TH-O':    { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-WDS30-T-O':     { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-Sec-Key':       { 'type': 'AA / Mignon / LR06',    count: 3},
+        'HM-Sec-SD':        { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-RC-12':         { 'type': 'AAA / Micro / LR03',    count: 3},
+        'HM-RC-12-B':       { 'type': 'AAA / Micro / LR03',    count: 3},
+        'HM-PB-4Dis-WM':    { 'type': 'AAA / Micro / LR03',    count: 2},
+        'HM-Sen-EP':        { 'type': 'AAA / Micro / LR03',    count: 2},
+        'HM-Sen-MDIR-SM':   { 'type': 'AA / Mignon / LR06',    count: 2},
+        'HM-CCU-1':         { 'type': 'AA / Mignon / LR06',    count: 4}
+
+
+
+    },
+
     // Zuordnung Datenpunkte -> Einheit, Anzahl Dezimalstellen, Faktor
     dpDetails: {
         'BAT_LEVEL':            {

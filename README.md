@@ -42,11 +42,20 @@ http://www.homematic-inside.de/software/download/item/hq-webui-addon
 
 **Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
+*Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
+
+
+### Als Zusatzsoftware über das WebUI
+
 Die Datei hq-webui_(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ erreichbar.
 
 **Achtung Safari Benutzer:** Safari packt in Standardeinstellung .tar.gz Dateien direkt nach dem Download aus - das ist schlecht - Zusatzsoftware muss immer als .tar.gz Datei auf die CCU geladen werden.
 
-*Hinweis: Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
+### Per FTP oder SCP (Vorteil: **kein Reboot** der CCU notwendig!)
+
+Die Datei hq-webui_(version).tar.gz auspacken (mit 7-Zip z.B.) und dann einfach den Ordner "hq" auf die CCU in das Verzeichnis /www/addons/ kopieren. Zur Deinstallation genügt dann einfach das Löschen dieses Ordners von der CCU.
+
+Hinweis: Wird das HQ WebUI auf diese Weise installiert erscheint es nicht im originalen WebUI in der Liste der installierten Zusatzsoftware.
 
 
 ## Bedienung
@@ -89,7 +98,8 @@ Wenn Servicemeldungen vorhanden sind werden diese im Reiter Geräte mit Anzahl an
 ### Entwicklung
 
 Beim Ausführen von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergänzt.
-Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
+
+**Achtung:** Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
 ### Zentrale/Systemprotokoll
 

@@ -22,16 +22,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.4.0",
+    var version =               "2.4.1",
 
         codemirror,
-        codemirrorReady = false,
-        editorResizeReady = false,
-        editorActiveFile = "",
-        editorFiles = {},
+        codemirrorReady =       false,
+        editorResizeReady =     false,
+        editorActiveFile =      "",
+        editorFiles =           {},
         editorMode,
-        chartDPs = [],
-        chartProtocolSeries = [],
+        chartDPs =              [],
+        chartProtocolSeries =   [],
 
         statesXML,
         rssiXML,
@@ -39,8 +39,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         programsXML,
         functionsXML,
         roomsXML,
-        devicesXML,
         favoritesXML,
+        batXML,
 
         statesXMLObj,
         rssiXMLObj,
@@ -49,12 +49,16 @@ jQuery.extend(jQuery.expr[ ":" ], {
         functionsXMLObj,
         roomsXMLObj,
         favoritesXMLObj,
+        batXMLObj,
 
-        alarmsData,
-        tabActive,
         protocolXML,
         protocolXMLObj,
         protocolRecords,
+
+
+        alarmsData,
+        tabActive =             window.location.hash,
+        tabChange =             false,
 
         statesReady =           false,
         alarmsReady =           false,
@@ -67,6 +71,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
         devicesReady =          false,
         favoritesReady =        false,
 
+        selectRoomsReady =      false,
+        selectFunctionsReady =  false,
+
+        protocolLoading =       false,
+        chartProtocolReady =    false,
+        chartProtocolLoading =  false,
 
         firstLoad =             false,
 
@@ -95,6 +105,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         gridRooms =             $("#gridRooms"),
         gridScriptVariables =   $("#gridScriptVariables"),
         gridInfo =              $("#gridInfo"),
+        gridBat =               $("#gridBat"),
         gridChannelChooser =    $("#gridChannelChooser"),
 
         variableInput =         $("#variableInput"),
@@ -151,11 +162,11 @@ jQuery.extend(jQuery.expr[ ":" ], {
         loaderFavorites =       $("#loaderFavorites"),
 
         chartProtocol =         $("#chartProtocol"),
-        
+
         namingConfirm =         $("#namingConfirm"),
 
         buttonRefreshFavs =     $("#buttonRefreshFavs"),
-
+        buttonsFavorites =      $("#buttonsFavorites"),
         debugMode =             $("#debugMode"),
         sliderRefresh =         $("#sliderRefresh"),
         refreshEstimation =     $("#refreshEstimation"),
@@ -183,11 +194,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         hmSession,
         editorReady =           false,
+        chartProtocolLoaded =   false,
         xmlmenu,
         highchartProtocol,
         lang = {};
-
-    $(".hq-version").html(version);
 
     // Elemente verstecken
     divLogin.hide();
@@ -197,18 +207,29 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $(".menu").menu().hide().removeClass("ui-corner-all").addClass("ui-corner-bottom");
     $("#hmRunScriptMenu").menu().hide().removeClass("ui-corner-all").addClass("ui-corner-bottom");
     $("#contextMenuRooms").menu().hide();
-    $("#buttonsFavorites").hide();
+    buttonsFavorites.hide();
     $("ul.tabsPanel li a img").hide();
     serviceIndicator.hide();
     alarmIndicator.hide();
     divStderr.hide();
     divScriptVariables.hide();
 
+    $(".hq-version").html(version);
 
+    function getTheme() {
+        var theme = storage.get("hqWebUiTheme");
+        if (theme === null) {
+            theme = hqConf.themeDefault;
+        } else {
+            if (theme != hqConf.themeDefault) {
+                $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
+            }
+
+        }
+
+        $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
+    }
     getTheme();
-
-    getConfig();
-    initConfigDialog();
 
 
     function getConfig() {
@@ -228,6 +249,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
         if (hqConf.debug) { console.log((new Date()).getTime() + " getConfig()"); }
     }
+    getConfig();
+
 
     function initConfigDialog() {
         if (hqConf.debug) {
@@ -259,9 +282,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 setConfigItem("refreshFactor", value);
                 refreshEstimation.html(Math.ceil(0.5 + (value * 0.5)));
             }
-        })
-
+        });
     }
+    initConfigDialog();
 
     function setConfigItem(item, value) {
         var debugged;
@@ -279,8 +302,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
     // Tabs Init und Navigation
-    var tabChange = false;
-    tabActive = window.location.hash;
     if (tabActive == "") { tabActive = "#tabFavorites"; }
     tabs.tabs({
         select: function(event, ui) {
@@ -309,6 +330,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             }
     });
+
     $("a[href='#tabDashboard']").css("border","1px solid red").unbind("click").click(function () {
         this.href="dashboard.html";
     });
@@ -318,9 +340,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
         tabChange = true;
         tabActive = window.location.hash;
         tabs.tabs('select', tabActive);
-
     });
-    var protocolLoading = false, chartProtocolLoading = false;
+
     subTabCcu.tabs({
         activate: function( event, ui ) {
             resizeAll();
@@ -349,78 +370,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     });
 
-    // Resize
-    $(window).resize(function() {
-        resizeAll();
-    });
-    setTimeout(resizeAll, 250);
-    function resizeAll() {
-        var x = $(window).width();
-        var y = $(window).height();
-        //console.log((new Date()).getTime() + " x=" + x + " y=" + y);
-        // subTabCcu.css('height', y - 84);
-        var gridWidth = x - 56;
-        if (gridWidth < hqConf.gridWidth) {
-            gridWidth = hqConf.gridWidth;
-        }
-        var gridHeight = y - 175;
-        /* if (gridHeight < hqConf.gridHeight) {
-         gridHeight = hqConf.gridHeight;
-         } */
-        gridStates.setGridHeight(gridHeight);
-        $("#editorContainer").css("height", y-80).css("width",gridWidth);
-        $(".CodeMirror").css("height", y-105);
-        $("#tblEditor").css("width", "100%");
-        $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
-        $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
-        $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
-        //divStdout.css('width', x - 775);
-        //gridScriptVariables.setGridWidth(300);
-        tabFavorites.css("height", $("#tabVariables").height());
-        //$("#tabCcu").css("height", $("#tabVariables").height());
-        chartProtocol.css("width", gridWidth - 46);
-        chartProtocol.css("height", $("#tabCcuProtocol").height());
-        $("#tabSystemContainer").css("width", gridWidth - 46);
-        $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
-        $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
-        if (codemirrorReady) {
-            initEditorResize();
-        }
-        resizeFavHeight();
-        if (chartProtocolLoaded) {
-            highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
-        }
-        if (editorActiveFile) {
-            resizeScriptOut();
-        }
-    }
-
-    function resizeFavHeight() {
-        if (favoritesReady) {
-            $("#buttonsFavorites").show();
-            $("#accordionFavorites").css("height", $(window).height() - 111).accordion("refresh");
-        }
-    }
-
-
-    function resizeFavItems() {
-
-        /*
-        $(".favInput").each(function () {
-            //console.log($(this).parent().attr("id") + " " + $(this).height());
-            var newHeight = $(this).height();
-            if (newHeight < 36) {
-                newHeight = 28;
-            } else {
-                newHeight = ((Math.ceil(newHeight / 36)) * 37);
-            }
-            $(this).parent().css('height', newHeight);
-        });*/
-    }
-
-
-
-
     // Buttons ins Tabs-Panel einfügen
     $("#mainNav").
         append("<button title='Abmelden' class='smallButton' style='float:right; margin-left: 1px;' id='buttonLogout'></button>").
@@ -446,32 +395,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
         ajaxIndicator.removeClass("ui-icon-transfer-e-w").addClass("ui-icon-transferthick-e-w");
     }
 
-
-   /* divStdout.resizable().on("resize", function(event, ui) {
-        $("#hmScriptStdout").height(divStdout.height()-29);
-        divStderr.width(divStdout.width());
-    });*/
-
-/*
-
-    divStderr.resizable().on("resize", function(event, ui) {
-        $("#hmScriptStderr").height(divStderr.height()-29);
-    });*/
-
-
-
-    // Los gehts!
-    sessionStart();
-
-
-
     /*
      *          jqGrid colNames and colModels
      *
      *          siehe http://www.trirand.com/jqgridwiki/doku.php?id=wiki:colmodel_options
      *
      */
-
     var colNamesChannelChooser = [
         'id',
         'Kanal Name',
@@ -1293,6 +1222,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     ];
+
     var colNamesRooms = [
         'id',
         'Name',
@@ -1474,6 +1404,61 @@ jQuery.extend(jQuery.expr[ ":" ], {
         }
     ];
 
+    var colNamesBat = [
+        '',
+        'id',
+        'Name',
+        'Adresse',
+        'Gerätetyp',
+        'Batterietyp',
+        'Anzahl',
+        'Zustand'
+    ];
+    var colModelBat = [
+        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+            xmlmap: function (obj) {
+                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
+            }
+        },
+        {name:'id', index:'id', width: 43, fixed: true, sorttype: 'int', align: 'right',
+            xmlmap: function (obj) {
+                return $(obj).attr("id");
+            },
+            classes: 'ise_id'
+        },
+        {name:'name', index:'name', width: 240, fixed: true,
+            xmlmap: function (obj) {
+                return $(obj).attr("name");
+            }
+        },
+        {name:'address', index:'address',  width: 90, fixed: true,
+            xmlmap: function (obj) {
+                return $(obj).attr("addr");
+            }
+        },
+        {name:'device_type', index:'device_type', width: 80,
+            xmlmap: function (obj) {
+                return $(obj).attr("type");
+            }
+        },
+        {name:'bat_type', index:'bat_type', width: 60,
+            xmlmap: function (obj) {
+                return $(obj).attr("bat_type");
+            }
+        },
+        {name:'bat_count', index:'bat_count', width: 60,
+            xmlmap: function (obj) {
+                return $(obj).attr("bat_count");
+            }
+        },
+        {name:'bat_cap', index:'bat_cap', width: 60,
+            xmlmap: function (obj) {
+                return $(obj).attr("bat_cap");
+            }
+
+        }
+    ];
+
     var colNamesProtocol = [
         'id',
         'Typ',
@@ -1556,8 +1541,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }
     ];
-
-
 
     gridVariables.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -1809,7 +1792,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
         dialogEditVariable.dialog("open");
     }
 
-
     gridPrograms.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
         colNames: colNamesPrograms,
@@ -2013,25 +1995,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
             cursor: "pointer"
         });
 
-/*    function hmCfgChannel(row_id) {
-        if (hqConf.debug) { console.log((new Date()).getTime() + " hmCfgChannel("+row_id+")"); }
-        var sObj = statesXMLObj.find("channel[ise_id='"+row_id+"']");
-        var dObj = devicesXMLObj.find("channel[ise_id='"+row_id+"']");
 
-
-        if ($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html() != null) {
-
-            $("#cfgChannelName").val($("tr[id='" + row_id + "'] td[aria-describedby='gridStates_name']").html());
-            $("#cfgChannelId").val(row_id);
-            $("#selectRooms option").removeAttr("selected");
-            roomsXMLObj.find("channel[ise_id='"+row_id+"']").each(function () {
-                console.log(this);
-                $("#selectRooms option[value='"+$(this).parent().attr("ise_id")+"']").attr("selected", true);
-            });
-
-            dialogCfgChannel.dialog('open');
-        }
-    }*/
     function hmCfgDevice(row_id) {
           $("#cfgDeviceName").val(statesXMLObj.find("device[ise_id='"+row_id+"']").attr("name"));
             $("#cfgDeviceId").val(row_id);
@@ -2252,7 +2216,46 @@ jQuery.extend(jQuery.expr[ ":" ], {
     $("#btnDelFunction").addClass("ui-state-disabled");
     $("#gridPagerFunctions_left").css("line-height","1em").append("<span style='font-size:0.8em;' class='timeUpdate'/><br/><span class='timeRefresh' style='margin-top: -2px; font-size:0.8em;' id='timeRefreshFunctions'/>");
 
+    gridBat.jqGrid({
+        width: hqConf["gridWidth"], height: hqConf["gridHeight"],
+        colNames:colNamesBat,
+        colModel :colModelBat,
+        pager: "#gridPagerBat",
+        rowList: hqConf["gridRowList"], rowNum: hqConf["gridRowNum"],
+        viewrecords:    true,
+        gridview:       true,
+        caption:        'Batterien',
+        loadonce:       true,
+        loadError:      function (xhr, status, error) { ajaxError(xhr, status, error) },
+        datatype:       'xmlstring',
+        data: {
+        },
+        ignoreCase: true,
+        xmlReader : {
+            root: "bat",
+            row: "device",
+            id: "[id]",
+            repeatitems: false
+        },
+        sortable: true
 
+    }).filterToolbar({defaultSearch: 'cn', searchOnEnter: false}).jqGrid(
+        'navGrid',
+        "#gridPagerRssi", { edit: false, add: false, del: false, search: false, refresh: false }).jqGrid(
+        'navButtonAdd',
+        "#gridPagerBat", {
+            caption:"",
+            buttonicon:"ui-icon-refresh",
+            onClickButton: function () {
+                storage.set("hqWebUiRssi", null);
+                storage.set("hqWebUiRssiTime", null);
+                hmGetRssi();
+            },
+            position: "first",
+            title:"Neu laden",
+            cursor: "pointer"
+        });
+    $("#gridPagerBat_left").append("<span class='timeRefresh' id='timeRefreshBat'/>");
 
     gridRssi.jqGrid({
         width: hqConf["gridWidth"], height: hqConf["gridHeight"],
@@ -2904,7 +2907,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 hmRefresh();
                 hmRefreshAlarms();
             }
-
+            hmGetBattery();
             if (!rssiReady) {
                 hmGetRssi();
             }
@@ -2962,13 +2965,12 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 if (!rssiReady) {
                     hmGetRssi();
                 }
+                hmGetBattery();
             }
         });
 
 
-
-
-        statesReady = false;
+        //statesReady = false;
         /*
         gridStates.setGridParam({
             url: hqConf["ccuUrl"] + hqConf["xmlapiPath"] + '/statelist.cgi',
@@ -2999,7 +3001,45 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         }).trigger("reloadGrid").setGridParam({loadonce: true}); */
     }
-var chartProtocolReady;
+
+    function hmGetBattery() {
+        var devtype,
+            devname,
+            devaddr,
+            bat_type,
+            bat_count,
+            bat_cap,
+            bat,
+            batinfo = {};
+
+
+        batXML = "<bat>";
+        statesXMLObj.find("device").each(function () {
+            var $this = $(this);
+            if (hqConf.deviceBat[$this.attr("device_type")] && $this.attr("interface") !== "CUxD") {
+                bat = hqConf.deviceBat[$this.attr("device_type")];
+                if (!batinfo[bat.type]) {
+                    batinfo[bat.type] = parseInt(bat.count, 10);
+                } else {
+                    batinfo[bat.type] += bat.count;
+                }
+                batXML += '<device id="'+$this.attr("ise_id")+'" type="'+$this.attr("device_type")+'" addr="'+$this.attr("address")+'" name="'+$this.attr("name")+'" bat_type="'+bat.type+'" bat_count="'+bat.count+'" bat_level=""/>\n';
+            }
+        });
+        batXML += "</bat>";
+        console.log(batXML);
+        batXMLObj = $(batXML);
+        gridBat.setGridParam({
+            loadonce: false,
+            datatype: "xmlstring",
+            datastr: batXML
+        }).trigger("reloadGrid").setGridParam({loadonce:true});
+        var type;
+        for (type in batinfo) {
+            addInfo("Anzahl Batterien Typ " + type, batinfo[type]);
+        }
+
+    }
 
     function refreshProtocol() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " refreshProtocol()"); }
@@ -3229,7 +3269,7 @@ var chartProtocolReady;
             error: ajaxError
         });
     }
-   function hmGetRssi() {
+    function hmGetRssi() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRssi()"); }
 
 
@@ -3331,7 +3371,6 @@ var chartProtocolReady;
             if (cols < 1 || cols > 4) { cols = Math.floor($(window).width() / 460); }
             if (cols == 0) { cols = 1; }
             if (cols > 4) { cols = 4; }
-
 
             if (orientation == 0) {
                 align = "right";
@@ -3828,7 +3867,7 @@ var chartProtocolReady;
             }
             //accordionFavorites.html(sortedHtml);
         }
-        $("#buttonsFavorites").show();
+        buttonsFavorites.show();
 
         accordionFavorites.accordion({
             heightStyle: "fill",
@@ -3880,8 +3919,6 @@ var chartProtocolReady;
 
 
     /* Buttons, Dialoge */
-
-
     $("#createBackup").button().click(function () {
         dialogReallyBackup.dialog("open");
         return false;
@@ -3896,12 +3933,9 @@ var chartProtocolReady;
         hmGetFavorites();
     });
 
-
-
     dialogDelScript.dialog({
         autoOpen: false
     });
-
 
     dialogReallyRename.dialog({
         autoOpen: false,
@@ -4180,7 +4214,6 @@ var chartProtocolReady;
         $("#cfgVarChannelId").val(65535);
         $("#cfgVarChannel").val("-");
     });
-
 
     dialogCfgProgram.dialog({
         autoOpen: false,
@@ -4765,6 +4798,7 @@ var chartProtocolReady;
             }
         }
     });
+
     dialogJsonError.dialog({
         autoOpen: false,
         modal: true,
@@ -4788,6 +4822,7 @@ var chartProtocolReady;
             }
         }
     });
+
     dialogDelFunction.dialog({
         autoOpen: false,
         modal: true,
@@ -4962,9 +4997,7 @@ var chartProtocolReady;
         }
     });
 
-
-
-   dialogDocu.dialog({
+    dialogDocu.dialog({
         autoOpen: false,
         width: 400,
         modal: true,
@@ -4974,6 +5007,7 @@ var chartProtocolReady;
             }
         }
     });
+
     dialogAbout.dialog({
         width: 446,
         height: 555,
@@ -4986,6 +5020,7 @@ var chartProtocolReady;
             }
         }
     });
+
     $("#dialogLinks").dialog({
         width: 400,
         height: 270,
@@ -4997,6 +5032,7 @@ var chartProtocolReady;
             }
         }
     });
+
     $("#hqWebUiVersion").html(version);
     $("#selectUiTheme").change(function () {
         changeTheme($("#selectUiTheme option:selected").val());
@@ -5070,14 +5106,9 @@ var chartProtocolReady;
         }
     });
 
-
-
-
-
     $("#editorHelp").click(function () {
       dialogDocu.dialog('open');
     });
-
 
     $("#hmRunScript").click(function () {
 
@@ -5415,7 +5446,6 @@ var chartProtocolReady;
         return false;
     });
 
-
     $("#editorNewXml").click(function (e) {
         newScript("xml");
         e.preventDefault();
@@ -5447,9 +5477,6 @@ var chartProtocolReady;
         jsonLogin($("input#username").val(), $("input#password").val());
         e.preventDefault();
     });
-
-
-
 
     // Homematic Funktionen
     function hmClearProtocol() {
@@ -5553,9 +5580,6 @@ var chartProtocolReady;
         }
 
     }
-
-
-
 
     function hmGetFunctions() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetFunctions()"); }
@@ -5792,6 +5816,7 @@ var chartProtocolReady;
             }
         });
     }
+
     function insertAlarms(data) {
         if (hqConf.debug) { console.log((new Date()).getTime() + " insertAlarms()"); }
 
@@ -5809,7 +5834,7 @@ var chartProtocolReady;
        //console.log(statesXMLObj);
        //console.log(statesXML);
     }
-    var selectRoomsReady = false, selectFunctionsReady = false;
+
     function initSelectRooms() {
         $("#selectRooms").html("");
         if (selectRoomsReady) {
@@ -5827,7 +5852,8 @@ var chartProtocolReady;
             header: false
         });
 
-    };
+    }
+
     function initSelectFunctions() {
         $("#selectFunctions").html("");
         if (selectFunctionsReady) {
@@ -5843,7 +5869,7 @@ var chartProtocolReady;
             noneSelectedText: "keinem Gewerk zugeordnet",
             header: false
         });
-    };
+    }
 
     function hmGetRooms() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetRooms()"); }
@@ -5983,10 +6009,6 @@ var chartProtocolReady;
        */
     }
 
-
-
-   // jsonLogin();
-
     function sessionStart() {
         if (hqConf.debug) { console.log((new Date()).getTime() + " sessionStart()"); }
 
@@ -6026,7 +6048,7 @@ var chartProtocolReady;
         $("#jsonOptions").html(options);
         $("#jsonError").html(errObj.code + " " + errObj.message);
         dialogJsonError.dialog("open");
-    };
+    }
 
     function jsonLogin(username, password) {
         if (hqConf.debug) { console.log((new Date()).getTime() + " JSON RPC: Session.login username=" + username); }
@@ -6192,8 +6214,6 @@ var chartProtocolReady;
         });
     }
 
-
-
     function hmRunScript (script, successFunction) {
         loaderScript.show();
         if (hqConf.debug) {
@@ -6216,8 +6236,6 @@ var chartProtocolReady;
             }
         });
     }
-
-
     function tclRunScript (script, successFunction) {
         loaderScript.show();
         $.ajax({
@@ -6236,7 +6254,6 @@ var chartProtocolReady;
         });
 
     }
-
     function shRunScript (script, successFunction) {
         loaderScript.show();
         $.ajax({
@@ -6255,9 +6272,6 @@ var chartProtocolReady;
         });
 
     }
-
-
-
     function xmlRunScript(port) {
         var fileContent = codemirror.getValue();
 
@@ -6277,7 +6291,6 @@ var chartProtocolReady;
             }
         });
     }
-
 
     function saveProgram() {
         var id = $("#cfgPrgId").val();
@@ -6376,10 +6389,9 @@ var chartProtocolReady;
 
             });
         }
-    };
+    }
 
     // Refresh Funktionen
-
     // Alle sichtbaren Datenpunkte und Variablen sowie alle Alarm-Variablen abfragen und im UI refreshen
     function hmRefresh() {
         clearTimeout(timerRefresh);
@@ -6937,8 +6949,6 @@ var chartProtocolReady;
 
     }
 
-
-
     function addInfo(key, value) {
         var idArray = gridInfo.jqGrid("getDataIDs");
         if (idArray.indexOf(key) > -1) {
@@ -6965,26 +6975,9 @@ var chartProtocolReady;
         dialogAjaxError.dialog("open");
     };
 
-
-
-
     function changeTheme(theme) {
         storage.set('hqWebUiTheme', theme);
         $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
-        $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
-    }
-
-    function getTheme() {
-        var theme = storage.get("hqWebUiTheme");
-        if (theme === null) {
-            theme = hqConf.themeDefault;
-        } else {
-            if (theme != hqConf.themeDefault) {
-                $("#theme").attr("href", hqConf.themeUrl + theme + hqConf.themeSuffix);
-            }
-
-        }
-
         $("#selectUiTheme option[value='" + theme + "']").attr("selected", true);
     }
 
@@ -6999,7 +6992,6 @@ var chartProtocolReady;
             weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
         }
     });
-    var chartProtocolLoaded = false;
     function initChartProtocol() {
         //if (hqConf.debug) { console.log((new Date()).getTime() + " initChartProtocol()"); }
         if (protocolReady && chartProtocolLoaded) {
@@ -7116,7 +7108,6 @@ var chartProtocolReady;
                 break;
         }
     }
-
 
     function fileLoad(name, content) {
         if (editorActiveFile) {
@@ -7279,5 +7270,62 @@ var chartProtocolReady;
     if (tabActive == "#tabEditor") {
         initCodemirror();
     }
+
+    // Resize
+    $(window).resize(function() {
+        resizeAll();
+    });
+
+    function resizeFavHeight() {
+        if (favoritesReady) {
+            buttonsFavorites.show();
+            $("#accordionFavorites").css("height", $(window).height() - 111).accordion("refresh");
+        }
+    }
+
+    function resizeAll() {
+        var x = $(window).width();
+        var y = $(window).height();
+        //console.log((new Date()).getTime() + " x=" + x + " y=" + y);
+        // subTabCcu.css('height', y - 84);
+        var gridWidth = x - 56;
+        if (gridWidth < hqConf.gridWidth) {
+            gridWidth = hqConf.gridWidth;
+        }
+        var gridHeight = y - 175;
+        /* if (gridHeight < hqConf.gridHeight) {
+         gridHeight = hqConf.gridHeight;
+         } */
+        gridStates.setGridHeight(gridHeight);
+        $("#editorContainer").css("height", y-80).css("width",gridWidth);
+        $(".CodeMirror").css("height", y-105);
+        $("#tblEditor").css("width", "100%");
+        $(".gridFull").setGridHeight(gridHeight).setGridWidth(gridWidth);
+        $(".gridSub").setGridHeight(gridHeight - 65).setGridWidth(gridWidth - 46);
+        $(".gridSubHalf").setGridHeight(gridHeight - 80).setGridWidth((gridWidth / 2) - 27);
+        //divStdout.css('width', x - 775);
+        //gridScriptVariables.setGridWidth(300);
+        tabFavorites.css("height", $("#tabVariables").height());
+        //$("#tabCcu").css("height", $("#tabVariables").height());
+        chartProtocol.css("width", gridWidth - 46);
+        chartProtocol.css("height", $("#tabCcuProtocol").height());
+        $("#tabSystemContainer").css("width", gridWidth - 46);
+        $("#tabCcuSystem").css("height", $("#tabCcuInfo").height());
+        $("#tabCcuChart").css("height", $("#tabCcuInfo").height());
+        if (codemirrorReady) {
+            initEditorResize();
+        }
+        resizeFavHeight();
+        if (chartProtocolLoaded) {
+            highchartProtocol.setSize($(window).width()-92,$(window).height()-140);
+        }
+        if (editorActiveFile) {
+            resizeScriptOut();
+        }
+    }
+    resizeAll();
+
+    // Los gehts!
+    sessionStart();
 
 })})(jQuery);

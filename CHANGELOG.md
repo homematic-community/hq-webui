@@ -1,5 +1,11 @@
 Changelog
 =========
+2.4.1
+-----
+* Neuer Tab: Batterien
+* Infos: Mehr Infos :)
+* Code weiter aufgeräumt
+
 2.4.0
 -----
 * Tab Entwicklung: Größenanpassung für Script-Output Fenster
