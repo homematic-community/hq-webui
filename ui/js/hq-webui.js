@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.4.1",
+    var version =               "2.4.2",
 
         codemirror,
         codemirrorReady =       false,
@@ -3027,7 +3027,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
             }
         });
         batXML += "</bat>";
-        console.log(batXML);
         batXMLObj = $(batXML);
         gridBat.setGridParam({
             loadonce: false,
