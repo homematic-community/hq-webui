@@ -3060,6 +3060,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 batXML += '<device id="'+$this.attr("ise_id")+'" type="'+$this.attr("device_type")+'" addr="'+$this.attr("address")+'" name="'+$this.attr("name")+'" bat_type="'+bat.type+'" bat_count="'+bat.count+'" bat_cap=""/>\n';
             }
         });
+        if (tabActive == "#tabCcu") {
+            hmGetInfos();
+        }
+
         addInfo("Anzahl Geräte Batteriebetrieben", batdevcount);
         batXML += "</bat>";
         batXMLObj = $(batXML);
@@ -3230,7 +3234,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
 
             }
-            var ts = parseInt(Date.parse($(this).attr("datetime").replace(/ /, "T")), 10) + 3600000;
+            var ts = parseInt(Date.parse($(this).attr("datetime").replace(/ /, "T")), 10);
             chartProtocolSeries[$(this).attr("did")].push([ts, parseFloat($(this).attr("value"), 10) * chartDPs[$(this).attr("did")].factor]);
 
             if (protocolReady) {
@@ -5417,11 +5421,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
         });
 
     function checkFileName(name) {
+        if (editorFiles) {
         if (editorFiles[name] !== undefined) {
             var parts = name.split(".");
             var ext = parts.pop();
             name = parts.join(".") + "_." + ext;
             return checkFileName(name);
+        }
         }
         return name;
     }
@@ -6184,11 +6190,22 @@ jQuery.extend(jQuery.expr[ ":" ], {
     }
 
     function hmGetInfos() {
+        infoReady = true;
+        if (hqConf.debug) { console.log((new Date()).getTime() + " hmGetInfos()"); }
         $.ajax({
-           url: '../api/sysinfo.cgi',
-           type: 'get',
+            url: hqConf.ccuUrl + hqConf.hqapiPath + "/sysinfo.cgi?session=" + hmSession,
+            type: 'get',
             dataType: 'json',
             success: function (data) {
+                data["CCU Batterie"] = parseInt(data["CCU Batterie"], 10) + "%";
+                batXMLObj.find("device[addr='System']").attr("bat_cap", data["CCU Batterie"]);
+                batXML = $.parseXML((new XMLSerializer()).serializeToString(batXMLObj[0]));
+                gridBat.setGridParam({
+                    loadonce: false,
+                    datatype: "xmlstring",
+                    datastr: batXML
+                }).trigger("reloadGrid").setGridParam({loadonce:true});
+
                 for (var key in data) {
                     addInfo(key, data[key]);
                 }
@@ -7132,6 +7149,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
     function fileSave() {
         if (editorActiveFile) {
             if (hqConf.debug) { console.log("saving file " + editorActiveFile); }
+            if (editorFiles === null) { editorFiles = {}; }
             editorFiles[editorActiveFile] = codemirror.getValue();
             storage.set("hqWebUiScripts", JSON.stringify(editorFiles));
         }
@@ -7235,6 +7253,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             editorFiles = JSON.parse(storage.get('hqWebUiScripts'));
 
             var active = storage.get("hqWebUiActiveFile");
+            if (editorFiles === null) { editorFiles = {}; }
+
             if (active !== null && editorFiles[active]) {
                 fileLoad(active, editorFiles[active]);
             } else {
@@ -7334,10 +7354,6 @@ jQuery.extend(jQuery.expr[ ":" ], {
     if (tabActive == "#tabEditor") {
         initCodemirror();
     }
-    if (tabActive == "#tabCcu") {
-        hmGetInfos();
-    }
-
     // Resize
     $(window).resize(function() {
         resizeAll();
