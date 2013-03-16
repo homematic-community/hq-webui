@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.4.2",
+    var version =               "2.5.0",
 
         codemirror,
         codemirrorReady =       false,
@@ -70,6 +70,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         rssiReady =             false,
         devicesReady =          false,
         favoritesReady =        false,
+        infoReady =             false,
 
         selectRoomsReady =      false,
         selectFunctionsReady =  false,
@@ -325,6 +326,13 @@ jQuery.extend(jQuery.expr[ ":" ], {
                     if (!editorReady) {
                         editorReady = true;
                         initCodemirror();
+                    }
+
+                }
+                if (ui.newTab[0].children[0].hash == "#tabCcu") {
+                    if (!infoReady) {
+                        infoReady = true;
+                        hmGetInfos();
                     }
 
                 }
@@ -1300,10 +1308,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Servicemeldungen'
     ];
     var colModelRssi = [
-        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+        {name: 'icon', index:'icon', width: 27, fixed: true,
             xmlmap: function (obj) {
-                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
-            }
+                var device = $(obj).attr("device");
+                var ise_id = statesXMLObj.find("device[address='" + device + "']").attr("ise_id");
+
+                var iface = statesXMLObj.find("device[ise_id='" + ise_id + "']").attr("device_type");
+                if (iface && hqConf.deviceImgEnable) {
+                    if (hqConf.deviceImg[iface]) {
+                        return '<span style="background-color: #fff; width: 24px; height: 22px; text-align: center; padding-top: 1px;"><img style="" src="' + hqConf.ccuUrl + hqConf.deviceImgPath + hqConf.deviceImg[iface] + '" height="21"/></span>' + '<span style="float:right; padding-top:5px;">';
+                    }
+                }
+                return '';
+
+            },
+            classes: 'deviceIcon'
         },
         {name:'ise_id', index:'ise_id', width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
@@ -1415,10 +1434,18 @@ jQuery.extend(jQuery.expr[ ":" ], {
         'Zustand'
     ];
     var colModelBat = [
-        {name: 'tools', index:'tools', width: 62, fixed: true, sortable: false, search: false,
+        {name: 'icon', index:'icon', width: 27, fixed: true,
             xmlmap: function (obj) {
-                //return "<button class='gridButton runProgram' id='runProgram"+$(obj).attr('id')+"'></button>";
-            }
+                var ise_id = $(obj).attr('id');
+                var iface = statesXMLObj.find("device[ise_id='" + ise_id + "']").attr("device_type");
+                if (iface && hqConf.deviceImgEnable) {
+                    if (hqConf.deviceImg[iface]) {
+                        return '<span style="background-color: #fff; width: 24px; height: 22px; text-align: center; padding-top: 1px;"><img style="" src="' + hqConf.ccuUrl + hqConf.deviceImgPath + hqConf.deviceImg[iface] + '" height="21"/></span>' + '<span style="float:right; padding-top:5px;">';
+                    }
+                }
+                return '';
+            },
+            classes: 'deviceIcon'
         },
         {name:'id', index:'id', width: 43, fixed: true, sorttype: 'int', align: 'right',
             xmlmap: function (obj) {
@@ -2354,7 +2381,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
         height: hqConf["gridHeight"] - 10,
         colNames: ['',''],
         colModel: [
-            {name: 'key', index:'key', width:120, sortable: false},
+            {name: 'key', index:'key', width:240, sortable: false},
             {name: 'value', index: 'value', width: 600, sortable: false}
         ],
         rowNum: 9998,
@@ -2424,7 +2451,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
                 },
-                subGridRowExpanded: function (grid_id, row_id) { subGridDatapoint(grid_id, row_id); },
+                subGridRowExpanded: function (grid_id, row_id) {
+                    subGridDatapoint(grid_id, row_id);
+                    setTimeout(hmRefresh, 100);
+                },
                 ondblClickRow: function(row_id, iRow, iCol, e) {
                     $("#" + subgrid_table_id).jqGrid('toggleSubGridRow', row_id);
                 },
@@ -2897,6 +2927,8 @@ jQuery.extend(jQuery.expr[ ":" ], {
             addInfo("Anzahl Datenpunkte", statesXMLObj.find("datapoint").length);
             addInfo("Anzahl Kanäle", statesXMLObj.find("channel").length);
             addInfo("Anzahl Geräte", statesXMLObj.find("device").length);
+            addInfo("Anzahl Geräte RF", statesXMLObj.find("device[interface='BidCos-RF']").length);
+            addInfo("Anzahl Geräte Wired", statesXMLObj.find("device[interface='BidCos-Wired']").length);
             var ccuBat = 100 * parseFloat(statesXMLObj.find("datapoint[name$='BAT_LEVEL']").attr("value"));
             //addInfo("CCU Batteriestatus", ccuBat + "%");
 
@@ -3014,18 +3046,21 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 
         batXML = "<bat>";
+        var batdevcount = 0;
         statesXMLObj.find("device").each(function () {
             var $this = $(this);
             if (hqConf.deviceBat[$this.attr("device_type")] && $this.attr("interface") !== "CUxD") {
+                batdevcount += 1;
                 bat = hqConf.deviceBat[$this.attr("device_type")];
                 if (!batinfo[bat.type]) {
                     batinfo[bat.type] = parseInt(bat.count, 10);
                 } else {
                     batinfo[bat.type] += bat.count;
                 }
-                batXML += '<device id="'+$this.attr("ise_id")+'" type="'+$this.attr("device_type")+'" addr="'+$this.attr("address")+'" name="'+$this.attr("name")+'" bat_type="'+bat.type+'" bat_count="'+bat.count+'" bat_level=""/>\n';
+                batXML += '<device id="'+$this.attr("ise_id")+'" type="'+$this.attr("device_type")+'" addr="'+$this.attr("address")+'" name="'+$this.attr("name")+'" bat_type="'+bat.type+'" bat_count="'+bat.count+'" bat_cap=""/>\n';
             }
         });
+        addInfo("Anzahl Geräte Batteriebetrieben", batdevcount);
         batXML += "</bat>";
         batXMLObj = $(batXML);
         gridBat.setGridParam({
@@ -3870,7 +3905,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
         accordionFavorites.accordion({
             heightStyle: "fill",
-            header: "> div > h3"
+            header: "> div > h3",
+            activate: function () {
+                hmRefresh();
+            }
         }).sortable({
                 axis: "y",
                 //handle: "h3",
@@ -5772,6 +5810,19 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                         var devcell = $("table#gridStates tr[id='" + devid + "'] td[aria-describedby='gridStates_service']");
                         devcell.html(devcell.html() + " " + message);
+                        if (message == "<span class='ui-state-active'>LOWBAT</span>") {
+                            var batcell = $("table#gridBat tr[id='" + devid + "'] td[aria-describedby='gridBat_bat_cap']");
+                            batcell.html(message);
+                            var devid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("ise_id");
+                            batXMLObj.find("device[id='"+devid+"']").attr("bat_cap", message);
+                            batXML = $.parseXML((new XMLSerializer()).serializeToString(batXMLObj[0]));
+                            gridBat.setGridParam({
+                                loadonce: false,
+                                datatype: "xmlstring",
+                                datastr: batXML
+                            }).trigger("reloadGrid").setGridParam({loadonce:true});
+
+                        }
                         var chcell = $("tr#" + chid + " td[aria-describedby$='_t_service']");
                         chcell.html(chcell.html() + " " + message);
 
@@ -6130,6 +6181,20 @@ jQuery.extend(jQuery.expr[ ":" ], {
                 }
             );
         }
+    }
+
+    function hmGetInfos() {
+        $.ajax({
+           url: '../api/sysinfo.cgi',
+           type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                for (var key in data) {
+                    addInfo(key, data[key]);
+                }
+
+            }
+        });
     }
 
     function hmSessionRenew(firstLoad) {
@@ -7268,6 +7333,9 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
     if (tabActive == "#tabEditor") {
         initCodemirror();
+    }
+    if (tabActive == "#tabCcu") {
+        hmGetInfos();
     }
 
     // Resize

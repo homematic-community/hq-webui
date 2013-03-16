@@ -38,7 +38,6 @@ proc escape { str } {
     "\r"  "\\r"
     "\t"  "\\t"
   }
-
   return "[string map $jsonmap $str]"
 }
 

@@ -111,19 +111,19 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ## Roadmap/Todo/Ideen
 
-### 2.5
+### 2.6
 * Script-Editor: Scripte auf CCU speichern und von CCU laden
 * Script-Editor: Menü "Bearbeiten"
 * Script-Editor: Einstellungs-Dialog
 * Benchmark-Funktion für Homematic-Scripte
 * Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
 
-### 2.6
+### 2.7
 * Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
 * Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
 * Sortieren von Favoriten
 
-### 2.7
+### 2.8
 * Programme anzeigen, anlegen, editieren, löschen
 * Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
 
