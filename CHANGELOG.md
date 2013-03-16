@@ -2,20 +2,12 @@ Changelog
 =========
 2.5.0
 -----
+* Neuer Tab Zentrale/Batterien
 * Tabs Geräte, Räume und Gewerke: verbessertes Refresh-Verhalten: beim Aufklappen von Kanälen wird nun ein sofortiger Refresh durchgeführt
 * Tab Favoriten: verbessertes Refresh-Verhalten: Beim Wechsel auf einen anderen Favoriten wird nun ein sofortiger Refresh durchgeführt
 * Tab Funk und Batterien: Anzeige von Icons
 * Tab Zentrale/Infos: Mehr Infos (Uptime, Speicher, Festplattenbelegung, homematic.regadom-Größe, Batterie-Anzahl uvm. :)
-
-2.4.2
------
 * Tab Entwicklung: Fehler behoben beim erzeugen von neuen Dateien
-* Neuer Tab Zentrale/Batterien
-
-2.4.1
------
-* Neuer Tab: Batterien
-* Infos: Mehr Infos :)
 * Code weiter aufgeräumt
 
 2.4.0
