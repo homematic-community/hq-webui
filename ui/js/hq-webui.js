@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.5.0",
+    var version =               "2.5.1",
 
         codemirror,
         codemirrorReady =       false,
@@ -4055,6 +4055,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
                     var logged = $("#cfgVarLogged").is(":checked");
                     var unit = $("#cfgVarUnit").val();
+
                     var min = $("#cfgVarTextRealMin").val();
                     if (min == "" || min === undefined || min == null) {
                         min = 0;
@@ -4082,7 +4083,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                                 "if (ch) {\n  ch.DPs().Remove(o.ID());\n  o.Channel(ID_ERROR);\n}\n" +
                                 "o.DPInfo('"+desc+"');\n" +
                                 "o.DPArchive("+logged+");\n" +
-                                "o.ValueUnit('"+unit+"');\n";
+                                "o.ValueUnit('" + unit + "');\n";
 
                             // Änderung des Variablen-Namens
                             if (name != varObj.attr("name")) {
@@ -4136,6 +4137,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                              // Variable neu anlegen
                              if (subtype != "6") {
                                  // Kein Alarm
+
                                 script = "object o = dom.CreateObject(OT_VARDP);\n" +
                                     "o.Name('" + name + "');\n" +
                                     "dom.GetObject(ID_SYSTEM_VARIABLES).Add(o.ID());\n" +
@@ -4193,6 +4195,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
                             "oChn.DPs().Add(o.ID());\n" +
                             "o.Channel("+channel+");";
                     }
+
 
                     if (hqConf.debug) { console.log(script) };
                     $.ajax({
@@ -5805,7 +5808,10 @@ jQuery.extend(jQuery.expr[ ":" ], {
                         var chid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().attr("ise_id");
                         var devid = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").parent().parent().attr("ise_id");
 
-                        var message = statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").attr("name").split(".")[1];
+                        var message = "";
+                        statesXMLObj.find("datapoint[ise_id='"+data[i].id+"']").each(function () {
+                            message = $(this).attr("name").split(".")[1];
+                        });
                         //var message = "true";
                         var timestamp = data[i].ts;
                         var timealarm = data[i].ta;

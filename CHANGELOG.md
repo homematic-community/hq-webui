@@ -1,5 +1,11 @@
 Changelog
 =========
+2.5.1
+-----
+* lässt sich nun auch auf CCU2 installieren
+* HM-SCI-3-FM zur Batterieübersicht hinzugefügt
+* Fehler behoben beim Laden der Servicemeldungen
+
 2.5.0
 -----
 * Neuer Tab Zentrale/Batterien

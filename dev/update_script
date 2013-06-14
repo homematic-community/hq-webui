@@ -1,7 +1,14 @@
 #!/bin/sh
 
 mkdir -p /mnt
-mount -t yaffs /dev/mtdblock3 /mnt
+
+if ["$1" == ""]; then
+    echo "CCU1"
+	mount -t yaffs /dev/mtdblock3 /mnt
+else
+    echo "CCU2"
+    mount -t ubifs ubi1:user /mnt
+fi
 
 cp -R ./hq /mnt/etc/config/addons/www/
 cp ./hobbyquaker-webui /mnt/etc/config/rc.d

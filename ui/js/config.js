@@ -187,6 +187,7 @@ var hqConf = {
         'HM-PB-2-WM':       { 'type': 'CR2032', count: 1},
         'HM-SwI-3-FM':      { 'type': 'CR2032', count: 1},
         'HM-PBI-4-FM':      { 'type': 'CR2032', count: 1},
+        'HM-SCI-3-FM':      { 'type': 'CR2032', count: 1},
         'HM-Sec-TiS':       { 'type': 'CR2032', count: 1},
         'HM-Sec-SC':        { 'type': 'LR44',   count: 2},
         'HM-Sec-RHS':       { 'type': 'LR44',   count: 2},

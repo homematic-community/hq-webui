@@ -16,7 +16,8 @@ CodeMirror.defineMode("homematic", function(config, parserConfig) {
             "function::": kw("function"),
             "for": kw("for"), "switch": kw("switch"), "case": kw("case"), "default": kw("default"),
             "in": operator, "typeof": operator, "instanceof": operator,
-            "true": atom, "false": atom, "dom": atom, "system": atom, "web": atom
+            "true": atom, "false": atom, "dom": atom, "system": atom, "web": atom,
+
         };
 
 
