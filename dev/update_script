@@ -2,12 +2,16 @@
 
 mkdir -p /mnt
 
-if ["$1" == ""]; then
+if [ "$1" == "" ]; then
     echo "CCU1"
-	mount -t yaffs /dev/mtdblock3 /mnt
-else
+    mount -t yaffs /dev/mtdblock3 /mnt
+elif [ "$1" == "CCU2" ]; then
     echo "CCU2"
     mount -t ubifs ubi1:user /mnt
+elif [ "$1" == "HM-RASPBERRYMATIC" ]; then
+    echo "HM-RASPBERRYMATIC"
+    mount /usr/local
+    mount --bind /usr/local /mnt
 fi
 
 cp -R ./hq /mnt/etc/config/addons/www/
@@ -15,3 +19,22 @@ cp ./hobbyquaker-webui /mnt/etc/config/rc.d
 chmod +x /mnt/etc/config/rc.d/hobbyquaker-webui
 
 umount /mnt
+
+# sync filesystem to make sure all changes are written to disk
+sync
+
+if [ "$1" = "" ]; then
+        echo "CCU1"
+        lcdtool "Reboot...             "
+        lcdtool -a 0x40 -t bin 00
+        echo "x" > /dev/watchdog
+        reboot
+        while true ; do true ;  done
+elif [ "$1" = "CCU2" ]; then
+        echo "CCU2"
+        # CCU2 always reboots after Addon/Firmware Update
+elif [ "$1" = "HM-RASPBERRYMATIC" ]; then
+        echo "HM-RASPBERRYMATIC"
+        umount /usr/local
+        # RASPBERRYMATIC always reboots after Addon/Firmware Update
+fi

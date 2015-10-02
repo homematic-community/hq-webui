@@ -27,4 +27,6 @@ cp ui/backup.html tmp/hq/ui/backup.html
 cp dev/update_script tmp/
 cp dev/hobbyquaker-webui tmp/
 cd tmp
-tar -czvf ../hq-webui.tar.gz *
+tar -czvf ../hq-webui_2.5.2.tar.gz *
+cd ..
+rm -rf tmp

@@ -1,5 +1,10 @@
 Changelog
 =========
+
+2.5.2
+-----
+* lässt sich nun auch auf RaspberryMatic (HM-RASPBERRYMATIC) installieren
+
 2.5.1
 -----
 * lässt sich nun auch auf CCU2 installieren
