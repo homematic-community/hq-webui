@@ -18,8 +18,10 @@ cp -a ui/js/cm tmp/hq/ui/js/cm
 #rm tmp/hq/ui/js/hq-webui.js
 cp -a ui/css/* tmp/hq/ui/css/
 cp -a ui/img/* tmp/hq/ui/img/
+cp -a ui/update-check.cgi tmp/hq/ui/
 cp -a api/* tmp/hq/api/
-cp index.html tmp/hq/index.html
+cp index.html tmp/hq/
+cp VERSION tmp/hq/
 #cp ui/index.min.html tmp/hq/ui/index.html
 cp ui/index.html tmp/hq/ui/index.html
 cp ui/cache.html tmp/hq/ui/cache.html
@@ -27,6 +29,6 @@ cp ui/backup.html tmp/hq/ui/backup.html
 cp dev/update_script tmp/
 cp dev/hobbyquaker-webui tmp/
 cd tmp
-tar -czvf ../hq-webui_2.5.2.tar.gz *
+tar -czvf ../hq-webui_$(cat ../VERSION).tar.gz *
 cd ..
 rm -rf tmp
