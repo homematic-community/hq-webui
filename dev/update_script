@@ -1,40 +1,42 @@
 #!/bin/sh
 
-mkdir -p /mnt
+ADDONNAME=hq
+WWWDIR=/usr/local/etc/config/addons/www/$ADDONNAME
+RCDDIR=/usr/local/etc/config/rc.d
 
 if [ "$1" == "" ]; then
-    echo "CCU1"
-    mount -t yaffs /dev/mtdblock3 /mnt
+  echo "CCU1"
+  lcdtool "Installing Addon...   "
+  mount -t yaffs /dev/mtdblock3 /usr/local
 elif [ "$1" == "CCU2" ]; then
-    echo "CCU2"
-    mount -t ubifs ubi1:user /mnt
+  echo "CCU2"
+  mount -t ubifs ubi1:user /usr/local
 elif [ "$1" == "HM-RASPBERRYMATIC" ]; then
-    echo "HM-RASPBERRYMATIC"
-    mount /usr/local
-    mount --bind /usr/local /mnt
+  echo "HM-RASPBERRYMATIC"
+  mount /usr/local
 fi
 
-cp -R ./hq /mnt/etc/config/addons/www/
-cp ./hobbyquaker-webui /mnt/etc/config/rc.d
-chmod +x /mnt/etc/config/rc.d/hobbyquaker-webui
+mkdir -P $WWWDIR
+cp -R $ADDONNAME/* $WWWDIR/
+chmod 755 $WWWDIR
 
-umount /mnt
+cp ./hobbyquaker-webui $RCDDIR/
+chmod +x $RCDDIR/hobbyquaker-webui
 
 # sync filesystem to make sure all changes are written to disk
 sync
 
 if [ "$1" = "" ]; then
-        echo "CCU1"
-        lcdtool "Reboot...             "
-        lcdtool -a 0x40 -t bin 00
-        echo "x" > /dev/watchdog
-        reboot
-        while true ; do true ;  done
+  echo "CCU1"
+  lcdtool "Reboot...             "
+  lcdtool -a 0x40 -t bin 00
+  echo "x" > /dev/watchdog
+  reboot
+  while true ; do true ;  done
 elif [ "$1" = "CCU2" ]; then
-        echo "CCU2"
-        # CCU2 always reboots after Addon/Firmware Update
+  echo "CCU2"
+  # CCU2 always reboots after Addon/Firmware Update
 elif [ "$1" = "HM-RASPBERRYMATIC" ]; then
-        echo "HM-RASPBERRYMATIC"
-        umount /usr/local
-        # RASPBERRYMATIC always reboots after Addon/Firmware Update
+  echo "HM-RASPBERRYMATIC"
+  # RASPBERRYMATIC always reboots after Addon/Firmware Update
 fi

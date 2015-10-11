@@ -1,4 +1,4 @@
-# HQ WebUI 2.5.2
+# HQ WebUI
 
 Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 

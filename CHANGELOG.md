@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.3
+-----
+* init skript für bessere WebUI Darstellung umgeschrieben.
+* update check Funktionalität implementiert.
+
 2.5.2
 -----
 * lässt sich nun auch auf RaspberryMatic (HM-RASPBERRYMATIC) installieren
