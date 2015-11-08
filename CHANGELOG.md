@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.4
+-----
+* update routinen repariert.
+
 2.5.3
 -----
 * init skript für bessere WebUI Darstellung umgeschrieben.

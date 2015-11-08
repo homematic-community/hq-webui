@@ -16,7 +16,7 @@ elif [ "$1" == "HM-RASPBERRYMATIC" ]; then
   mount /usr/local
 fi
 
-mkdir -P $WWWDIR
+mkdir -p $WWWDIR
 cp -R $ADDONNAME/* $WWWDIR/
 chmod 755 $WWWDIR
 
