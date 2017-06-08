@@ -3,6 +3,8 @@ Changelog
 
 2.5.4
 -----
+* fixed bug where an ExecError was generated with a CCU2 if System information was displayed.
+* fixed bug in favorite scanning routines calling incorrect functions to obtain certain values.
 * update routinen repariert.
 
 2.5.3
