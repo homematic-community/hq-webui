@@ -1,33 +1,38 @@
 # HQ WebUI
 
+[![Release](https://img.shields.io/github/release/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/hobbyquaker/hq-webui/latest/total.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
+[![Issues](https://img.shields.io/github/issues/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/issues)
+[![License](https://img.shields.io/badge/license-GPL%203.0-green.svg)](https://opensource.org/licenses/GPL-3.0)
+
 Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
 
 ## Features
 * wesentlich schnellere Ladezeiten und geringere Belastung der CCU
-* Übersichtliche Favoritenansicht
+* Ãœbersichtliche Favoritenansicht
 * Angenehmes Look&Feel, Themes, jQuery UI basiert
 * Grafische Darstellung des Systemprotokolls mittels "Highcharts"
-* Editor mit Syntax-Highlighting und Auto-Vervollständigung, unterstütztung für Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
-* Direktes Ausführen der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
-* Anzeige der Variablen, Programme, Geräte/Kanäle/Datenpunkte in übersichtlichen Tabellen
+* Editor mit Syntax-Highlighting und Auto-VervollstÃ¤ndigung, unterstÃ¼tztung fÃ¼r Homematic Script, TCL, Shell Script, XML RPC, JSON RPC
+* Direktes AusfÃ¼hren der Scripte und RPC aus dem Editor, automatisches Speichern im "LocalStorage"
+* Anzeige der Variablen, Programme, GerÃ¤te/KanÃ¤le/Datenpunkte in Ã¼bersichtlichen Tabellen
 * Zugriff auf alle Datenpunkte
-* Ändern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
-* Anlegen und Löschen von Variablen, ändern des Variablentyps
-* Zuordnung von Variablen zu Kanälen
+* Ã„ndern des Wertes eine Variable, umbenennen von Variablen, editieren der Beschreibung, aktivieren/deaktiveren der Protokollierung
+* Anlegen und LÃ¶schen von Variablen, Ã¤ndern des Variablentyps
+* Zuordnung von Variablen zu KanÃ¤len
 * Starten, umbenennen und aktivieren/deaktivieren von Programmen
-* Umbenennen von Geräten und Kanälen
-* Anlegen, editieren und Löschen von Gewerken und Räumen
-* Zuordnung von Kanälen zu Gewerken und Räumen
-* Durch Login geschützt, sowohl im Frontend als auch im Backend
+* Umbenennen von GerÃ¤ten und KanÃ¤len
+* Anlegen, editieren und LÃ¶schen von Gewerken und RÃ¤umen
+* Zuordnung von KanÃ¤len zu Gewerken und RÃ¤umen
+* Durch Login geschÃ¼tzt, sowohl im Frontend als auch im Backend
 * ...geplante Features siehe "Todo"
 
-Das HQ WebUI lädt alle Themes ausser dem Standard-Theme "Redmond" vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Themes auf der CCU belegen würden eingespart werden. Daher ist zur Benutzung von anderen Themes ein funktionierender Web-Zugang erforderlich.
+Das HQ WebUI lÃ¤dt alle Themes ausser dem Standard-Theme "Redmond" vom CDN ("Content Delivery Network") googleapis.com - so kann der Speicherplatz den die Themes auf der CCU belegen wÃ¼rden eingespart werden. Daher ist zur Benutzung von anderen Themes ein funktionierender Web-Zugang erforderlich.
 
 Chrome, Safari oder Firefox erforderlich, Chrome empfohlen.
 
 Diese Software darf kostenfrei verwendet, modifiziert und weiterverbreitet werden, allerdings ohne jegliche Garantien, die Benutzung erfolgt auf eigenes Risiko. Bei einer Weiterverbreitung bitte dieses Readme beibehalten!
 
-Allgemeines Feedback, Verbesserungsvorschläge, Wünsche und Fehlerberichte sind jederzeit willkommen!
+Allgemeines Feedback, VerbesserungsvorschlÃ¤ge, WÃ¼nsche und Fehlerberichte sind jederzeit willkommen!
 
 Siehe auch diesen Foren-Thread: http://homematic-forum.de/forum/viewtopic.php?f=31&t=10559
 
@@ -42,10 +47,10 @@ http://www.homematic-inside.de/software/download/item/hq-webui-addon
 
 **Achtung bei Updates:** vor dem installieren die alte Version deinstallieren. Bitte nach der Installation den Browsercache leeren.
 
-*Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x möglich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
+*Die Nutzung ohne Installation auf der CCU (wie sie mit Version 1.x mÃ¶glich war) ist nicht mehr vorgesehen (wenn auch mit einigen Verrenkungen machbar)*
 
 
-### Als Zusatzsoftware über das WebUI
+### Als Zusatzsoftware Ã¼ber das WebUI
 
 Die Datei hq-webui_(version).tar.gz wird als Zusatzsoftware auf der CCU installiert. Das HQ WebUI ist dann unter http://IP-Adresse-der-CCU/addons/hq/ erreichbar.
 
@@ -53,7 +58,7 @@ Die Datei hq-webui_(version).tar.gz wird als Zusatzsoftware auf der CCU installi
 
 ### Per FTP oder SCP (Vorteil: **kein Reboot** der CCU notwendig!)
 
-Die Datei hq-webui_(version).tar.gz auspacken (mit 7-Zip z.B.) und dann einfach den Ordner "hq" auf die CCU in das Verzeichnis /www/addons/ kopieren. Zur Deinstallation genügt dann einfach das Löschen dieses Ordners von der CCU.
+Die Datei hq-webui_(version).tar.gz auspacken (mit 7-Zip z.B.) und dann einfach den Ordner "hq" auf die CCU in das Verzeichnis /www/addons/ kopieren. Zur Deinstallation genÃ¼gt dann einfach das LÃ¶schen dieses Ordners von der CCU.
 
 Hinweis: Wird das HQ WebUI auf diese Weise installiert erscheint es nicht im originalen WebUI in der Liste der installierten Zusatzsoftware.
 
@@ -62,16 +67,16 @@ Hinweis: Wird das HQ WebUI auf diese Weise installiert erscheint es nicht im ori
 
 ### Anmeldung
 
-Zur Anmeldung werden die gleichen Benutzernamen und Passwörter wie zur Anmeldung am originalen WebUI verwendet. Bitte darauf achten das auch Benuzternamen Groß-/Kleinschreibung relevant ist und der Standard-Benutzer auf der Homematic CCU sich "Admin" mit großem A schreibt.
+Zur Anmeldung werden die gleichen Benutzernamen und PasswÃ¶rter wie zur Anmeldung am originalen WebUI verwendet. Bitte darauf achten das auch Benuzternamen GroÃŸ-/Kleinschreibung relevant ist und der Standard-Benutzer auf der Homematic CCU sich "Admin" mit groÃŸem A schreibt.
 
 
 ### Allgemein
 
-Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die gecachten Daten neu zu laden. Alle Sichtbaren Datenpunkten werden ständig automatisch aktualisiert, die Reload-Buttons müssen nur dann verwendet werden wenn Änderungen ausserhalb des HQ WebUI vorgenommen wurden (z.B. neues Gerät angelernt oder Programm im originalen WebUI angelegt)
-Im Einstellungsmenü (Zahnrad-Button oben rechts) kann man alle zwischengespeicherten Daten löschen.
-Rechts oben befindet sich der Logout-Button, der Einstellungen-Button (in den Einstellungen kann das Theme gewählt werden und gespeicherte Login-Daten können gelöscht werden), sowie ein Hilfe-Button.
-Eigene Themes können quasi ohne HTML/CSS-Kenntnisse hier zusammengecklickt werden: http://jqueryui.com/themeroller/
-Diverse Konfigurationsoptionen können in der Datei ui/js/config.js editiert werden.
+Links unten in jeder Tabellen-Ansicht befindet sich ein Reload-Button um die gecachten Daten neu zu laden. Alle Sichtbaren Datenpunkten werden stÃ¤ndig automatisch aktualisiert, die Reload-Buttons mÃ¼ssen nur dann verwendet werden wenn Ã„nderungen ausserhalb des HQ WebUI vorgenommen wurden (z.B. neues GerÃ¤t angelernt oder Programm im originalen WebUI angelegt)
+Im EinstellungsmenÃ¼ (Zahnrad-Button oben rechts) kann man alle zwischengespeicherten Daten lÃ¶schen.
+Rechts oben befindet sich der Logout-Button, der Einstellungen-Button (in den Einstellungen kann das Theme gewÃ¤hlt werden und gespeicherte Login-Daten kÃ¶nnen gelÃ¶scht werden), sowie ein Hilfe-Button.
+Eigene Themes kÃ¶nnen quasi ohne HTML/CSS-Kenntnisse hier zusammengecklickt werden: http://jqueryui.com/themeroller/
+Diverse Konfigurationsoptionen kÃ¶nnen in der Datei ui/js/config.js editiert werden.
 
 ### Favoriten
 
@@ -79,31 +84,31 @@ Die Favoritenbereiche lassen sich per Drag&Drop sortieren, diese Einstellung wir
 
 ### Variablen & Programme
 
-Variablen und Programme können über einfach-Klick markiert werden, dann werden unten Links 2 Buttons aktiv, einer zum Ändern des Variablen-Werts (bzw zum starten eines Programms), einer zum editieren des Namens und der Beschreibung.
+Variablen und Programme kÃ¶nnen Ã¼ber einfach-Klick markiert werden, dann werden unten Links 2 Buttons aktiv, einer zum Ã„ndern des Variablen-Werts (bzw zum starten eines Programms), einer zum editieren des Namens und der Beschreibung.
 
-### Räume & Gewerke
+### RÃ¤ume & Gewerke
 
-Räume und Gewerke können über die Buttons unten Links bearbeitet werden.
+RÃ¤ume und Gewerke kÃ¶nnen Ã¼ber die Buttons unten Links bearbeitet werden.
 
-### Geräte
+### GerÃ¤te
 
-In der Geräteliste befindet sich ganz links in den Tabellen-Zeilen bei jedem Gerät ein + Symbol. Hierüber können Geräte "aufgeklappt" werden, dann werden Kanäle sichtbar. Diese verfügen ihrerseits wieder über ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
-Datenpunkte lassen sich über einen Button rechts in der jeweiligen Zeile editieren, hier können auch Servicemeldungen bestätigt werden. Geräte und Kanäle können ebenfalls über den Button rechts umbenannt werden.
+In der GerÃ¤teliste befindet sich ganz links in den Tabellen-Zeilen bei jedem GerÃ¤t ein + Symbol. HierÃ¼ber kÃ¶nnen GerÃ¤te "aufgeklappt" werden, dann werden KanÃ¤le sichtbar. Diese verfÃ¼gen ihrerseits wieder Ã¼ber ein + zum aufklappen, dann werden die Datenpunkte sichtbar.
+Datenpunkte lassen sich Ã¼ber einen Button rechts in der jeweiligen Zeile editieren, hier kÃ¶nnen auch Servicemeldungen bestÃ¤tigt werden. GerÃ¤te und KanÃ¤le kÃ¶nnen ebenfalls Ã¼ber den Button rechts umbenannt werden.
 
-### Geräte/Servicemeldungen
+### GerÃ¤te/Servicemeldungen
 
-Wenn Servicemeldungen vorhanden sind werden diese im Reiter Geräte mit Anzahl angezeigt. Klappt man Geräte und Kanäle mit aktiven Servicemeldungen auf kann man über den "Checkmark" Button die Servicemeldung bestätigen.
+Wenn Servicemeldungen vorhanden sind werden diese im Reiter GerÃ¤te mit Anzahl angezeigt. Klappt man GerÃ¤te und KanÃ¤le mit aktiven Servicemeldungen auf kann man Ã¼ber den "Checkmark" Button die Servicemeldung bestÃ¤tigen.
 
 
 ### Entwicklung
 
-Beim Ausführen von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergänzt.
+Beim AusfÃ¼hren von JSON RPC muss der Parameter _session_id nicht angebeben werden, er wird automatisch mit der aktuellen Session-ID ergÃ¤nzt.
 
 **Achtung:** Man sollte sich nicht auf die Speichern-Funktion des Script-Editors verlassen. Die Scripte werden im "LocalStorage" gespeichert, das ist nichts weiter als eine modernere Art Browser-Cookie und kann "verloren gehen".
 
 ### Zentrale/Systemprotokoll
 
-Bitte beachten dass die Ladezeiten des Systemprotokolls sehr lange sind und die CCU stark belasten. Das Systemprotokoll wird deshalb erst dann geladen wenn der entsprechende Reiter das erste mal ausgewählt wird.
+Bitte beachten dass die Ladezeiten des Systemprotokolls sehr lange sind und die CCU stark belasten. Das Systemprotokoll wird deshalb erst dann geladen wenn der entsprechende Reiter das erste mal ausgewÃ¤hlt wird.
 
 ## Changelog
 
@@ -113,28 +118,28 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 
 ### 2.6
 * Script-Editor: Scripte auf CCU speichern und von CCU laden
-* Script-Editor: Menü "Bearbeiten"
+* Script-Editor: MenÃ¼ "Bearbeiten"
 * Script-Editor: Einstellungs-Dialog
-* Benchmark-Funktion für Homematic-Scripte
+* Benchmark-Funktion fÃ¼r Homematic-Scripte
 * Programme mit Script im Dann-Teil direkt aus dem Scripteditor heraus erzeugen
 
 ### 2.7
-* Hinzufügen/Entfernen/Umbenennen von Favoritenbereichen
-* Hinzufügen/Entfernen von Kanälen, Variablen und Programmen zu Favoriten
+* HinzufÃ¼gen/Entfernen/Umbenennen von Favoritenbereichen
+* HinzufÃ¼gen/Entfernen von KanÃ¤len, Variablen und Programmen zu Favoriten
 * Sortieren von Favoriten
 
 ### 2.8
-* Programme anzeigen, anlegen, editieren, löschen
-* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die Geräte beinhalten etc
+* Programme anzeigen, anlegen, editieren, lÃ¶schen
+* Verlinkungen - Variablen und Programme die diese Variable nutzen, Programme die GerÃ¤te beinhalten etc
 
 
 ### 3.0
 * Nutzung der "WebAPI", Verzeichnisse umstrukturieren, Verzeichnis "api" fliegt komplett raus.
-* Code aufräumen, ordnen, kommentieren, refaktorieren
+* Code aufrÃ¤umen, ordnen, kommentieren, refaktorieren
 * hq-webui.js minifiziert ausliefern, eventuell javascript-files zusammenfassen
 * http://homematic/ise/checkrega.cgi auswerten im Fehlerfall und entsprechende Meldung darstellen
 * Session Fehler abfangen
-* Kontextmenü (rechts-klick) in allen Tabellenansichten und in der File-Liste des Editors
+* KontextmenÃ¼ (rechts-klick) in allen Tabellenansichten und in der File-Liste des Editors
 
 
 
@@ -145,21 +150,21 @@ Siehe https://github.com/hobbyquaker/hq-webui/blob/master/CHANGELOG.md
 * WebMatic Flags (r) (d) (nv) (g/...) beim Editieren von Variablen anbieten
 * Tabellenheader anpassen (Sortierung, Filter - Selects)
 * Programme-Drucken funktion implementieren (Anli?)
-* Such-Funktion für Suche nach Variablen, Programmen, Geräten und Kanälen?
+* Such-Funktion fÃ¼r Suche nach Variablen, Programmen, GerÃ¤ten und KanÃ¤len?
 * Automatisches erstellen eines Programms zum Start eines TCL/Shellscripts aus dem Editor (wahlweise system.exec oder cuxd)
-* neuer Tab "Kanäle"? Umschaltbare Ansicht im Tab Geräte um Kanalliste anzuzeigen?
-* Tab Geräte: Wahlweise Übersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
-* Editor-Ausgabe: Einbinden schöner (auf/zuklappbarer) Baumansichten für XML und JSON Ausgaben (Plugin auswählen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
-* Programme exportieren/importieren? Aufwendig - beim Import müssten Variablen/Kanäle komfortabel neu zugeordnet werden...
-* CCU-Dateibrowser (Mit möglichkeit eine Datei auszuführen bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
-* Anlegen/Editieren/Löschen von Cronjobs
+* neuer Tab "KanÃ¤le"? Umschaltbare Ansicht im Tab GerÃ¤te um Kanalliste anzuzeigen?
+* Tab GerÃ¤te: Wahlweise Ãœbersetzungen/Texte von Werten, Datenpunkten und Servicemeldungen anzeigen (Checkbox im Einstellungen-Dialog)
+* Editor-Ausgabe: Einbinden schÃ¶ner (auf/zuklappbarer) Baumansichten fÃ¼r XML und JSON Ausgaben (Plugin auswÃ¤hlen! http://freebiesdesign.com/7-best-jquery-treeview-plugins/)
+* Programme exportieren/importieren? Aufwendig - beim Import mÃ¼ssten Variablen/KanÃ¤le komfortabel neu zugeordnet werden...
+* CCU-Dateibrowser (Mit mÃ¶glichkeit eine Datei auszufÃ¼hren bzw anzusehen/downzuloaden/upzuloaden) (braucht man das? FTP und Telnet tun es doch?!?)
+* Anlegen/Editieren/LÃ¶schen von Cronjobs
 * Dienste starten/stoppen (inetd (telnet), ftpd etc)
 * Selbst-Update / Auto-Update des HQ WebUI
 * Zusatzsoftware installieren - optional ohne Zwangsreboot - und deinstallieren
-* Mehr Infos für die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
-* Ausbau des Tabs Funk, Einfärben der RX/TX Werte?
+* Mehr Infos fÃ¼r die Info-Tabelle: z.B.: Inventarscript integrieren, CCU FW-Version, Uptime, ...
+* Ausbau des Tabs Funk, EinfÃ¤rben der RX/TX Werte?
 * Thermostatmodus setzen
-* Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "Auffüllen" benutzen bei ungleichmäßiger Spaltenverteilung)
+* Favoriten-Separatoren per Einstellungs-Dialog abschaltbar machen (dann kann man sie zum "AuffÃ¼llen" benutzen bei ungleichmÃ¤ÃŸiger Spaltenverteilung)
 
 
 
@@ -186,7 +191,7 @@ Version 3 as published by the Free Software Foundation.
 
 http://www.gnu.org/licenses/gpl.html
 
-**deutsche Übersetzung**: http://www.gnu.de/documents/gpl.de.html
+**deutsche Ãœbersetzung**: http://www.gnu.de/documents/gpl.de.html
 
 Please keep this Readme File when redistributing this Software!
 
