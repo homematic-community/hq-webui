@@ -29,6 +29,6 @@ cp ui/backup.html tmp/hq/ui/backup.html
 cp dev/update_script tmp/
 cp dev/hobbyquaker-webui tmp/
 cd tmp
-tar -czvf ../hq-webui_$(cat ../VERSION).tar.gz *
+tar --owner=root --group=root --exclude=.DS_Store -czvf ../hq-webui_$(cat ../VERSION).tar.gz *
 cd ..
 rm -rf tmp
