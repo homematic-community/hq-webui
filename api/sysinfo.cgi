@@ -25,7 +25,7 @@ if {$res != ""} {
     set memory [exec cat /proc/meminfo]
     set regadom [exec ls -lh /etc/config/homematic.regadom]
     set disk [exec df -h]
-    array set ccubat [rega_script {Write(dom.GetObject("System.System:1.BAT_LEVEL").Value() * 100);}]
+    array set ccubat [rega_script {var obj=dom.GetObject("System.System:1.BAT_LEVEL"); if(obj) { Write(obj.Value() * 100); };}]
 
     regsub -all {[^/]*([a-z0-9\/]+)[ ]+([a-zA-Z0-9.]+)[ ]+([a-zA-Z0-9.]+)[ ]+([a-zA-Z0-9.]+)[ ]+([a-zA-Z0-9.%]+)[ ]+([A-Za-z\/]+)} $disk {"CCU Filesystem \6":"Size:\2 Used:\3 Free:\4 Used:\5",} disk
     regsub {[-a-z]+[ ]+[0-9] [a-z ]+([0-9.]+[A-Za-z]) ([A-Za-z0-9: ]+)[a-zA-Z./]+} $regadom {"CCU homematic.regadom size":"\1"} regadom

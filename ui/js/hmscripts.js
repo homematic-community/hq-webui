@@ -335,17 +335,24 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "        if (fav.IsTypeOf(OT_CHANNEL)) { favType = \"CHANNEL\"; }\n" +
     "        if (fav.IsTypeOf(OT_ALARMDP)) { favType = \"SYSVAR\"; }\n" +
     "        if (fav.IsTypeOf(OT_FAVORITE)) { favType = \"FAVORITE\"; }\n" +
-    "        if (favType != \"UNKNOWN\" ) { \n" +
-    "        WriteXML(fav.Name()); Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
-    "        Write( \"' name_position='\"); WriteXML(fav.FavNamePosition());\n" +
-    "        Write( \"' col_align='\"); WriteXML(fav.FavColumnAlign());\n" +
+    "        if (favType != \"UNKNOWN\" ) {\n" +
+    "        WriteXML(fav.Name());" +
+    "        if (fav.IsTypeOf(OT_FAVORITE)) {\n" +
+    "          Write( \"' column_count='\"); WriteXML(fav.FavColumnCount());\n" +
+    "          Write( \"' name_position='\"); WriteXML(fav.FavNamePosition());\n" +
+    "          Write( \"' col_align='\"); WriteXML(fav.FavColumnAlign());\n" +
+    "        }\n" +
     "        Write( \"' type='\" # favType);\n" +
-    "        if (favType == \"CHANNEL\") { Write( \"' chnlabel='\" # fav.ChnLabel()); }\n" +
-    "        Write( \"' ctype='\" # fav.ChannelType());\n" +
+    "        if (favType == \"CHANNEL\") {\n" +
+    "          Write( \"' chnlabel='\" # fav.ChnLabel());\n" +
+    "          Write( \"' ctype='\" # fav.ChannelType());\n" +
+    "        }\n" +
     "        string canUse = \"false\";\n" +
     "        string id;\n" +
-    "        foreach (id, oFavorite.FavControlIDs().EnumIDs()) {\n" +
-    "            if (id == sChannelId) { canUse = \"true\"; }\n" +
+    "        if (fav.IsTypeOf(OT_FAVORITE)) {\n" +
+    "          foreach (id, oFavorite.FavControlIDs().EnumIDs()) {\n" +
+    "              if (id == sChannelId) { canUse = \"true\"; }\n" +
+    "          }\n" +
     "        }\n" +
     "        Write( \"' not_can_use='\" # canUse);\n" +
     "        if (show_datapoint == 1) {\n" +
@@ -373,7 +380,6 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "    }\n" +
     "                Write(\"' unit='\"); WriteXML( oDP.ValueUnit());\n" +
     "                if (oDP.ValueType() == 16) { Write(\"' value_text='\"); WriteXML( oDP.ValueList().StrValueByIndex(';', oDP.Value())); }\n" +
-    "                Write(\"' type='\" # fav.ValueType() # \"' subtype='\" # fav.ValueSubType());\n" +
     "                            Write(\"' timestamp='\" # oDP.Timestamp().ToInteger());\n" +
     "                            Write(\"' />\");\n" +
     "                        }\n" +
@@ -409,6 +415,3 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "    Write(\"\\n</favorite>\");\n" +
     "}\n" +
     "Write(\"\\n</favoriteList>\");";
-
-
-
