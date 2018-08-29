@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.5
+-----
+* fixed bug where .AlType() should be used instead of .Variable().
+
 2.5.4
 -----
 * fixed bug where an ExecError was generated with a CCU2 if System information was displayed.

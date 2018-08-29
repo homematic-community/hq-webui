@@ -130,13 +130,21 @@ var scriptVariables = "object oSysVar;\n" +
     "    Write(\"\\n <systemVariable\");\n" +
     "    Write(\" name='\"); WriteXML( oSysVar.Name() );\n" +
     "    Write(\"' desc='\"); WriteXML( oSysVar.DPInfo() );\n" +
-    "    Write(\"' variable='\"); WriteXML( oSysVar.Variable());\n" +
+    "    Write(\"' variable='\");\n" +
+    "    if (oSysVar.ValueSubType() == 6) {\n" +
+    "      WriteXML( oSysVar.AlType());\n" +
+    "    } else {\n" +
+    "      WriteXML( oSysVar.Variable());\n" +
+    "    }\n" +
     "    !Write(\"' value='\"); WriteXML( oSysVar.Value());\n" +
     "    if (oSysVar.ValueType() == 2) {\n" +
     "     Write(\"' text_false='\"); WriteXML( oSysVar.ValueName0());\n" +
     "     Write(\"' text_true='\"); WriteXML( oSysVar.ValueName1());\n" +
     "    }\n" +
-    "    Write(\"' value_list='\"); WriteXML( oSysVar.ValueList());\n" +
+    "    Write(\"' value_list='\");\n" +
+    "    if (oSysVar.ValueType() == 16) {\n" +
+    "      WriteXML( oSysVar.ValueList());\n" +
+    "    }\n" +
     "    Write(\"' ise_id='\" # oSysVar.ID() );\n" +
     "    if (sShowText == \"true\") {\n" +
     "        Write(\"' value_text='\"); WriteXML( oSysVar.ValueList().StrValueByIndex(';', oSysVar.Value()));\n" +
@@ -389,9 +397,17 @@ var scriptFavorites = "var show_datapoint=1;\n" +
     "            if (favType == \"SYSVAR\") {\n" +
     "                Write(\"\\n <systemVariable\");\n" +
     "                Write(\" name='\"); WriteXML( fav.Name() );\n" +
-    "                Write(\"' variable='\"); WriteXML( fav.Variable());\n" +
+    "                Write(\"' variable='\");\n" +
+    "                if (fav.ValueSubType() == 6) {\n" +
+    "                  WriteXML( fav.AlType());\n" +
+    "                } else {\n" +
+    "                  WriteXML( fav.Variable());\n" +
+    "                }\n" +
     "                Write(\"' value='\"); WriteXML( fav.Value());\n" +
-    "                Write(\"' value_list='\"); WriteXML( fav.ValueList());\n" +
+    "                Write(\"' value_list='\");\n" +
+    "                if (fav.ValueType() == 16) {\n" +
+    "                  WriteXML( fav.ValueList());\n" +
+    "                }\n" +
     "                Write(\"' value_text='\"); WriteXML( fav.ValueList().StrValueByIndex(';', fav.Value()));\n" +
     "    if (fav.ValueType() == 2) {\n" +
     "     Write(\"' text_false='\"); WriteXML( fav.ValueName0());\n" +
