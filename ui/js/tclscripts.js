@@ -7,7 +7,7 @@ var scriptRssi = "puts -nonewline {<rssiList>}\n" +
     "set RSSI_MEDIUM -100.0\n" +
     "set RSSI_GOOD -20.0\n" +
     "\n" +
-    "set url \"xmlrpc_bin://127.0.0.1:2001\"\n" +
+    "set url \"xmlrpc://127.0.0.1:2001\"\n" +
     "\n" +
     "if { [ catch {\n" +
     "    #check if the interface supports rssi\n" +
