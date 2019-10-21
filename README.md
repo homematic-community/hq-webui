@@ -2,9 +2,9 @@
 
 **Verwaistes Projekt, Maintainer Gesucht!**
 
-[![Release](https://img.shields.io/github/release/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/hobbyquaker/hq-webui/latest/total.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
-[![Issues](https://img.shields.io/github/issues/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/issues)
+[![Release](https://img.shields.io/github/release/homematic-community/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/homematic-community/hq-webui/latest/total.svg)](https://github.com/homematic-community/hq-webui/releases/latest)
+[![Issues](https://img.shields.io/github/issues/homematic-community/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/issues)
 [![License](https://img.shields.io/badge/license-GPL%203.0-green.svg)](https://opensource.org/licenses/GPL-3.0)
 
 Schnelles alternatives Webfrontend zur Administration der Homematic CCU und zur Entwicklung von Homematic-Scripten.
