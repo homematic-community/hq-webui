@@ -1,5 +1,7 @@
 # HQ WebUI
 
+**Verwaistes Projekt, Maintainer Gesucht!**
+
 [![Release](https://img.shields.io/github/release/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/hobbyquaker/hq-webui/latest/total.svg)](https://github.com/hobbyquaker/hq-webui/releases/latest)
 [![Issues](https://img.shields.io/github/issues/hobbyquaker/hq-webui.svg)](https://github.com/hobbyquaker/hq-webui/issues)
