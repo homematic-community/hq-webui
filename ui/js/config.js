@@ -58,7 +58,7 @@ var hqConf = {
 
     // jQuery UI Theme
     themeDefault:           "redmond",
-    themeUrl:               "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/",
+    themeUrl:               "https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/",
     themeSuffix:            "/jquery-ui.css",
 
     // Geräte-Bildchen anzeigen
