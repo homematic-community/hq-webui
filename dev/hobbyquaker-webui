@@ -9,7 +9,7 @@ case "$1" in
   info)
     VER=`cat /etc/config/addons/www/hq/VERSION`
     echo "Info: <b>HQ WebUI CCU Addon</b><br>"
-    echo "Info: <a href="ħttps://github.com/hobbyquaker/hq-webui">https://github.com/hobbyquaker/hq-webui</a>"
+    echo "Info: <a href="https://github.com/hobbyquaker/hq-webui">https://github.com/hobbyquaker/hq-webui</a>"
     echo "Name: HQ WebUI"
     echo "Version: $VER"
     echo "Operations: uninstall"
