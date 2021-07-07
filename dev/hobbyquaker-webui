@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# check for unsupported platforms
+if grep -qim1 busmatic /www/api/methods/ccu/downloadFirmware.tcl; then
+  exit 13
+fi
+
 case "$1" in
 
   ""|start|restart|stop)
