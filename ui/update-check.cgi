@@ -1,14 +1,15 @@
 #!/bin/tclsh
 
-set checkURL    "https://raw.githubusercontent.com/hobbyquaker/hq-webui/master/VERSION"
-set downloadURL "https://github.com/hobbyquaker/hq-webui/releases/latest"
+set checkURL    "https://raw.githubusercontent.com/homematic-community/hq-webui/master/VERSION"
+set downloadURL "https://github.com/homematic-community/hq-webui/releases"
 
 catch {
   set input $env(QUERY_STRING)
   set pairs [split $input &]
   foreach pair $pairs {
-    if {0 != [regexp "^(\[^=]*)=(.*)$" $pair dummy varname val]} {
-      set $varname $val
+    if {$pair == "cmd=download"} {
+      set cmd "download"
+      break
     }
   }
 }
