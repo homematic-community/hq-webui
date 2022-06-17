@@ -1,6 +1,6 @@
 /**
  *  HQ WebUI - schnelles Webfrontend für die Homematic CCU
- *  https://github.com/hobbyquaker/hq-webui/
+ *  https://github.com/homematic-community/hq-webui/
  *
  *  Copyright (c) 2012, 2013 hobbyquaker https://github.com/hobbyquaker
  *
@@ -22,7 +22,7 @@ jQuery.extend(jQuery.expr[ ":" ], {
 
 (function ($) { $("document").ready(function () {
 
-    var version =               "2.5.5",
+    var version =               "2.5.9",
 
         codemirror,
         codemirrorReady =       false,
